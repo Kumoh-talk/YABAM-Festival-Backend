@@ -14,12 +14,16 @@ import lombok.RequiredArgsConstructor;
 public class MenuCategoryReader {
 	private final MenuCategoryRepository menuCategoryRepository;
 
-	public Optional<MenuCategory> getMenuCategory(Long categoryId) {
-		return menuCategoryRepository.getMenuCategory(categoryId);
+	public Optional<MenuCategory> getMenuCategory(Long storeId, Long categoryId) {
+		return menuCategoryRepository.getMenuCategory(storeId, categoryId);
 	}
 
 	public List<MenuCategory> getMenuCategoryList(Long storeId) {
 		return menuCategoryRepository.getMenuCategoryList(storeId);
+	}
+
+	public boolean existsMenuCategory(Long storeId, Long menuCategoryId) {
+		return menuCategoryRepository.existsMenuCategory(storeId, menuCategoryId);
 	}
 
 	public boolean existsMenuCategoryOrder(Long storeId, int menuCategoryOrder) {

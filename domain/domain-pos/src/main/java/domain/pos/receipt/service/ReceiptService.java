@@ -9,10 +9,10 @@ import com.exception.ErrorCode;
 import com.exception.ServiceException;
 
 import domain.pos.member.entity.UserPassport;
-import domain.pos.member.entity.UserRole;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.receipt.implement.ReceiptReader;
+import domain.pos.receipt.implement.ReceiptValidator;
 import domain.pos.receipt.implement.ReceiptWriter;
 import domain.pos.store.entity.Sale;
 import domain.pos.store.implement.SaleReader;
@@ -26,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class ReceiptService {
+	private final ReceiptValidator receiptValidator;
 	private final SaleReader saleReader;
 	private final TableWriter tableWriter;
 	private final TableReader tableReader;
@@ -64,22 +65,12 @@ public class ReceiptService {
 				return new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 			});
 
-		if (!hasAccessToReceipt(receipt, userPassport)) {
+		if (!receiptValidator.hasAccessToReceipt(receipt, userPassport)) {
 			log.warn("Receipt 접근 가능 요청자가 아닙니다. userId: {}", userPassport.getUserId());
 			throw new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED);
 		}
 
 		return receipt.getReceiptInfo();
-	}
-
-	private boolean hasAccessToReceipt(Receipt receipt, UserPassport userPassport) {
-		Long customerId = receipt.getUserPassport().getUserId();
-		Long storeOwnerId = receipt.getSale().getStore().getOwnerPassport().getUserId();
-		Long userId = userPassport.getUserId();
-
-		return (customerId.equals(userId) && userPassport.getUserRole().equals(UserRole.ROLE_USER))
-			||
-			(storeOwnerId.equals(userId) && userPassport.getUserRole().equals(UserRole.ROLE_OWNER));
 	}
 
 	// TODO : application 계층 one-indexed-parameters 설정 추가

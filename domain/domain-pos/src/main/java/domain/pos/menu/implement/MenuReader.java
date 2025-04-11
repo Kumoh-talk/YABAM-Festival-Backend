@@ -15,12 +15,16 @@ import lombok.RequiredArgsConstructor;
 public class MenuReader {
 	private final MenuRepository menuRepository;
 
-	public Optional<MenuInfo> getMenuInfo(Long menuId) {
-		return menuRepository.getMenuInfo(menuId);
+	public Optional<MenuInfo> getMenuInfo(Long storeId, Long menuId) {
+		return menuRepository.getMenuInfo(storeId, menuId);
 	}
 
 	public Slice<MenuInfo> getMenuSlice(Pageable pageable, MenuInfo lastMenuInfo, Long menuCategoryId) {
 		return menuRepository.getMenuSlice(pageable, lastMenuInfo, menuCategoryId);
+	}
+
+	public boolean existsMenu(Long storeId, Long menuId) {
+		return menuRepository.getMenuInfo(storeId, menuId).isPresent();
 	}
 
 	public boolean existsMenuOrder(Long menuCategoryId, int menuOrder) {
