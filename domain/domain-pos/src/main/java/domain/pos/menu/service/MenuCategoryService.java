@@ -9,6 +9,7 @@ import com.exception.ServiceException;
 
 import domain.pos.member.entity.UserPassport;
 import domain.pos.menu.entity.MenuCategory;
+import domain.pos.menu.entity.MenuCategoryInfo;
 import domain.pos.menu.implement.MenuCategoryReader;
 import domain.pos.menu.implement.MenuCategoryValidator;
 import domain.pos.menu.implement.MenuCategoryWriter;
@@ -25,9 +26,10 @@ public class MenuCategoryService {
 	private final MenuCategoryWriter menuCategoryWriter;
 	private final MenuCategoryReader menuCategoryReader;
 
-	public MenuCategory postMenuCategory(Long storeId, UserPassport userPassport, String categoryName) {
+	public MenuCategory postMenuCategory(Long storeId, UserPassport userPassport, MenuCategoryInfo menuCategoryInfo) {
 		storeValidator.validateStoreOwner(userPassport, storeId);
-		return menuCategoryWriter.postMenuCategory(storeId, categoryName);
+		menuCategoryValidator.validateMenuCategoryOrder(storeId, menuCategoryInfo);
+		return menuCategoryWriter.postMenuCategory(storeId, menuCategoryInfo);
 	}
 
 	public List<MenuCategory> getMenuCategoryList(Long storeId) {
@@ -35,11 +37,18 @@ public class MenuCategoryService {
 		return menuCategoryReader.getMenuCategoryList(storeId);
 	}
 
-	public MenuCategory patchMenuCategory(Long storeId, UserPassport userPassport, Long categoryId,
-		String categoryName) {
+	public MenuCategoryInfo patchMenuCategory(Long storeId, UserPassport userPassport,
+		MenuCategoryInfo menuCategoryInfo) {
 		storeValidator.validateStoreOwner(userPassport, storeId);
-		menuCategoryValidator.validateMenuCategory(categoryId);
-		return menuCategoryWriter.patchMenuCategory(categoryId, categoryName);
+		menuCategoryValidator.validateMenuCategory(menuCategoryInfo.getMenuCategoryId());
+		return menuCategoryWriter.patchMenuCategory(menuCategoryInfo);
+	}
+
+	public MenuCategoryInfo patchMenuCategoryOrder(Long storeId, UserPassport userPassport,
+		MenuCategoryInfo menuCategoryInfo) {
+		storeValidator.validateStoreOwner(userPassport, storeId);
+		menuCategoryValidator.validateMenuCategory(menuCategoryInfo.getMenuCategoryId());
+		return menuCategoryWriter.patchMenuCategoryOrder(storeId, menuCategoryInfo);
 	}
 
 	public void deleteMenuCategory(Long storeId, UserPassport userPassport, Long categoryId) {

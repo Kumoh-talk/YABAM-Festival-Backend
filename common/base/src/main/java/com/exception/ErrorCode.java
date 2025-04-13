@@ -27,9 +27,11 @@ public enum ErrorCode {
 
 	// Menu
 	MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "MENU_0001", "존재하지 않는 메뉴입니다."),
+	EXIST_MENU_ORDER(HttpStatus.CONFLICT, "MENU_0002", "이미 존재하는 메뉴 순서입니다."),
 
 	// MenuCategory
 	MENU_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "MENU_CATEGORY_0001", "존재하지 않는 메뉴 카테고리입니다."),
+	EXIST_MENU_CATEGORY_ORDER(HttpStatus.CONFLICT, "MENU_CATEGORY_0002", "이미 존재하는 메뉴 카테고리 순서입니다."),
 
 	// Security
 	NEED_AUTHORIZED(HttpStatus.UNAUTHORIZED, "SECURITY_0001", "인증이 필요합니다."),
@@ -45,7 +47,12 @@ public enum ErrorCode {
 	STORE_IS_OPEN_TABLE_WRITE(HttpStatus.CONFLICT, "TABLE_0004", "가게가 운영중입니다. 테이블 수 조정 불가"),
 
 	// Sale
-	NOT_FOUND_SALE(HttpStatus.NOT_FOUND, "SALE_0001", "존재하지 않는 세일입니다.");
+	NOT_FOUND_SALE(HttpStatus.NOT_FOUND, "SALE_0001", "존재하지 않는 세일입니다."),
+
+	// Receipt
+	RECEIPT_NOT_FOUND(HttpStatus.NOT_FOUND, "RECEIPT_0001", "존재하지 않는 영수증입니다."),
+	ALREADY_ADJUSTMENT_RECEIPT(HttpStatus.CONFLICT, "RECEIPT_0002", "이미 정산된 영수증입니다."),
+	RECEIPT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "RECEIPT_0003", "대상 영수증에 접근 가능한 요청이 아닙니다.");
 
 	private final HttpStatus status;
 	private final String code;

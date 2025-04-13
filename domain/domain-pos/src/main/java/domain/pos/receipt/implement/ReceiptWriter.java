@@ -17,4 +17,12 @@ public class ReceiptWriter {
 	public Receipt createReceipt(UserPassport userPassport, Table table, Sale sale) {
 		return receiptRepository.createReceipt(userPassport, table, sale);
 	}
+
+	public void adjustReceipt(Long receiptId) {
+		receiptRepository.adjustReceipt(receiptId);
+	}
+
+	public void deleteReceipt(Long receiptId) {
+		receiptRepository.deleteReceipt(receiptId);
+	}
 }

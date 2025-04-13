@@ -22,4 +22,8 @@ public class MenuReader {
 	public Slice<MenuInfo> getMenuSlice(Pageable pageable, MenuInfo lastMenuInfo, Long menuCategoryId) {
 		return menuRepository.getMenuSlice(pageable, lastMenuInfo, menuCategoryId);
 	}
+
+	public boolean existsMenuOrder(Long menuCategoryId, int menuOrder) {
+		return menuRepository.existsMenuOrder(menuCategoryId, menuOrder);
+	}
 }

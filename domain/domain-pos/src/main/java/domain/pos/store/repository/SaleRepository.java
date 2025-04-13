@@ -10,5 +10,7 @@ public interface SaleRepository {
 
 	Optional<Sale> findSaleBySaleId(Long saleId);
 
+	Optional<Sale> findSaleWithOwnerBySaleId(Long saleId);
+
 	Sale closeSale(Sale savedSale, Store closeStore);
 }

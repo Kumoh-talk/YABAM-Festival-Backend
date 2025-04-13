@@ -7,29 +7,25 @@ import lombok.Getter;
 
 @Getter
 public class Receipt {
-	private final Long orderId;
-	private final boolean isAdjustment; // 정산 여부
+	private final ReceiptInfo receiptInfo;
 	private final UserPassport userPassport;
 	private final Table table;
 	private final Sale sale;
 
-	private Receipt(Long orderId, boolean isAdjustment, UserPassport userPassport, Table table, Sale sale) {
-		this.orderId = orderId;
-		this.isAdjustment = isAdjustment;
+	private Receipt(ReceiptInfo receiptInfo, UserPassport userPassport, Table table, Sale sale) {
+		this.receiptInfo = receiptInfo;
 		this.userPassport = userPassport;
 		this.table = table;
 		this.sale = sale;
 	}
 
 	public static Receipt of(
-		final Long orderId,
-		final boolean isAdjustment,
+		final ReceiptInfo receiptInfo,
 		final UserPassport userPassport,
 		final Table table,
 		final Sale sale) {
 		return new Receipt(
-			orderId,
-			isAdjustment,
+			receiptInfo,
 			userPassport,
 			table,
 			sale

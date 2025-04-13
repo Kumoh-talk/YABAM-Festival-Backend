@@ -32,6 +32,7 @@ public class MenuService {
 	public Menu postMenu(Long storeId, UserPassport userPassport, Long menuCategoryId, MenuInfo menuInfo) {
 		storeValidator.validateStoreOwner(userPassport, storeId);
 		menuCategoryValidator.validateMenuCategory(menuCategoryId);
+		menuValidator.validateMenuOrder(menuCategoryId, menuInfo);
 		return menuWriter.postMenu(storeId, userPassport, menuCategoryId, menuInfo);
 	}
 

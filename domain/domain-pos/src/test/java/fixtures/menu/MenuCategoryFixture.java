@@ -1,33 +1,26 @@
 package fixtures.menu;
 
 import domain.pos.menu.entity.MenuCategory;
+import domain.pos.menu.entity.MenuCategoryInfo;
+import domain.pos.store.entity.Store;
+import fixtures.store.StoreFixture;
 
 public class MenuCategoryFixture {
-	public static final Long GENERAL_MENU_CATEGORY_ID = 1L;
-	public static final String GENERAL_CATEGORY_NAME = "categoryName";
-	public static final Long GENERAL_STORE_ID = 1L;
+
+	public static final MenuCategoryInfo GENERAL_MENU_CATEGORY_INFO = MenuCategoryInfoFixture.GENERAL_MENU_CATEGORY_INFO();
+	public static final Store GENERAL_STORE = StoreFixture.GENERAL_CLOSE_STORE();
 
 	public static MenuCategory GENERAL_MENU_CATEGORY() {
 		return MenuCategory.builder()
-			.menuCategoryId(GENERAL_MENU_CATEGORY_ID)
-			.menuCategoryName(GENERAL_CATEGORY_NAME)
-			.storeId(GENERAL_STORE_ID)
+			.menuCategoryInfo(GENERAL_MENU_CATEGORY_INFO)
+			.store(GENERAL_STORE)
 			.build();
 	}
 
-	public static MenuCategory CUSTOM_MENU_CATEGORY(Long menuCategoryId, Long storeId) {
+	public static MenuCategory CUSTOM_MENU_CATEGORY(MenuCategoryInfo menuCategoryInfo, Store store) {
 		return MenuCategory.builder()
-			.menuCategoryId(menuCategoryId)
-			.menuCategoryName(GENERAL_CATEGORY_NAME)
-			.storeId(storeId)
-			.build();
-	}
-
-	public static MenuCategory CUSTOM_MENU_CATEGORY(Long menuCategoryId, String categoryName, Long storeId) {
-		return MenuCategory.builder()
-			.menuCategoryId(menuCategoryId)
-			.menuCategoryName(categoryName)
-			.storeId(storeId)
+			.menuCategoryInfo(menuCategoryInfo)
+			.store(store)
 			.build();
 	}
 }

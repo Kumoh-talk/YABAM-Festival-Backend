@@ -2,6 +2,8 @@ package domain.pos.menu;
 
 import static fixtures.member.UserFixture.*;
 import static fixtures.menu.MenuCategoryFixture.*;
+import static fixtures.menu.MenuCategoryInfoFixture.GENERAL_MENU_CATEGORY_INFO;
+import static fixtures.menu.MenuCategoryInfoFixture.*;
 import static fixtures.menu.MenuFixture.*;
 import static fixtures.menu.MenuInfoFixture.*;
 import static fixtures.store.StoreFixture.*;
@@ -31,6 +33,7 @@ import base.ServiceTest;
 import domain.pos.member.entity.UserPassport;
 import domain.pos.menu.entity.Menu;
 import domain.pos.menu.entity.MenuCategory;
+import domain.pos.menu.entity.MenuCategoryInfo;
 import domain.pos.menu.entity.MenuInfo;
 import domain.pos.menu.implement.MenuCategoryValidator;
 import domain.pos.menu.implement.MenuReader;
@@ -62,7 +65,7 @@ public class MenuServiceTest extends ServiceTest {
 	class postMenu {
 		private final Long storeId = 1L;
 		private final UserPassport userPassport = OWNER_USER_PASSPORT();
-		private final Long menuCategoryId = 3L;
+		private final Long menuCategoryId = GENERAL_MENU_CATEGORY_ID;
 		private final MenuInfo requestMenuInfo = REQUEST_MENU_INFO();
 
 		private final Long menuId = 3L;
@@ -71,8 +74,9 @@ public class MenuServiceTest extends ServiceTest {
 		void 메뉴_생성_성공() {
 			// given
 			Store store = CUSTOM_STORE(storeId, GENERAL_STORE_INFO(), OWNER_USER_PASSPORT());
-			MenuCategory menuCategory = CUSTOM_MENU_CATEGORY(menuCategoryId, storeId);
-			Menu menu = CUSTOM_MENU(REQUEST_TO_ENTITY(menuId, requestMenuInfo), store, menuCategory);
+			MenuCategoryInfo menuCategoryInfo = GENERAL_MENU_CATEGORY_INFO();
+			MenuCategory menuCategory = CUSTOM_MENU_CATEGORY(menuCategoryInfo, store);
+			Menu menu = CUSTOM_MENU(REQUEST_TO_ENTITY(menuId, requestMenuInfo), menuCategory.getStore(), menuCategory);
 
 			BDDMockito.given(menuWriter.postMenu(storeId, userPassport, menuCategoryId, requestMenuInfo))
 				.willReturn(menu);
@@ -91,7 +95,8 @@ public class MenuServiceTest extends ServiceTest {
 				softly.assertThat(serviceMenuInfo.getDescription()).isEqualTo(requestMenuInfo.getDescription());
 				softly.assertThat(serviceMenuInfo.getImageUrl()).isEqualTo(requestMenuInfo.getImageUrl());
 
-				softly.assertThat(serviceMenuCategory.getMenuCategoryId()).isEqualTo(menuCategory.getMenuCategoryId());
+				softly.assertThat(serviceMenuCategory.getMenuCategoryInfo().getMenuCategoryId())
+					.isEqualTo(menuCategoryInfo.getMenuCategoryId());
 			});
 		}
 
@@ -112,6 +117,8 @@ public class MenuServiceTest extends ServiceTest {
 					.validateStoreOwner(userPassport, storeId);
 				verify(menuCategoryValidator, never())
 					.validateMenuCategory(menuCategoryId);
+				verify(menuValidator, never())
+					.validateMenuOrder(menuCategoryId, requestMenuInfo);
 				verify(menuWriter, never())
 					.postMenu(storeId, userPassport, menuCategoryId, requestMenuInfo);
 			});
@@ -134,6 +141,8 @@ public class MenuServiceTest extends ServiceTest {
 					.validateStoreOwner(userPassport, storeId);
 				verify(menuCategoryValidator, never())
 					.validateMenuCategory(menuCategoryId);
+				verify(menuValidator, never())
+					.validateMenuOrder(menuCategoryId, requestMenuInfo);
 				verify(menuWriter, never())
 					.postMenu(storeId, userPassport, menuCategoryId, requestMenuInfo);
 			});
@@ -156,6 +165,32 @@ public class MenuServiceTest extends ServiceTest {
 					.validateStoreOwner(userPassport, storeId);
 				verify(menuCategoryValidator)
 					.validateMenuCategory(menuCategoryId);
+				verify(menuValidator, never())
+					.validateMenuOrder(menuCategoryId, requestMenuInfo);
+				verify(menuWriter, never())
+					.postMenu(storeId, userPassport, menuCategoryId, requestMenuInfo);
+			});
+		}
+
+		@Test
+		void 중복된_메뉴_순서_실패() {
+			// given
+			doThrow(new ServiceException(ErrorCode.EXIST_MENU_ORDER))
+				.when(menuValidator)
+				.validateMenuOrder(menuCategoryId, requestMenuInfo);
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(
+						() -> menuService.postMenu(storeId, userPassport, menuCategoryId, requestMenuInfo))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.EXIST_MENU_ORDER);
+				verify(storeValidator)
+					.validateStoreOwner(userPassport, storeId);
+				verify(menuCategoryValidator)
+					.validateMenuCategory(menuCategoryId);
+				verify(menuValidator)
+					.validateMenuOrder(menuCategoryId, requestMenuInfo);
 				verify(menuWriter, never())
 					.postMenu(storeId, userPassport, menuCategoryId, requestMenuInfo);
 			});
@@ -243,8 +278,9 @@ public class MenuServiceTest extends ServiceTest {
 			// given
 			Store store = CUSTOM_STORE(storeId, GENERAL_STORE_INFO(), OWNER_USER_PASSPORT());
 			MenuInfo lastMenuInfo = GENERAL_MENU_INFO();
-			MenuInfo nextMenuInfo = CUSTOM_MENU_INFO(lastMenuId + 1, GENERAL_SORT_ORDER + 1,
-				GENERAL_MENU_NAME, GENERAL_PRICE, GENERAL_DESCRIPTION, GENERAL_IMAGE_URL, GENERAL_IS_SOLD_OUT);
+			MenuInfo nextMenuInfo = CUSTOM_MENU_INFO(lastMenuId + 1, GENERAL_MENU_ORDER + 1,
+				GENERAL_MENU_NAME, GENERAL_PRICE, GENERAL_DESCRIPTION, GENERAL_IMAGE_URL, GENERAL_IS_SOLD_OUT,
+				GENERAL_IS_RECOMMENDED);
 			Slice<MenuInfo> menuSlice = new SliceImpl<>(new ArrayList<>(List.of(nextMenuInfo)), pageable, hasNext);
 
 			BDDMockito.given(storeReader.readSingleStore(storeId))
@@ -261,8 +297,8 @@ public class MenuServiceTest extends ServiceTest {
 			assertSoftly(softly -> {
 				softly.assertThat(serviceMenuSlice.getSize()).isEqualTo(size);
 				softly.assertThat(serviceMenuSlice.hasNext()).isEqualTo(hasNext);
-				softly.assertThat(serviceMenuSlice.getContent().get(0).getSortOrder())
-					.isEqualTo(GENERAL_SORT_ORDER + 1);
+				softly.assertThat(serviceMenuSlice.getContent().get(0).getMenuOrder())
+					.isEqualTo(GENERAL_MENU_ORDER + 1);
 			});
 		}
 
@@ -451,7 +487,7 @@ public class MenuServiceTest extends ServiceTest {
 		void 메뉴_순서_수정_성공() {
 			// given
 			MenuInfo patchMenuInfo = CUSTOM_MENU_INFO(menuId, patchOrder, GENERAL_MENU_NAME,
-				GENERAL_PRICE, GENERAL_DESCRIPTION, GENERAL_IMAGE_URL, GENERAL_IS_SOLD_OUT);
+				GENERAL_PRICE, GENERAL_DESCRIPTION, GENERAL_IMAGE_URL, GENERAL_IS_SOLD_OUT, GENERAL_IS_RECOMMENDED);
 			BDDMockito.given(menuWriter.patchMenuOrder(storeId, menuCategoryId, menuId, patchOrder))
 				.willReturn(patchMenuInfo);
 
@@ -462,12 +498,13 @@ public class MenuServiceTest extends ServiceTest {
 			// then
 			assertSoftly(softly -> {
 				softly.assertThat(servicePatchMenuInfo.getMenuId()).isEqualTo(menuId);
-				softly.assertThat(servicePatchMenuInfo.getSortOrder()).isEqualTo(patchOrder);
+				softly.assertThat(servicePatchMenuInfo.getMenuOrder()).isEqualTo(patchOrder);
 				softly.assertThat(servicePatchMenuInfo.getMenuName()).isEqualTo(patchMenuInfo.getMenuName());
 				softly.assertThat(servicePatchMenuInfo.getPrice()).isEqualTo(patchMenuInfo.getPrice());
 				softly.assertThat(servicePatchMenuInfo.getDescription()).isEqualTo(patchMenuInfo.getDescription());
 				softly.assertThat(servicePatchMenuInfo.getImageUrl()).isEqualTo(patchMenuInfo.getImageUrl());
 				softly.assertThat(servicePatchMenuInfo.isSoldOut()).isEqualTo(patchMenuInfo.isSoldOut());
+				softly.assertThat(servicePatchMenuInfo.isRecommended()).isEqualTo(patchMenuInfo.isRecommended());
 			});
 		}
 

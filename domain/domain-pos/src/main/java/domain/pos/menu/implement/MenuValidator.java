@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
 
+import domain.pos.menu.entity.MenuInfo;
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -15,5 +16,11 @@ public class MenuValidator {
 	public void validateMenu(Long menuId) {
 		menuReader.getMenuInfo(menuId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
+	}
+
+	public void validateMenuOrder(Long menuCategoryId, MenuInfo menuInfo) {
+		if (menuReader.existsMenuOrder(menuCategoryId, menuInfo.getMenuOrder())) {
+			throw new ServiceException(ErrorCode.EXIST_MENU_ORDER);
+		}
 	}
 }

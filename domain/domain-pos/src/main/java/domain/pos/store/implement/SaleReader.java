@@ -17,4 +17,8 @@ public class SaleReader {
 		return saleRepository.findSaleBySaleId(saleId);
 	}
 
+	public Optional<Sale> readSaleWithOwner(Long saleId) {
+		return saleRepository.findSaleWithOwnerBySaleId(saleId);
+	}
+
 }

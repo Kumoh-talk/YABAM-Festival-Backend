@@ -21,4 +21,8 @@ public class MenuCategoryReader {
 	public List<MenuCategory> getMenuCategoryList(Long storeId) {
 		return menuCategoryRepository.getMenuCategoryList(storeId);
 	}
+
+	public boolean existsMenuCategoryOrder(Long storeId, int menuCategoryOrder) {
+		return menuCategoryRepository.existsMenuCategoryOrder(storeId, menuCategoryOrder);
+	}
 }

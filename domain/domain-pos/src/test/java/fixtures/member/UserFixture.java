@@ -33,4 +33,14 @@ public class UserFixture {
 			GENERAL_USER_NICKNAME,
 			OWNER_USER_ROLE);
 	}
+
+	public static UserPassport CUSTOM_USER_PASSPORT(
+		final Long userId,
+		final String nickname,
+		final UserRole userRole) {
+		return UserPassport.of(
+			userId,
+			nickname,
+			userRole);
+	}
 }
