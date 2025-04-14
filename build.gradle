@@ -121,7 +121,8 @@ editorconfig {
             'application/**/data',
             '**/*.dblwr',
             'settings.gradle',
-            '**/docker-infra'
+            '**/docker-infra',
+            '**/data'
     ]
 }
 

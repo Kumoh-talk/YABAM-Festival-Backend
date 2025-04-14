@@ -16,3 +16,6 @@ include(":common:base")
 // domain
 include(":domain:domain-pos")
 
+// infra
+include(":infra:rdb:pos")
+
