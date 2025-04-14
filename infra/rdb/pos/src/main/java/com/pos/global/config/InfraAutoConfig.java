@@ -1,4 +1,4 @@
-package com.pos.config;
+package com.pos.global.config;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
