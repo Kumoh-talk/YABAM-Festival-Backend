@@ -227,8 +227,6 @@ class ReceiptServiceTest extends ServiceTest {
 
 			BDDMockito.given(receiptReader.getReceiptWithCustomerAndOwner(receiptId))
 				.willReturn(Optional.of(receipt));
-			BDDMockito.given(receiptValidator.hasAccessToReceipt(receipt, userPassport))
-				.willReturn(true);
 
 			// when
 			ReceiptInfo receiptInfo = receiptService.getReceiptInfo(receiptId, userPassport);
@@ -254,7 +252,7 @@ class ReceiptServiceTest extends ServiceTest {
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
 
 				verify(receiptReader).getReceiptWithCustomerAndOwner(receiptId);
-				verify(receiptValidator, never()).hasAccessToReceipt(any(Receipt.class), any(UserPassport.class));
+				verify(receiptValidator, never()).validateAccessToReceipt(any(Receipt.class), any(UserPassport.class));
 			});
 		}
 
@@ -276,6 +274,8 @@ class ReceiptServiceTest extends ServiceTest {
 
 			BDDMockito.given(receiptReader.getReceiptWithCustomerAndOwner(receiptId))
 				.willReturn(Optional.of(receipt));
+			doThrow(new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED))
+				.when(receiptValidator).validateAccessToReceipt(any(Receipt.class), any(UserPassport.class));
 
 			// when -> then
 			assertSoftly(softly -> {
@@ -285,7 +285,7 @@ class ReceiptServiceTest extends ServiceTest {
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_ACCESS_DENIED);
 
 				verify(receiptReader).getReceiptWithCustomerAndOwner(receiptId);
-				verify(receiptValidator).hasAccessToReceipt(any(Receipt.class), any(UserPassport.class));
+				verify(receiptValidator).validateAccessToReceipt(any(Receipt.class), any(UserPassport.class));
 			});
 		}
 

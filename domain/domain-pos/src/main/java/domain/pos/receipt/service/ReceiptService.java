@@ -65,10 +65,7 @@ public class ReceiptService {
 				return new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 			});
 
-		if (!receiptValidator.hasAccessToReceipt(receipt, userPassport)) {
-			log.warn("Receipt 접근 가능 요청자가 아닙니다. userId: {}", userPassport.getUserId());
-			throw new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED);
-		}
+		receiptValidator.validateAccessToReceipt(receipt, userPassport);
 
 		return receipt.getReceiptInfo();
 	}
