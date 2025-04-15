@@ -83,7 +83,7 @@ public class StoreEntity extends BaseEntity {
 	public void changeStoreInfo(StoreInfo requestChangeStoreInfo) {
 		this.name = requestChangeStoreInfo.getStoreName();
 		this.headImageUrl = requestChangeStoreInfo.getHeadImageUrl();
-		this.description = requestChangeStoreInfo.getDesciption();
+		this.description = requestChangeStoreInfo.getDescription();
 		this.location = StorePoint.of(
 			requestChangeStoreInfo.getLocation().x,
 			requestChangeStoreInfo.getLocation().y

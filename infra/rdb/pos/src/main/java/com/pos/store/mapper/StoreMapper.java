@@ -19,7 +19,7 @@ public class StoreMapper {
 			storeInfo.getStoreName(),
 			storeInfo.getLocation().getX(),
 			storeInfo.getLocation().getY(),
-			storeInfo.getDesciption(),
+			storeInfo.getDescription(),
 			storeInfo.getHeadImageUrl(),
 			storeInfo.getUniversity()
 		);

@@ -41,7 +41,7 @@ class StoreRepositoryImplTest extends RepositoryTest {
 			softly.assertThat(findStoreEntity.getName()).isEqualTo(changedStoreInfo.getStoreName());
 			softly.assertThat(findStoreEntity.getLocation().getLatitude()).isEqualTo(changedStoreInfo.getLocation().x);
 			softly.assertThat(findStoreEntity.getLocation().getLongitude()).isEqualTo(changedStoreInfo.getLocation().y);
-			softly.assertThat(findStoreEntity.getDescription()).isEqualTo(changedStoreInfo.getDesciption());
+			softly.assertThat(findStoreEntity.getDescription()).isEqualTo(changedStoreInfo.getDescription());
 		});
 	}
 
