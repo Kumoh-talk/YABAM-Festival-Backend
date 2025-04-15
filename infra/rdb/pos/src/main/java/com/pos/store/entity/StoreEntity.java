@@ -6,6 +6,7 @@ import org.hibernate.annotations.SQLRestriction;
 import com.pos.global.base.entity.BaseEntity;
 import com.pos.store.vo.StorePoint;
 
+import domain.pos.store.entity.StoreInfo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -76,6 +77,16 @@ public class StoreEntity extends BaseEntity {
 			description,
 			headImageUrl,
 			university
+		);
+	}
+
+	public void changeStoreInfo(StoreInfo requestChangeStoreInfo) {
+		this.name = requestChangeStoreInfo.getStoreName();
+		this.headImageUrl = requestChangeStoreInfo.getHeadImageUrl();
+		this.description = requestChangeStoreInfo.getDesciption();
+		this.location = StorePoint.of(
+			requestChangeStoreInfo.getLocation().x,
+			requestChangeStoreInfo.getLocation().y
 		);
 	}
 }

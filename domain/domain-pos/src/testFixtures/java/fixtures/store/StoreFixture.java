@@ -23,7 +23,7 @@ public class StoreFixture {
 	private static final StoreInfo GENERAL_CHANGED_STORE_INFO = CHANGED_GENERAL_STORE_INFO();
 
 	public static Store GENERAL_CLOSE_STORE() {
-		return new Store(
+		return Store.of(
 			STORE_ID,
 			IS_CLOSED,
 			GENERAL_STORE_INFO,
@@ -32,7 +32,7 @@ public class StoreFixture {
 	}
 
 	public static Store CHANGED_GENERAL_STORE() {
-		return new Store(
+		return Store.of(
 			STORE_ID,
 			IS_CLOSED,
 			GENERAL_CHANGED_STORE_INFO,
@@ -41,7 +41,7 @@ public class StoreFixture {
 	}
 
 	public static Store GENERAL_OPEN_STORE() {
-		return new Store(
+		return Store.of(
 			STORE_ID,
 			IS_OPEN,
 			GENERAL_STORE_INFO,
@@ -50,7 +50,7 @@ public class StoreFixture {
 	}
 
 	public static Store CUSTOM_STORE(Long storeId, StoreInfo storeInfo, UserPassport ownerPassport) {
-		return new Store(
+		return Store.of(
 			storeId,
 			IS_CLOSED,
 			storeInfo,
