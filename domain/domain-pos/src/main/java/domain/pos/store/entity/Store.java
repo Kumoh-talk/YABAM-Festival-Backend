@@ -10,10 +10,19 @@ public class Store {
 	private final StoreInfo storeInfo;
 	private final UserPassport ownerPassport;
 
-	public Store(Long storeId, Boolean isOpen, StoreInfo storeInfo, UserPassport ownerPassport) {
+	private Store(Long storeId, Boolean isOpen, StoreInfo storeInfo, UserPassport ownerPassport) {
 		this.storeId = storeId;
 		this.isOpen = isOpen;
 		this.storeInfo = storeInfo;
 		this.ownerPassport = ownerPassport;
 	}
+
+	public static Store of(Long storeId, Boolean isOpen, StoreInfo storeInfo, UserPassport ownerPassport) {
+		return new Store(storeId, isOpen, storeInfo, ownerPassport);
+	}
+
+	public Store open() {
+		return new Store(this.storeId, true, this.storeInfo, this.ownerPassport);
+	}
+
 }

@@ -1,4 +1,4 @@
-package com.pos.config;
+package com.pos.global.config;
 
 import javax.sql.DataSource;
 
