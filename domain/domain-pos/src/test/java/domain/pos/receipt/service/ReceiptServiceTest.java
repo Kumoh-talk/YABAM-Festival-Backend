@@ -259,7 +259,7 @@ class ReceiptServiceTest extends ServiceTest {
 		@Test
 		void 영수증_접근_권한_실패() {
 			// given
-			UserPassport anotherUserPassport = UserFixture.CUSTOM_USER_PASSPORT(
+			UserPassport anotherUserPassport = CUSTOM_USER_PASSPORT(
 				100L,
 				"다른유저",
 				UserRole.ROLE_USER

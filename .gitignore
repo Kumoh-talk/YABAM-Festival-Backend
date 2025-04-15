@@ -49,4 +49,4 @@ out/
 ### Conventional Commit ###
 /node_modules
 
-
+**/data

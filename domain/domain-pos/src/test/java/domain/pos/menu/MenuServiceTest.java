@@ -2,8 +2,8 @@ package domain.pos.menu;
 
 import static fixtures.member.UserFixture.*;
 import static fixtures.menu.MenuCategoryFixture.*;
-import static fixtures.menu.MenuCategoryInfoFixture.GENERAL_MENU_CATEGORY_INFO;
 import static fixtures.menu.MenuCategoryInfoFixture.*;
+import static fixtures.menu.MenuCategoryInfoFixture.GENERAL_MENU_CATEGORY_INFO;
 import static fixtures.menu.MenuFixture.*;
 import static fixtures.menu.MenuInfoFixture.*;
 import static fixtures.store.StoreFixture.*;

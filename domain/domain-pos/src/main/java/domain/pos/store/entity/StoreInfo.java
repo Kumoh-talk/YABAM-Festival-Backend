@@ -8,15 +8,15 @@ import lombok.Getter;
 public class StoreInfo {
 	private final String storeName;
 	private final Point2D.Double location;
-	private final String desciption;
+	private final String description;
 	private final String headImageUrl;
 	private final String university;
 
-	private StoreInfo(String storeName, Point2D.Double location, String desciption, String headImageUrl,
+	private StoreInfo(String storeName, Point2D.Double location, String description, String headImageUrl,
 		String university) {
 		this.storeName = storeName;
 		this.location = location;
-		this.desciption = desciption;
+		this.description = description;
 		this.headImageUrl = headImageUrl;
 		this.university = university;
 	}
