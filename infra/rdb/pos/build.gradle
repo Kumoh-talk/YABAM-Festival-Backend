@@ -18,6 +18,9 @@ dependencies {
     // domain 모듈
     compileOnly project(':domain:domain-pos')
 
+    // common 모듈
+    compileOnly project(':common:base')
+
     // QueryDSL
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
