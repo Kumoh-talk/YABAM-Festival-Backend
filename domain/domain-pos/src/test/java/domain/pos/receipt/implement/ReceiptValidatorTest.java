@@ -41,6 +41,16 @@ public class ReceiptValidatorTest {
 		}
 
 		@Test
+		void 비회원_영수증_접근_성공() {
+			// given
+			receipt = ReceiptFixture.GENERAL_NON_MEMBER_RECEIPT();
+			UserPassport userPassport = UserFixture.ANONYMOUS_USER_PASSPORT();
+
+			// when -> then
+			assertDoesNotThrow(() -> receiptValidator.validateAccessToReceipt(receipt, userPassport));
+		}
+
+		@Test
 		void 영수증_접근_실패() {
 			// given
 			UserPassport userPassport = UserFixture.DIFF_OWNER_PASSPORT();
