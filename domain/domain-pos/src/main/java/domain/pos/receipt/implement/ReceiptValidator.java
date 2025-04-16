@@ -24,6 +24,13 @@ public class ReceiptValidator {
 		}
 	}
 
+	public void validateIsOwner(Receipt receipt, UserPassport userPassport) {
+		if (!isStoreOwner(receipt.getSale().getStore().getOwnerPassport().getUserId(), userPassport)) {
+			log.warn("요청자가 점주가 아닙니다. userId: {}", userPassport.getUserId());
+			throw new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED);
+		}
+	}
+
 	private boolean isCustomer(Long customerId, UserPassport userPassport) {
 		return customerId.equals(userPassport.getUserId()) && userPassport.getUserRole() == UserRole.ROLE_USER;
 	}

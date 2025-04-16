@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OrderService {
 	private final ReceiptValidator receiptValidator;
-
 	private final ReceiptReader receiptReader;
 	private final MenuReader menuReader;
 	private final OrderWriter orderWriter;
@@ -53,10 +52,17 @@ public class OrderService {
 		return orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole());
 	}
 
-	// TODO : 주문 메뉴 추가
-	// TODO : 주문 메뉴 삭제
-	// TODO : 주문 메뉴 수량 변경
-	// TODO : 상태 별 주문 목록 조회
-	// TODO : 단일 영수증 주문 목록 조회
-	// TODO : 주문 상세 조회
+	public List<Order> getReceiptOrders(Long receiptId, UserPassport userPassport) {
+		Receipt receipt = receiptReader.getReceiptWithCustomerAndOwner(receiptId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
+		receiptValidator.validateAccessToReceipt(receipt, userPassport);
+		return orderReader.getReceiptOrders(receiptId);
+	}
+
+	public Order getOrder(Long orderId, UserPassport userPassport) {
+		Order order = orderReader.getOrderWithCustomerAndOwner(orderId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_NOT_FOUND));
+		receiptValidator.validateAccessToReceipt(order.getReceipt(), userPassport);
+		return order;
+	}
 }

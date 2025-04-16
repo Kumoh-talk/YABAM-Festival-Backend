@@ -223,4 +223,132 @@ public class OrderServiceTest extends ServiceTest {
 			});
 		}
 	}
+
+	@Nested
+	@DisplayName("영수증_별_주문_목록 조회")
+	class getReceiptOrders {
+		private Long receiptId = ReceiptInfoFixture.NON_ADJUSTMENT_RECEIPT_INFO().getReceiptId();
+		private UserPassport userPassport = UserFixture.GENERAL_USER_PASSPORT();
+
+		@Test
+		void 영수증_별_주문_목록_조회_성공() {
+			// given
+			Receipt receipt = ReceiptFixture.GENERAL_NON_ADJUSTMENT_RECEIPT();
+			List<Order> orders = List.of(OrderFixture.GENERAL_ORDER());
+
+			BDDMockito.given(receiptReader.getReceiptWithCustomerAndOwner(receiptId))
+				.willReturn(Optional.of(receipt));
+			BDDMockito.given(orderReader.getReceiptOrders(receiptId))
+				.willReturn(orders);
+
+			// when
+			orderService.getReceiptOrders(receiptId, userPassport);
+
+			// then
+			verify(receiptReader).getReceiptWithCustomerAndOwner(receiptId);
+			verify(receiptValidator).validateAccessToReceipt(receipt, userPassport);
+			verify(orderReader).getReceiptOrders(receiptId);
+		}
+
+		@Test
+		void 영수증_조회_실패() {
+			// given
+			BDDMockito.given(receiptReader.getReceiptWithCustomerAndOwner(receiptId))
+				.willReturn(Optional.empty());
+
+			// when, then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(() -> orderService.getReceiptOrders(receiptId, userPassport))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
+
+				verify(receiptReader).getReceiptWithCustomerAndOwner(receiptId);
+				verify(receiptValidator, never()).validateAccessToReceipt(any(), any());
+				verify(orderReader, never()).getReceiptOrders(any());
+			});
+		}
+
+		@Test
+		void 영수증_접근_권한_실패() {
+			// given
+			Receipt receipt = ReceiptFixture.GENERAL_NON_ADJUSTMENT_RECEIPT();
+			BDDMockito.given(receiptReader.getReceiptWithCustomerAndOwner(receiptId))
+				.willReturn(Optional.of(receipt));
+
+			doThrow(new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED))
+				.when(receiptValidator).validateAccessToReceipt(receipt, userPassport);
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(() -> orderService.getReceiptOrders(receiptId, userPassport))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_ACCESS_DENIED);
+
+				verify(receiptReader).getReceiptWithCustomerAndOwner(receiptId);
+				verify(receiptValidator).validateAccessToReceipt(receipt, userPassport);
+				verify(orderReader, never()).getReceiptOrders(any());
+			});
+		}
+
+		@Nested
+		@DisplayName("주문_상세_조회")
+		class getOrder {
+			private Long orderId = OrderFixture.GENERAL_ORDER_ID;
+			private UserPassport userPassport = UserFixture.OWNER_USER_PASSPORT();
+
+			@Test
+			void 주문_상세_조회_성공() {
+				// given
+				Order order = OrderFixture.GENERAL_ORDER();
+
+				BDDMockito.given(orderReader.getOrderWithCustomerAndOwner(orderId))
+					.willReturn(Optional.of(order));
+
+				// when
+				orderService.getOrder(orderId, userPassport);
+
+				// then
+				verify(orderReader).getOrderWithCustomerAndOwner(orderId);
+				verify(receiptValidator).validateAccessToReceipt(order.getReceipt(), userPassport);
+			}
+
+			@Test
+			void 주문_조회_실패() {
+				// given
+				BDDMockito.given(orderReader.getOrderWithCustomerAndOwner(orderId))
+					.willReturn(Optional.empty());
+
+				// when, then
+				assertSoftly(softly -> {
+					softly.assertThatThrownBy(() -> orderService.getOrder(orderId, userPassport))
+						.isInstanceOf(ServiceException.class)
+						.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ORDER_NOT_FOUND);
+
+					verify(orderReader).getOrderWithCustomerAndOwner(orderId);
+					verify(receiptValidator, never()).validateAccessToReceipt(any(), any());
+				});
+			}
+
+			@Test
+			void 주문_접근_권한_실패() {
+				// given
+				Order order = OrderFixture.GENERAL_ORDER();
+				BDDMockito.given(orderReader.getOrderWithCustomerAndOwner(orderId))
+					.willReturn(Optional.of(order));
+
+				doThrow(new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED))
+					.when(receiptValidator).validateAccessToReceipt(order.getReceipt(), userPassport);
+
+				// when -> then
+				assertSoftly(softly -> {
+					softly.assertThatThrownBy(() -> orderService.getOrder(orderId, userPassport))
+						.isInstanceOf(ServiceException.class)
+						.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_ACCESS_DENIED);
+
+					verify(orderReader).getOrderWithCustomerAndOwner(orderId);
+					verify(receiptValidator).validateAccessToReceipt(order.getReceipt(), userPassport);
+				});
+			}
+		}
+	}
 }
