@@ -25,6 +25,10 @@ public class StoreMapper {
 		);
 	}
 
+	public static StoreEntity toStoreEntity(Long storeId) {
+		return StoreEntity.from(storeId);
+	}
+
 	public static StoreInfo toStoreInfo(StoreEntity storeEntity) {
 		return StoreInfo.of(
 			storeEntity.getName(),

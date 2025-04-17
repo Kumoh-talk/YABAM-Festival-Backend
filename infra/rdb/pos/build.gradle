@@ -31,6 +31,8 @@ dependencies {
     testImplementation project(':domain:domain-pos')
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation testFixtures(project(':domain:domain-pos'))
+    testImplementation project(':common:base')
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
 }
 
 

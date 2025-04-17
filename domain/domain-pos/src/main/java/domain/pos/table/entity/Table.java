@@ -25,4 +25,8 @@ public class Table {
 			store
 		);
 	}
+
+	public Table changeActiveStatus(boolean isActive) {
+		return Table.of(this.tableId, this.tableNumber, isActive, this.store);
+	}
 }

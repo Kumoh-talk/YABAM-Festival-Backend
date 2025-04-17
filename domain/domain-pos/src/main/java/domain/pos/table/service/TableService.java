@@ -33,7 +33,7 @@ public class TableService {
 			throw new ServiceException(ErrorCode.STORE_IS_OPEN_TABLE_WRITE);
 		}
 
-		if (tableReader.isExistsTable(store, queryTableNumber)) {
+		if (tableReader.isExistsTable(store)) {
 			log.warn("존재하는 테이블 생성 에러 : storeId={}, tableNumber={}", queryStoreId, queryTableNumber);
 			throw new ServiceException(ErrorCode.EXIST_TABLE);
 		}
@@ -42,7 +42,7 @@ public class TableService {
 		return createdTable;
 	}
 
-	public List<Table> updateTableNum(UserPassport ownerPassport, Long queryStoreId,
+	public void updateTableNum(UserPassport ownerPassport, Long queryStoreId,
 		Integer queryUpdateTableNumber) {
 		final Store store = storeValidator.validateStoreOwner(ownerPassport, queryStoreId);
 
@@ -51,8 +51,7 @@ public class TableService {
 			throw new ServiceException(ErrorCode.STORE_IS_OPEN_TABLE_WRITE);
 		}
 
-		final List<Table> updatedTable = tableWriter.modifyTableNum(store, queryUpdateTableNumber);
-		return updatedTable;
+		tableWriter.modifyTableNum(store, queryUpdateTableNumber);
 	}
 
 	public List<Table> findTables(Long queryStoreId) {

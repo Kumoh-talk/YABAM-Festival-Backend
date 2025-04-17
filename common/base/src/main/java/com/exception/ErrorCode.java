@@ -45,7 +45,8 @@ public enum ErrorCode {
 	NOT_FOUND_TABLE(HttpStatus.NOT_FOUND, "TABLE_0002", "존재하지 않는 테이블입니다."),
 	ALREADY_ACTIVE_TABLE(HttpStatus.CONFLICT, "TABLE_0003", "이미 활성화된 테이블입니다."),
 	STORE_IS_OPEN_TABLE_WRITE(HttpStatus.CONFLICT, "TABLE_0004", "가게가 운영중입니다. 테이블 수 조정 불가"),
-
+	TABLE_NOT_FOUND(HttpStatus.NOT_FOUND, "TABLE_0005", "테이블이 존재하지 않습니다."),
+	TABLE_NOT_EQUAL_MODIFY(HttpStatus.CONFLICT, "TABLE_0006", "테이블 수가 같습니다."),
 	// Sale
 	NOT_FOUND_SALE(HttpStatus.NOT_FOUND, "SALE_0001", "존재하지 않는 세일입니다."),
 
