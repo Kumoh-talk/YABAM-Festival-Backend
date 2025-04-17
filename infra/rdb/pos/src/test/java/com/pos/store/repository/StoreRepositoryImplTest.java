@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pos.global.config.RepositoryTest;
 import com.pos.store.entity.StoreEntity;
+import com.pos.store.mapper.StoreMapper;
 
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
@@ -52,10 +53,11 @@ class StoreRepositoryImplTest extends RepositoryTest {
 		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(savedStore));
 		testEntityManager.flush();
 		testEntityManager.clear();
+		Store queryStore = StoreMapper.toStore(savedStoreEntity);
 
 		// when
 		System.out.println("===StoreRepositoryImplTest.Store엔티티_논리_삭제_테스트 쿼리===");
-		storeRepository.deleteStore(savedStore);
+		storeRepository.deleteStore(queryStore);
 		testEntityManager.flush();
 		testEntityManager.clear();
 		System.out.println("===StoreRepositoryImplTest.Store엔티티_논리_삭제_테스트 쿼리===");
@@ -75,7 +77,7 @@ class StoreRepositoryImplTest extends RepositoryTest {
 		testEntityManager.flush();
 		testEntityManager.clear();
 
-		Store opendStore = GENERAL_OPEN_STORE();
+		Store opendStore = StoreMapper.toStore(savedStoreEntity).open();
 		// when
 		System.out.println("===StoreRepositoryImplTest.Store_오픈_상태_변경_테스트 쿼리===");
 		storeRepository.changeStoreOpenStatus(opendStore);
