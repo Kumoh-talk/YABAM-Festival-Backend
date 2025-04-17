@@ -3,6 +3,7 @@ package domain.pos.menu.service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
@@ -31,7 +32,7 @@ public class MenuService {
 
 	public Menu postMenu(Long storeId, UserPassport userPassport, Long menuCategoryId, MenuInfo menuInfo) {
 		storeValidator.validateStoreOwner(userPassport, storeId);
-		menuCategoryValidator.validateMenuCategory(menuCategoryId);
+		menuCategoryValidator.validateMenuCategory(storeId, menuCategoryId);
 		menuValidator.validateMenuOrder(menuCategoryId, menuInfo);
 		return menuWriter.postMenu(storeId, userPassport, menuCategoryId, menuInfo);
 	}
@@ -39,39 +40,43 @@ public class MenuService {
 	public MenuInfo getMenuInfo(Long storeId, Long menuId) {
 		storeReader.readSingleStore(storeId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.NOT_FOUND_STORE));
-		return menuReader.getMenuInfo(menuId)
+		return menuReader.getMenuInfo(storeId, menuId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
 	}
 
 	public Slice<MenuInfo> getMenuSlice(Pageable pageable, Long lastMenuId, Long storeId, Long menuCategoryId) {
 		storeReader.readSingleStore(storeId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.NOT_FOUND_STORE));
-		menuCategoryValidator.validateMenuCategory(menuCategoryId);
+		menuCategoryValidator.validateMenuCategory(storeId, menuCategoryId);
 
 		MenuInfo lastMenuInfo = null;
 		if (lastMenuId != null) {
-			lastMenuInfo = menuReader.getMenuInfo(lastMenuId)
+			lastMenuInfo = menuReader.getMenuInfo(storeId, lastMenuId)
 				.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
 		}
 		return menuReader.getMenuSlice(pageable, lastMenuInfo, menuCategoryId);
 	}
 
+	@Transactional
 	public MenuInfo patchMenu(Long storeId, UserPassport userPassport, MenuInfo patchMenuInfo) {
 		storeValidator.validateStoreOwner(userPassport, storeId);
-		menuValidator.validateMenu(patchMenuInfo.getMenuId());
+		menuReader.getMenuInfo(storeId, patchMenuInfo.getMenuId())
+			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
 		return menuWriter.patchMenu(patchMenuInfo);
 	}
 
 	public MenuInfo patchMenuOrder(Long storeId, UserPassport userPassport, Long menuCategoryId, Long menuId,
 		int patchOrder) {
 		storeValidator.validateStoreOwner(userPassport, storeId);
-		menuValidator.validateMenu(menuId);
+		menuValidator.validateMenu(storeId, menuId);
 		return menuWriter.patchMenuOrder(storeId, menuCategoryId, menuId, patchOrder);
 	}
 
+	@Transactional
 	public void deleteMenu(Long storeId, UserPassport userPassport, Long menuCategoryId, Long menuId) {
 		storeValidator.validateStoreOwner(userPassport, storeId);
-		menuValidator.validateMenu(menuId);
+		menuReader.getMenuInfo(storeId, menuId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
 		menuWriter.deleteMenu(storeId, menuCategoryId, menuId);
 	}
 }

@@ -40,20 +40,21 @@ public class MenuCategoryService {
 	public MenuCategoryInfo patchMenuCategory(Long storeId, UserPassport userPassport,
 		MenuCategoryInfo menuCategoryInfo) {
 		storeValidator.validateStoreOwner(userPassport, storeId);
-		menuCategoryValidator.validateMenuCategory(menuCategoryInfo.getMenuCategoryId());
+		menuCategoryValidator.validateMenuCategory(storeId, menuCategoryInfo.getMenuCategoryId());
 		return menuCategoryWriter.patchMenuCategory(menuCategoryInfo);
 	}
 
 	public MenuCategoryInfo patchMenuCategoryOrder(Long storeId, UserPassport userPassport,
 		MenuCategoryInfo menuCategoryInfo) {
 		storeValidator.validateStoreOwner(userPassport, storeId);
-		menuCategoryValidator.validateMenuCategory(menuCategoryInfo.getMenuCategoryId());
+		menuCategoryValidator.validateMenuCategory(storeId, menuCategoryInfo.getMenuCategoryId());
 		return menuCategoryWriter.patchMenuCategoryOrder(storeId, menuCategoryInfo);
 	}
 
 	public void deleteMenuCategory(Long storeId, UserPassport userPassport, Long categoryId) {
 		storeValidator.validateStoreOwner(userPassport, storeId);
-		menuCategoryValidator.validateMenuCategory(categoryId);
+		menuCategoryReader.getMenuCategory(storeId, categoryId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_CATEGORY_NOT_FOUND));
 		menuCategoryWriter.deleteMenuCategory(categoryId);
 	}
 }

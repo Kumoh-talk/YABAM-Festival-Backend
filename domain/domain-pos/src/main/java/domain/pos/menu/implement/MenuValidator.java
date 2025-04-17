@@ -13,9 +13,10 @@ import lombok.RequiredArgsConstructor;
 public class MenuValidator {
 	private final MenuReader menuReader;
 
-	public void validateMenu(Long menuId) {
-		menuReader.getMenuInfo(menuId)
-			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
+	public void validateMenu(Long storeId, Long menuId) {
+		if (!menuReader.existsMenu(storeId, menuId)) {
+			throw new ServiceException(ErrorCode.MENU_NOT_FOUND);
+		}
 	}
 
 	public void validateMenuOrder(Long menuCategoryId, MenuInfo menuInfo) {

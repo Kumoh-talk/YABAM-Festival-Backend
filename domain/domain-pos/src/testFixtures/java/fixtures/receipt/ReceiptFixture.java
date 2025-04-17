@@ -55,4 +55,13 @@ public class ReceiptFixture {
 			GENERAL_SALE
 		);
 	}
+
+	public static Receipt GENERAL_NON_MEMBER_RECEIPT() {
+		return Receipt.of(
+			GENERAL_NON_ADJUSTMENT_RECEIPT_INFO,
+			null,
+			GENERAL_TABLE,
+			GENERAL_SALE
+		);
+	}
 }
