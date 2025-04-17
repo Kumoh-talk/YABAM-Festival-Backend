@@ -212,8 +212,6 @@ class TableServiceTest extends ServiceTest {
 
 			doReturn(responStore)
 				.when(storeValidator).validateStoreOwner(queryUserPassport, queryStoreId);
-			doReturn(createdTables)
-				.when(tableWriter).modifyTableNum(responStore, queryUpdateTableNumber);
 
 			// when
 			tableService.updateTableNum(queryUserPassport, queryStoreId,
