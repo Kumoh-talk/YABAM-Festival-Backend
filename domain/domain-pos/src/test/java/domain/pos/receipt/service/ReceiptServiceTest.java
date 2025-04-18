@@ -3,7 +3,7 @@ package domain.pos.receipt.service;
 import static fixtures.member.UserFixture.*;
 import static fixtures.receipt.ReceiptFixture.*;
 import static fixtures.receipt.ReceiptInfoFixture.*;
-import static fixtures.store.SaleFixture.*;
+import static fixtures.store.SaleFixture.GENERAL_OPEN_SALE;
 import static fixtures.table.TableFixture.*;
 import static org.assertj.core.api.SoftAssertions.*;
 import static org.mockito.Mockito.*;
@@ -23,7 +23,6 @@ import com.exception.ServiceException;
 
 import base.ServiceTest;
 import domain.pos.member.entity.UserPassport;
-import domain.pos.member.entity.UserRole;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.receipt.implement.ReceiptReader;
@@ -32,17 +31,21 @@ import domain.pos.receipt.implement.ReceiptWriter;
 import domain.pos.store.entity.Sale;
 import domain.pos.store.entity.Store;
 import domain.pos.store.implement.SaleReader;
+import domain.pos.store.implement.StoreValidator;
 import domain.pos.table.entity.Table;
 import domain.pos.table.implement.TableReader;
 import domain.pos.table.implement.TableWriter;
 import fixtures.member.UserFixture;
-import fixtures.receipt.ReceiptFixture;
+import fixtures.receipt.ReceiptInfoFixture;
 import fixtures.store.StoreFixture;
 
 class ReceiptServiceTest extends ServiceTest {
 
 	@Mock
 	private ReceiptValidator receiptValidator;
+	@Mock
+	private StoreValidator storeValidator;
+
 	@Mock
 	private SaleReader saleReader;
 	@Mock
@@ -76,7 +79,6 @@ class ReceiptServiceTest extends ServiceTest {
 			Table changedActiveTable = GENERAL_ACTIVE_TABLE(savedStore);
 			Receipt createdReceipt = CUSTOM_RECEIPT(
 				receiptInfo,
-				queryUserPassport,
 				changedActiveTable,
 				savedSale
 			);
@@ -208,95 +210,48 @@ class ReceiptServiceTest extends ServiceTest {
 	@Nested
 	@DisplayName("영수증 상세 조회")
 	class getReceiptInfo {
-		private final Long receiptId = 1L;
-		private UserPassport userPassport = CUSTOM_USER_PASSPORT(
-			2L,
-			"요청 유저",
-			UserRole.ROLE_USER
-		);
+		private final Long receiptId = GENERAL_RECEIPT_ID;
 
 		@Test
 		void 영수증_상세_조회_성공() {
 			// given
-			Receipt receipt = CUSTOM_RECEIPT(
-				NON_ADJUSTMENT_RECEIPT_INFO(),
-				userPassport,
-				GENERAL_ACTIVE_TABLE(StoreFixture.GENERAL_OPEN_STORE()),
-				GENERAL_OPEN_SALE(StoreFixture.GENERAL_OPEN_STORE())
-			);
+			ReceiptInfo receiptInfo = ReceiptInfoFixture.NON_ADJUSTMENT_RECEIPT_INFO();
 
-			BDDMockito.given(receiptReader.getReceiptWithCustomerAndOwner(receiptId))
-				.willReturn(Optional.of(receipt));
+			BDDMockito.given(receiptReader.getReceiptInfo(receiptId))
+				.willReturn(Optional.of(receiptInfo));
 
 			// when
-			ReceiptInfo receiptInfo = receiptService.getReceiptInfo(receiptId, userPassport);
+			receiptService.getReceiptInfo(receiptId);
 
 			// then
-			assertSoftly(softly -> {
-				softly.assertThat(receiptInfo).isEqualTo(receipt.getReceiptInfo());
-			});
+			verify(receiptReader).getReceiptInfo(receiptId);
 
 		}
 
 		@Test
 		void 영수증_조회_실패() {
 			// given
-			BDDMockito.given(receiptReader.getReceiptWithCustomerAndOwner(receiptId))
+			BDDMockito.given(receiptReader.getReceiptInfo(receiptId))
 				.willReturn(Optional.empty());
 
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
-						() -> receiptService.getReceiptInfo(receiptId, userPassport))
+						() -> receiptService.getReceiptInfo(receiptId))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
 
-				verify(receiptReader).getReceiptWithCustomerAndOwner(receiptId);
-				verify(receiptValidator, never()).validateAccessToReceipt(any(Receipt.class), any(UserPassport.class));
+				verify(receiptReader).getReceiptInfo(receiptId);
 			});
 		}
-
-		@Test
-		void 영수증_접근_권한_실패() {
-			// given
-			UserPassport anotherUserPassport = CUSTOM_USER_PASSPORT(
-				100L,
-				"다른유저",
-				UserRole.ROLE_USER
-			);
-
-			Receipt receipt = CUSTOM_RECEIPT(
-				NON_ADJUSTMENT_RECEIPT_INFO(),
-				userPassport,
-				GENERAL_ACTIVE_TABLE(StoreFixture.GENERAL_OPEN_STORE()),
-				GENERAL_OPEN_SALE(StoreFixture.GENERAL_OPEN_STORE())
-			);
-
-			BDDMockito.given(receiptReader.getReceiptWithCustomerAndOwner(receiptId))
-				.willReturn(Optional.of(receipt));
-			doThrow(new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED))
-				.when(receiptValidator).validateAccessToReceipt(any(Receipt.class), any(UserPassport.class));
-
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> receiptService.getReceiptInfo(receiptId, anotherUserPassport))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_ACCESS_DENIED);
-
-				verify(receiptReader).getReceiptWithCustomerAndOwner(receiptId);
-				verify(receiptValidator).validateAccessToReceipt(any(Receipt.class), any(UserPassport.class));
-			});
-		}
-
 	}
 
 	@Nested
-	@DisplayName("영수증 목록 조회")
+	@DisplayName("영업 별 영수증 목록 조회")
 	class getReceiptPageBySale {
 		private final int size = 10;
 		private final Pageable pageable = Pageable.ofSize(size);
-		private UserPassport userPassport = UserFixture.GENERAL_USER_PASSPORT();
+		private UserPassport userPassport = UserFixture.OWNER_USER_PASSPORT();
 		private final Long saleId = 1L;
 
 		@Test
@@ -313,31 +268,31 @@ class ReceiptServiceTest extends ServiceTest {
 
 			// then
 			verify(saleReader).readSaleWithOwner(saleId);
+			verify(storeValidator).validateStoreOwner(userPassport, savedSale.getStore().getStoreId());
 			verify(receiptReader).getReceiptPageBySale(pageable, saleId);
 		}
 
 		@Test
-		void 실패_유효하지_않은_sale_id() {
+		void 영업_조회_실패() {
 			// given
-			Sale savedSale = GENERAL_OPEN_SALE(StoreFixture.GENERAL_OPEN_STORE());
-
 			BDDMockito.given(saleReader.readSaleWithOwner(saleId))
 				.willReturn(Optional.empty());
 
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
-						() -> receiptService.getReceiptPageBySale(pageable, userPassport, savedSale.getSaleId()))
+						() -> receiptService.getReceiptPageBySale(pageable, userPassport, saleId))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_SALE);
 
 				verify(saleReader).readSaleWithOwner(saleId);
+				verify(storeValidator, never()).validateStoreOwner(any(), anyLong());
 				verify(receiptReader, never()).getReceiptPageBySale(pageable, saleId);
 			});
 		}
 
 		@Test
-		void 실패_요청_유저_점주_불일치() {
+		void 요청_유저_점주_불일치_실패() {
 			// given
 			userPassport = DIFF_OWNER_PASSPORT();
 			Store savedStore = StoreFixture.GENERAL_OPEN_STORE();
@@ -345,15 +300,18 @@ class ReceiptServiceTest extends ServiceTest {
 
 			BDDMockito.given(saleReader.readSaleWithOwner(saleId))
 				.willReturn(Optional.of(savedSale));
+			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
+				.when(storeValidator).validateStoreOwner(userPassport, savedSale.getStore().getStoreId());
 
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
 						() -> receiptService.getReceiptPageBySale(pageable, DIFF_OWNER_PASSPORT(), saleId))
 					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_VALID_OWNER);
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
 
 				verify(saleReader).readSaleWithOwner(saleId);
+				verify(storeValidator).validateStoreOwner(userPassport, savedSale.getStore().getStoreId());
 				verify(receiptReader, never()).getReceiptPageBySale(pageable, saleId);
 			});
 		}
@@ -363,7 +321,7 @@ class ReceiptServiceTest extends ServiceTest {
 	@DisplayName("영수증 정산")
 	class adjustReceipt {
 		private final Long receiptId = 1L;
-		private UserPassport userPassport = ReceiptFixture.GENERAL_USER_PASSPORT;
+		private UserPassport userPassport = UserFixture.OWNER_USER_PASSPORT();
 
 		@Test
 		void 영수증_정산_성공() {
@@ -378,26 +336,49 @@ class ReceiptServiceTest extends ServiceTest {
 
 			// then
 			verify(receiptReader).getReceiptWithOwner(receiptId);
+			verify(receiptValidator).validateIsOwner(receipt, userPassport);
 			verify(receiptWriter).adjustReceipt(receiptId);
 		}
 
 		@Test
-		void 실패_요청_유저_점주_불일치() {
+		void 영수증_조회_실패() {
 			// given
-			userPassport = DIFF_OWNER_PASSPORT();
-			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
-
 			BDDMockito.given(receiptReader.getReceiptWithOwner(receiptId))
-				.willReturn(Optional.of(receipt));
+				.willReturn(Optional.empty());
 
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
 						() -> receiptService.adjustReceipt(receiptId, userPassport))
 					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_VALID_OWNER);
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
 
 				verify(receiptReader).getReceiptWithOwner(receiptId);
+				verify(receiptValidator, never()).validateIsOwner(any(), any());
+				verify(receiptWriter, never()).adjustReceipt(anyLong());
+			});
+		}
+
+		@Test
+		void 요청_유저_점주_불일치_실패() {
+			// given
+			userPassport = DIFF_OWNER_PASSPORT();
+			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
+
+			BDDMockito.given(receiptReader.getReceiptWithOwner(receiptId))
+				.willReturn(Optional.of(receipt));
+			doThrow(new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED))
+				.when(receiptValidator).validateIsOwner(receipt, userPassport);
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(
+						() -> receiptService.adjustReceipt(receiptId, userPassport))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_ACCESS_DENIED);
+
+				verify(receiptReader).getReceiptWithOwner(receiptId);
+				verify(receiptValidator).validateIsOwner(receipt, userPassport);
 				verify(receiptWriter, never()).adjustReceipt(receiptId);
 			});
 		}
@@ -418,6 +399,7 @@ class ReceiptServiceTest extends ServiceTest {
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_ADJUSTMENT_RECEIPT);
 
 				verify(receiptReader).getReceiptWithOwner(receiptId);
+				verify(receiptValidator).validateIsOwner(receipt, userPassport);
 				verify(receiptWriter, never()).adjustReceipt(receiptId);
 			});
 		}
@@ -427,7 +409,7 @@ class ReceiptServiceTest extends ServiceTest {
 	@DisplayName("영수증 삭제")
 	class deleteReceipt {
 		private final Long receiptId = 1L;
-		private UserPassport userPassport = ReceiptFixture.GENERAL_USER_PASSPORT;
+		private UserPassport userPassport = UserFixture.OWNER_USER_PASSPORT();
 
 		@Test
 		void 영수증_삭제_성공() {
@@ -442,6 +424,7 @@ class ReceiptServiceTest extends ServiceTest {
 
 			// then
 			verify(receiptReader).getReceiptWithOwner(receiptId);
+			verify(receiptValidator).validateIsOwner(receipt, userPassport);
 			verify(receiptWriter).deleteReceipt(receiptId);
 		}
 
@@ -459,6 +442,7 @@ class ReceiptServiceTest extends ServiceTest {
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
 
 				verify(receiptReader).getReceiptWithOwner(receiptId);
+				verify(receiptValidator, never()).validateIsOwner(any(), any());
 				verify(receiptWriter, never()).deleteReceipt(receiptId);
 			});
 		}
@@ -471,15 +455,18 @@ class ReceiptServiceTest extends ServiceTest {
 
 			BDDMockito.given(receiptReader.getReceiptWithOwner(receiptId))
 				.willReturn(Optional.of(receipt));
+			doThrow(new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED))
+				.when(receiptValidator).validateIsOwner(receipt, userPassport);
 
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
 						() -> receiptService.deleteReceipt(receiptId, userPassport))
 					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_VALID_OWNER);
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_ACCESS_DENIED);
 
 				verify(receiptReader).getReceiptWithOwner(receiptId);
+				verify(receiptValidator).validateIsOwner(any(), any());
 				verify(receiptWriter, never()).deleteReceipt(receiptId);
 			});
 		}

@@ -16,6 +16,7 @@ import domain.pos.receipt.implement.ReceiptValidator;
 import domain.pos.receipt.implement.ReceiptWriter;
 import domain.pos.store.entity.Sale;
 import domain.pos.store.implement.SaleReader;
+import domain.pos.store.implement.StoreValidator;
 import domain.pos.table.entity.Table;
 import domain.pos.table.implement.TableReader;
 import domain.pos.table.implement.TableWriter;
@@ -27,6 +28,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ReceiptService {
 	private final ReceiptValidator receiptValidator;
+	private final StoreValidator storeValidator;
+
 	private final SaleReader saleReader;
 	private final TableWriter tableWriter;
 	private final TableReader tableReader;
@@ -58,19 +61,16 @@ public class ReceiptService {
 		return createdReceipt;
 	}
 
-	public ReceiptInfo getReceiptInfo(Long receiptId, UserPassport userPassport) {
-		Receipt receipt = receiptReader.getReceiptWithCustomerAndOwner(receiptId)
+	public ReceiptInfo getReceiptInfo(Long receiptId) {
+		return receiptReader.getReceiptInfo(receiptId)
 			.orElseThrow(() -> {
 				log.warn("Receipt 을 찾을 수 없습니다. receiptId: {}", receiptId);
 				return new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 			});
-
-		receiptValidator.validateAccessToReceipt(receipt, userPassport);
-
-		return receipt.getReceiptInfo();
 	}
 
 	// TODO : application 계층 one-indexed-parameters 설정 추가
+	// Owner api
 	public Page<Receipt> getReceiptPageBySale(Pageable pageable, UserPassport userPassport, Long saleId) {
 		Sale sale = saleReader.readSaleWithOwner(saleId)
 			.orElseThrow(() -> {
@@ -78,15 +78,12 @@ public class ReceiptService {
 				return new ServiceException(ErrorCode.NOT_FOUND_SALE);
 			});
 
-		Long storeOwnerId = sale.getStore().getOwnerPassport().getUserId();
-		if (!storeOwnerId.equals(userPassport.getUserId())) {
-			log.warn("Store 의 소유자와 요청자가 다릅니다. ownerId: {}, userId: {}", storeOwnerId, userPassport.getUserId());
-			throw new ServiceException(ErrorCode.NOT_VALID_OWNER);
-		}
+		storeValidator.validateStoreOwner(userPassport, sale.getStore().getStoreId());
 
 		return receiptReader.getReceiptPageBySale(pageable, saleId);
 	}
 
+	// Owner api
 	public void adjustReceipt(Long receiptId, UserPassport userPassport) {
 		Receipt receipt = receiptReader.getReceiptWithOwner(receiptId)
 			.orElseThrow(() -> {
@@ -94,11 +91,7 @@ public class ReceiptService {
 				return new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 			});
 
-		Long storeOwnerId = receipt.getSale().getStore().getOwnerPassport().getUserId();
-		if (!storeOwnerId.equals(userPassport.getUserId())) {
-			log.warn("Store 의 소유자와 요청자가 다릅니다. ownerId: {}, userId: {}", storeOwnerId, userPassport.getUserId());
-			throw new ServiceException(ErrorCode.NOT_VALID_OWNER);
-		}
+		receiptValidator.validateIsOwner(receipt, userPassport);
 		if (receipt.getReceiptInfo().isAdjustment()) {
 			log.warn("이미 정산된 영수증입니다. receiptId: {}", receiptId);
 			throw new ServiceException(ErrorCode.ALREADY_ADJUSTMENT_RECEIPT);
@@ -107,18 +100,14 @@ public class ReceiptService {
 		receiptWriter.adjustReceipt(receiptId);
 	}
 
+	// Owner api
 	public void deleteReceipt(Long receiptId, UserPassport userPassport) {
 		Receipt receipt = receiptReader.getReceiptWithOwner(receiptId)
 			.orElseThrow(() -> {
 				log.warn("Receipt 을 찾을 수 없습니다. receiptId: {}", receiptId);
 				return new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 			});
-
-		Long storeOwnerId = receipt.getSale().getStore().getOwnerPassport().getUserId();
-		if (!storeOwnerId.equals(userPassport.getUserId())) {
-			log.warn("Store 의 소유자와 요청자가 다릅니다. ownerId: {}, userId: {}", storeOwnerId, userPassport.getUserId());
-			throw new ServiceException(ErrorCode.NOT_VALID_OWNER);
-		}
+		receiptValidator.validateIsOwner(receipt, userPassport);
 		receiptWriter.deleteReceipt(receiptId);
 	}
 }

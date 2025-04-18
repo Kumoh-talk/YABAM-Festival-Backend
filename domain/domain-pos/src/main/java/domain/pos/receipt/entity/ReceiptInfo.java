@@ -11,7 +11,7 @@ public class ReceiptInfo {
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
 
-	public ReceiptInfo(Long receiptId, boolean isAdjustment, LocalDateTime startTime, LocalDateTime endTime) {
+	private ReceiptInfo(Long receiptId, boolean isAdjustment, LocalDateTime startTime, LocalDateTime endTime) {
 		this.receiptId = receiptId;
 		this.isAdjustment = isAdjustment;
 		this.startTime = startTime;

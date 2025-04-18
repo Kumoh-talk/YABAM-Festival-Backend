@@ -1,41 +1,46 @@
 package domain.pos.receipt.implement;
 
+import org.springframework.stereotype.Component;
+
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
 
 import domain.pos.member.entity.UserPassport;
 import domain.pos.member.entity.UserRole;
 import domain.pos.receipt.entity.Receipt;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Component
+@RequiredArgsConstructor
 @Slf4j
 public class ReceiptValidator {
-	public void validateAccessToReceipt(Receipt receipt, UserPassport userPassport) {
-		if (receipt.getUserPassport() == null) {
-			return;
-		}
-		Long customerId = receipt.getUserPassport().getUserId();
-		Long storeOwnerId = receipt.getSale().getStore().getOwnerPassport().getUserId();
+	private final ReceiptReader receiptReader;
 
-		if (!isCustomer(customerId, userPassport)
-			&& !isStoreOwner(storeOwnerId, userPassport)) {
-			log.warn("Receipt 접근 가능 요청자가 아닙니다. userId: {}", userPassport.getUserId());
-			throw new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED);
+	public void validateReceipt(Long receiptId) {
+		if (!receiptReader.existsReceipt(receiptId)) {
+			log.warn("영수증을 찾을 수 없습니다. receiptId: {}", receiptId);
+			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
+		}
+	}
+
+	public UserRole validateRole(Receipt receipt, UserPassport userPassport) {
+		if (isStoreOwner(receipt, userPassport)) {
+			return UserRole.ROLE_OWNER;
+		} else {
+			return UserRole.ROLE_ANONYMOUS;
 		}
 	}
 
 	public void validateIsOwner(Receipt receipt, UserPassport userPassport) {
-		if (!isStoreOwner(receipt.getSale().getStore().getOwnerPassport().getUserId(), userPassport)) {
+		if (!isStoreOwner(receipt, userPassport)) {
 			log.warn("요청자가 점주가 아닙니다. userId: {}", userPassport.getUserId());
 			throw new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED);
 		}
 	}
 
-	private boolean isCustomer(Long customerId, UserPassport userPassport) {
-		return customerId.equals(userPassport.getUserId()) && userPassport.getUserRole() == UserRole.ROLE_USER;
-	}
-
-	private boolean isStoreOwner(Long storeOwnerId, UserPassport userPassport) {
+	public boolean isStoreOwner(Receipt receipt, UserPassport userPassport) {
+		Long storeOwnerId = receipt.getSale().getStore().getOwnerPassport().getUserId();
 		return storeOwnerId.equals(userPassport.getUserId()) && userPassport.getUserRole() == UserRole.ROLE_OWNER;
 	}
 }
