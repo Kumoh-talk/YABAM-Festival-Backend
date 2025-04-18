@@ -12,6 +12,7 @@ public class UserFixture {
 	// 유저 권한
 	private static final UserRole OWNER_USER_ROLE = UserRole.ROLE_OWNER;
 	private static final UserRole GENERAL_USER_ROLE = UserRole.ROLE_USER;
+	private static final UserRole ANONYMOUS_USER_ROLE = UserRole.ROLE_ANONYMOUS;
 
 	public static UserPassport OWNER_USER_PASSPORT() {
 		return UserPassport.of(
@@ -25,6 +26,13 @@ public class UserFixture {
 			GENERAL_USER_ID,
 			GENERAL_USER_NICKNAME,
 			GENERAL_USER_ROLE);
+	}
+
+	public static UserPassport ANONYMOUS_USER_PASSPORT() {
+		return UserPassport.of(
+			GENERAL_USER_ID,
+			GENERAL_USER_NICKNAME,
+			ANONYMOUS_USER_ROLE);
 	}
 
 	public static UserPassport DIFF_OWNER_PASSPORT() {

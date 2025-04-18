@@ -27,6 +27,7 @@ import domain.pos.member.entity.UserRole;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.receipt.implement.ReceiptReader;
+import domain.pos.receipt.implement.ReceiptValidator;
 import domain.pos.receipt.implement.ReceiptWriter;
 import domain.pos.store.entity.Sale;
 import domain.pos.store.entity.Store;
@@ -40,6 +41,8 @@ import fixtures.store.StoreFixture;
 
 class ReceiptServiceTest extends ServiceTest {
 
+	@Mock
+	private ReceiptValidator receiptValidator;
 	@Mock
 	private SaleReader saleReader;
 	@Mock
@@ -249,6 +252,7 @@ class ReceiptServiceTest extends ServiceTest {
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
 
 				verify(receiptReader).getReceiptWithCustomerAndOwner(receiptId);
+				verify(receiptValidator, never()).validateAccessToReceipt(any(Receipt.class), any(UserPassport.class));
 			});
 		}
 
@@ -270,6 +274,8 @@ class ReceiptServiceTest extends ServiceTest {
 
 			BDDMockito.given(receiptReader.getReceiptWithCustomerAndOwner(receiptId))
 				.willReturn(Optional.of(receipt));
+			doThrow(new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED))
+				.when(receiptValidator).validateAccessToReceipt(any(Receipt.class), any(UserPassport.class));
 
 			// when -> then
 			assertSoftly(softly -> {
@@ -279,6 +285,7 @@ class ReceiptServiceTest extends ServiceTest {
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_ACCESS_DENIED);
 
 				verify(receiptReader).getReceiptWithCustomerAndOwner(receiptId);
+				verify(receiptValidator).validateAccessToReceipt(any(Receipt.class), any(UserPassport.class));
 			});
 		}
 
