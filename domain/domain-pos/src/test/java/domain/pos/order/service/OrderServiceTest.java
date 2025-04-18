@@ -59,9 +59,39 @@ public class OrderServiceTest extends ServiceTest {
 		private List<OrderMenu> orderMenus = List.of(OrderMenuFixture.GENERAL_ORDER_MENU());
 
 		@Test
-		void 주문_등록_성공() {
+		void 회원_주문_등록_성공() {
 			// given
 			Receipt receipt = ReceiptFixture.GENERAL_NON_ADJUSTMENT_RECEIPT();
+			List<Long> orderMenuIds = orderMenus.stream()
+				.map(orderMenu -> orderMenu.getMenu().getMenuInfo().getMenuId())
+				.toList();
+
+			BDDMockito.given(receiptReader.getReceiptWithCustomerAndOwner(receiptId))
+				.willReturn(Optional.of(receipt));
+			BDDMockito.given(
+					menuReader.getMenuInfo(
+						BDDMockito.eq(receipt.getSale().getStore().getStoreId()),
+						ArgumentMatchers.argThat(orderMenuIds::contains)))
+				.willReturn(Optional.of(MenuInfoFixture.GENERAL_MENU_INFO()));
+
+			// when
+			orderService.postOrder(receiptId, userPassport, orderMenus);
+
+			// then
+			verify(receiptReader).getReceiptWithCustomerAndOwner(receiptId);
+			verify(receiptValidator).validateAccessToReceipt(receipt, userPassport);
+			verify(menuReader).getMenuInfo(
+				BDDMockito.eq(receipt.getSale().getStore().getStoreId()),
+				ArgumentMatchers.argThat(orderMenuIds::contains));
+			verify(orderWriter).postOrder(receiptId, orderMenus);
+		}
+
+		@Test
+		void 비회원_주문_등록_성공() {
+			// given
+			Receipt receipt = ReceiptFixture.GENERAL_NON_MEMBER_RECEIPT();
+			userPassport = UserFixture.ANONYMOUS_USER_PASSPORT();
+
 			List<Long> orderMenuIds = orderMenus.stream()
 				.map(orderMenu -> orderMenu.getMenu().getMenuInfo().getMenuId())
 				.toList();
