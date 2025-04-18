@@ -45,7 +45,8 @@ public enum ErrorCode {
 	NOT_FOUND_TABLE(HttpStatus.NOT_FOUND, "TABLE_0002", "존재하지 않는 테이블입니다."),
 	ALREADY_ACTIVE_TABLE(HttpStatus.CONFLICT, "TABLE_0003", "이미 활성화된 테이블입니다."),
 	STORE_IS_OPEN_TABLE_WRITE(HttpStatus.CONFLICT, "TABLE_0004", "가게가 운영중입니다. 테이블 수 조정 불가"),
-
+	TABLE_NOT_FOUND(HttpStatus.NOT_FOUND, "TABLE_0005", "테이블이 존재하지 않습니다."),
+	TABLE_NOT_EQUAL_MODIFY(HttpStatus.CONFLICT, "TABLE_0006", "테이블 수가 같습니다."),
 	// Sale
 	NOT_FOUND_SALE(HttpStatus.NOT_FOUND, "SALE_0001", "존재하지 않는 세일입니다."),
 
@@ -53,14 +54,16 @@ public enum ErrorCode {
 	RECEIPT_NOT_FOUND(HttpStatus.NOT_FOUND, "RECEIPT_0001", "존재하지 않는 영수증입니다."),
 	ALREADY_ADJUSTMENT_RECEIPT(HttpStatus.CONFLICT, "RECEIPT_0002", "이미 정산된 영수증입니다."),
 	RECEIPT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "RECEIPT_0003", "대상 영수증에 접근 가능한 요청이 아닙니다."),
-
 	// Order
 	ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER_0001", "존재하지 않는 주문입니다."),
 	ORDER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "ORDER_0002", "대상 주문에 접근 가능한 요청이 아닙니다."),
 	INVALID_STATE_TRANSITION(HttpStatus.BAD_REQUEST, "ORDER_0003", "주문 상태 전환이 불가능합니다."),
 	ALREADY_RECEIVED_ORDER(HttpStatus.BAD_REQUEST, "ORDER_0004", "이미 접수된 주문입니다."),
 	ALREADY_CANCELLED_ORDER(HttpStatus.BAD_REQUEST, "ORDER_0005", "이미 취소된 주문입니다."),
-	ALREADY_COMPLETED_ORDER(HttpStatus.BAD_REQUEST, "ORDER_0006", "이미 완료된 주문입니다.");
+	ALREADY_COMPLETED_ORDER(HttpStatus.BAD_REQUEST, "ORDER_0006", "이미 완료된 주문입니다."),
+
+	// VoException
+	NOT_VALID_VO(HttpStatus.BAD_REQUEST, "VO_0001", "Vo 객체가 유효하지 않습니다.");
 
 	private final HttpStatus status;
 	private final String code;

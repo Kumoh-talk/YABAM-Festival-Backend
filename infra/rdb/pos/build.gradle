@@ -18,6 +18,9 @@ dependencies {
     // domain 모듈
     compileOnly project(':domain:domain-pos')
 
+    // common 모듈
+    compileOnly project(':common:base')
+
     // QueryDSL
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
@@ -28,6 +31,8 @@ dependencies {
     testImplementation project(':domain:domain-pos')
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation testFixtures(project(':domain:domain-pos'))
+    testImplementation project(':common:base')
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
 }
 
 
