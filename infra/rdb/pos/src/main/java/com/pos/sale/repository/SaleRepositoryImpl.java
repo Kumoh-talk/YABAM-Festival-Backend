@@ -43,6 +43,7 @@ public class SaleRepositoryImpl implements SaleRepository {
 			.map(SaleMapper::toSaleWithStore);
 	}
 
+	// TODO : 해당 메서드 findSaleWithOwnerBySaleId 와 동일한 로직을 수행하는걸로 보임 수정 필요 @siwan9
 	@Override
 	public Optional<Sale> findSaleWithOwnerBySaleId(Long saleId) {
 		return Optional.empty();
