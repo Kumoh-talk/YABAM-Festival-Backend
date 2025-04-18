@@ -11,7 +11,9 @@ public interface OrderRepository {
 	// TODO : 인프라 단에서 모듣 메뉴 금액 계산 후 엔티티 저장 시 반영해야함 + orderMenu에 조회한 Menu 엔티티를 직접 넣어야함(응답에 포함되어야하므로)
 	Order postOrder(Long receiptId, List<OrderMenu> orderMenus);
 
-	Optional<Order> getOrderWithCustomerAndOwner(Long orderId);
+	Optional<Order> getOrder(Long orderId);
+
+	Optional<Order> getOrderWithOwner(Long orderId);
 
 	Order patchOrderStatus(Order order, OrderStatus orderStatus);
 

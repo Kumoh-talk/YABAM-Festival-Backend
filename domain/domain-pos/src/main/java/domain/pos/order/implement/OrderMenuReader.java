@@ -13,8 +13,8 @@ import lombok.RequiredArgsConstructor;
 public class OrderMenuReader {
 	private final OrderMenuRepository orderMenuRepository;
 
-	public Optional<OrderMenu> getOrderMenuWithCustomerAndOwner(Long orderMenuId) {
-		return orderMenuRepository.getOrderMenuWithCustomerAndOwner(orderMenuId);
+	public Optional<OrderMenu> getOrderMenuWithOwner(Long orderMenuId) {
+		return orderMenuRepository.getOrderMenuWithOwner(orderMenuId);
 	}
 
 }

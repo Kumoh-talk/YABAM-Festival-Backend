@@ -9,6 +9,9 @@ public enum ErrorCode {
 	// Owner
 	NOT_VALID_OWNER(HttpStatus.BAD_REQUEST, "OWNER_0001", "해당 사용자는 가게 점주가 아닙니다"),
 
+	// User
+	USER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "USER_0001", "해당 사용자는 요청한 리소스에 접근할 수 없습니다."),
+
 	// Store
 	NOT_EQUAL_STORE_OWNER(HttpStatus.CONFLICT, "STORE_0001", "해당 가게의 점주가 아닙니다"),
 	NOT_FOUND_STORE(HttpStatus.NOT_FOUND, "STORE_0002", "해당 가게를 찾을 수 없습니다"),
@@ -48,6 +51,7 @@ public enum ErrorCode {
 
 	// Sale
 	NOT_FOUND_SALE(HttpStatus.NOT_FOUND, "SALE_0001", "존재하지 않는 세일입니다."),
+	CLOSE_SALE(HttpStatus.CONFLICT, "SALE_0002", "영업이 종료되었습니다."),
 
 	// Receipt
 	RECEIPT_NOT_FOUND(HttpStatus.NOT_FOUND, "RECEIPT_0001", "존재하지 않는 영수증입니다."),

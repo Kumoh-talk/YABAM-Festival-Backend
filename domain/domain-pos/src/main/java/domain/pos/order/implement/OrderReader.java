@@ -14,8 +14,12 @@ import lombok.RequiredArgsConstructor;
 public class OrderReader {
 	private final OrderRepository orderRepository;
 
-	public Optional<Order> getOrderWithCustomerAndOwner(Long orderId) {
-		return orderRepository.getOrderWithCustomerAndOwner(orderId);
+	public Optional<Order> getOrder(Long orderId) {
+		return orderRepository.getOrder(orderId);
+	}
+
+	public Optional<Order> getOrderWithOwner(Long orderId) {
+		return orderRepository.getOrderWithOwner(orderId);
 	}
 
 	public List<Order> getReceiptOrders(Long receiptId) {
