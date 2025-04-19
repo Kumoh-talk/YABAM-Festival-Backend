@@ -8,6 +8,7 @@ include(':application:config')
 include(':application:discovery')
 include(':application:gateway')
 include(':application:auth')
+include((':application:event'))
 
 // common
 include(":common:discovery-client")
