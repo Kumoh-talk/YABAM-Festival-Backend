@@ -73,6 +73,8 @@ public class OrderServiceTest extends ServiceTest {
 		@Test
 		void 점주_주문_등록_성공() {
 			UserPassport userPassport = UserFixture.OWNER_USER_PASSPORT();
+			BDDMockito.given(receiptValidator.isStoreOwner(any(), any()))
+				.willReturn(true);
 			주문_등록_성공_공통_로직(userPassport);
 			verify(receiptCustomerWriter, never()).postReceiptCustomer(userPassport.getUserId(), receiptId);
 		}

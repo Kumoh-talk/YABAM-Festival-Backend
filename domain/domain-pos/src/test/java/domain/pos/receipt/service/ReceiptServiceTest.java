@@ -306,7 +306,7 @@ class ReceiptServiceTest extends ServiceTest {
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
-						() -> receiptService.getReceiptPageBySale(pageable, DIFF_OWNER_PASSPORT(), saleId))
+						() -> receiptService.getReceiptPageBySale(pageable, userPassport, saleId))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
 
