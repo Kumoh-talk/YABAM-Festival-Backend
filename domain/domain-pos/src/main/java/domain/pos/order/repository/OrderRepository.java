@@ -13,7 +13,7 @@ public interface OrderRepository {
 
 	Optional<Order> getOrder(Long orderId);
 
-	Optional<Order> getOrderWithOwner(Long orderId);
+	Optional<Order> getOrderWithStore(Long orderId);
 
 	Order patchOrderStatus(Order order, OrderStatus orderStatus);
 

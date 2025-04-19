@@ -37,7 +37,7 @@ public class OrderService {
 	// TODO : 위치기반으로 특정 범위 내에 유저가 존재해야만 주문이 가능하도록 구현 필요
 	@Transactional
 	public Order postOrder(Long receiptId, UserPassport userPassport, List<OrderMenu> orderMenus) {
-		Receipt receipt = receiptReader.getNonAdjustReceiptWithOwner(receiptId)
+		Receipt receipt = receiptReader.getNonAdjustReceiptWithStore(receiptId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
 		saleValidator.validateSaleOpen(receipt.getSale());
 
@@ -56,7 +56,7 @@ public class OrderService {
 
 	@Transactional
 	public Order patchOrderStatus(Long orderId, UserPassport userPassport, OrderStatus orderStatus) {
-		Order order = orderReader.getOrderWithOwner(orderId)
+		Order order = orderReader.getOrderWithStore(orderId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_NOT_FOUND));
 
 		UserRole userRole = receiptValidator.validateRole(order.getReceipt(), userPassport);

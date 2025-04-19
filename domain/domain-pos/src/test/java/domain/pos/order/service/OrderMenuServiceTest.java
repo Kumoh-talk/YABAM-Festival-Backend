@@ -54,7 +54,7 @@ public class OrderMenuServiceTest extends ServiceTest {
 		@Test
 		void 주문_메뉴_추가_성공() {
 			// given
-			BDDMockito.given(orderReader.getOrderWithOwner(orderId))
+			BDDMockito.given(orderReader.getOrderWithStore(orderId))
 				.willReturn(Optional.of(OrderFixture.GENERAL_ORDER()));
 			BDDMockito.given(menuReader.getMenuInfo(any(), any()))
 				.willReturn(Optional.of(MenuInfoFixture.GENERAL_MENU_INFO()));
@@ -63,7 +63,7 @@ public class OrderMenuServiceTest extends ServiceTest {
 			orderMenuService.postOrderMenu(orderId, userPassport, orderMenu);
 
 			// then
-			verify(orderReader).getOrderWithOwner(orderId);
+			verify(orderReader).getOrderWithStore(orderId);
 			verify(receiptValidator).validateIsOwner(any(), eq(userPassport));
 			verify(menuReader).getMenuInfo(any(), any());
 			verify(orderMenuWriter).postOrderMenu(orderId, orderMenu);
@@ -72,7 +72,7 @@ public class OrderMenuServiceTest extends ServiceTest {
 		@Test
 		void 주문_조회_실패() {
 			// given
-			BDDMockito.given(orderReader.getOrderWithOwner(orderId))
+			BDDMockito.given(orderReader.getOrderWithStore(orderId))
 				.willReturn(Optional.empty());
 
 			// when -> then
@@ -81,7 +81,7 @@ public class OrderMenuServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ORDER_NOT_FOUND);
 
-				verify(orderReader).getOrderWithOwner(orderId);
+				verify(orderReader).getOrderWithStore(orderId);
 				verify(receiptValidator, never()).validateIsOwner(any(), any());
 				verify(menuReader, never()).getMenuInfo(any(), any());
 				verify(orderMenuWriter, never()).postOrderMenu(any(), any());
@@ -91,7 +91,7 @@ public class OrderMenuServiceTest extends ServiceTest {
 		@Test
 		void 요청_유저_점주_불일치_실패() {
 			// given
-			BDDMockito.given(orderReader.getOrderWithOwner(orderId))
+			BDDMockito.given(orderReader.getOrderWithStore(orderId))
 				.willReturn(Optional.of(OrderFixture.GENERAL_ORDER()));
 
 			doThrow(new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED))
@@ -103,7 +103,7 @@ public class OrderMenuServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_ACCESS_DENIED);
 
-				verify(orderReader).getOrderWithOwner(orderId);
+				verify(orderReader).getOrderWithStore(orderId);
 				verify(receiptValidator).validateIsOwner(any(), any());
 				verify(menuReader, never()).getMenuInfo(any(), any());
 				verify(orderMenuWriter, never()).postOrderMenu(any(), any());
@@ -113,7 +113,7 @@ public class OrderMenuServiceTest extends ServiceTest {
 		@Test
 		void 메뉴_조회_실패() {
 			// given
-			BDDMockito.given(orderReader.getOrderWithOwner(orderId))
+			BDDMockito.given(orderReader.getOrderWithStore(orderId))
 				.willReturn(Optional.of(OrderFixture.GENERAL_ORDER()));
 
 			BDDMockito.given(menuReader.getMenuInfo(anyLong(), anyLong()))
@@ -125,7 +125,7 @@ public class OrderMenuServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.MENU_NOT_FOUND);
 
-				verify(orderReader).getOrderWithOwner(orderId);
+				verify(orderReader).getOrderWithStore(orderId);
 				verify(receiptValidator).validateIsOwner(any(), any());
 				verify(menuReader).getMenuInfo(anyLong(), anyLong());
 				verify(orderMenuWriter, never()).postOrderMenu(any(), any());
@@ -144,14 +144,14 @@ public class OrderMenuServiceTest extends ServiceTest {
 		void 주문_메뉴_수량_변경_성공() {
 			// given
 			OrderMenu orderMenu = OrderMenuFixture.GENERAL_ORDER_MENU();
-			BDDMockito.given(orderMenuReader.getOrderMenuWithOwner(orderMenuId))
+			BDDMockito.given(orderMenuReader.getOrderMenuWithStore(orderMenuId))
 				.willReturn(Optional.of(orderMenu));
 
 			// when
 			orderMenuService.patchOrderMenuQuantity(orderMenuId, userPassport, quantity);
 
 			// then
-			verify(orderMenuReader).getOrderMenuWithOwner(orderMenuId);
+			verify(orderMenuReader).getOrderMenuWithStore(orderMenuId);
 			verify(receiptValidator).validateIsOwner(any(), eq(userPassport));
 			verify(orderMenuWriter).patchOrderMenuQuantity(orderMenu, quantity);
 		}
@@ -159,7 +159,7 @@ public class OrderMenuServiceTest extends ServiceTest {
 		@Test
 		void 주문_메뉴_조회_실패() {
 			// given
-			BDDMockito.given(orderMenuReader.getOrderMenuWithOwner(orderMenuId))
+			BDDMockito.given(orderMenuReader.getOrderMenuWithStore(orderMenuId))
 				.willReturn(Optional.empty());
 
 			// when -> then
@@ -169,7 +169,7 @@ public class OrderMenuServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ORDER_MENU_NOT_FOUND);
 
-				verify(orderMenuReader).getOrderMenuWithOwner(orderMenuId);
+				verify(orderMenuReader).getOrderMenuWithStore(orderMenuId);
 				verify(receiptValidator, never()).validateIsOwner(any(), any());
 				verify(orderMenuWriter, never()).patchOrderMenuQuantity(any(), anyInt());
 			});
@@ -179,7 +179,7 @@ public class OrderMenuServiceTest extends ServiceTest {
 		void 요청_유저_점주_불일치_실패() {
 			// given
 			OrderMenu orderMenu = OrderMenuFixture.GENERAL_ORDER_MENU();
-			BDDMockito.given(orderMenuReader.getOrderMenuWithOwner(orderMenuId))
+			BDDMockito.given(orderMenuReader.getOrderMenuWithStore(orderMenuId))
 				.willReturn(Optional.of(orderMenu));
 
 			doThrow(new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED))
@@ -192,7 +192,7 @@ public class OrderMenuServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_ACCESS_DENIED);
 
-				verify(orderMenuReader).getOrderMenuWithOwner(orderMenuId);
+				verify(orderMenuReader).getOrderMenuWithStore(orderMenuId);
 				verify(receiptValidator).validateIsOwner(any(), any());
 				verify(orderMenuWriter, never()).patchOrderMenuQuantity(any(), anyInt());
 			});
@@ -209,14 +209,14 @@ public class OrderMenuServiceTest extends ServiceTest {
 		void 주문_메뉴_삭제_성공() {
 			// given
 			OrderMenu orderMenu = OrderMenuFixture.GENERAL_ORDER_MENU();
-			BDDMockito.given(orderMenuReader.getOrderMenuWithOwner(orderMenuId))
+			BDDMockito.given(orderMenuReader.getOrderMenuWithStore(orderMenuId))
 				.willReturn(Optional.of(orderMenu));
 
 			// when
 			orderMenuService.deleteOrderMenu(orderMenuId, userPassport);
 
 			// then
-			verify(orderMenuReader).getOrderMenuWithOwner(orderMenuId);
+			verify(orderMenuReader).getOrderMenuWithStore(orderMenuId);
 			verify(receiptValidator).validateIsOwner(any(), eq(userPassport));
 			verify(orderMenuWriter).deleteOrderMenu(orderMenuId);
 		}
@@ -224,7 +224,7 @@ public class OrderMenuServiceTest extends ServiceTest {
 		@Test
 		void 주문_메뉴_조회_실패() {
 			// given
-			BDDMockito.given(orderMenuReader.getOrderMenuWithOwner(orderMenuId))
+			BDDMockito.given(orderMenuReader.getOrderMenuWithStore(orderMenuId))
 				.willReturn(Optional.empty());
 
 			// when -> then
@@ -233,7 +233,7 @@ public class OrderMenuServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ORDER_MENU_NOT_FOUND);
 
-				verify(orderMenuReader).getOrderMenuWithOwner(orderMenuId);
+				verify(orderMenuReader).getOrderMenuWithStore(orderMenuId);
 				verify(receiptValidator, never()).validateIsOwner(any(), any());
 				verify(orderMenuWriter, never()).deleteOrderMenu(any());
 			});
@@ -243,7 +243,7 @@ public class OrderMenuServiceTest extends ServiceTest {
 		void 요청_유저_점주_불일치_실패() {
 			// given
 			OrderMenu orderMenu = OrderMenuFixture.GENERAL_ORDER_MENU();
-			BDDMockito.given(orderMenuReader.getOrderMenuWithOwner(orderMenuId))
+			BDDMockito.given(orderMenuReader.getOrderMenuWithStore(orderMenuId))
 				.willReturn(Optional.of(orderMenu));
 
 			doThrow(new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED))
@@ -254,7 +254,7 @@ public class OrderMenuServiceTest extends ServiceTest {
 				softly.assertThatThrownBy(() -> orderMenuService.deleteOrderMenu(orderMenuId, userPassport))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_ACCESS_DENIED);
-				verify(orderMenuReader).getOrderMenuWithOwner(orderMenuId);
+				verify(orderMenuReader).getOrderMenuWithStore(orderMenuId);
 				verify(receiptValidator).validateIsOwner(any(), any());
 				verify(orderMenuWriter, never()).deleteOrderMenu(any());
 			});

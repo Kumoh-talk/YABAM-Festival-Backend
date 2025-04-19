@@ -29,7 +29,7 @@ public class OrderMenuService {
 
 	@Transactional
 	public OrderMenu postOrderMenu(Long orderId, UserPassport userPassport, OrderMenu orderMenu) {
-		Order order = orderReader.getOrderWithOwner(orderId)
+		Order order = orderReader.getOrderWithStore(orderId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_NOT_FOUND));
 		receiptValidator.validateIsOwner(order.getReceipt(), userPassport);
 		menuReader.getMenuInfo(order.getReceipt().getSale().getStore().getStoreId(),
@@ -40,14 +40,14 @@ public class OrderMenuService {
 
 	@Transactional
 	public OrderMenu patchOrderMenuQuantity(Long orderMenuId, UserPassport userPassport, Integer quantity) {
-		OrderMenu orderMenu = orderMenuReader.getOrderMenuWithOwner(orderMenuId)
+		OrderMenu orderMenu = orderMenuReader.getOrderMenuWithStore(orderMenuId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_MENU_NOT_FOUND));
 		receiptValidator.validateIsOwner(orderMenu.getOrder().getReceipt(), userPassport);
 		return orderMenuWriter.patchOrderMenuQuantity(orderMenu, quantity);
 	}
 
 	public void deleteOrderMenu(Long orderMenuId, UserPassport userPassport) {
-		OrderMenu orderMenu = orderMenuReader.getOrderMenuWithOwner(orderMenuId)
+		OrderMenu orderMenu = orderMenuReader.getOrderMenuWithStore(orderMenuId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_MENU_NOT_FOUND));
 		receiptValidator.validateIsOwner(orderMenu.getOrder().getReceipt(), userPassport);
 		orderMenuWriter.deleteOrderMenu(orderMenuId);

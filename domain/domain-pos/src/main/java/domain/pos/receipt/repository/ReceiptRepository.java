@@ -16,9 +16,9 @@ public interface ReceiptRepository {
 
 	Optional<ReceiptInfo> getReceiptInfo(Long receiptId);
 
-	Optional<Receipt> getReceiptWithOwner(Long receiptId);
+	Optional<Receipt> getReceiptWithStore(Long receiptId);
 
-	Optional<Receipt> getNonAdjustReceiptWithOwner(Long receiptId);
+	Optional<Receipt> getNonAdjustReceiptWithStore(Long receiptId);
 
 	Page<Receipt> getReceiptPageBySale(Pageable pageable, Long saleId);
 

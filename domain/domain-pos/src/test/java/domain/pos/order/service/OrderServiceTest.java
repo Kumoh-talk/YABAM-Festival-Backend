@@ -93,7 +93,7 @@ public class OrderServiceTest extends ServiceTest {
 				.map(orderMenu -> orderMenu.getMenu().getMenuInfo().getMenuId())
 				.toList();
 
-			BDDMockito.given(receiptReader.getNonAdjustReceiptWithOwner(receiptId))
+			BDDMockito.given(receiptReader.getNonAdjustReceiptWithStore(receiptId))
 				.willReturn(Optional.of(receipt));
 			BDDMockito.given(
 					menuReader.getMenuInfo(
@@ -105,7 +105,7 @@ public class OrderServiceTest extends ServiceTest {
 			orderService.postOrder(receiptId, userPassport, orderMenus);
 
 			// then
-			verify(receiptReader).getNonAdjustReceiptWithOwner(receiptId);
+			verify(receiptReader).getNonAdjustReceiptWithStore(receiptId);
 			verify(saleValidator).validateSaleOpen(receipt.getSale());
 			verify(menuReader).getMenuInfo(
 				BDDMockito.eq(receipt.getSale().getStore().getStoreId()),
@@ -116,7 +116,7 @@ public class OrderServiceTest extends ServiceTest {
 		@Test
 		void 영수증_조회_실패() {
 			// given
-			BDDMockito.given(receiptReader.getNonAdjustReceiptWithOwner(receiptId))
+			BDDMockito.given(receiptReader.getNonAdjustReceiptWithStore(receiptId))
 				.willReturn(Optional.empty());
 
 			// when -> then
@@ -125,7 +125,7 @@ public class OrderServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
 
-				verify(receiptReader).getNonAdjustReceiptWithOwner(receiptId);
+				verify(receiptReader).getNonAdjustReceiptWithStore(receiptId);
 				verify(saleValidator, never()).validateSaleOpen(any());
 				verify(menuReader, never()).getMenuInfo(anyLong(), any());
 				verify(receiptCustomerWriter, never()).postReceiptCustomer(userPassport.getUserId(), receiptId);
@@ -137,7 +137,7 @@ public class OrderServiceTest extends ServiceTest {
 		void 영업_종료로_인한_주문_실패() {
 			// given
 			Receipt receipt = ReceiptFixture.GENERAL_CLOSE_SALE_NON_ADJSTMENT_RECEIPT();
-			BDDMockito.given(receiptReader.getNonAdjustReceiptWithOwner(receiptId))
+			BDDMockito.given(receiptReader.getNonAdjustReceiptWithStore(receiptId))
 				.willReturn(Optional.of(receipt));
 			doThrow(new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED))
 				.when(saleValidator).validateSaleOpen(receipt.getSale());
@@ -148,7 +148,7 @@ public class OrderServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_ACCESS_DENIED);
 
-				verify(receiptReader).getNonAdjustReceiptWithOwner(receiptId);
+				verify(receiptReader).getNonAdjustReceiptWithStore(receiptId);
 				verify(saleValidator).validateSaleOpen(receipt.getSale());
 				verify(menuReader, never()).getMenuInfo(anyLong(), any());
 				verify(receiptCustomerWriter, never()).postReceiptCustomer(userPassport.getUserId(), receiptId);
@@ -164,7 +164,7 @@ public class OrderServiceTest extends ServiceTest {
 				.map(orderMenu -> orderMenu.getMenu().getMenuInfo().getMenuId())
 				.toList();
 
-			BDDMockito.given(receiptReader.getNonAdjustReceiptWithOwner(receiptId))
+			BDDMockito.given(receiptReader.getNonAdjustReceiptWithStore(receiptId))
 				.willReturn(Optional.of(receipt));
 			BDDMockito.given(
 					menuReader.getMenuInfo(
@@ -178,7 +178,7 @@ public class OrderServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.MENU_NOT_FOUND);
 
-				verify(receiptReader).getNonAdjustReceiptWithOwner(receiptId);
+				verify(receiptReader).getNonAdjustReceiptWithStore(receiptId);
 				verify(saleValidator).validateSaleOpen(receipt.getSale());
 				verify(menuReader).getMenuInfo(anyLong(), any());
 				verify(receiptCustomerWriter, never()).postReceiptCustomer(userPassport.getUserId(), receiptId);
@@ -200,14 +200,14 @@ public class OrderServiceTest extends ServiceTest {
 			// given
 			Order order = OrderFixture.GENERAL_ORDER();
 
-			BDDMockito.given(orderReader.getOrderWithOwner(orderId))
+			BDDMockito.given(orderReader.getOrderWithStore(orderId))
 				.willReturn(Optional.of(order));
 
 			// when
 			orderService.patchOrderStatus(orderId, userPassport, orderStatus);
 
 			// then
-			verify(orderReader).getOrderWithOwner(orderId);
+			verify(orderReader).getOrderWithStore(orderId);
 			verify(receiptValidator).validateRole(order.getReceipt(), userPassport);
 			verify(orderWriter).patchOrderStatus(BDDMockito.eq(order), BDDMockito.eq(orderStatus), any());
 		}
@@ -215,7 +215,7 @@ public class OrderServiceTest extends ServiceTest {
 		@Test
 		void 주문_조회_실패() {
 			// given
-			BDDMockito.given(orderReader.getOrderWithOwner(orderId))
+			BDDMockito.given(orderReader.getOrderWithStore(orderId))
 				.willReturn(Optional.empty());
 
 			// when, then
@@ -224,7 +224,7 @@ public class OrderServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ORDER_NOT_FOUND);
 
-				verify(orderReader).getOrderWithOwner(orderId);
+				verify(orderReader).getOrderWithStore(orderId);
 				verify(receiptValidator, never()).validateRole(any(), any());
 				verify(orderWriter, never()).patchOrderStatus(any(), any(), any());
 			});

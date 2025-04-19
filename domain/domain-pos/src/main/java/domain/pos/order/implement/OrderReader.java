@@ -18,8 +18,8 @@ public class OrderReader {
 		return orderRepository.getOrder(orderId);
 	}
 
-	public Optional<Order> getOrderWithOwner(Long orderId) {
-		return orderRepository.getOrderWithOwner(orderId);
+	public Optional<Order> getOrderWithStore(Long orderId) {
+		return orderRepository.getOrderWithStore(orderId);
 	}
 
 	public List<Order> getReceiptOrders(Long receiptId) {

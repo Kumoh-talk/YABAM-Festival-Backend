@@ -72,7 +72,7 @@ public class ReceiptService {
 	// TODO : application 계층 one-indexed-parameters 설정 추가
 	// Owner api
 	public Page<Receipt> getReceiptPageBySale(Pageable pageable, UserPassport userPassport, Long saleId) {
-		Sale sale = saleReader.readSaleWithOwner(saleId)
+		Sale sale = saleReader.readSingleSale(saleId)
 			.orElseThrow(() -> {
 				log.warn("Sale 을 찾을 수 없습니다. saleId: {}, userId: {}", saleId, null);
 				return new ServiceException(ErrorCode.NOT_FOUND_SALE);
@@ -85,7 +85,7 @@ public class ReceiptService {
 
 	// Owner api
 	public void adjustReceipt(Long receiptId, UserPassport userPassport) {
-		Receipt receipt = receiptReader.getReceiptWithOwner(receiptId)
+		Receipt receipt = receiptReader.getReceiptWithStore(receiptId)
 			.orElseThrow(() -> {
 				log.warn("Receipt 을 찾을 수 없습니다. receiptId: {}", receiptId);
 				return new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
@@ -102,7 +102,7 @@ public class ReceiptService {
 
 	// Owner api
 	public void deleteReceipt(Long receiptId, UserPassport userPassport) {
-		Receipt receipt = receiptReader.getReceiptWithOwner(receiptId)
+		Receipt receipt = receiptReader.getReceiptWithStore(receiptId)
 			.orElseThrow(() -> {
 				log.warn("Receipt 을 찾을 수 없습니다. receiptId: {}", receiptId);
 				return new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);

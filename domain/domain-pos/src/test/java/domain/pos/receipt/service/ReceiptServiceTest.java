@@ -260,14 +260,14 @@ class ReceiptServiceTest extends ServiceTest {
 			Store savedStore = StoreFixture.GENERAL_OPEN_STORE();
 			Sale savedSale = GENERAL_OPEN_SALE(savedStore);
 
-			BDDMockito.given(saleReader.readSaleWithOwner(saleId))
+			BDDMockito.given(saleReader.readSingleSale(saleId))
 				.willReturn(Optional.of(savedSale));
 
 			// when
 			receiptService.getReceiptPageBySale(pageable, userPassport, saleId);
 
 			// then
-			verify(saleReader).readSaleWithOwner(saleId);
+			verify(saleReader).readSingleSale(saleId);
 			verify(storeValidator).validateStoreOwner(userPassport, savedSale.getStore().getStoreId());
 			verify(receiptReader).getReceiptPageBySale(pageable, saleId);
 		}
@@ -275,7 +275,7 @@ class ReceiptServiceTest extends ServiceTest {
 		@Test
 		void 영업_조회_실패() {
 			// given
-			BDDMockito.given(saleReader.readSaleWithOwner(saleId))
+			BDDMockito.given(saleReader.readSingleSale(saleId))
 				.willReturn(Optional.empty());
 
 			// when -> then
@@ -285,7 +285,7 @@ class ReceiptServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_SALE);
 
-				verify(saleReader).readSaleWithOwner(saleId);
+				verify(saleReader).readSingleSale(saleId);
 				verify(storeValidator, never()).validateStoreOwner(any(), anyLong());
 				verify(receiptReader, never()).getReceiptPageBySale(pageable, saleId);
 			});
@@ -298,7 +298,7 @@ class ReceiptServiceTest extends ServiceTest {
 			Store savedStore = StoreFixture.GENERAL_OPEN_STORE();
 			Sale savedSale = GENERAL_OPEN_SALE(savedStore);
 
-			BDDMockito.given(saleReader.readSaleWithOwner(saleId))
+			BDDMockito.given(saleReader.readSingleSale(saleId))
 				.willReturn(Optional.of(savedSale));
 			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
 				.when(storeValidator).validateStoreOwner(userPassport, savedSale.getStore().getStoreId());
@@ -310,7 +310,7 @@ class ReceiptServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
 
-				verify(saleReader).readSaleWithOwner(saleId);
+				verify(saleReader).readSingleSale(saleId);
 				verify(storeValidator).validateStoreOwner(userPassport, savedSale.getStore().getStoreId());
 				verify(receiptReader, never()).getReceiptPageBySale(pageable, saleId);
 			});
@@ -328,14 +328,14 @@ class ReceiptServiceTest extends ServiceTest {
 			// given
 			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
 
-			BDDMockito.given(receiptReader.getReceiptWithOwner(receiptId))
+			BDDMockito.given(receiptReader.getReceiptWithStore(receiptId))
 				.willReturn(Optional.of(receipt));
 
 			// when
 			receiptService.adjustReceipt(receiptId, userPassport);
 
 			// then
-			verify(receiptReader).getReceiptWithOwner(receiptId);
+			verify(receiptReader).getReceiptWithStore(receiptId);
 			verify(receiptValidator).validateIsOwner(receipt, userPassport);
 			verify(receiptWriter).adjustReceipt(receiptId);
 		}
@@ -343,7 +343,7 @@ class ReceiptServiceTest extends ServiceTest {
 		@Test
 		void 영수증_조회_실패() {
 			// given
-			BDDMockito.given(receiptReader.getReceiptWithOwner(receiptId))
+			BDDMockito.given(receiptReader.getReceiptWithStore(receiptId))
 				.willReturn(Optional.empty());
 
 			// when -> then
@@ -353,7 +353,7 @@ class ReceiptServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
 
-				verify(receiptReader).getReceiptWithOwner(receiptId);
+				verify(receiptReader).getReceiptWithStore(receiptId);
 				verify(receiptValidator, never()).validateIsOwner(any(), any());
 				verify(receiptWriter, never()).adjustReceipt(anyLong());
 			});
@@ -365,7 +365,7 @@ class ReceiptServiceTest extends ServiceTest {
 			userPassport = DIFF_OWNER_PASSPORT();
 			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
 
-			BDDMockito.given(receiptReader.getReceiptWithOwner(receiptId))
+			BDDMockito.given(receiptReader.getReceiptWithStore(receiptId))
 				.willReturn(Optional.of(receipt));
 			doThrow(new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED))
 				.when(receiptValidator).validateIsOwner(receipt, userPassport);
@@ -377,7 +377,7 @@ class ReceiptServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_ACCESS_DENIED);
 
-				verify(receiptReader).getReceiptWithOwner(receiptId);
+				verify(receiptReader).getReceiptWithStore(receiptId);
 				verify(receiptValidator).validateIsOwner(receipt, userPassport);
 				verify(receiptWriter, never()).adjustReceipt(receiptId);
 			});
@@ -388,7 +388,7 @@ class ReceiptServiceTest extends ServiceTest {
 			// given
 			Receipt receipt = GENERAL_ADJUSTMENT_RECEIPT();
 
-			BDDMockito.given(receiptReader.getReceiptWithOwner(receiptId))
+			BDDMockito.given(receiptReader.getReceiptWithStore(receiptId))
 				.willReturn(Optional.of(receipt));
 
 			// when -> then
@@ -398,7 +398,7 @@ class ReceiptServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_ADJUSTMENT_RECEIPT);
 
-				verify(receiptReader).getReceiptWithOwner(receiptId);
+				verify(receiptReader).getReceiptWithStore(receiptId);
 				verify(receiptValidator).validateIsOwner(receipt, userPassport);
 				verify(receiptWriter, never()).adjustReceipt(receiptId);
 			});
@@ -416,14 +416,14 @@ class ReceiptServiceTest extends ServiceTest {
 			// given
 			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
 
-			BDDMockito.given(receiptReader.getReceiptWithOwner(receiptId))
+			BDDMockito.given(receiptReader.getReceiptWithStore(receiptId))
 				.willReturn(Optional.of(receipt));
 
 			// when
 			receiptService.deleteReceipt(receiptId, userPassport);
 
 			// then
-			verify(receiptReader).getReceiptWithOwner(receiptId);
+			verify(receiptReader).getReceiptWithStore(receiptId);
 			verify(receiptValidator).validateIsOwner(receipt, userPassport);
 			verify(receiptWriter).deleteReceipt(receiptId);
 		}
@@ -431,7 +431,7 @@ class ReceiptServiceTest extends ServiceTest {
 		@Test
 		void 영수증_조회_실패() {
 			// given
-			BDDMockito.given(receiptReader.getReceiptWithOwner(receiptId))
+			BDDMockito.given(receiptReader.getReceiptWithStore(receiptId))
 				.willReturn(Optional.empty());
 
 			// when -> then
@@ -441,7 +441,7 @@ class ReceiptServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
 
-				verify(receiptReader).getReceiptWithOwner(receiptId);
+				verify(receiptReader).getReceiptWithStore(receiptId);
 				verify(receiptValidator, never()).validateIsOwner(any(), any());
 				verify(receiptWriter, never()).deleteReceipt(receiptId);
 			});
@@ -453,7 +453,7 @@ class ReceiptServiceTest extends ServiceTest {
 			userPassport = DIFF_OWNER_PASSPORT();
 			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
 
-			BDDMockito.given(receiptReader.getReceiptWithOwner(receiptId))
+			BDDMockito.given(receiptReader.getReceiptWithStore(receiptId))
 				.willReturn(Optional.of(receipt));
 			doThrow(new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED))
 				.when(receiptValidator).validateIsOwner(receipt, userPassport);
@@ -465,7 +465,7 @@ class ReceiptServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_ACCESS_DENIED);
 
-				verify(receiptReader).getReceiptWithOwner(receiptId);
+				verify(receiptReader).getReceiptWithStore(receiptId);
 				verify(receiptValidator).validateIsOwner(any(), any());
 				verify(receiptWriter, never()).deleteReceipt(receiptId);
 			});

@@ -24,12 +24,12 @@ public class ReceiptReader {
 		return receiptRepository.getReceiptInfo(receiptId);
 	}
 
-	public Optional<Receipt> getReceiptWithOwner(Long receiptId) {
-		return receiptRepository.getReceiptWithOwner(receiptId);
+	public Optional<Receipt> getReceiptWithStore(Long receiptId) {
+		return receiptRepository.getReceiptWithStore(receiptId);
 	}
 
-	public Optional<Receipt> getNonAdjustReceiptWithOwner(Long receiptId) {
-		return receiptRepository.getNonAdjustReceiptWithOwner(receiptId);
+	public Optional<Receipt> getNonAdjustReceiptWithStore(Long receiptId) {
+		return receiptRepository.getNonAdjustReceiptWithStore(receiptId);
 	}
 
 	public Page<Receipt> getReceiptPageBySale(Pageable pageable, Long saleId) {
