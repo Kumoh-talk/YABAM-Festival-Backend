@@ -1,5 +1,8 @@
 package com.pos.table.entity;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import com.pos.global.base.entity.BaseEntity;
 import com.pos.store.entity.StoreEntity;
 import com.pos.table.vo.TableNumber;
@@ -22,6 +25,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@SQLDelete(sql = "UPDATE tables SET deleted_at = NOW() where id=?")
+@SQLRestriction(value = "deleted_at is NULL")
 public class TableEntity extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
