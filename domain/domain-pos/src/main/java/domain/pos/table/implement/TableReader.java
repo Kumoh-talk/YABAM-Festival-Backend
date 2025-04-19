@@ -16,11 +16,11 @@ public class TableReader {
 	private final TableRepository tableRepository;
 
 	public Optional<Table> findLockTableById(Long queryTableId) {
-		return tableRepository.findById(queryTableId);
+		return tableRepository.findByIdWithLock(queryTableId);
 	}
 
-	public boolean isExistsTable(Store responStore, Integer queryTableNumber) {
-		return tableRepository.existsTableByStore(responStore, queryTableNumber);
+	public boolean isExistsTable(Store responStore) {
+		return tableRepository.existsTableByStoreWithLock(responStore);
 	}
 
 	public List<Table> findTables(Long storeId) {

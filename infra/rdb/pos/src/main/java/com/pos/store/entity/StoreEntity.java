@@ -14,12 +14,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "stores")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @SQLDelete(sql = "UPDATE stores SET deleted_at = NOW() where id=?")
 @SQLRestriction(value = "deleted_at is NULL")
@@ -60,6 +61,10 @@ public class StoreEntity extends BaseEntity {
 		this.university = university;
 	}
 
+	private StoreEntity(Long storeId) {
+		this.id = storeId;
+	}
+
 	public static StoreEntity of(
 		Long ownerId,
 		boolean isOpen,
@@ -78,6 +83,10 @@ public class StoreEntity extends BaseEntity {
 			headImageUrl,
 			university
 		);
+	}
+
+	public static StoreEntity from(Long storeId) {
+		return new StoreEntity(storeId);
 	}
 
 	public void changeStoreInfo(StoreInfo requestChangeStoreInfo) {
