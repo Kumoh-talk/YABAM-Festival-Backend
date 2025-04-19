@@ -139,14 +139,14 @@ public class OrderServiceTest extends ServiceTest {
 			Receipt receipt = ReceiptFixture.GENERAL_CLOSE_SALE_NON_ADJSTMENT_RECEIPT();
 			BDDMockito.given(receiptReader.getNonAdjustReceiptWithStore(receiptId))
 				.willReturn(Optional.of(receipt));
-			doThrow(new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED))
+			doThrow(new ServiceException(ErrorCode.CLOSE_SALE))
 				.when(saleValidator).validateSaleOpen(receipt.getSale());
 
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(() -> orderService.postOrder(receiptId, userPassport, orderMenus))
 					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_ACCESS_DENIED);
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CLOSE_SALE);
 
 				verify(receiptReader).getNonAdjustReceiptWithStore(receiptId);
 				verify(saleValidator).validateSaleOpen(receipt.getSale());
@@ -238,6 +238,10 @@ public class OrderServiceTest extends ServiceTest {
 
 		@Test
 		void 영수증_별_주문_목록_조회_성공() {
+			// given
+			BDDMockito.given(orderReader.getReceiptOrders(receiptId))
+				.willReturn(List.of(OrderFixture.GENERAL_ORDER()));
+			
 			// when
 			orderService.getReceiptOrders(receiptId);
 
