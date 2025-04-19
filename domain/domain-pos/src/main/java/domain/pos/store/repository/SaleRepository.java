@@ -8,7 +8,7 @@ import domain.pos.store.entity.Store;
 public interface SaleRepository {
 	Sale createSale(Store previousStore);
 
-	Optional<Sale> findSaleBySaleId(Long saleId);
+	Optional<Sale> findSaleWithStoreBySaleId(Long saleId);
 
 	Optional<Sale> findSaleWithOwnerBySaleId(Long saleId);
 
