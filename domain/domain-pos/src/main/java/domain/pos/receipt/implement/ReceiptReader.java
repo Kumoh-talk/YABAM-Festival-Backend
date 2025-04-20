@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import domain.pos.receipt.entity.Receipt;
+import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.receipt.repository.ReceiptRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -15,12 +16,20 @@ import lombok.RequiredArgsConstructor;
 public class ReceiptReader {
 	private final ReceiptRepository receiptRepository;
 
-	public Optional<Receipt> getReceiptWithOwner(Long receiptId) {
-		return receiptRepository.getReceiptWithOwner(receiptId);
+	public boolean existsReceipt(Long receiptId) {
+		return receiptRepository.existsReceipt(receiptId);
 	}
 
-	public Optional<Receipt> getReceiptWithCustomerAndOwner(Long receiptId) {
-		return receiptRepository.getReceiptWithCustomerAndOwner(receiptId);
+	public Optional<ReceiptInfo> getReceiptInfo(Long receiptId) {
+		return receiptRepository.getReceiptInfo(receiptId);
+	}
+
+	public Optional<Receipt> getReceiptWithStore(Long receiptId) {
+		return receiptRepository.getReceiptWithStore(receiptId);
+	}
+
+	public Optional<Receipt> getNonAdjustReceiptWithStore(Long receiptId) {
+		return receiptRepository.getNonAdjustReceiptWithStore(receiptId);
 	}
 
 	public Page<Receipt> getReceiptPageBySale(Pageable pageable, Long saleId) {

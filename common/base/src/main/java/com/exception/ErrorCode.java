@@ -9,6 +9,9 @@ public enum ErrorCode {
 	// Owner
 	NOT_VALID_OWNER(HttpStatus.BAD_REQUEST, "OWNER_0001", "해당 사용자는 가게 점주가 아닙니다"),
 
+	// User
+	USER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "USER_0001", "해당 사용자는 요청한 리소스에 접근할 수 없습니다."),
+
 	// Store
 	NOT_EQUAL_STORE_OWNER(HttpStatus.CONFLICT, "STORE_0001", "해당 가게의 점주가 아닙니다"),
 	NOT_FOUND_STORE(HttpStatus.NOT_FOUND, "STORE_0002", "해당 가게를 찾을 수 없습니다"),
@@ -49,11 +52,13 @@ public enum ErrorCode {
 	TABLE_NOT_EQUAL_MODIFY(HttpStatus.CONFLICT, "TABLE_0006", "테이블 수가 같습니다."),
 	// Sale
 	NOT_FOUND_SALE(HttpStatus.NOT_FOUND, "SALE_0001", "존재하지 않는 세일입니다."),
+	CLOSE_SALE(HttpStatus.CONFLICT, "SALE_0002", "영업이 종료되었습니다."),
 
 	// Receipt
 	RECEIPT_NOT_FOUND(HttpStatus.NOT_FOUND, "RECEIPT_0001", "존재하지 않는 영수증입니다."),
 	ALREADY_ADJUSTMENT_RECEIPT(HttpStatus.CONFLICT, "RECEIPT_0002", "이미 정산된 영수증입니다."),
 	RECEIPT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "RECEIPT_0003", "대상 영수증에 접근 가능한 요청이 아닙니다."),
+
 	// Order
 	ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER_0001", "존재하지 않는 주문입니다."),
 	ORDER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "ORDER_0002", "대상 주문에 접근 가능한 요청이 아닙니다."),
@@ -63,7 +68,10 @@ public enum ErrorCode {
 	ALREADY_COMPLETED_ORDER(HttpStatus.BAD_REQUEST, "ORDER_0006", "이미 완료된 주문입니다."),
 
 	// VoException
-	NOT_VALID_VO(HttpStatus.BAD_REQUEST, "VO_0001", "Vo 객체가 유효하지 않습니다.");
+	NOT_VALID_VO(HttpStatus.BAD_REQUEST, "VO_0001", "Vo 객체가 유효하지 않습니다."),
+
+	// OrderMenu
+	ORDER_MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER_MENU_0001", "존재하지 않는 주문 메뉴입니다.");
 
 	private final HttpStatus status;
 	private final String code;
