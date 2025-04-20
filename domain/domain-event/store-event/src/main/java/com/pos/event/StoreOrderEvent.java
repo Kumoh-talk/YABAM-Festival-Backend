@@ -1,4 +1,4 @@
-package com.event.message;
+package com.pos.event;
 
 import java.time.LocalDateTime;
 import java.util.List;
