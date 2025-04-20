@@ -20,5 +20,5 @@ dependencies {
     implementation project(':domain:domain-event:store-event')
 
     // kafka
-    implementation project(':infra:mq:kafka-pos')
+    runtimeOnly project(':infra:mq:kafka-pos')
 }
