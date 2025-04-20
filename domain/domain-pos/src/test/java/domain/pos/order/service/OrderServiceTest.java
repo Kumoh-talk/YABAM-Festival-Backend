@@ -241,7 +241,6 @@ public class OrderServiceTest extends ServiceTest {
 			// given
 			BDDMockito.given(orderReader.getReceiptOrders(receiptId))
 				.willReturn(List.of(OrderFixture.GENERAL_ORDER()));
-			
 			// when
 			orderService.getReceiptOrders(receiptId);
 
