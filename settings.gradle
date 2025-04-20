@@ -19,4 +19,5 @@ include(":domain:domain-pos")
 
 // infra
 include(":infra:rdb:pos")
+include(":infra:mq:kafka-pos")
 
