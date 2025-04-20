@@ -10,5 +10,5 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
     // domain-event
-    implementation project(':domain:domain-event:store-event')
+    compileOnly project(':domain:domain-event:store-event')
 }
