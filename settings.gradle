@@ -8,6 +8,7 @@ include(':application:config')
 include(':application:discovery')
 include(':application:gateway')
 include(':application:auth')
+include((':application:event'))
 
 // common
 include(":common:discovery-client")
@@ -16,7 +17,8 @@ include(":common:mvc")
 
 // domain
 include(":domain:domain-pos")
-
+include(":domain:domain-event:store-event")
 // infra
 include(":infra:rdb:pos")
+include(":infra:mq:kafka-pos")
 

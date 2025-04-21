@@ -1,0 +1,12 @@
+spring:
+  kafka:
+    bootstrap-servers: 172.24.57.212:9092          # ⇒ 브로커 주소(콤마로 여러 개 가능)
+    # ───── Consumer 공통 ──────
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      group-id: store-order-consumer
+      auto-offset-reset: earliest   # (earliest, latest, none)
+      enable-auto-commit: false     # 수동 커밋 권장
+    listener:
+      ack-mode: manual_immediate    # MANUAL ack 활용 시
