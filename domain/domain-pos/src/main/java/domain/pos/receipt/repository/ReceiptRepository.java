@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 import domain.pos.member.entity.UserPassport;
 import domain.pos.receipt.entity.Receipt;
@@ -21,6 +22,10 @@ public interface ReceiptRepository {
 	Optional<Receipt> getNonAdjustReceiptWithStore(Long receiptId);
 
 	Page<Receipt> getReceiptPageBySale(Pageable pageable, Long saleId);
+
+	Long getNonAdjustReceiptId(Long tableId);
+
+	Slice<Receipt> getCustomerReceiptSlice(Pageable pageable, Long customerId);
 
 	boolean existsReceipt(Long receiptId);
 
