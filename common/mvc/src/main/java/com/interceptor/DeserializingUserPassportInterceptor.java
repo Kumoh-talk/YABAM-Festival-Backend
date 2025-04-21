@@ -1,10 +1,9 @@
-package com.application.global.interceptor;
+package com.interceptor;
 
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -16,7 +15,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Component
 public class DeserializingUserPassportInterceptor implements HandlerInterceptor {
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
@@ -37,6 +35,7 @@ public class DeserializingUserPassportInterceptor implements HandlerInterceptor 
 			} catch (IOException e) {
 				request.setAttribute(USER_INFO_ATTRIBUTE, UserPassport.anonymous());
 			}
+
 		}
 
 		return true;

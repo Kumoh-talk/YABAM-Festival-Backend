@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 
 import domain.pos.receipt.entity.Receipt;
@@ -34,5 +35,13 @@ public class ReceiptReader {
 
 	public Page<Receipt> getReceiptPageBySale(Pageable pageable, Long saleId) {
 		return receiptRepository.getReceiptPageBySale(pageable, saleId);
+	}
+
+	public Long getNonAdjustReceiptId(Long tableId) {
+		return receiptRepository.getNonAdjustReceiptId(tableId);
+	}
+
+	public Slice<Receipt> getCustomerReceiptSlice(Pageable pageable, Long customerId) {
+		return receiptRepository.getCustomerReceiptSlice(pageable, customerId);
 	}
 }

@@ -26,6 +26,7 @@ dependencies {
     implementation(project(':common:discovery-client'))
     // common module
     implementation(project(':common:base'))
+    implementation(project(':common:mvc'))
     // Domain module
     implementation project(":domain:domain-pos")
 

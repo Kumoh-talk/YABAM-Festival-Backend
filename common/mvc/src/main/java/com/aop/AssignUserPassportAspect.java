@@ -1,4 +1,4 @@
-package com.application.global.aop;
+package com.aop;
 
 import java.lang.reflect.Parameter;
 
@@ -6,20 +6,18 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.application.global.interceptor.DeserializingUserPassportInterceptor;
+import com.interceptor.DeserializingUserPassportInterceptor;
 
 import domain.pos.member.entity.UserPassport;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Aspect
-@Component
 public class AssignUserPassportAspect {
 
-	@Around("@annotation(com.application.global.authorization.AssignUserPassport)")
+	@Around("@annotation(com.authorization.AssignUserPassport)")
 	public Object assignUserPassport(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 		ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
 		HttpServletRequest request = attributes.getRequest();

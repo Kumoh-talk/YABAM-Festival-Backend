@@ -2,6 +2,7 @@ package domain.pos.receipt.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,6 +10,7 @@ import com.exception.ErrorCode;
 import com.exception.ServiceException;
 
 import domain.pos.member.entity.UserPassport;
+import domain.pos.member.implement.UserPassportValidator;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.receipt.implement.ReceiptReader;
@@ -29,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ReceiptService {
 	private final ReceiptValidator receiptValidator;
 	private final StoreValidator storeValidator;
+	private final UserPassportValidator userPassportValidator;
 
 	private final SaleReader saleReader;
 	private final TableWriter tableWriter;
@@ -110,4 +113,14 @@ public class ReceiptService {
 		receiptValidator.validateIsOwner(receipt, userPassport);
 		receiptWriter.deleteReceipt(receiptId);
 	}
+
+	public Long getNonAdjustReceiptId(Long tableId) {
+		return receiptReader.getNonAdjustReceiptId(tableId);
+	}
+
+	public Slice<Receipt> getCustomerReceiptSlice(Pageable pageable, UserPassport userPassport, Long customerId) {
+		userPassportValidator.validateUserPassport(userPassport, customerId);
+		return receiptReader.getCustomerReceiptSlice(pageable, customerId);
+	}
+
 }
