@@ -1,10 +1,9 @@
-package com.application.global.interceptor;
+package com.interceptor;
 
-import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.application.global.authorization.HasRole;
+import com.authorization.HasRole;
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
 
@@ -15,7 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Component
 public class AuthorizationInterceptor implements HandlerInterceptor {
 
 	@Override

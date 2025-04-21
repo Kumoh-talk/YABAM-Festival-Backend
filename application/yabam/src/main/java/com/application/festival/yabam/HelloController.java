@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.application.global.authorization.AssignUserPassport;
-import com.application.global.authorization.HasRole;
+import com.authorization.AssignUserPassport;
+import com.authorization.HasRole;
 
 import domain.pos.member.entity.UserPassport;
 import domain.pos.member.entity.UserRole;

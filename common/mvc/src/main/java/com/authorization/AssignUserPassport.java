@@ -1,4 +1,4 @@
-package com.application.global.authorization;
+package com.authorization;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

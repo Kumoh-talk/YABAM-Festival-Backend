@@ -12,6 +12,7 @@ include(':application:auth')
 // common
 include(":common:discovery-client")
 include(":common:base")
+include(":common:mvc")
 
 // domain
 include(":domain:domain-pos")

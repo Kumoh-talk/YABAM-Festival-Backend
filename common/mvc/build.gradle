@@ -1,0 +1,14 @@
+bootJar {
+    enabled = false
+}
+jar {
+    enabled = true
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    compileOnly project(":domain:domain-pos")
+
+    implementation project(":common:base")
+}
