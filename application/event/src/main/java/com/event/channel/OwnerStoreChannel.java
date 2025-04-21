@@ -8,7 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import com.event.message.StoreOrderEvent;
+import com.pos.event.StoreOrderEvent;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class OwnerStoreChannel {
 	private final Map<Long, SseEmitter> emitterMap = new ConcurrentHashMap<>();
-	private static final long TIMEOUT = 60 * 1000;
+	private static final long TIMEOUT = 60 * 1000 * 3;
 	private static final long RECONNECTION_TIMEOUT = 1000L;
 	private static final String EVENT_NAME = "OwnerStoreEvent-";
 

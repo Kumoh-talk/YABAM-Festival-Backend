@@ -5,7 +5,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.event.channel.OwnerStoreChannel;
 import com.event.implement.OwnerStoreValidator;
-import com.event.message.StoreOrderEvent;
+import com.pos.consumer.StoreOrderHandler;
+import com.pos.event.StoreOrderEvent;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class SsePosService {
+public class SsePosService implements StoreOrderHandler {
 	private final OwnerStoreChannel ownerStoreChannel;
 	private final OwnerStoreValidator ownerStoreValidator;
 
@@ -27,4 +28,8 @@ public class SsePosService {
 		ownerStoreChannel.unicast(storeId, storeOrderEvent);
 	}
 
+	@Override
+	public void handleStoreOrder(String key, StoreOrderEvent storeOrderEvent) {
+		ownerStoreChannel.unicast(Long.parseLong(key), storeOrderEvent);
+	}
 }
