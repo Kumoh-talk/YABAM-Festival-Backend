@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.application.presentation.table.api.TableApi;
 import com.application.presentation.table.dto.TableInfoResponse;
 import com.authorization.AssignUserPassport;
 import com.authorization.HasRole;
@@ -21,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-public class TableController {
+public class TableController implements TableApi {
 	private final TableService tableService;
 
 	@PostMapping("/api/v1/table")

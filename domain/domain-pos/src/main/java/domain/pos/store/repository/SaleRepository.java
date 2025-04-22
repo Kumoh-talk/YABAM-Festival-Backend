@@ -2,9 +2,12 @@ package domain.pos.store.repository;
 
 import java.util.Optional;
 
+import org.springframework.stereotype.Repository;
+
 import domain.pos.store.entity.Sale;
 import domain.pos.store.entity.Store;
 
+@Repository
 public interface SaleRepository {
 	Sale createSale(Store previousStore);
 
