@@ -2,10 +2,13 @@ package domain.pos.store.repository;
 
 import java.util.Optional;
 
+import org.springframework.stereotype.Repository;
+
 import domain.pos.member.entity.UserPassport;
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
 
+@Repository
 public interface StoreRepository {
 	Long createStore(UserPassport userPassport, StoreInfo createRequestStoreInfo);
 

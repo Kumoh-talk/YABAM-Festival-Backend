@@ -8,7 +8,8 @@ include(':application:config')
 include(':application:discovery')
 include(':application:gateway')
 include(':application:auth')
-include((':application:event'))
+include((':application:yabam:yabam-core'))
+include((':application:yabam:yabam-event'))
 
 // common
 include(":common:discovery-client")
