@@ -1,4 +1,4 @@
-package com.pos.config;
+package com.pos.consumer.store.order.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
