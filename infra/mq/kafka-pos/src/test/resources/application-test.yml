@@ -1,0 +1,6 @@
+kafka:
+  store:
+    order:
+      topic: store-order
+      group-id: store-order-consumer
+      bootstrap-servers: localhost:9092
