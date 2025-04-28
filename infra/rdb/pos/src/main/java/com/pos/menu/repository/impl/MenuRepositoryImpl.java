@@ -1,0 +1,114 @@
+package com.pos.menu.repository.impl;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.pos.menu.entity.MenuEntity;
+import com.pos.menu.mapper.MenuCategoryMapper;
+import com.pos.menu.mapper.MenuMapper;
+import com.pos.menu.repository.jpa.MenuJpaRepository;
+
+import domain.pos.menu.entity.Menu;
+import domain.pos.menu.entity.MenuCategory;
+import domain.pos.menu.entity.MenuCategoryInfo;
+import domain.pos.menu.entity.MenuInfo;
+import domain.pos.menu.repository.MenuRepository;
+import domain.pos.store.entity.Store;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import lombok.RequiredArgsConstructor;
+
+@Repository
+@RequiredArgsConstructor
+public class MenuRepositoryImpl implements MenuRepository {
+	private final MenuJpaRepository menuJpaRepository;
+
+	@PersistenceContext
+	private EntityManager entityManager;
+
+	private final Integer TEMPORARY_ORDER = -1;
+
+	@Override
+	@Transactional
+	public Menu postMenu(Store store, MenuCategoryInfo menuCategoryInfo, MenuInfo menuInfo) {
+		MenuEntity menuEntity = MenuMapper.toMenuEntity(menuInfo, store, menuCategoryInfo);
+		menuJpaRepository.save(menuEntity);
+		return MenuMapper.toMenu(menuEntity, store, MenuCategory.fromWithoutStore(menuCategoryInfo));
+	}
+
+	@Override
+	public Optional<MenuInfo> getMenuInfo(Long storeId, Long menuId) {
+		return menuJpaRepository.findByIdAndStoreId(menuId, storeId)
+			.map(MenuMapper::toMenuInfo);
+	}
+
+	@Override
+	public List<Menu> getAllByStoreIdWithCategoryAndLock(Long storeId) {
+		return menuJpaRepository.findAllByStoreIdWithCategoryAndLock(storeId)
+			.stream()
+			.map(menuEntity -> MenuMapper.toMenu(menuEntity, null,
+				MenuCategoryMapper.toMenuCategory(menuEntity.getMenuCategory(), null)))
+			.collect(Collectors.toList());
+	}
+
+	@Override
+	public Slice<MenuInfo> getMenuSlice(Pageable pageable, MenuInfo lastMenuInfo, Long menuCategoryId) {
+		return menuJpaRepository.findSliceByMenuCategoryId(
+			pageable,
+			lastMenuInfo == null ? null : lastMenuInfo.getOrder(),
+			menuCategoryId
+		).map(MenuMapper::toMenuInfo);
+	}
+
+	@Override
+	public boolean existsMenuOrder(Long menuCategoryId, Integer menuOrder) {
+		return menuJpaRepository.existsMenuOrder(menuCategoryId, menuOrder);
+	}
+
+	@Override
+	public MenuInfo patchMenu(MenuInfo patchMenuInfo) {
+		MenuEntity menuEntity = menuJpaRepository.findById(patchMenuInfo.getId()).get();
+		menuEntity.updateWithoutOrder(patchMenuInfo);
+		return MenuMapper.toMenuInfo(menuEntity);
+	}
+
+	@Override
+	public MenuInfo patchMenuOrder(Menu menu, Integer patchOrder) {
+		if (menu.getMenuInfo().getOrder().equals(patchOrder)) {
+			return menu.getMenuInfo();
+		}
+		MenuEntity menuEntity = menuJpaRepository.findById(menu.getMenuInfo().getId()).get();
+		menuEntity.updateOrder(TEMPORARY_ORDER);
+		entityManager.flush();
+
+		if (menu.getMenuInfo().getOrder().compareTo(patchOrder) < 0) {
+			menuJpaRepository.decreaseOrderInRange(menu.getMenuCategory().getMenuCategoryInfo().getId(),
+				menu.getMenuInfo().getOrder(),
+				patchOrder);
+		} else {
+			menuJpaRepository.increaseOrderInRange(menu.getMenuCategory().getMenuCategoryInfo().getId(),
+				patchOrder,
+				menu.getMenuInfo().getOrder());
+		}
+		menuEntity.updateOrder(patchOrder);
+		return MenuMapper.toMenuInfo(menuEntity);
+	}
+
+	@Override
+	public void deleteMenu(Menu menu) {
+		MenuEntity menuEntity = menuJpaRepository.findById(menu.getMenuInfo().getId()).get();
+		Integer periodOrder = menuEntity.getOrder();
+		menuEntity.updateOrder(null);
+		entityManager.flush();
+
+		menuJpaRepository.delete(menuEntity);
+		menuJpaRepository.decreaseOrderWhereGT(menu.getMenuCategory().getMenuCategoryInfo().getId(),
+			periodOrder);
+	}
+}

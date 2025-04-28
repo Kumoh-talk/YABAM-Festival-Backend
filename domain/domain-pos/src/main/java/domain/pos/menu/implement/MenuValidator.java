@@ -20,7 +20,7 @@ public class MenuValidator {
 	}
 
 	public void validateMenuOrder(Long menuCategoryId, MenuInfo menuInfo) {
-		if (menuReader.existsMenuOrder(menuCategoryId, menuInfo.getMenuOrder())) {
+		if (menuReader.existsMenuOrder(menuCategoryId, menuInfo.getOrder())) {
 			throw new ServiceException(ErrorCode.EXIST_MENU_ORDER);
 		}
 	}

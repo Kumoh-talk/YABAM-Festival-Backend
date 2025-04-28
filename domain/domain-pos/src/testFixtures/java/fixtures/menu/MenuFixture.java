@@ -12,18 +12,10 @@ public class MenuFixture {
 	public static final MenuCategory GENERAL_MENU_CATEGORY = MenuCategoryFixture.GENERAL_MENU_CATEGORY();
 
 	public static Menu GENERAL_MENU() {
-		return Menu.builder()
-			.menuInfo(GENERAL_MENU_INFO)
-			.store(GENERAL_STORE)
-			.menuCategory(GENERAL_MENU_CATEGORY)
-			.build();
+		return Menu.of(GENERAL_MENU_INFO, GENERAL_STORE, GENERAL_MENU_CATEGORY);
 	}
 
 	public static Menu CUSTOM_MENU(MenuInfo menuInfo, Store store, MenuCategory menuCategory) {
-		return Menu.builder()
-			.menuInfo(menuInfo)
-			.store(store)
-			.menuCategory(menuCategory)
-			.build();
+		return Menu.of(menuInfo, store, menuCategory);
 	}
 }
