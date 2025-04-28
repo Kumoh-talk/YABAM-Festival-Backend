@@ -88,6 +88,16 @@ public class MenuService {
 	}
 
 	@Transactional
+	public MenuInfo patchIsSoldOut(Long storeId, UserPassport userPassport, Long menuId,
+		Boolean isSoldOut) {
+		storeValidator.validateStoreOwner(userPassport, storeId);
+		MenuInfo menuInfo = menuReader.getMenuInfo(storeId, menuId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
+		menuInfo.updateSoldOut(isSoldOut);
+		return menuWriter.patchMenu(menuInfo);
+	}
+
+	@Transactional
 	public void deleteMenu(Long storeId, UserPassport userPassport, Long menuId) {
 		Store store = storeValidator.validateStoreOwner(userPassport, storeId);
 		validateStoreOpen(store);

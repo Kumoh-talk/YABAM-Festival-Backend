@@ -26,4 +26,8 @@ public class MenuInfo {
 		this.isSoldOut = isSoldOut;
 		this.isRecommended = isRecommended;
 	}
+
+	public void updateSoldOut(boolean isSoldOut) {
+		this.isSoldOut = isSoldOut;
+	}
 }
