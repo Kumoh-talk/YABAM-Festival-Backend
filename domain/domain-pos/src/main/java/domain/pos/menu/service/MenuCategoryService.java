@@ -54,6 +54,7 @@ public class MenuCategoryService {
 		return menuCategoryWriter.patchMenuCategory(patchMenuCategoryInfo);
 	}
 
+	// TODO : 컨트롤러에서 patchOrder not null 및 양수체크
 	@Transactional
 	public MenuCategoryInfo patchMenuCategoryOrder(Long storeId, UserPassport userPassport, Long menuCategoryId,
 		Integer patchOrder) {

@@ -76,6 +76,7 @@ public class MenuService {
 		return menuWriter.patchMenu(patchMenuInfo);
 	}
 
+	// TODO : 컨트롤러에서 patchOrder not null 및 양수체크
 	@Transactional
 	public MenuInfo patchMenuOrder(Long storeId, UserPassport userPassport, Long menuId,
 		Integer patchOrder) {
