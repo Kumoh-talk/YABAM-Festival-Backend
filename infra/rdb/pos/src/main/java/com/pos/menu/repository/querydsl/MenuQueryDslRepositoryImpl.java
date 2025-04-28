@@ -1,0 +1,105 @@
+package com.pos.menu.repository.querydsl;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
+
+import com.pos.menu.entity.MenuEntity;
+import com.pos.menu.entity.QMenuEntity;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+
+import jakarta.persistence.LockModeType;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+public class MenuQueryDslRepositoryImpl implements MenuQueryDslRepository {
+	private final JPAQueryFactory jpaQueryFactory;
+	private final QMenuEntity qMenuEntity = QMenuEntity.menuEntity;
+
+	@Override
+	public Optional<MenuEntity> findByIdAndStoreId(Long menuId, Long storeId) {
+		MenuEntity menuEntity = jpaQueryFactory
+			.selectFrom(qMenuEntity)
+			.where(qMenuEntity.id.eq(menuId)
+				.and(qMenuEntity.store.id.eq(storeId)))
+			.fetchOne();
+
+		return Optional.ofNullable(menuEntity);
+	}
+
+	@Override
+	public List<MenuEntity> findAllByStoreIdWithCategoryAndLock(Long storeId) {
+		return jpaQueryFactory
+			.selectFrom(qMenuEntity)
+			.join(qMenuEntity.menuCategory).fetchJoin()
+			.where(qMenuEntity.store.id.eq(storeId))
+			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
+			.fetch();
+
+	}
+
+	@Override
+	public Slice<MenuEntity> findSliceByMenuCategoryId(Pageable pageable, Integer lastMenuOrder, Long menuCategoryId) {
+		List<MenuEntity> content = jpaQueryFactory
+			.selectFrom(qMenuEntity)
+			.where(qMenuEntity.menuCategory.id.eq(menuCategoryId)
+				.and(lastMenuOrder == null ? Expressions.TRUE : qMenuEntity.order.gt(lastMenuOrder))
+			)
+			.orderBy(qMenuEntity.order.asc())
+			.limit(pageable.getPageSize() + 1)
+			.fetch();
+
+		boolean hasNext = content.size() > pageable.getPageSize();
+		if (hasNext) {
+			content.remove(pageable.getPageSize());
+		}
+
+		return new SliceImpl<>(content, pageable, hasNext);
+	}
+
+	@Override
+	public boolean existsMenuOrder(Long menuCategoryId, int menuOrder) {
+		return jpaQueryFactory
+			.selectOne()
+			.from(qMenuEntity)
+			.where(qMenuEntity.menuCategory.id.eq(menuCategoryId)
+				.and(qMenuEntity.order.eq(menuOrder)))
+			.fetchFirst() != null;
+	}
+
+	@Override
+	public void decreaseOrderInRange(Long menuCategoryId, Integer startOrder, Integer endOrder) {
+		jpaQueryFactory
+			.update(qMenuEntity)
+			.set(qMenuEntity.order, qMenuEntity.order.subtract(1))
+			.where(qMenuEntity.menuCategory.id.eq(menuCategoryId)
+				.and(qMenuEntity.order.gt(startOrder))
+				.and(qMenuEntity.order.loe(endOrder)))
+			.execute();
+	}
+
+	@Override
+	public void increaseOrderInRange(Long menuCategoryId, Integer startOrder, Integer endOrder) {
+		jpaQueryFactory
+			.update(qMenuEntity)
+			.set(qMenuEntity.order, qMenuEntity.order.add(1))
+			.where(qMenuEntity.menuCategory.id.eq(menuCategoryId)
+				.and(qMenuEntity.order.goe(startOrder))
+				.and(qMenuEntity.order.lt(endOrder)))
+			.execute();
+	}
+
+	@Override
+	public void decreaseOrderWhereGT(Long menuCategoryId, Integer deleteOrder) {
+		jpaQueryFactory
+			.update(qMenuEntity)
+			.set(qMenuEntity.order, qMenuEntity.order.subtract(1))
+			.where(qMenuEntity.menuCategory.id.eq(menuCategoryId)
+				.and(qMenuEntity.order.gt(deleteOrder)))
+			.execute();
+	}
+}

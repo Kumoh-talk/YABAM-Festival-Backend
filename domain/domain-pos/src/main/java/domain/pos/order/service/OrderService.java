@@ -43,7 +43,7 @@ public class OrderService {
 
 		Long storeId = receipt.getSale().getStore().getStoreId();
 		for (OrderMenu orderMenu : orderMenus) {
-			menuReader.getMenuInfo(storeId, orderMenu.getMenu().getMenuInfo().getMenuId())
+			menuReader.getMenuInfo(storeId, orderMenu.getMenu().getMenuInfo().getId())
 				.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
 		}
 

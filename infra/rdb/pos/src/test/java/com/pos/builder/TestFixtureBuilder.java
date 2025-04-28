@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.pos.menu.entity.MenuCategoryEntity;
+import com.pos.menu.entity.MenuEntity;
 import com.pos.sale.entity.SaleEntity;
 import com.pos.store.entity.StoreEntity;
 import com.pos.table.entity.TableEntity;
@@ -24,5 +26,17 @@ public class TestFixtureBuilder {
 
 	public SaleEntity buildSaleEntity(SaleEntity saleEntity) {
 		return bs.getSaleJpaRepository().save(saleEntity);
+	}
+
+	public MenuEntity buildMenuEntity(MenuEntity menuEntity) {
+		return bs.getMenuJpaRepository().save(menuEntity);
+	}
+
+	public List<MenuEntity> buildMenuEntityList(List<MenuEntity> menuEntityList) {
+		return bs.getMenuJpaRepository().saveAll(menuEntityList);
+	}
+
+	public MenuCategoryEntity buildMenuCategoryEntity(MenuCategoryEntity menuCategoryEntity) {
+		return bs.getMenuCategoryJpaRepository().save(menuCategoryEntity);
 	}
 }

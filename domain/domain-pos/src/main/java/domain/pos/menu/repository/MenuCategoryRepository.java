@@ -5,25 +5,25 @@ import java.util.Optional;
 
 import domain.pos.menu.entity.MenuCategory;
 import domain.pos.menu.entity.MenuCategoryInfo;
+import domain.pos.store.entity.Store;
 
 public interface MenuCategoryRepository {
-	MenuCategory postMenuCategory(Long storeId, MenuCategoryInfo menuCategoryInfo);
+	MenuCategory postMenuCategory(Store store, MenuCategoryInfo menuCategoryInfo);
 
-	Optional<MenuCategory> getMenuCategory(Long storeId, Long categoryId);
+	Optional<MenuCategoryInfo> getMenuCategoryInfo(Long storeId, Long categoryId);
 
-	List<MenuCategory> getMenuCategoryList(Long storeId);
+	List<MenuCategoryInfo> getAllByStoreIdWithLock(Long storeId);
+
+	List<MenuCategoryInfo> getMenuCategoryInfoList(Long storeId);
 
 	boolean existsMenuCategory(Long storeId, Long menuCategoryId);
 
 	boolean existsMenuCategoryOrder(Long storeId, int menuCategoryOrder);
 
-	// TODO : Native Update(카테고리 명) + patch 할 때, order는 수정하지 않도록 구현
-	MenuCategoryInfo patchMenuCategory(MenuCategoryInfo menuCategoryInfo);
+	MenuCategoryInfo patchMenuCategory(MenuCategoryInfo patchMenuCategoryInfo);
 
-	// TODO : Native Update(순서) Infra 계층 구현 시 동일 가게 내에 지정 order 이상인 메뉴들은 ++order 하도록 구현
-	MenuCategoryInfo patchMenuCategoryOrder(Long storeId, MenuCategoryInfo menuCategoryInfo);
+	MenuCategoryInfo patchMenuCategoryOrder(Long storeId, MenuCategoryInfo menuCategoryInfo, Integer patchOrder);
 
-	// TODO : Infra 계층 구현 시 동일 가게 내에 삭제 메뉴 카테고리 order 초과인 메뉴들은 --order 하도록 구현
-	void deleteMenuCategory(Long categoryId);
+	void deleteMenuCategory(Long storeId, Long categoryId);
 
 }

@@ -33,7 +33,7 @@ public class OrderMenuService {
 			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_NOT_FOUND));
 		receiptValidator.validateIsOwner(order.getReceipt(), userPassport);
 		menuReader.getMenuInfo(order.getReceipt().getSale().getStore().getStoreId(),
-				orderMenu.getMenu().getMenuInfo().getMenuId())
+				orderMenu.getMenu().getMenuInfo().getId())
 			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
 		return orderMenuWriter.postOrderMenu(orderId, orderMenu);
 	}
