@@ -1,5 +1,6 @@
 package com.pos.table.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,8 +52,12 @@ public class TableRepositoryImpl implements TableRepository {
 	}
 
 	@Override
-	public void updateTableNum(Store store, Integer queryUpdateTableNumber) {
+	public List<Table> updateTableNum(Store store, Integer queryUpdateTableNumber) {
 		List<TableEntity> tableEntities = tableJpaRepository.findTablesByStoreWithLock(store);
+		List<Table> tableList = new ArrayList<>();
+		tableEntities.stream()
+			.map(tableEntity -> TableMapper.toTable(tableEntity, store))
+			.forEach(tableList::add);
 		if (tableEntities.size() == 0) {
 			throw new ServiceException(ErrorCode.TABLE_NOT_FOUND);
 		}
@@ -61,10 +66,17 @@ public class TableRepositoryImpl implements TableRepository {
 		}
 		if (tableEntities.size() > queryUpdateTableNumber) {
 			tableJpaRepository.softDeleteTablesGTQueryTableCount(store, queryUpdateTableNumber);
+			return tableList.stream()
+				.filter(tableEntity -> tableEntity.getTableNumber() <= queryUpdateTableNumber)
+				.toList();
 		} else {
 			List<TableEntity> addedTableEntities = TableMapper.toTableEntities(store, tableEntities.size(),
 				queryUpdateTableNumber);
 			tableJpaRepository.saveAll(addedTableEntities);
+			addedTableEntities.stream()
+				.map(tableEntity -> TableMapper.toTable(tableEntity, store.getStoreId()))
+				.forEach(tableList::add);
+			return tableList;
 		}
 	}
 

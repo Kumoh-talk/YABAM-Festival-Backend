@@ -40,12 +40,13 @@ public class TableController implements TableApi {
 	@PatchMapping("/api/v1/table")
 	@HasRole(userRole = ROLE_OWNER)
 	@AssignUserPassport
-	public ResponseEntity<ResponseBody<Void>> updateTableNum(
+	public ResponseEntity<ResponseBody<TableInfoResponse>> updateTableNum(
 		final UserPassport userPassport,
-		@RequestParam Long tableId,
+		@RequestParam Long storeId,
 		@RequestParam Integer tableNumber) {
-		tableService.updateTableNum(userPassport, tableId, tableNumber);
-		return ResponseEntity.ok(createSuccessResponse());
+		return ResponseEntity.ok(
+			createSuccessResponse(
+				TableInfoResponse.from(tableService.updateTableNum(userPassport, storeId, tableNumber))));
 	}
 
 	@GetMapping("/api/v1/table")

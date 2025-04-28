@@ -113,7 +113,7 @@ class TableRepositoryImplTest extends RepositoryTest {
 
 			// when
 			System.out.println("===TableRepositoryImplTest.성공_테이블수보다_더많게_변경할수있다 쿼리===");
-			tableRepository.updateTableNum(savedStore, newCount);
+			List<Table> modifiedTables = tableRepository.updateTableNum(savedStore, newCount);
 			testEntityManager.flush();
 			testEntityManager.clear();
 			System.out.println("===TableRepositoryImplTest.성공_테이블수보다_더많게_변경할수있다 쿼리===");
@@ -122,9 +122,11 @@ class TableRepositoryImplTest extends RepositoryTest {
 			assertSoftly(softly -> {
 				List<Table> tables = tableRepository.findTablesByStoreId(savedStore.getStoreId());
 				softly.assertThat(tables).hasSize(newCount);
+				softly.assertThat(modifiedTables).hasSize(newCount);
 				for (int i = 0; i < newCount; i++) {
 					softly.assertThat(tables.get(i).getTableNumber()).isEqualTo(i + 1);
 					softly.assertThat(tables.get(i).getIsActive()).isFalse();
+					softly.assertThat(modifiedTables.get(i).getTableNumber()).isEqualTo(i + 1);
 				}
 			});
 		}
@@ -140,7 +142,7 @@ class TableRepositoryImplTest extends RepositoryTest {
 
 			// when
 			System.out.println("===TableRepositoryImplTest.성공_테이블수보다_적게_변경할수있다 쿼리===");
-			tableRepository.updateTableNum(savedStore, newCount);
+			List<Table> modifiedTables = tableRepository.updateTableNum(savedStore, newCount);
 			testEntityManager.flush();
 			testEntityManager.clear();
 			System.out.println("===TableRepositoryImplTest.성공_테이블수보다_적게_변경할수있다 쿼리===");
@@ -149,9 +151,12 @@ class TableRepositoryImplTest extends RepositoryTest {
 			assertSoftly(softly -> {
 				List<Table> tables = tableRepository.findTablesByStoreId(savedStore.getStoreId());
 				softly.assertThat(tables).hasSize(newCount);
+				softly.assertThat(modifiedTables).hasSize(newCount);
 				for (int i = 0; i < newCount; i++) {
 					softly.assertThat(tables.get(i).getTableNumber()).isEqualTo(i + 1);
 					softly.assertThat(tables.get(i).getIsActive()).isFalse();
+					softly.assertThat(modifiedTables.get(i).getIsActive()).isFalse();
+					softly.assertThat(modifiedTables.get(i).getTableNumber()).isEqualTo(i + 1);
 				}
 			});
 		}

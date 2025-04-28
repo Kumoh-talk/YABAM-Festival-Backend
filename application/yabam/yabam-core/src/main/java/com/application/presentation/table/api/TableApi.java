@@ -56,9 +56,9 @@ public interface TableApi {
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.TABLE_NOT_EQUAL_MODIFY),
 		}
 	)
-	ResponseEntity<ResponseBody<Void>> updateTableNum(
+	ResponseEntity<ResponseBody<TableInfoResponse>> updateTableNum(
 		@Parameter(hidden = true) final UserPassport userPassport,
-		@Schema(description = "가게 고유 ID", example = "1") @RequestParam Long tableId,
+		@Schema(description = "가게 고유 ID", example = "1") @RequestParam Long storeId,
 		@Schema(description = "테이블 수", example = "10") @RequestParam Integer tableNumber);
 
 	@Operation(
