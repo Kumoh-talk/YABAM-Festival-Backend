@@ -23,7 +23,7 @@ public class TableWriter {
 		return tableRepository.createTablesAll(responStore, queryTableNumber);
 	}
 
-	public void modifyTableNum(Store store, Integer queryUpdateTableNumber) {
-		tableRepository.updateTableNum(store, queryUpdateTableNumber);
+	public List<Table> modifyTableNum(Store store, Integer queryUpdateTableNumber) {
+		return tableRepository.updateTableNum(store, queryUpdateTableNumber);
 	}
 }

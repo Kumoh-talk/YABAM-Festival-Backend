@@ -42,7 +42,7 @@ public class TableService {
 		return createdTable;
 	}
 
-	public void updateTableNum(UserPassport ownerPassport, Long queryStoreId,
+	public List<Table> updateTableNum(UserPassport ownerPassport, Long queryStoreId,
 		Integer queryUpdateTableNumber) {
 		final Store store = storeValidator.validateStoreOwner(ownerPassport, queryStoreId);
 
@@ -51,7 +51,7 @@ public class TableService {
 			throw new ServiceException(ErrorCode.STORE_IS_OPEN_TABLE_WRITE);
 		}
 
-		tableWriter.modifyTableNum(store, queryUpdateTableNumber);
+		return tableWriter.modifyTableNum(store, queryUpdateTableNumber);
 	}
 
 	public List<Table> findTables(Long queryStoreId) {
