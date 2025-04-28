@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import domain.pos.menu.entity.MenuCategory;
+import domain.pos.menu.entity.MenuCategoryInfo;
 import domain.pos.menu.repository.MenuCategoryRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -14,12 +14,19 @@ import lombok.RequiredArgsConstructor;
 public class MenuCategoryReader {
 	private final MenuCategoryRepository menuCategoryRepository;
 
-	public Optional<MenuCategory> getMenuCategory(Long storeId, Long categoryId) {
-		return menuCategoryRepository.getMenuCategory(storeId, categoryId);
+	public Optional<MenuCategoryInfo> getMenuCategoryInfo(Long storeId, Long categoryId) {
+		return menuCategoryRepository.getMenuCategoryInfo(storeId, categoryId);
 	}
 
-	public List<MenuCategory> getMenuCategoryList(Long storeId) {
-		return menuCategoryRepository.getMenuCategoryList(storeId);
+	public Optional<MenuCategoryInfo> getMenuCategoryInfoWithStoreLock(Long storeId, Long categoryId) {
+		List<MenuCategoryInfo> menuCategoryInfos = menuCategoryRepository.getAllByStoreIdWithLock(storeId);
+		return menuCategoryInfos.stream()
+			.filter(menuCategoryInfo -> menuCategoryInfo.getId().equals(categoryId))
+			.findFirst();
+	}
+
+	public List<MenuCategoryInfo> getMenuCategoryInfoList(Long storeId) {
+		return menuCategoryRepository.getMenuCategoryInfoList(storeId);
 	}
 
 	public boolean existsMenuCategory(Long storeId, Long menuCategoryId) {

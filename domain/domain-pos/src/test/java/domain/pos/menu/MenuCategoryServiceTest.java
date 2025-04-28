@@ -2,8 +2,8 @@ package domain.pos.menu;
 
 import static fixtures.member.UserFixture.*;
 import static fixtures.menu.MenuCategoryFixture.*;
-import static fixtures.menu.MenuCategoryInfoFixture.*;
 import static fixtures.menu.MenuCategoryInfoFixture.GENERAL_MENU_CATEGORY_INFO;
+import static fixtures.menu.MenuCategoryInfoFixture.*;
 import static fixtures.store.StoreFixture.*;
 import static org.assertj.core.api.SoftAssertions.*;
 import static org.mockito.Mockito.*;
@@ -31,6 +31,7 @@ import domain.pos.menu.implement.MenuCategoryWriter;
 import domain.pos.menu.service.MenuCategoryService;
 import domain.pos.store.implement.StoreReader;
 import domain.pos.store.implement.StoreValidator;
+import fixtures.menu.MenuCategoryFixture;
 
 public class MenuCategoryServiceTest extends ServiceTest {
 	@Mock
@@ -49,7 +50,7 @@ public class MenuCategoryServiceTest extends ServiceTest {
 	@Nested
 	@DisplayName("메뉴 카테고리 생성")
 	class postMenuCategory {
-		private final Long storeId = 1L;
+		private final Long storeId = MenuCategoryFixture.GENERAL_STORE.getStoreId();
 		private final UserPassport userPassport = OWNER_USER_PASSPORT();
 		private final MenuCategoryInfo menuCategoryInfo = GENERAL_MENU_CATEGORY_INFO();
 
@@ -58,7 +59,9 @@ public class MenuCategoryServiceTest extends ServiceTest {
 			// given
 			MenuCategory menuCategory = GENERAL_MENU_CATEGORY();
 
-			BDDMockito.given(menuCategoryWriter.postMenuCategory(storeId, menuCategoryInfo))
+			BDDMockito.given(storeValidator.validateStoreOwner(userPassport, storeId))
+				.willReturn(GENERAL_STORE);
+			BDDMockito.given(menuCategoryWriter.postMenuCategory(GENERAL_STORE, menuCategoryInfo))
 				.willReturn(menuCategory);
 
 			// when
@@ -69,10 +72,17 @@ public class MenuCategoryServiceTest extends ServiceTest {
 			assertSoftly(softly -> {
 				MenuCategoryInfo serviceMenuCategoryInfo = serviceMenuCategory.getMenuCategoryInfo();
 
-				softly.assertThat(serviceMenuCategoryInfo.getMenuCategoryId()).isEqualTo(GENERAL_MENU_CATEGORY_ID);
-				softly.assertThat(serviceMenuCategoryInfo.getMenuCategoryName()).isEqualTo(GENERAL_MENU_CATEGORY_NAME);
-				softly.assertThat(serviceMenuCategoryInfo.getMenuCategoryOrder())
+				softly.assertThat(serviceMenuCategoryInfo.getId()).isEqualTo(GENERAL_MENU_CATEGORY_ID);
+				softly.assertThat(serviceMenuCategoryInfo.getName()).isEqualTo(GENERAL_MENU_CATEGORY_NAME);
+				softly.assertThat(serviceMenuCategoryInfo.getOrder())
 					.isEqualTo(GENERAL_MENU_CATEGORY_ORDER);
+
+				verify(storeValidator)
+					.validateStoreOwner(userPassport, storeId);
+				verify(menuCategoryValidator)
+					.validateMenuCategoryOrder(storeId, menuCategoryInfo);
+				verify(menuCategoryWriter)
+					.postMenuCategory(GENERAL_STORE, menuCategoryInfo);
 			});
 		}
 
@@ -92,9 +102,9 @@ public class MenuCategoryServiceTest extends ServiceTest {
 				verify(storeValidator)
 					.validateStoreOwner(userPassport, storeId);
 				verify(menuCategoryValidator, never())
-					.validateMenuCategoryOrder(storeId, menuCategoryInfo);
+					.validateMenuCategoryOrder(anyLong(), any());
 				verify(menuCategoryWriter, never())
-					.postMenuCategory(storeId, menuCategoryInfo);
+					.postMenuCategory(any(), any());
 			});
 		}
 
@@ -114,15 +124,17 @@ public class MenuCategoryServiceTest extends ServiceTest {
 				verify(storeValidator)
 					.validateStoreOwner(userPassport, storeId);
 				verify(menuCategoryValidator, never())
-					.validateMenuCategoryOrder(storeId, menuCategoryInfo);
+					.validateMenuCategoryOrder(anyLong(), any());
 				verify(menuCategoryWriter, never())
-					.postMenuCategory(storeId, menuCategoryInfo);
+					.postMenuCategory(any(), any());
 			});
 		}
 
 		@Test
 		void 중복된_메뉴_순서_실패() {
 			// given
+			BDDMockito.given(storeValidator.validateStoreOwner(userPassport, storeId))
+				.willReturn(GENERAL_STORE);
 			doThrow(new ServiceException(ErrorCode.EXIST_MENU_CATEGORY_ORDER))
 				.when(menuCategoryValidator)
 				.validateMenuCategoryOrder(storeId, menuCategoryInfo);
@@ -138,7 +150,7 @@ public class MenuCategoryServiceTest extends ServiceTest {
 				verify(menuCategoryValidator)
 					.validateMenuCategoryOrder(storeId, menuCategoryInfo);
 				verify(menuCategoryWriter, never())
-					.postMenuCategory(storeId, menuCategoryInfo);
+					.postMenuCategory(any(), any());
 			});
 		}
 	}
@@ -151,24 +163,28 @@ public class MenuCategoryServiceTest extends ServiceTest {
 		@Test
 		void 메뉴_카테고리_리스트_조회_성공() {
 			// given
-			MenuCategory menuCategory = GENERAL_MENU_CATEGORY();
+			MenuCategoryInfo menuCategoryInfo = GENERAL_MENU_CATEGORY_INFO();
 
 			BDDMockito.given(storeReader.readSingleStore(storeId))
 				.willReturn(Optional.of(CUSTOM_STORE(storeId, null, null)));
-			BDDMockito.given(menuCategoryReader.getMenuCategoryList(storeId))
-				.willReturn(List.of(menuCategory));
+			BDDMockito.given(menuCategoryReader.getMenuCategoryInfoList(storeId))
+				.willReturn(List.of(menuCategoryInfo));
 
 			// when
-			List<MenuCategory> menuCategoryList = menuCategoryService.getMenuCategoryList(storeId);
+			List<MenuCategoryInfo> menuCategoryInfos = menuCategoryService.getMenuCategoryList(storeId);
 
 			// then
 			assertSoftly(softly -> {
-				MenuCategoryInfo serviceMenuCategoryInfo = menuCategoryList.get(0).getMenuCategoryInfo();
+				MenuCategoryInfo serviceMenuCategoryInfo = menuCategoryInfos.get(0);
 
-				softly.assertThat(serviceMenuCategoryInfo.getMenuCategoryId()).isEqualTo(GENERAL_MENU_CATEGORY_ID);
-				softly.assertThat(serviceMenuCategoryInfo.getMenuCategoryName()).isEqualTo(GENERAL_MENU_CATEGORY_NAME);
-				softly.assertThat(serviceMenuCategoryInfo.getMenuCategoryOrder())
+				softly.assertThat(serviceMenuCategoryInfo.getId()).isEqualTo(GENERAL_MENU_CATEGORY_ID);
+				softly.assertThat(serviceMenuCategoryInfo.getName()).isEqualTo(GENERAL_MENU_CATEGORY_NAME);
+				softly.assertThat(serviceMenuCategoryInfo.getOrder())
 					.isEqualTo(GENERAL_MENU_CATEGORY_ORDER);
+				verify(storeReader)
+					.readSingleStore(storeId);
+				verify(menuCategoryReader)
+					.getMenuCategoryInfoList(storeId);
 			});
 		}
 
@@ -186,7 +202,7 @@ public class MenuCategoryServiceTest extends ServiceTest {
 				verify(storeReader)
 					.readSingleStore(storeId);
 				verify(menuCategoryReader, never())
-					.getMenuCategoryList(storeId);
+					.getMenuCategoryInfoList(anyLong());
 			});
 		}
 	}
@@ -201,6 +217,10 @@ public class MenuCategoryServiceTest extends ServiceTest {
 		@Test
 		void 메뉴_카테고리_수정_성공() {
 			// given
+			BDDMockito.given(storeValidator.validateStoreOwner(userPassport, storeId))
+				.willReturn(GENERAL_STORE);
+			BDDMockito.given(menuCategoryReader.getMenuCategoryInfo(storeId, menuCategoryInfo.getId()))
+				.willReturn(Optional.of(GENERAL_MENU_CATEGORY_INFO()));
 			BDDMockito.given(menuCategoryWriter.patchMenuCategory(menuCategoryInfo))
 				.willReturn(menuCategoryInfo);
 
@@ -210,10 +230,16 @@ public class MenuCategoryServiceTest extends ServiceTest {
 
 			// then
 			assertSoftly(softly -> {
-				softly.assertThat(serviceMenuCategoryInfo.getMenuCategoryId()).isEqualTo(GENERAL_MENU_CATEGORY_ID);
-				softly.assertThat(serviceMenuCategoryInfo.getMenuCategoryName()).isEqualTo(GENERAL_MENU_CATEGORY_NAME);
-				softly.assertThat(serviceMenuCategoryInfo.getMenuCategoryOrder())
+				softly.assertThat(serviceMenuCategoryInfo.getId()).isEqualTo(GENERAL_MENU_CATEGORY_ID);
+				softly.assertThat(serviceMenuCategoryInfo.getName()).isEqualTo(GENERAL_MENU_CATEGORY_NAME);
+				softly.assertThat(serviceMenuCategoryInfo.getOrder())
 					.isEqualTo(GENERAL_MENU_CATEGORY_ORDER);
+				verify(storeValidator)
+					.validateStoreOwner(userPassport, storeId);
+				verify(menuCategoryReader)
+					.getMenuCategoryInfo(storeId, menuCategoryInfo.getId());
+				verify(menuCategoryWriter)
+					.patchMenuCategory(menuCategoryInfo);
 			});
 		}
 
@@ -232,10 +258,10 @@ public class MenuCategoryServiceTest extends ServiceTest {
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
 				verify(storeValidator)
 					.validateStoreOwner(userPassport, storeId);
-				verify(menuCategoryValidator, never())
-					.validateMenuCategory(storeId, menuCategoryInfo.getMenuCategoryId());
+				verify(menuCategoryReader, never())
+					.getMenuCategoryInfo(anyLong(), anyLong());
 				verify(menuCategoryWriter, never())
-					.patchMenuCategory(menuCategoryInfo);
+					.patchMenuCategory(any());
 			});
 		}
 
@@ -254,19 +280,20 @@ public class MenuCategoryServiceTest extends ServiceTest {
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
 				verify(storeValidator)
 					.validateStoreOwner(userPassport, storeId);
-				verify(menuCategoryValidator, never())
-					.validateMenuCategory(storeId, menuCategoryInfo.getMenuCategoryId());
+				verify(menuCategoryReader, never())
+					.getMenuCategoryInfo(anyLong(), anyLong());
 				verify(menuCategoryWriter, never())
-					.patchMenuCategory(menuCategoryInfo);
+					.patchMenuCategory(any());
 			});
 		}
 
 		@Test
 		void 메뉴_카테고리_조회_실패() {
 			// given
-			doThrow(new ServiceException(ErrorCode.MENU_CATEGORY_NOT_FOUND))
-				.when(menuCategoryValidator)
-				.validateMenuCategory(storeId, menuCategoryInfo.getMenuCategoryId());
+			BDDMockito.given(storeValidator.validateStoreOwner(userPassport, storeId))
+				.willReturn(GENERAL_STORE);
+			BDDMockito.given(menuCategoryReader.getMenuCategoryInfo(storeId, menuCategoryInfo.getId()))
+				.willReturn(Optional.empty());
 
 			// when -> then
 			assertSoftly(softly -> {
@@ -276,8 +303,8 @@ public class MenuCategoryServiceTest extends ServiceTest {
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.MENU_CATEGORY_NOT_FOUND);
 				verify(storeValidator)
 					.validateStoreOwner(userPassport, storeId);
-				verify(menuCategoryValidator)
-					.validateMenuCategory(storeId, menuCategoryInfo.getMenuCategoryId());
+				verify(menuCategoryReader)
+					.getMenuCategoryInfo(storeId, menuCategoryInfo.getId());
 				verify(menuCategoryWriter, never())
 					.patchMenuCategory(menuCategoryInfo);
 			});
@@ -289,24 +316,36 @@ public class MenuCategoryServiceTest extends ServiceTest {
 	class patchMenuCategoryOrder {
 		private final Long storeId = 1L;
 		private final UserPassport userPassport = OWNER_USER_PASSPORT();
-		private final MenuCategoryInfo menuCategoryInfo = GENERAL_MENU_CATEGORY_INFO();
+		private final Long menuCategoryId = GENERAL_MENU_CATEGORY_ID;
+		private final Integer patchOrder = 2;
 
 		@Test
 		void 메뉴_카테고리_수정_성공() {
 			// given
-			BDDMockito.given(menuCategoryWriter.patchMenuCategoryOrder(storeId, menuCategoryInfo))
+			MenuCategoryInfo menuCategoryInfo = GENERAL_MENU_CATEGORY_INFO();
+			BDDMockito.given(storeValidator.validateStoreOwner(userPassport, storeId))
+				.willReturn(GENERAL_STORE);
+			BDDMockito.given(menuCategoryReader.getMenuCategoryInfoWithStoreLock(storeId, menuCategoryId))
+				.willReturn(Optional.of(menuCategoryInfo));
+			BDDMockito.given(menuCategoryWriter.patchMenuCategoryOrder(storeId, menuCategoryInfo, patchOrder))
 				.willReturn(menuCategoryInfo);
 
 			// when
 			MenuCategoryInfo serviceMenuCategoryInfo = menuCategoryService.patchMenuCategoryOrder(storeId, userPassport,
-				menuCategoryInfo);
+				menuCategoryId, patchOrder);
 
 			// then
 			assertSoftly(softly -> {
-				softly.assertThat(serviceMenuCategoryInfo.getMenuCategoryId()).isEqualTo(GENERAL_MENU_CATEGORY_ID);
-				softly.assertThat(serviceMenuCategoryInfo.getMenuCategoryName()).isEqualTo(GENERAL_MENU_CATEGORY_NAME);
-				softly.assertThat(serviceMenuCategoryInfo.getMenuCategoryOrder())
+				softly.assertThat(serviceMenuCategoryInfo.getId()).isEqualTo(GENERAL_MENU_CATEGORY_ID);
+				softly.assertThat(serviceMenuCategoryInfo.getName()).isEqualTo(GENERAL_MENU_CATEGORY_NAME);
+				softly.assertThat(serviceMenuCategoryInfo.getOrder())
 					.isEqualTo(GENERAL_MENU_CATEGORY_ORDER);
+				verify(storeValidator)
+					.validateStoreOwner(userPassport, storeId);
+				verify(menuCategoryReader)
+					.getMenuCategoryInfoWithStoreLock(storeId, menuCategoryId);
+				verify(menuCategoryWriter)
+					.patchMenuCategoryOrder(storeId, menuCategoryInfo, patchOrder);
 			});
 		}
 
@@ -320,15 +359,15 @@ public class MenuCategoryServiceTest extends ServiceTest {
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
-						() -> menuCategoryService.patchMenuCategoryOrder(storeId, userPassport, menuCategoryInfo))
+						() -> menuCategoryService.patchMenuCategoryOrder(storeId, userPassport, menuCategoryId, patchOrder))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
 				verify(storeValidator)
 					.validateStoreOwner(userPassport, storeId);
-				verify(menuCategoryValidator, never())
-					.validateMenuCategory(storeId, menuCategoryInfo.getMenuCategoryId());
+				verify(menuCategoryReader, never())
+					.getMenuCategoryInfoWithStoreLock(anyLong(), anyLong());
 				verify(menuCategoryWriter, never())
-					.patchMenuCategory(menuCategoryInfo);
+					.patchMenuCategoryOrder(anyLong(), any(), anyInt());
 			});
 		}
 
@@ -342,37 +381,38 @@ public class MenuCategoryServiceTest extends ServiceTest {
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
-						() -> menuCategoryService.patchMenuCategoryOrder(storeId, userPassport, menuCategoryInfo))
+						() -> menuCategoryService.patchMenuCategoryOrder(storeId, userPassport, menuCategoryId, patchOrder))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
 				verify(storeValidator)
 					.validateStoreOwner(userPassport, storeId);
-				verify(menuCategoryValidator, never())
-					.validateMenuCategory(storeId, menuCategoryInfo.getMenuCategoryId());
+				verify(menuCategoryReader, never())
+					.getMenuCategoryInfoWithStoreLock(anyLong(), anyLong());
 				verify(menuCategoryWriter, never())
-					.patchMenuCategory(menuCategoryInfo);
+					.patchMenuCategoryOrder(anyLong(), any(), anyInt());
 			});
 		}
 
 		@Test
 		void 메뉴_카테고리_조회_실패() {
 			// given
-			doThrow(new ServiceException(ErrorCode.MENU_CATEGORY_NOT_FOUND))
-				.when(menuCategoryValidator)
-				.validateMenuCategory(storeId, menuCategoryInfo.getMenuCategoryId());
+			BDDMockito.given(storeValidator.validateStoreOwner(userPassport, storeId))
+				.willReturn(GENERAL_STORE);
+			BDDMockito.given(menuCategoryReader.getMenuCategoryInfoWithStoreLock(storeId, menuCategoryId))
+				.willReturn(Optional.empty());
 
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
-						() -> menuCategoryService.patchMenuCategoryOrder(storeId, userPassport, menuCategoryInfo))
+						() -> menuCategoryService.patchMenuCategoryOrder(storeId, userPassport, menuCategoryId, patchOrder))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.MENU_CATEGORY_NOT_FOUND);
 				verify(storeValidator)
 					.validateStoreOwner(userPassport, storeId);
-				verify(menuCategoryValidator)
-					.validateMenuCategory(storeId, menuCategoryInfo.getMenuCategoryId());
+				verify(menuCategoryReader)
+					.getMenuCategoryInfoWithStoreLock(storeId, menuCategoryId);
 				verify(menuCategoryWriter, never())
-					.patchMenuCategory(menuCategoryInfo);
+					.patchMenuCategoryOrder(anyLong(), any(), anyInt());
 			});
 		}
 	}
@@ -387,15 +427,21 @@ public class MenuCategoryServiceTest extends ServiceTest {
 		@Test
 		void 메뉴_카테고리_삭제_성공() {
 			// given
-			BDDMockito.given(menuCategoryReader.getMenuCategory(storeId, categoryId))
-				.willReturn(Optional.of(GENERAL_MENU_CATEGORY()));
+			BDDMockito.given(storeValidator.validateStoreOwner(userPassport, storeId))
+				.willReturn(GENERAL_STORE);
+			BDDMockito.given(menuCategoryReader.getMenuCategoryInfoWithStoreLock(storeId, categoryId))
+				.willReturn(Optional.of(GENERAL_MENU_CATEGORY_INFO()));
 
 			// when
 			menuCategoryService.deleteMenuCategory(storeId, userPassport, categoryId);
 
 			// then
+			verify(storeValidator)
+				.validateStoreOwner(userPassport, storeId);
+			verify(menuCategoryReader)
+				.getMenuCategoryInfoWithStoreLock(storeId, categoryId);
 			verify(menuCategoryWriter)
-				.deleteMenuCategory(categoryId);
+				.deleteMenuCategory(storeId, categoryId);
 
 		}
 
@@ -414,10 +460,10 @@ public class MenuCategoryServiceTest extends ServiceTest {
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
 				verify(storeValidator)
 					.validateStoreOwner(userPassport, storeId);
-				verify(menuCategoryValidator, never())
-					.validateMenuCategory(storeId, categoryId);
+				verify(menuCategoryReader, never())
+					.getMenuCategoryInfoWithStoreLock(anyLong(), anyLong());
 				verify(menuCategoryWriter, never())
-					.deleteMenuCategory(categoryId);
+					.deleteMenuCategory(anyLong(), anyLong());
 			});
 		}
 
@@ -436,17 +482,19 @@ public class MenuCategoryServiceTest extends ServiceTest {
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
 				verify(storeValidator)
 					.validateStoreOwner(userPassport, storeId);
-				verify(menuCategoryValidator, never())
-					.validateMenuCategory(storeId, categoryId);
+				verify(menuCategoryReader, never())
+					.getMenuCategoryInfoWithStoreLock(anyLong(), anyLong());
 				verify(menuCategoryWriter, never())
-					.deleteMenuCategory(categoryId);
+					.deleteMenuCategory(anyLong(), anyLong());
 			});
 		}
 
 		@Test
 		void 메뉴_카테고리_조회_실패() {
 			// given
-			BDDMockito.given(menuCategoryReader.getMenuCategory(storeId, categoryId))
+			BDDMockito.given(storeValidator.validateStoreOwner(userPassport, storeId))
+				.willReturn(GENERAL_STORE);
+			BDDMockito.given(menuCategoryReader.getMenuCategoryInfoWithStoreLock(storeId, categoryId))
 				.willReturn(Optional.empty());
 
 			// when -> then
@@ -458,9 +506,9 @@ public class MenuCategoryServiceTest extends ServiceTest {
 				verify(storeValidator)
 					.validateStoreOwner(userPassport, storeId);
 				verify(menuCategoryReader)
-					.getMenuCategory(storeId, categoryId);
+					.getMenuCategoryInfoWithStoreLock(storeId, categoryId);
 				verify(menuCategoryWriter, never())
-					.deleteMenuCategory(categoryId);
+					.deleteMenuCategory(anyLong(), anyLong());
 			});
 		}
 	}

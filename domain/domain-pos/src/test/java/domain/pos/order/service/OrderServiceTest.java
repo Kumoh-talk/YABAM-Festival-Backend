@@ -90,7 +90,7 @@ public class OrderServiceTest extends ServiceTest {
 			// given
 			Receipt receipt = ReceiptFixture.GENERAL_NON_ADJUSTMENT_RECEIPT();
 			List<Long> orderMenuIds = orderMenus.stream()
-				.map(orderMenu -> orderMenu.getMenu().getMenuInfo().getMenuId())
+				.map(orderMenu -> orderMenu.getMenu().getMenuInfo().getId())
 				.toList();
 
 			BDDMockito.given(receiptReader.getNonAdjustReceiptWithStore(receiptId))
@@ -161,7 +161,7 @@ public class OrderServiceTest extends ServiceTest {
 			// given
 			Receipt receipt = ReceiptFixture.GENERAL_NON_ADJUSTMENT_RECEIPT();
 			List<Long> orderMenuIds = orderMenus.stream()
-				.map(orderMenu -> orderMenu.getMenu().getMenuInfo().getMenuId())
+				.map(orderMenu -> orderMenu.getMenu().getMenuInfo().getId())
 				.toList();
 
 			BDDMockito.given(receiptReader.getNonAdjustReceiptWithStore(receiptId))

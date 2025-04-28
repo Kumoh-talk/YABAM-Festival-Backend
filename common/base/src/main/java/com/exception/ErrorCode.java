@@ -31,6 +31,7 @@ public enum ErrorCode {
 	// Menu
 	MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "MENU_0001", "존재하지 않는 메뉴입니다."),
 	EXIST_MENU_ORDER(HttpStatus.CONFLICT, "MENU_0002", "이미 존재하는 메뉴 순서입니다."),
+	STORE_IS_OPEN_MENU_WRITE(HttpStatus.CONFLICT, "MENU_0003", "운영중인 가게는 메뉴를 추가 및 수정할 수 없습니다."),
 
 	// MenuCategory
 	MENU_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "MENU_CATEGORY_0001", "존재하지 않는 메뉴 카테고리입니다."),
