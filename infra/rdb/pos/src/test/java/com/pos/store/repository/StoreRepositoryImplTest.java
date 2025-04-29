@@ -43,6 +43,8 @@ class StoreRepositoryImplTest extends RepositoryTest {
 			softly.assertThat(findStoreEntity.getLocation().getLatitude()).isEqualTo(changedStoreInfo.getLocation().x);
 			softly.assertThat(findStoreEntity.getLocation().getLongitude()).isEqualTo(changedStoreInfo.getLocation().y);
 			softly.assertThat(findStoreEntity.getDescription()).isEqualTo(changedStoreInfo.getDescription());
+			softly.assertThat(findStoreEntity.getHeadImageUrl()).isEqualTo(changedStoreInfo.getHeadImageUrl());
+			softly.assertThat(findStoreEntity.getUniversity()).isEqualTo(changedStoreInfo.getUniversity());
 			softly.assertThat(findStoreEntity.getTableCostPerTime().getTableCost())
 				.isEqualTo(changedStoreInfo.getTableCost());
 			softly.assertThat(findStoreEntity.getTableCostPerTime().getTableTime())
