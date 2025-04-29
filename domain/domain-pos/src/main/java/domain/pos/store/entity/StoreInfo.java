@@ -11,23 +11,29 @@ public class StoreInfo {
 	private final String description;
 	private final String headImageUrl;
 	private final String university;
+	private final Integer tableTime;
+	private final Integer tableCost;
 
 	private StoreInfo(String storeName, Point2D.Double location, String description, String headImageUrl,
-		String university) {
+		String university, Integer tableTime, Integer tableCost) {
 		this.storeName = storeName;
 		this.location = location;
 		this.description = description;
 		this.headImageUrl = headImageUrl;
 		this.university = university;
+		this.tableTime = tableTime;
+		this.tableCost = tableCost;
 	}
 
 	public static StoreInfo of(String storeName, Point2D.Double location, String desciption, String headImageUrl,
-		String university) {
+		String university, Integer tableTime, Integer tableCost) {
 		return new StoreInfo(
 			storeName,
 			location,
 			desciption,
 			headImageUrl,
-			university);
+			university,
+			tableTime,
+			tableCost);
 	}
 }

@@ -20,6 +20,12 @@ public class StoreInfoFixture {
 	// 가게 대학교
 	private static final String STORE_UNIVERSITY = "금오공과대학교";
 	private static final String STORE_UNIVERSITY_2 = "서울대학교";
+	// 가게 테이블 시간
+	private static final Integer STORE_TABLE_TIME = 30;
+	private static final Integer STORE_TABLE_TIME_2 = 60;
+	// 가게 테이블 비용
+	private static final Integer STORE_TABLE_COST = 10000;
+	private static final Integer STORE_TABLE_COST_2 = 20000;
 
 	public static StoreInfo GENERAL_STORE_INFO() {
 		return StoreInfo.of(
@@ -27,7 +33,9 @@ public class StoreInfoFixture {
 			STORE_LOCATION,
 			STORE_DESCRIPTION,
 			STORE_IMAGE_URL,
-			STORE_UNIVERSITY
+			STORE_UNIVERSITY,
+			STORE_TABLE_TIME,
+			STORE_TABLE_COST
 		);
 	}
 
@@ -37,7 +45,9 @@ public class StoreInfoFixture {
 			STORE_LOCATION_2,
 			STORE_DESCRIPTION_2,
 			STORE_IMAGE_URL_2,
-			STORE_UNIVERSITY_2
+			STORE_UNIVERSITY_2,
+			STORE_TABLE_TIME_2,
+			STORE_TABLE_COST_2
 		);
 	}
 }
