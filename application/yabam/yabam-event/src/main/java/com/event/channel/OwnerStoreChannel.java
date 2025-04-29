@@ -26,12 +26,12 @@ public class OwnerStoreChannel {
 		try {
 			SseEmitter.SseEventBuilder event = SseEmitter.event()
 				.name(EVENT_NAME + String.valueOf(storeId))
-				.id(String.valueOf("id-1"))
+				.id(String.valueOf(storeId))
 				.data("SSE connected")
 				.reconnectTime(RECONNECTION_TIMEOUT);
 			emitter.send(event);
 		} catch (IOException e) {
-			log.error("failure send media position data, id={}, {}", storeId, e.getMessage());
+			log.warn("[store-order-event] failure send media position data, id={}, {}", storeId, e.getMessage());
 		}
 		return emitter;
 	}
@@ -40,31 +40,32 @@ public class OwnerStoreChannel {
 		SseEmitter emitter = emitterMap.get(storeId);
 		try {
 			emitter.send(SseEmitter.event()
-				.name("broadcast event")
-				.id("broadcast event 1")
+				.name(EVENT_NAME + String.valueOf(storeId))
+				.id(String.valueOf(storeId))
 				.reconnectTime(RECONNECTION_TIMEOUT)
 				.data(storeOrderEvent, MediaType.APPLICATION_JSON));
-			log.info("sended notification, id={}, payload={}", storeId, storeOrderEvent);
+			log.info("[store-order-event] sended notification, id={}", storeId);
 		} catch (IOException e) {
-			log.error("fail to send emitter id={}, {}", storeId, e.getMessage());
+			log.warn("[store-order-event] fail to send emitter id={}, {}", storeId, e.getMessage());
 		}
 	}
 
 	private SseEmitter setUpSseEmitter(Long storeId) {
 		SseEmitter emitter = createEmitter();
 		emitter.onTimeout(() -> {
-			log.info("server sent event timed out : id={}", storeId);
+			log.info("[store-order-event] server sent event timed out : id={}", storeId);
 			emitter.complete();
 		});
 		emitter.onError(e -> {
-			log.info("server sent event error occurred : id={}, message={}", storeId, e.getMessage());
+			log.info("[store-order-event] server sent event error occurred : id={}, message={}", storeId,
+				e.getMessage());
 			emitter.complete();
 		});
 		emitter.onCompletion(() -> {
 			if (emitterMap.remove(storeId) != null) {
-				log.info("server sent event removed in emitter cache: id={}", storeId);
+				log.info("[store-order-event] server sent event removed in emitter cache: id={}", storeId);
 			}
-			log.info("disconnected by completed server sent event: id={}", storeId);
+			log.info("[store-order-event] disconnected by completed server sent event: id={}", storeId);
 		});
 		return emitter;
 	}
