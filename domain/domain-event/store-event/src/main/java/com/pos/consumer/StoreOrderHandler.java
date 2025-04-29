@@ -6,5 +6,5 @@ import com.pos.event.StoreOrderEvent;
 
 @Component
 public interface StoreOrderHandler {
-	void handleStoreOrder(String key, StoreOrderEvent storeOrderEvent);
+	void handleStoreOrder(String eventName, String key, StoreOrderEvent storeOrderEvent);
 }

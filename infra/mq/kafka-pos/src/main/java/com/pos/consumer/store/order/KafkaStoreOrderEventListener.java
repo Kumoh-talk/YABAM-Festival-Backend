@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 public class KafkaStoreOrderEventListener {
 	private final StoreOrderHandler storeOrderHandler;
 	private final ObjectMapper mapper;
+	private static final String EVENT_NAME = "StoreOrderEvent";
 
 	@KafkaListener(topics = "${kafka.store.order.topic}", groupId = "${kafka.store.order.group-id}")
 	public void listen(@Header(KafkaHeaders.RECEIVED_KEY) String key, String json) {
@@ -36,6 +37,6 @@ public class KafkaStoreOrderEventListener {
 	}
 
 	private void onOrderEvent(String key, StoreOrderEvent storeOrderEvent) {
-		storeOrderHandler.handleStoreOrder(key, storeOrderEvent);
+		storeOrderHandler.handleStoreOrder(EVENT_NAME, key, storeOrderEvent);
 	}
 }

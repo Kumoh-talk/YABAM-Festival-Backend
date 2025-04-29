@@ -61,6 +61,6 @@ class KafkaStoreOrderEventListenerTest {
 
 		// then
 		verify(storeOrderHandler, timeout(1000))
-			.handleStoreOrder(anyString(), any(StoreOrderEvent.class));
+			.handleStoreOrder(anyString(), anyString(), any(StoreOrderEvent.class));
 	}
 }

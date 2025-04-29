@@ -25,11 +25,11 @@ public class SsePosService implements StoreOrderHandler {
 	}
 
 	public void unicast(Long storeId, StoreOrderEvent storeOrderEvent) {
-		ownerStoreChannel.unicast(storeId, storeOrderEvent);
+		ownerStoreChannel.unicast("StoreOrderEvent", storeId, storeOrderEvent);
 	}
 
 	@Override
-	public void handleStoreOrder(String key, StoreOrderEvent storeOrderEvent) {
-		ownerStoreChannel.unicast(Long.parseLong(key), storeOrderEvent);
+	public void handleStoreOrder(String eventName, String key, StoreOrderEvent storeOrderEvent) {
+		ownerStoreChannel.unicast(eventName, Long.parseLong(key), storeOrderEvent);
 	}
 }
