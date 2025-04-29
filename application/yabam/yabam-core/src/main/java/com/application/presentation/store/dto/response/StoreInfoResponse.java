@@ -26,7 +26,11 @@ public record StoreInfoResponse(
 	@Schema(description = "가게 대표 이미지 URL", example = "https://example.com/image.jpg")
 	String headImageUrl,
 	@Schema(description = "가게 소속 대학교", example = "서울대학교")
-	String university
+	String university,
+	@Schema(description = "가게 테이블 시간", example = "30")
+	Integer tableTime,
+	@Schema(description = "가게 테이블 비용", example = "10000")
+	Integer tableCost
 ) {
 	public static StoreInfoResponse of(Store store) {
 		return StoreInfoResponse.builder()
@@ -40,6 +44,8 @@ public record StoreInfoResponse(
 			.description(store.getStoreInfo().getDescription())
 			.headImageUrl(store.getStoreInfo().getHeadImageUrl())
 			.university(store.getStoreInfo().getUniversity())
+			.tableTime(store.getStoreInfo().getTableTime())
+			.tableCost(store.getStoreInfo().getTableCost())
 			.build();
 	}
 }

@@ -4,6 +4,7 @@ import java.awt.geom.Point2D;
 
 import domain.pos.store.entity.StoreInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -25,7 +26,15 @@ public record StoreWriteRequest(
 	@NotBlank(message = "가게 대표 이미지는 필수입니다.")
 	String headImageUrl,
 	@Schema(description = "가게 소속 대학교", example = "서울대학교")
-	String university
+	String university,
+	@Schema(description = "가게 테이블 시간", example = "30")
+	@NotNull(message = "가게 테이블 시간은 필수입니다.")
+	@Min(value = 1, message = "가게 테이블 시간은 1분 이상이어야 합니다.")
+	Integer tableTime,
+	@Schema(description = "가게 테이블 비용", example = "10000")
+	@NotNull(message = "가게 테이블 비용은 필수입니다.")
+	@Min(value = 0, message = "가게 테이블 비용은 0원 이상이어야 합니다.")
+	Integer tableCost
 ) {
 	public StoreInfo toStoreInfo() {
 		return StoreInfo.of(
@@ -33,7 +42,9 @@ public record StoreWriteRequest(
 			new Point2D.Double(latitude, longitude),
 			description,
 			headImageUrl,
-			university
+			university,
+			tableTime,
+			tableCost
 		);
 	}
 }

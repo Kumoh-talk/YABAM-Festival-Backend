@@ -5,6 +5,7 @@ import org.hibernate.annotations.SQLRestriction;
 
 import com.pos.global.base.entity.BaseEntity;
 import com.pos.store.vo.StorePoint;
+import com.pos.store.vo.TableCostPerTime;
 
 import domain.pos.store.entity.StoreInfo;
 import jakarta.persistence.Column;
@@ -50,8 +51,11 @@ public class StoreEntity extends BaseEntity {
 	@Column(name = "university", nullable = false)
 	private String university;
 
+	@Embedded
+	private TableCostPerTime tableCostPerTime;
+
 	private StoreEntity(Long ownerId, boolean isOpen, String name, StorePoint location, String description,
-		String headImageUrl, String university) {
+		String headImageUrl, String university, TableCostPerTime tableCostPerTime) {
 		this.ownerId = ownerId;
 		this.isOpen = isOpen;
 		this.name = name;
@@ -59,6 +63,7 @@ public class StoreEntity extends BaseEntity {
 		this.description = description;
 		this.headImageUrl = headImageUrl;
 		this.university = university;
+		this.tableCostPerTime = tableCostPerTime;
 	}
 
 	private StoreEntity(Long storeId) {
@@ -73,7 +78,9 @@ public class StoreEntity extends BaseEntity {
 		Double longitude,
 		String description,
 		String headImageUrl,
-		String university) {
+		String university,
+		Integer tableTime,
+		Integer tableCost) {
 		return new StoreEntity(
 			ownerId,
 			isOpen,
@@ -81,7 +88,8 @@ public class StoreEntity extends BaseEntity {
 			StorePoint.of(latitude, longitude),
 			description,
 			headImageUrl,
-			university
+			university,
+			TableCostPerTime.of(tableTime, tableCost)
 		);
 	}
 
@@ -93,9 +101,14 @@ public class StoreEntity extends BaseEntity {
 		this.name = requestChangeStoreInfo.getStoreName();
 		this.headImageUrl = requestChangeStoreInfo.getHeadImageUrl();
 		this.description = requestChangeStoreInfo.getDescription();
+		this.university = requestChangeStoreInfo.getUniversity();
 		this.location = StorePoint.of(
 			requestChangeStoreInfo.getLocation().x,
 			requestChangeStoreInfo.getLocation().y
+		);
+		this.tableCostPerTime = TableCostPerTime.of(
+			requestChangeStoreInfo.getTableTime(),
+			requestChangeStoreInfo.getTableCost()
 		);
 	}
 }

@@ -21,7 +21,9 @@ public class StoreMapper {
 			storeInfo.getLocation().getY(),
 			storeInfo.getDescription(),
 			storeInfo.getHeadImageUrl(),
-			storeInfo.getUniversity()
+			storeInfo.getUniversity(),
+			storeInfo.getTableTime(),
+			storeInfo.getTableCost()
 		);
 	}
 
@@ -35,7 +37,9 @@ public class StoreMapper {
 			new Point2D.Double(storeEntity.getLocation().getLatitude(), storeEntity.getLocation().getLongitude()),
 			storeEntity.getDescription(),
 			storeEntity.getHeadImageUrl(),
-			storeEntity.getUniversity()
+			storeEntity.getUniversity(),
+			storeEntity.getTableCostPerTime().getTableTime(),
+			storeEntity.getTableCostPerTime().getTableCost()
 		);
 	}
 
