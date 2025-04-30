@@ -147,6 +147,9 @@ graph LR
 
     L -->|persistence| RDB
     L -->|Log Produce| C
+    C --> order
+    C --> table
+    C --> store
 %% 연결 관계 설정
     D -->|Log Produce| G
     G -->|Log Consume| F
