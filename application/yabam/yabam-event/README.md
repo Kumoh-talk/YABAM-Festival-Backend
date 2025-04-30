@@ -1,52 +1,148 @@
-## SSE Event Server 의 역할
+# 야밤 이벤트 시스템 아키텍처 설명서
 
-> SSE 서버에서 제공하는 준 실시간성 데이터에 대해 설명하고자 한다.
->
-> SSE에서 제공하는 데이터의 종류는 관심사에 적합한 Channel 로 분류된다.
+## 1. 시스템 개요
 
-### OwnerChannel
+야밤 이벤트 시스템은 점주와 테이블 간의 실시간 주문 정보를 전달하기 위한 이벤트 기반 아키텍처입니다. Server-Sent Events(SSE) 기술을 활용하여 클라이언트에게 실시간으로 데이터를 푸시합니다.
+<br>점주는 실시간으로(real-time) 데이터를 안정적이고 신뢰성 있게 주문 데이터를 전달 받아야합니다.
 
-##### 설명
+일관적인 실시간 데이터 수집을 위해 야밤은 리소스를 최소화하면서 SSE 연결을 유지하고, 장애 발생 시에도 자동으로 복구할 수 있는 아키텍처를 설계했습니다.
 
-- 가게 점주가 화면을 띄워놨을 때 수신 받는 데이터의 파이프라인을 나타낸다.
+## 2. SSE 아키텍처
 
-#### StoreOrderEvent
+![img.png](img.png)
 
-##### 설명
+## 3. Real-Time 지원과 시스템 안정성
 
-- 주문이 생성되었거나 주문의 상태 변환시 발생하는 이벤트이다.
+### 3.1 재연결 및 동기화 메커니즘
 
-```java
-public record StoreOrderEvent(
-	Long tableId,
-	Integer tableNumber,
-	Order order
-) {
-	public record Order(
-		Long orderId,
-		LocalDateTime createdAt,
-		List<OrderMenu> orderMenu
-	) {
-		public record OrderMenu(
-			Long menuId,
-			String menuName,
-			Integer menuPrice,
-			Integer menuCount,
-			String menuStatus // TODO : 추후 enum으로 변경
-		) {
-		}
-	}
-}
+SSE 연결이 timeout 되거나 장애 발생 시 클라이언트는 동일한 Fetch Sync API를 호출하여 데이터를 동기화합니다. 이 API는 일반적인 재연결 상황과 장애 상황 모두에서 fallback 메커니즘으로
+작동합니다.
+
+``` mermaid
+sequenceDiagram
+    participant C as 클라이언트
+    participant ES as 이벤트 서버
+    participant YC as Yabam Core (Fetch Sync API)
+    
+    C->>ES: SSE 연결 요청
+    ES-->>C: 연결 수립 및 이미터 제공
+    ES->>C: 실시간 이벤트 스트림 전송
+    Note over ES,C: 짧은 timeout 기간 설정됨
+    ES->>C: 연결 timeout
+    
+    C->>YC: Fetch Sync API 호출 (마지막 수신 이벤트 ID 포함)
+    YC-->>C: 누락된 데이터 응답 (상태 동기화)
+    
+    C->>ES: SSE 재연결 시도
+    alt 재연결 성공
+        ES-->>C: 새로운 연결 수립
+        ES->>C: 실시간 이벤트 스트림 재개
+    else 재연결 실패 (장애 상황)
+        Note over C,ES: 이벤트 서버 장애 감지
+        C->>YC: 동일한 Fetch Sync API 호출 (fallback)
+        YC-->>C: 최신 데이터 응답
+        Note over C: 주기적으로 API 호출하여 데이터 갱신
+        C->>ES: SSE 연결 주기적 재시도
+    end
 ```
 
-### TableChannel
+### 3.2 통합된 Fetch Sync API
 
-##### 설명
+재연결 시와 장애 상황에서 모두 동일한 API를 사용하는 통합 접근 방식:
 
-- 일반 고객이 테이블에 점유하고 있을 때 수신 받는 데이터의 파이프라인을 나타낸다.
+``` mermaid
+graph TD
+    A[클라이언트] -->|"1. SSE 연결 요청"| B[이벤트 서버]
+    B -->|"2. 연결 수립 (짧은 timeout)"| A
+    B -->|"3. 이벤트 스트림 전송"| A
+    
+    A -->|"4. timeout 발생"| C{재연결 전 동기화}
+    C -->|"5. Fetch Sync API 호출"| D[Yabam Core]
+    D -->|"6. 누락 데이터 제공"| A
+    
+    A -->|"7. 재연결 시도"| E{연결 성공?}
+    E -->|"8. Yes"| B
+    E -->|"9. No (장애 상황)"| F[주기적 Fetch Sync API 호출]
+    F -->|"10. 데이터 갱신"| A
+    F -->|"11. 주기적으로"| E
+```
 
-#### TableOrderEvent
+## 4. 실시간 시스템과 장애 허용 아키텍처
 
-##### 설명
+``` mermaid
+graph TB
+    subgraph "Yabam Event System"
+        A[SSE 서버]
+        B[Kafka]
+        C[이벤트 생산자들]
+    end
+    
+    subgraph "Yabam Core"
+        D[Fetch Sync API]
+        E[데이터 저장소]
+    end
+    
+    subgraph "클라이언트"
+        F[이벤트 소비자]
+        G[상태 관리]
+        H[재연결 로직]
+        I[동기화 로직]
+    end
+    
+    C -->|이벤트 발행| B
+    B -->|이벤트 소비| A
+    A -->|실시간 이벤트| F
+    F -->|상태 업데이트| G
+    
+    H -->|재연결 전| I
+    I -->|데이터 동기화| D
+    D -->|최신 데이터 제공| F
+    
+    A -.->|연결 timeout| H
+    H -->|동기화 후 재연결| A
+    
+    H -.->|재연결 실패| I
+    I -->|주기적 동기화| D
+    
+    C -->|데이터 저장| E
+    D -->|데이터 조회| E
+```
 
-- 주문이 생성되었거나 주문의 상태 변환시 발생하는 이벤트이다.
+## 5. 통합 동기화 전략의 이점
+
+### 5.1 단순화된 아키텍처
+
+- **일관된 API**: 재연결 시와 장애 상황에서 모두 동일한 API를 사용하여 코드 복잡성 감소
+- **중복 로직 제거**: 동일한 동기화 로직을 재사용하여 코드 유지보수성 향상
+- **에러 처리 통합**: 모든 데이터 동기화 상황에서 일관된 에러 처리 방식 적용
+
+### 5.2 강화된 데이터 일관성
+
+- **연결 전 항상 동기화**: 매 연결 시도 전에 동기화를 수행하여 데이터 일관성 보장
+- **누락 데이터 방지**: timeout과 재연결 과정에서 발생할 수 있는 데이터 누락 최소화
+- **장애 복구 자동화**: 시스템 장애 이후 자동으로 최신 상태로 복구
+
+### 5.3 시스템 안정성 확보
+
+- **우아한 성능 저하**: 이벤트 서버 장애 시 폴링 모드로 자연스럽게 전환
+- **리소스 효율화**: 짧은 SSE timeout으로 서버 리소스 관리 최적화
+- **중복 요청 방지**: 정확한 lastEventId 추적으로 중복 데이터 요청 방지
+
+### 5.4 사용자 경험 향상
+
+- **끊김 없는 서비스**: 연결 문제나 장애 상황에서도 지속적인 데이터 업데이트
+- **백그라운드 복구**: 사용자 인지 없이 자동으로 SSE 연결 복구 시도
+- **네트워크 조건 적응**: 불안정한 네트워크 환경에서도 안정적인 서비스 제공
+
+## 6. 설계 원칙 요약
+
+``` mermaid
+flowchart TD
+    subgraph "야밤 이벤트 시스템 장애 허용 설계"
+        A[짧은 SSE timeout] -->|"리소스 효율화"| F[시스템 안정성]
+        B[연결 전 항상 동기화] -->|"데이터 일관성"| F
+        C[통합 Fetch Sync API] -->|"코드 단순화"| F
+        D[자동 fallback 모드] -->|"고가용성"| F
+        E[주기적 재연결 시도] -->|"자가 복구"| F
+    end
+```
