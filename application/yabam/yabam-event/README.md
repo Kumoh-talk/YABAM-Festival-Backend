@@ -9,7 +9,8 @@
 
 ## 2. SSE 아키텍처
 
-![img.png](img.png)
+![image](https://github.com/user-attachments/assets/865d5243-d28f-4229-81d7-3da7db858e81)
+
 
 ## 3. Real-Time 지원과 시스템 안정성
 
