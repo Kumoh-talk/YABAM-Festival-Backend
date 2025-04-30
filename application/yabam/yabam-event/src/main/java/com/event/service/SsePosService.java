@@ -25,12 +25,6 @@ public class SsePosService implements SseEventHandler {
 		return emitter;
 	}
 
-	public SseEmitter subscribeByTable(Long tableId) {
-		SseChannel sseChannel = sseChannelMap.get(SseChannelProvider.TABLE_ORDER);
-		SseEmitter emitter = sseChannel.subscribe(tableId);
-		return emitter;
-	}
-
 	@Override
 	public void handleEventWithSSE(SseChannelProvider sseChannelProvider, String eventName, String key,
 		Object eventData) {

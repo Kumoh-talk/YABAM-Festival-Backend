@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 
 import com.event.channel.OwnerStoreChannel;
 import com.event.channel.SseChannel;
-import com.event.channel.TableOrderChannel;
 import com.event.implement.EmitterGenerator;
 import com.event.implement.OwnerStoreValidator;
 import com.event.service.SsePosService;
@@ -27,15 +26,9 @@ public class SseChannelConfig {
 	}
 
 	@Bean
-	public SseChannel tableOrderChannel() {
-		return new TableOrderChannel(emitterGenerator);
-	}
-
-	@Bean
 	public SsePosService ssePosService() {
 		return new SsePosService(ownerStoreValidator, Map.of(
-			SseChannelProvider.OWNER_STORE, ownerStoreChannel(),
-			SseChannelProvider.TABLE_ORDER, tableOrderChannel()
+			SseChannelProvider.OWNER_STORE, ownerStoreChannel()
 		));
 	}
 }

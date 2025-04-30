@@ -33,14 +33,6 @@ public class SsePosController {
 		return ResponseEntity.ok(emitter);
 	}
 
-	@PostMapping(path = "/api/v1/table/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-	public ResponseEntity<SseEmitter> subscribeTable(
-		@RequestParam Long tableId) {
-		log.info("SSE Subscribe 요청 tableId: {}", tableId);
-		SseEmitter emitter = ssePosService.subscribeByTable(tableId);
-		return ResponseEntity.ok(emitter);
-	}
-
 	// TODO: 임시 테스트 용
 	@PostMapping(path = "/api/v1/owner/unicast")
 	public ResponseEntity<Void> unicast(
