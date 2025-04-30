@@ -16,7 +16,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import com.pos.consumer.StoreOrderHandler;
+import com.pos.consumer.SseEventHandler;
 import com.pos.consumer.store.order.config.KafkaConsumerConfig;
 import com.pos.event.StoreOrderEvent;
 import com.pos.producer.store.order.KafkaStoreOrderProducer;
@@ -34,7 +34,7 @@ import com.pos.producer.store.order.config.KafkaProcuerConfig;
 class KafkaStoreOrderEventListenerTest {
 
 	@MockitoBean
-	private StoreOrderHandler storeOrderHandler;
+	private SseEventHandler sseEventHandler;
 
 	@Autowired
 	private KafkaTemplate<String, String> kafkaTemplate;
@@ -60,7 +60,7 @@ class KafkaStoreOrderEventListenerTest {
 		kafkaTemplate.flush();
 
 		// then
-		verify(storeOrderHandler, timeout(1000))
-			.handleStoreOrder(anyString(), anyString(), any(StoreOrderEvent.class));
+		verify(sseEventHandler, timeout(1000))
+			.handleEventWithSSE(any(), anyString(), anyString(), any());
 	}
 }

@@ -7,7 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pos.consumer.StoreOrderHandler;
+import com.pos.consumer.SseEventHandler;
+import com.pos.event.SseChannelProvider;
 import com.pos.event.StoreOrderEvent;
 
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class KafkaStoreOrderEventListener {
-	private final StoreOrderHandler storeOrderHandler;
+	private final SseEventHandler sseEventHandler;
 	private final ObjectMapper mapper;
 	private static final String EVENT_NAME = "StoreOrderEvent";
 
@@ -37,6 +38,6 @@ public class KafkaStoreOrderEventListener {
 	}
 
 	private void onOrderEvent(String key, StoreOrderEvent storeOrderEvent) {
-		storeOrderHandler.handleStoreOrder(EVENT_NAME, key, storeOrderEvent);
+		sseEventHandler.handleEventWithSSE(SseChannelProvider.OWNER_STORE, EVENT_NAME, key, storeOrderEvent);
 	}
 }

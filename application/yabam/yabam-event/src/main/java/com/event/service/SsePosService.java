@@ -1,35 +1,44 @@
 package com.event.service;
 
-import org.springframework.stereotype.Service;
+import java.util.Map;
+
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import com.event.channel.OwnerStoreChannel;
+import com.event.channel.SseChannel;
 import com.event.implement.OwnerStoreValidator;
-import com.pos.consumer.StoreOrderHandler;
-import com.pos.event.StoreOrderEvent;
+import com.pos.consumer.SseEventHandler;
+import com.pos.event.SseChannelProvider;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Service
-@RequiredArgsConstructor
 @Slf4j
-public class SsePosService implements StoreOrderHandler {
-	private final OwnerStoreChannel ownerStoreChannel;
+@RequiredArgsConstructor
+public class SsePosService implements SseEventHandler {
 	private final OwnerStoreValidator ownerStoreValidator;
+	private final Map<SseChannelProvider, SseChannel> sseChannelMap;
 
 	public SseEmitter subscribeByOwner(Long ownerId, Long storeId) {
 		ownerStoreValidator.validate(ownerId, storeId);
-		SseEmitter emitter = ownerStoreChannel.subscribe(storeId);
+		SseChannel sseChannel = sseChannelMap.get(SseChannelProvider.OWNER_STORE);
+		SseEmitter emitter = sseChannel.subscribe(storeId);
 		return emitter;
 	}
 
-	public void unicast(Long storeId, StoreOrderEvent storeOrderEvent) {
-		ownerStoreChannel.unicast("StoreOrderEvent", storeId, storeOrderEvent);
+	public SseEmitter subscribeByTable(Long tableId) {
+		SseChannel sseChannel = sseChannelMap.get(SseChannelProvider.TABLE_ORDER);
+		SseEmitter emitter = sseChannel.subscribe(tableId);
+		return emitter;
 	}
 
 	@Override
-	public void handleStoreOrder(String eventName, String key, StoreOrderEvent storeOrderEvent) {
-		ownerStoreChannel.unicast(eventName, Long.parseLong(key), storeOrderEvent);
+	public void handleEventWithSSE(SseChannelProvider sseChannelProvider, String eventName, String key,
+		Object eventData) {
+		unicast(sseChannelProvider, eventName, Long.parseLong(key), eventData);
+	}
+
+	private void unicast(SseChannelProvider sseChannelProvider, String eventName, Long storeId,
+		Object eventData) {
+		sseChannelMap.get(sseChannelProvider).unicast(eventName, storeId, eventData);
 	}
 }
