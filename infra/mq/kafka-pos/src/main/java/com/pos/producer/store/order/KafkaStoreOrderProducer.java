@@ -7,8 +7,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pos.event.StoreOrderEvent;
 import com.pos.global.properties.KafkaStoreOrderProperties;
-import com.pos.producer.StoreOrderProducer;
+import com.pos.producer.store.order.common.StoreOrderEventMapper;
 
+import domain.pos.order.entity.Order;
+import domain.pos.order.implement.StoreOrderProducer;
+import domain.pos.store.entity.Store;
+import domain.pos.table.entity.Table;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,7 +25,9 @@ public class KafkaStoreOrderProducer implements StoreOrderProducer {
 	private final ObjectMapper objectMapper;
 
 	@Override
-	public void produceStoreOrder(String key, StoreOrderEvent storeOrderEvent) {
+	public void produceStoreOrder(Store store, Table table, Order order) {
+		StoreOrderEvent storeOrderEvent = StoreOrderEventMapper.toStoreOrderEvent(table, order);
+		String key = String.valueOf(store.getStoreId());
 		String message;
 		try {
 			message = objectMapper.writeValueAsString(storeOrderEvent);
@@ -31,7 +37,7 @@ public class KafkaStoreOrderProducer implements StoreOrderProducer {
 		}
 		kafkaTemplate.send(properties.getTopic(), key, message)
 			.whenComplete((record, ex) -> {
-				if (ex != null) { //TODO : 카프카 전송 실패 관련 처리 추가 해야함
+				if (ex != null) {
 					log.error("카프카 메시지 전송 실패 토픽 : {}, key : {}, 에러 메시지 : {}  ",
 						properties.getTopic(),
 						key,

@@ -135,10 +135,13 @@ graph LR
         J --- K
     end
 
-%% Yabam Core 애플리케이션 계층 추가
+%% domain-pos 계층
     subgraph "pos 도메인  계층 (domain:domain-pos)"
         C[OrderEventProducer]
         L[OrderService]
+        order[Order]
+        table[Table]
+        store[Store]
         RDB[RDB]
     end
 

@@ -2,8 +2,6 @@ package com.pos.consumer.store.order;
 
 import static org.mockito.Mockito.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.Test;
@@ -18,9 +16,13 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.pos.consumer.SseEventHandler;
 import com.pos.consumer.store.order.config.KafkaConsumerConfig;
-import com.pos.event.StoreOrderEvent;
 import com.pos.producer.store.order.KafkaStoreOrderProducer;
 import com.pos.producer.store.order.config.KafkaProcuerConfig;
+
+import domain.pos.order.entity.Order;
+import domain.pos.store.entity.Store;
+import domain.pos.table.entity.Table;
+import fixtures.order.OrderFixture;
 
 @SpringBootTest
 @Import(value = {KafkaProcuerConfig.class,
@@ -31,7 +33,7 @@ import com.pos.producer.store.order.config.KafkaProcuerConfig;
 @ActiveProfiles("test")
 @EmbeddedKafka(partitions = 1, topics = {"${kafka.store.order.topic}"},
 	brokerProperties = {"listeners=PLAINTEXT://localhost:9092", "port=9092"})
-class KafkaStoreOrderEventListenerTest {
+class KafkaStoreOrderDtoEventListenerTest {
 
 	@MockitoBean
 	private SseEventHandler sseEventHandler;
@@ -45,18 +47,12 @@ class KafkaStoreOrderEventListenerTest {
 	@Test
 	void kafkaListenerTest() throws Exception {
 		// given
-		StoreOrderEvent storeOrderEvent = new StoreOrderEvent(
-			10L,
-			5,
-			new StoreOrderEvent.Order(
-				1001L,
-				LocalDateTime.now(),
-				List.of(new StoreOrderEvent.Order.OrderMenu(1L, "Americano", 3000, 2, "ORDERED"))
-			)
-		);
+		Order order = OrderFixture.GENERAL_ORDER();
+		Store store = order.getReceipt().getSale().getStore();
+		Table table = order.getReceipt().getTable();
 		TimeUnit.SECONDS.sleep(1);
 		// when
-		kafkaStoreOrderProducer.produceStoreOrder("1", storeOrderEvent);
+		kafkaStoreOrderProducer.produceStoreOrder(store, table, order);
 		kafkaTemplate.flush();
 
 		// then

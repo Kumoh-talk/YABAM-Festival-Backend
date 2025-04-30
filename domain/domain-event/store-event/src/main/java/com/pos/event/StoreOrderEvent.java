@@ -3,17 +3,22 @@ package com.pos.event;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import lombok.Builder;
+
+@Builder
 public record StoreOrderEvent(
 	Long tableId,
 	Integer tableNumber,
-	Order order
+	OrderDto orderDto
 ) {
-	public record Order(
+	@Builder
+	public record OrderDto(
 		Long orderId,
 		LocalDateTime createdAt,
-		List<OrderMenu> orderMenu
+		List<OrderMenuDto> orderMenuDtos
 	) {
-		public record OrderMenu(
+		@Builder
+		public record OrderMenuDto(
 			Long menuId,
 			String menuName,
 			Integer menuPrice,
