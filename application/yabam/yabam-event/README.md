@@ -67,74 +67,33 @@ graph TD
     F -->|"11. 주기적으로"| E
 ```
 
-## 4. 실시간 시스템과 장애 허용 아키텍처
+## 4. 통합 동기화 전략의 이점
 
-``` mermaid
-graph TB
-    subgraph "Yabam Event System"
-        A[SSE 서버]
-        B[Kafka]
-        C[이벤트 생산자들]
-    end
-    
-    subgraph "Yabam Core"
-        D[Fetch Sync API]
-        E[데이터 저장소]
-    end
-    
-    subgraph "클라이언트"
-        F[이벤트 소비자]
-        G[상태 관리]
-        H[재연결 로직]
-        I[동기화 로직]
-    end
-    
-    C -->|이벤트 발행| B
-    B -->|이벤트 소비| A
-    A -->|실시간 이벤트| F
-    F -->|상태 업데이트| G
-    
-    H -->|재연결 전| I
-    I -->|데이터 동기화| D
-    D -->|최신 데이터 제공| F
-    
-    A -.->|연결 timeout| H
-    H -->|동기화 후 재연결| A
-    
-    H -.->|재연결 실패| I
-    I -->|주기적 동기화| D
-    
-    C -->|데이터 저장| E
-    D -->|데이터 조회| E
-```
-
-## 5. 통합 동기화 전략의 이점
-
-### 5.1 단순화된 아키텍처
+### 4.1 단순화된 아키텍처
 
 - **일관된 API**: 재연결 시와 장애 상황에서 모두 동일한 API를 사용하여 코드 복잡성 감소
 - **중복 로직 제거**: 동일한 동기화 로직을 재사용하여 코드 유지보수성 향상
 - **에러 처리 통합**: 모든 데이터 동기화 상황에서 일관된 에러 처리 방식 적용
 
-### 5.2 강화된 데이터 일관성
+### 4.2 강화된 데이터 일관성
 
 - **연결 전 항상 동기화**: 매 연결 시도 전에 동기화를 수행하여 데이터 일관성 보장
 - **누락 데이터 방지**: timeout과 재연결 과정에서 발생할 수 있는 데이터 누락 최소화
 - **장애 복구 자동화**: 시스템 장애 이후 자동으로 최신 상태로 복구
 
-### 5.3 시스템 안정성 확보
+### 4.3 시스템 안정성 확보
 
 - **우아한 성능 저하**: 이벤트 서버 장애 시 폴링 모드로 자연스럽게 전환
 - **리소스 효율화**: 짧은 SSE timeout으로 서버 리소스 관리 최적화
 - **중복 요청 방지**: 정확한 lastEventId 추적으로 중복 데이터 요청 방지
 
-### 5.4 사용자 경험 향상
+### 4.4 사용자 경험 향상
 
 - **끊김 없는 서비스**: 연결 문제나 장애 상황에서도 지속적인 데이터 업데이트
 - **백그라운드 복구**: 사용자 인지 없이 자동으로 SSE 연결 복구 시도
 - **네트워크 조건 적응**: 불안정한 네트워크 환경에서도 안정적인 서비스 제공
 
-## 6. 설계 원칙 요약
+## 5. 설계 원칙 요약
 
 ``` mermaid
 flowchart TD
@@ -146,3 +105,66 @@ flowchart TD
         E[주기적 재연결 시도] -->|"자가 복구"| F
     end
 ```
+
+## 6. 모듈 의존도
+
+```mermaid
+graph LR
+
+%% 도메인 계층을 중앙에 배치
+    subgraph "도메인 계층 (domain-event:store-event)"
+        A[StoreOrderEvent]
+        E[SseEventHandler]
+        E --- A
+    end
+
+%% 인프라 계층을 위쪽에 배치
+    subgraph "인프라 계층 (infra:mq:kafka-pos)"
+        F[KafkaStoreOrderEventListener]
+        G[Kafka]
+        D[StoreOrderProducer]
+    end
+
+%% 애플리케이션 계층을 아래쪽에 배치
+    subgraph "애플리케이션 계층 (yabam-event)"
+        H[SsePosController]
+        I[SsePosService]
+        J[SseChannel Interface]
+        K[OwnerStoreChannel]
+        P[SseEmitter]
+        J --- K
+    end
+
+%% Yabam Core 애플리케이션 계층 추가
+    subgraph "pos 도메인  계층 (domain:domain-pos)"
+        C[OrderEventProducer]
+        L[OrderService]
+        RDB[RDB]
+    end
+
+    L -->|persistence| RDB
+    L -->|Log Produce| C
+%% 연결 관계 설정
+    D -->|Log Produce| G
+    G -->|Log Consume| F
+    F -->|Log Proccessing| E
+    I -->|채널 선택| J
+    H -->|클라이언트 요청| I
+    I -->|데이터 push| P
+    I -->|concrete| E
+%% Yabam Core에서 이벤트 생성 관계 추가
+    D -->|concrete| C
+```
+
+### 핵심 모듈 구조
+
+- **도메인 계층(domain-event:store-event)**: 주문 이벤트(StoreOrderEvent)의 핵심 도메인 모델과 이벤트 처리기(SseEventHandler)를 포함합니다.
+- **인프라 계층(infra:mq:kafka-pos)**: Kafka 메시징 시스템과 이벤트 발행자(StoreOrderProducer), 구독자(KafkaStoreOrderEventListener)를 포함합니다.
+- **애플리케이션 계층(yabam-event)**: SSE 컨트롤러, 서비스, 채널 관리 등 클라이언트와의 실시간 통신을 담당합니다.
+- **도메인-POS 계층(domain:domain-pos)**: 주문 서비스와 이벤트 생성기(OrderEventProducer)를 포함합니다.
+
+### 핵심 데이터 흐름
+
+1. **이벤트 생성과 발행**: OrderService → OrderEventProducer → StoreOrderProducer → Kafka
+2. **이벤트 소비와 처리**: Kafka → KafkaStoreOrderEventListener → SseEventHandler
+3. **클라이언트 데이터 전송**: SsePosController → SsePosService → SseChannel → 클라이언트
