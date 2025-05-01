@@ -111,4 +111,10 @@ public class MenuRepositoryImpl implements MenuRepository {
 		menuJpaRepository.decreaseOrderWhereGT(menu.getMenuCategory().getMenuCategoryInfo().getId(),
 			periodOrder);
 	}
+
+	@Override
+	public Optional<MenuInfo> getMenuInfoById(Long menuId) {
+		return menuJpaRepository.findById(menuId)
+			.map(MenuMapper::toMenuInfo);
+	}
 }
