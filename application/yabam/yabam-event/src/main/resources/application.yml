@@ -10,3 +10,11 @@ spring:
       enable-auto-commit: false     # 수동 커밋 권장
     listener:
       ack-mode: manual_immediate    # MANUAL ack 활용 시
+
+
+kafka:
+  store:
+    order:
+      topic: store-order
+      group-id: store-order-consumer
+      bootstrap-servers: localhost:9092

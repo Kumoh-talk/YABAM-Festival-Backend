@@ -3,23 +3,28 @@ package com.pos.event;
 import java.time.LocalDateTime;
 import java.util.List;
 
-//TODO : 추후 내역 수정
+import lombok.Builder;
+
+@Builder
 public record StoreOrderEvent(
 	Long tableId,
 	Integer tableNumber,
-	Order order
+	OrderDto orderDto
 ) {
-	public record Order(
+	@Builder
+	public record OrderDto(
 		Long orderId,
 		LocalDateTime createdAt,
-		List<OrderMenu> orderMenu
+		List<OrderMenuDto> orderMenuDtos,
+		String orderStatus
 	) {
-		public record OrderMenu(
+		@Builder
+		public record OrderMenuDto(
 			Long menuId,
 			String menuName,
 			Integer menuPrice,
-			Integer menuCount,
-			String menuStatus // TODO : 추후 enum으로 변경
+			Integer menuCount
+			// TODO : OrderMenuStatus 추가되면 수정해야함
 		) {
 		}
 	}

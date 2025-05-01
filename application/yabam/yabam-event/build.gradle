@@ -21,4 +21,7 @@ dependencies {
 
     // kafka
     runtimeOnly project(':infra:mq:kafka-pos')
+
+    // common mvc(auth) module
+    implementation project(':common:mvc')
 }
