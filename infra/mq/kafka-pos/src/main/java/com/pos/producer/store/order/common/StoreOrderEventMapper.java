@@ -19,8 +19,6 @@ public class StoreOrderEventMapper {
 					.menuName(orderMenu.getMenu().getMenuInfo().getName())
 					.menuPrice(orderMenu.getMenu().getMenuInfo().getPrice())
 					.menuCount(orderMenu.getQuantity())
-					.menuStatus(
-						orderMenu.getOrder().getOrderStatus().name()) // TODO : 해당 상태값을 Order의 상태가 아닌 Order로 수정해야함
 					.build();
 			})
 			.toList();
@@ -31,6 +29,7 @@ public class StoreOrderEventMapper {
 				StoreOrderEvent.OrderDto.builder()
 					.orderId(order.getOrderId())
 					.orderMenuDtos(orderMenus)
+					.orderStatus(order.getOrderStatus().name())
 					// TODO : order.getCreatedAt() 추가되면 여기에 추가해야함
 					.build()
 			)

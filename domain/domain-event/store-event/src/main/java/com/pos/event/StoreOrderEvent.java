@@ -15,15 +15,16 @@ public record StoreOrderEvent(
 	public record OrderDto(
 		Long orderId,
 		LocalDateTime createdAt,
-		List<OrderMenuDto> orderMenuDtos
+		List<OrderMenuDto> orderMenuDtos,
+		String orderStatus
 	) {
 		@Builder
 		public record OrderMenuDto(
 			Long menuId,
 			String menuName,
 			Integer menuPrice,
-			Integer menuCount,
-			String menuStatus
+			Integer menuCount
+			// TODO : OrderMenuStatus 추가되면 수정해야함
 		) {
 		}
 	}
