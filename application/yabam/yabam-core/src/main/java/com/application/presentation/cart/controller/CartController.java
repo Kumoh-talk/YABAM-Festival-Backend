@@ -17,6 +17,7 @@ import com.authorization.HasRole;
 import com.response.ResponseBody;
 
 import domain.pos.cart.service.CartService;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -30,7 +31,7 @@ public class CartController implements CartApi {
 	public ResponseEntity<ResponseBody<Void>> postCart(
 		@RequestParam final Long receiptId,
 		@RequestParam final Long menuId,
-		@RequestParam final Integer quantity) {
+		@RequestParam @Min(value = 1, message = "수량은 최소 1개 이상입니다.") final Integer quantity) {
 		cartService.upsertCart(receiptId, menuId, quantity);
 		return ResponseEntity.ok(createSuccessResponse());
 	}
