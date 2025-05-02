@@ -39,7 +39,7 @@ public class OrderMenuEntity {
 	private OrderEntity order;
 
 	@ManyToOne
-	@Column(name = "menu_id", nullable = false)
+	@JoinColumn(name = "menu_id", nullable = false)
 	private MenuEntity menu;
 
 	private OrderMenuEntity(Integer quantity, OrderEntity order, MenuEntity menu) {
