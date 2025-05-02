@@ -1,5 +1,6 @@
 package domain.pos.receipt.implement;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -25,20 +26,28 @@ public class ReceiptReader {
 		return receiptRepository.getReceiptInfo(receiptId);
 	}
 
-	public Optional<Receipt> getReceiptWithStore(Long receiptId) {
-		return receiptRepository.getReceiptWithStore(receiptId);
+	public Optional<Receipt> getReceiptWithTableAndStore(Long receiptId) {
+		return receiptRepository.getReceiptWithTableAndStore(receiptId);
 	}
 
-	public Optional<Receipt> getNonAdjustReceiptWithStore(Long receiptId) {
-		return receiptRepository.getNonAdjustReceiptWithStore(receiptId);
+	public List<Receipt> getStopReceiptsWithStore(List<Long> receiptIds) {
+		return receiptRepository.getStopReceiptsWithStore(receiptIds);
 	}
 
-	public Page<Receipt> getReceiptPageBySale(Pageable pageable, Long saleId) {
-		return receiptRepository.getReceiptPageBySale(pageable, saleId);
+	public List<Receipt> getStopReceiptsWithTableAndStore(List<Long> receiptIds) {
+		return receiptRepository.getStopReceiptsWithTableAndStore(receiptIds);
 	}
 
-	public Long getNonAdjustReceiptId(Long tableId) {
-		return receiptRepository.getNonAdjustReceiptId(tableId);
+	public List<Receipt> getNonStopReceiptsWithStoreAndLock(List<Long> receiptIds) {
+		return receiptRepository.getNonStopReceiptsWithStoreAndLock(receiptIds);
+	}
+
+	public Page<ReceiptInfo> getAdjustedReceiptPageBySale(Pageable pageable, Long saleId) {
+		return receiptRepository.getAdjustedReceiptPageBySale(pageable, saleId);
+	}
+
+	public ReceiptInfo getNonAdjustReceipt(Long tableId) {
+		return receiptRepository.getNonAdjustReceipt(tableId);
 	}
 
 	public Slice<Receipt> getCustomerReceiptSlice(Pageable pageable, Long customerId) {

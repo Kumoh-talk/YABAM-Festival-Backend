@@ -24,36 +24,36 @@ public class ReceiptFixture {
 
 	public static Receipt CUSTOM_RECEIPT(
 		final ReceiptInfo receiptInfo,
-		final Table table,
-		final Sale sale) {
+		final Sale sale,
+		final Table table) {
 		return Receipt.of(
 			receiptInfo,
-			table,
-			sale
+			sale,
+			table
 		);
 	}
 
 	public static Receipt GENERAL_ADJUSTMENT_RECEIPT() {
 		return Receipt.of(
 			GENERAL_ADJUSTMENT_RECEIPT_INFO,
-			GENERAL_TABLE,
-			GENERAL_OPEN_SALE
+			GENERAL_OPEN_SALE,
+			GENERAL_TABLE
 		);
 	}
 
 	public static Receipt GENERAL_NON_ADJUSTMENT_RECEIPT() {
 		return Receipt.of(
 			GENERAL_NON_ADJUSTMENT_RECEIPT_INFO,
-			GENERAL_TABLE,
-			GENERAL_OPEN_SALE
+			GENERAL_OPEN_SALE,
+			GENERAL_TABLE
 		);
 	}
 
 	public static Receipt GENERAL_CLOSE_SALE_NON_ADJSTMENT_RECEIPT() {
 		return Receipt.of(
 			GENERAL_NON_ADJUSTMENT_RECEIPT_INFO,
-			GENERAL_TABLE,
-			GENERAL_CLOSE_SALE
+			GENERAL_CLOSE_SALE,
+			GENERAL_TABLE
 		);
 	}
 }

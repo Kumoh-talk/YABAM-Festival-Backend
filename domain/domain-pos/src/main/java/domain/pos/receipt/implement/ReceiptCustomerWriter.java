@@ -2,7 +2,6 @@ package domain.pos.receipt.implement;
 
 import org.springframework.stereotype.Component;
 
-import domain.pos.receipt.entity.ReceiptCustomer;
 import domain.pos.receipt.repository.ReceiptCustomerRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -11,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 public class ReceiptCustomerWriter {
 	private final ReceiptCustomerRepository receiptCustomerRepository;
 
-	public ReceiptCustomer postReceiptCustomer(Long customerId, Long receiptId) {
-		return receiptCustomerRepository.postReceiptCustomer(customerId, receiptId);
+	public void postReceiptCustomer(Long customerId, Long receiptId) {
+		receiptCustomerRepository.postReceiptCustomer(customerId, receiptId);
 	}
 }
