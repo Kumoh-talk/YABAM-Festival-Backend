@@ -15,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 public class TableReader {
 	private final TableRepository tableRepository;
 
-	public Optional<Table> findLockTableById(Long queryTableId) {
-		return tableRepository.findByIdWithLock(queryTableId);
+	public Optional<Table> findLockTableById(Long queryTableId, Long storeId) {
+		return tableRepository.findByIdWithLock(queryTableId, storeId);
 	}
 
 	public boolean isExistsTable(Store responStore) {

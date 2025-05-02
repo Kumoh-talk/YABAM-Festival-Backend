@@ -86,7 +86,7 @@ class TableRepositoryImplTest extends RepositoryTest {
 
 		// when
 		System.out.println("===TableRepositoryImplTest.테이블_아이디로_락_조회 쿼리===");
-		Table table = tableRepository.findByIdWithLock(tableEntities.get(0).getId()).get();
+		Table table = tableRepository.findByIdWithLock(tableEntities.get(0).getId(), savedStore.getStoreId()).get();
 		testEntityManager.flush();
 		testEntityManager.clear();
 		System.out.println("===TableRepositoryImplTest.테이블_아이디로_락_조회 쿼리===");

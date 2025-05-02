@@ -51,10 +51,11 @@ public class TableDslRepositoryImpl implements TableDslRepository {
 	}
 
 	@Override
-	public TableEntity findTableByidForUpdate(Long queryTableId) {
+	public TableEntity findByIdAndStoreIdForUpdate(Long queryTableId, Long storeId) {
 		return queryFactory
 			.selectFrom(qTableEntity)
-			.where(qTableEntity.id.eq(queryTableId))
+			.where(qTableEntity.id.eq(queryTableId)
+				.and(qTableEntity.store.id.eq(storeId)))
 			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
 			.fetchOne();
 	}

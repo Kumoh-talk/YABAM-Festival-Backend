@@ -14,7 +14,7 @@ public interface TableRepository {
 
 	boolean existsTableByStoreWithLock(Store responStore);
 
-	Optional<Table> findByIdWithLock(Long queryTableId);
+	Optional<Table> findByIdWithLock(Long queryTableId, Long storeId);
 
 	Table changeTableActiveStatus(boolean isActive, Table savedInActiveTable);
 

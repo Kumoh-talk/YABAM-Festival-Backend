@@ -17,7 +17,7 @@ public interface TableDslRepository {
 
 	void updateTableActiveStatusById(boolean isActive, Table savedInActiveTable);
 
-	TableEntity findTableByidForUpdate(Long queryTableId);
+	TableEntity findByIdAndStoreIdForUpdate(Long queryTableId, Long storeId);
 
 	boolean existsTableByStoreIdForUpdate(Store responStore);
 
