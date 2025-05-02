@@ -55,4 +55,13 @@ public class CartRepositoryImpl implements CartRepository {
 				return CartMapper.toCart(receiptId, cartEntity);
 			});
 	}
+
+	@Override
+	public void deleteCartAndCartMenuByReceiptId(Long receiptId) {
+		CartEntity cartEntity = cartJpaRepository.findCartByReceiptId(receiptId).orElseThrow(
+			() -> new IllegalArgumentException("해당 영수증 id에 해당하는 장바구니 내역이 없습니다." + receiptId));
+		cartJpaRepository.delete(cartEntity);
+		cartMenuJpaRepository.deleteAll(cartEntity.getCartMenus());
+		cartEntity.getCartMenus().clear();
+	}
 }

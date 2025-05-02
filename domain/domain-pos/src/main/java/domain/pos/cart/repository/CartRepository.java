@@ -15,4 +15,7 @@ public interface CartRepository {
 	void deleteCartMenu(Long receiptId, Long menuId);
 
 	Optional<Cart> getCart(Long receiptId);
+
+	// 외부에서 영수증을 삭제할 때, 장바구니도 삭제한다.
+	void deleteCartAndCartMenuByReceiptId(Long receiptId);
 }
