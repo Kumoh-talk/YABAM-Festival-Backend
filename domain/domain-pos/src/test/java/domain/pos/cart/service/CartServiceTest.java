@@ -71,7 +71,7 @@ class CartServiceTest extends ServiceTest {
 			Long menuId = 10L;
 
 			// when
-			cartService.deleteCart(receiptId, menuId);
+			cartService.deleteCartMenu(receiptId, menuId);
 
 			// then
 			assertSoftly(softly -> {
