@@ -3,6 +3,7 @@ package com.pos.builder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.pos.cart.repository.CartJpaRepository;
 import com.pos.menu.repository.jpa.MenuCategoryJpaRepository;
 import com.pos.menu.repository.jpa.MenuJpaRepository;
 import com.pos.sale.repository.SaleJpaRepository;
@@ -22,6 +23,9 @@ public class BuilderSupporter {
 
 	@Autowired
 	private MenuJpaRepository menuJpaRepository;
+
+	@Autowired
+	private CartJpaRepository cartJpaRepository;
 
 	@Autowired
 	private MenuCategoryJpaRepository menuCategoryJpaRepository;
@@ -44,5 +48,9 @@ public class BuilderSupporter {
 
 	public MenuCategoryJpaRepository getMenuCategoryJpaRepository() {
 		return menuCategoryJpaRepository;
+	}
+
+	public CartJpaRepository getCartJpaRepository() {
+		return cartJpaRepository;
 	}
 }
