@@ -28,4 +28,5 @@ public interface MenuRepository {
 
 	void deleteMenu(Menu menu);
 
+	Optional<MenuInfo> getMenuInfoById(Long menuId);
 }
