@@ -13,12 +13,13 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
 import com.pos.global.properties.KafkaStoreOrderProperties;
+import com.pos.producer.store.order.KafkaStoreOrderProducer;
 
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
-@Import(KafkaStoreOrderProperties.class)
+@Import({KafkaStoreOrderProperties.class, KafkaStoreOrderProducer.class})
 public class KafkaProcuerConfig {
 	private final KafkaStoreOrderProperties kafkaStoreOrderProperties;
 
