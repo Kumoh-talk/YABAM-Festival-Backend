@@ -48,11 +48,19 @@ public class TableEntity extends BaseEntity {
 		this.store = store;
 	}
 
+	private TableEntity(Long id) {
+		this.id = id;
+	}
+
 	public static TableEntity of(TableNumber tableNumber, Boolean isActive, StoreEntity store) {
 		return new TableEntity(
 			tableNumber,
 			isActive,
 			store
 		);
+	}
+
+	public static TableEntity from(Long id) {
+		return new TableEntity(id);
 	}
 }

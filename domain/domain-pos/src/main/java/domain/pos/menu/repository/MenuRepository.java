@@ -5,12 +5,14 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.stereotype.Repository;
 
 import domain.pos.menu.entity.Menu;
 import domain.pos.menu.entity.MenuCategoryInfo;
 import domain.pos.menu.entity.MenuInfo;
 import domain.pos.store.entity.Store;
 
+@Repository
 public interface MenuRepository {
 	Menu postMenu(Store store, MenuCategoryInfo menuCategory, MenuInfo menuInfo);
 
