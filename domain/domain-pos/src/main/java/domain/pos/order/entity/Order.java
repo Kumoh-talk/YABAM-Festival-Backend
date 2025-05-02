@@ -24,4 +24,12 @@ public class Order {
 		this.receipt = receipt;
 		this.orderMenus = orderMenus;
 	}
+
+	private Order(Long orderId) {
+		this.orderId = orderId;
+	}
+
+	public static Order from(Long orderId) {
+		return new Order(orderId);
+	}
 }

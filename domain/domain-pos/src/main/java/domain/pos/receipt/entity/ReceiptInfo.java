@@ -1,33 +1,45 @@
 package domain.pos.receipt.entity;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
+import domain.pos.store.entity.Store;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 public class ReceiptInfo {
 	private Long receiptId;
 	private boolean isAdjustment;
-	private LocalDateTime startTime;
-	private LocalDateTime endTime;
+	private LocalDateTime startUsageTime;
+	private LocalDateTime stopUsageTime;
+	private Integer occupancyFee;
 
-	private ReceiptInfo(Long receiptId, boolean isAdjustment, LocalDateTime startTime, LocalDateTime endTime) {
+	@Builder
+	public ReceiptInfo(Long receiptId, boolean isAdjustment, LocalDateTime startUsageTime,
+		LocalDateTime stopUsageTime, Integer occupancyFee) {
 		this.receiptId = receiptId;
 		this.isAdjustment = isAdjustment;
-		this.startTime = startTime;
-		this.endTime = endTime;
+		this.startUsageTime = startUsageTime;
+		this.stopUsageTime = stopUsageTime;
+		this.occupancyFee = occupancyFee;
 	}
 
-	public static ReceiptInfo of(
-		final Long receiptId,
-		final boolean isAdjustment,
-		final LocalDateTime startTime,
-		final LocalDateTime endTime) {
-		return new ReceiptInfo(
-			receiptId,
-			isAdjustment,
-			startTime,
-			endTime
-		);
+	public void stop(Store store) {
+		this.stopUsageTime = LocalDateTime.now();
+
+		long minutesUsed = Duration.between(this.startUsageTime, this.stopUsageTime).toMinutes();
+		Integer costPerMinute = store.getStoreInfo().getTableCost();
+
+		this.occupancyFee = (int)(minutesUsed * costPerMinute);
+	}
+
+	public void restart() {
+		this.stopUsageTime = null;
+		this.occupancyFee = null;
+	}
+
+	public void adjust() {
+		this.isAdjustment = true;
 	}
 }

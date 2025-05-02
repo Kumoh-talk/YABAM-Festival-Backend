@@ -1,5 +1,7 @@
 package domain.pos.receipt.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -39,29 +41,28 @@ public class ReceiptService {
 	private final ReceiptWriter receiptWriter;
 	private final ReceiptReader receiptReader;
 
+	// TODO : 이것도 SSE로 전송해야하지 않을까..?
 	@Transactional
-	public Receipt registerReceipt(final UserPassport queryUserPassport, final Long queryTableId,
-		final Long querySaleId) {
+	public Receipt registerReceipt(final Long queryTableId, final Long querySaleId) {
 		final Sale savedSale = saleReader.readSingleSale(querySaleId)
 			.orElseThrow(() -> {
-				log.warn("Sale 을 찾을 수 없습니다. saleId: {}, userId: {}", querySaleId, queryUserPassport.getUserId());
+				log.warn("Sale 을 찾을 수 없습니다. saleId: {}", querySaleId);
 				throw new ServiceException(ErrorCode.NOT_FOUND_SALE);
 			});
 
-		final Table savedTable = tableReader.findLockTableById(queryTableId)
+		final Table savedTable = tableReader.findLockTableById(queryTableId, savedSale.getStore().getStoreId())
 			.orElseThrow(() -> {
-				log.warn("Table 을 찾을 수 없습니다. tableId: {}, userId: {}", queryTableId, queryUserPassport.getUserId());
+				log.warn("Table 을 찾을 수 없습니다. tableId: {}", queryTableId);
 				throw new ServiceException(ErrorCode.NOT_FOUND_TABLE);
 			});
 
 		if (savedTable.getIsActive()) {
-			log.warn("Table 이 이미 활성화 되어 있습니다. tableId: {}, userId: {}", queryTableId, queryUserPassport.getUserId());
+			log.warn("Table 이 이미 활성화 되어 있습니다. tableId: {}", queryTableId);
 			throw new ServiceException(ErrorCode.ALREADY_ACTIVE_TABLE);
 		}
 
 		final Table changedActiveTable = tableWriter.changeTableActiveStatus(true, savedTable);
-		final Receipt createdReceipt = receiptWriter.createReceipt(queryUserPassport, changedActiveTable, savedSale);
-		return createdReceipt;
+		return receiptWriter.createReceipt(changedActiveTable, savedSale);
 	}
 
 	public ReceiptInfo getReceiptInfo(Long receiptId) {
@@ -74,7 +75,7 @@ public class ReceiptService {
 
 	// TODO : application 계층 one-indexed-parameters 설정 추가
 	// Owner api
-	public Page<Receipt> getReceiptPageBySale(Pageable pageable, UserPassport userPassport, Long saleId) {
+	public Page<ReceiptInfo> getAdjustedReceiptPageBySale(Pageable pageable, UserPassport userPassport, Long saleId) {
 		Sale sale = saleReader.readSingleSale(saleId)
 			.orElseThrow(() -> {
 				log.warn("Sale 을 찾을 수 없습니다. saleId: {}, userId: {}", saleId, null);
@@ -83,39 +84,78 @@ public class ReceiptService {
 
 		storeValidator.validateStoreOwner(userPassport, sale.getStore().getStoreId());
 
-		return receiptReader.getReceiptPageBySale(pageable, saleId);
+		return receiptReader.getAdjustedReceiptPageBySale(pageable, saleId);
 	}
 
-	// Owner api
-	public void adjustReceipt(Long receiptId, UserPassport userPassport) {
-		Receipt receipt = receiptReader.getReceiptWithStore(receiptId)
-			.orElseThrow(() -> {
-				log.warn("Receipt 을 찾을 수 없습니다. receiptId: {}", receiptId);
-				return new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
-			});
-
-		receiptValidator.validateIsOwner(receipt, userPassport);
-		if (receipt.getReceiptInfo().isAdjustment()) {
-			log.warn("이미 정산된 영수증입니다. receiptId: {}", receiptId);
-			throw new ServiceException(ErrorCode.ALREADY_ADJUSTMENT_RECEIPT);
+	@Transactional
+	public List<Receipt> stopReceiptUsage(List<Long> receiptIds, UserPassport userPassport) {
+		List<Receipt> receipts = receiptReader.getNonStopReceiptsWithStoreAndLock(receiptIds);
+		if (receipts.size() != receiptIds.size()) {
+			log.warn("Receipt 을 찾을 수 없습니다.");
+			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
+		}
+		for (Receipt receipt : receipts) {
+			receiptValidator.validateIsOwner(receipt, userPassport);
+			receipt.getReceiptInfo().stop(receipt.getSale().getStore());
 		}
 
-		receiptWriter.adjustReceipt(receiptId);
+		return receiptWriter.stopReceiptsWithMenu(receipts);
+	}
+
+	@Transactional
+	public void restartReceiptUsage(List<Long> receiptIds, UserPassport userPassport) {
+		List<Receipt> receipts = receiptReader.getStopReceiptsWithStore(receiptIds);
+		if (receipts.size() != receiptIds.size()) {
+			log.warn("Receipt 을 찾을 수 없습니다.");
+			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
+		}
+		for (Receipt receipt : receipts) {
+			receiptValidator.validateIsOwner(receipt, userPassport);
+		}
+
+		receiptWriter.restartReceipts(receipts);
 	}
 
 	// Owner api
+	// TODO : 정산이 끝나면 주문창 세션을 종료시켜야함
+	@Transactional
+	public void adjustReceipts(List<Long> receiptIds, UserPassport userPassport) {
+		List<Receipt> receipts = receiptReader.getStopReceiptsWithTableAndStore(receiptIds);
+		if (receipts.size() != receiptIds.size()) {
+			log.warn("Receipt 을 찾을 수 없습니다.");
+			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
+		}
+
+		for (Receipt receipt : receipts) {
+			receiptValidator.validateIsOwner(receipt, userPassport);
+			if (receipt.getReceiptInfo().isAdjustment()) {
+				log.warn("이미 정산된 영수증입니다. receiptId: {}", receipt.getReceiptInfo().getReceiptId());
+				throw new ServiceException(ErrorCode.ALREADY_ADJUSTMENT_RECEIPT);
+			}
+			tableWriter.changeTableActiveStatus(false, receipt.getTable());
+		}
+
+		receiptWriter.adjustReceipts(receipts);
+	}
+
+	// Owner api
+	@Transactional
 	public void deleteReceipt(Long receiptId, UserPassport userPassport) {
-		Receipt receipt = receiptReader.getReceiptWithStore(receiptId)
+		Receipt receipt = receiptReader.getReceiptWithTableAndStore(receiptId)
 			.orElseThrow(() -> {
 				log.warn("Receipt 을 찾을 수 없습니다. receiptId: {}", receiptId);
 				return new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 			});
 		receiptValidator.validateIsOwner(receipt, userPassport);
+		if (!receipt.getReceiptInfo().isAdjustment()) {
+			tableWriter.changeTableActiveStatus(false, receipt.getTable());
+		}
 		receiptWriter.deleteReceipt(receiptId);
 	}
 
 	public Long getNonAdjustReceiptId(Long tableId) {
-		return receiptReader.getNonAdjustReceiptId(tableId);
+		ReceiptInfo receiptInfo = receiptReader.getNonAdjustReceipt(tableId);
+		return receiptInfo != null ? receiptInfo.getReceiptId() : null;
 	}
 
 	public Slice<Receipt> getCustomerReceiptSlice(Pageable pageable, UserPassport userPassport, Long customerId) {

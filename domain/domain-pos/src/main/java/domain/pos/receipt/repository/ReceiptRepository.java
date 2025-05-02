@@ -1,35 +1,45 @@
 package domain.pos.receipt.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.stereotype.Repository;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.store.entity.Sale;
 import domain.pos.table.entity.Table;
 
+@Repository
 public interface ReceiptRepository {
-	Receipt createReceipt(UserPassport userPassport, Table table, Sale sale);
+	Receipt createReceipt(Table table, Sale sale);
 
 	Optional<ReceiptInfo> getReceiptInfo(Long receiptId);
 
-	Optional<Receipt> getReceiptWithStore(Long receiptId);
+	Optional<Receipt> getReceiptWithTableAndStore(Long receiptId);
 
-	Optional<Receipt> getNonAdjustReceiptWithStore(Long receiptId);
+	List<Receipt> getStopReceiptsWithTableAndStore(List<Long> receiptIds);
 
-	Page<Receipt> getReceiptPageBySale(Pageable pageable, Long saleId);
+	List<Receipt> getStopReceiptsWithStore(List<Long> receiptIds);
 
-	Long getNonAdjustReceiptId(Long tableId);
+	List<Receipt> getNonStopReceiptsWithStoreAndLock(List<Long> receiptIds);
+
+	Page<ReceiptInfo> getAdjustedReceiptPageBySale(Pageable pageable, Long saleId);
+
+	ReceiptInfo getNonAdjustReceipt(Long tableId);
 
 	Slice<Receipt> getCustomerReceiptSlice(Pageable pageable, Long customerId);
 
 	boolean existsReceipt(Long receiptId);
 
-	void adjustReceipt(Long receiptId);
+	List<Receipt> stopReceiptsWithMenu(List<Receipt> patchReceipts);
+
+	void restartReceipts(List<Receipt> receipts);
+
+	void adjustReceipts(List<Receipt> receipts);
 
 	void deleteReceipt(Long receiptId);
 }

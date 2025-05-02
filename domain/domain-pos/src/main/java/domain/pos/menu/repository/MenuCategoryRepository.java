@@ -3,10 +3,13 @@ package domain.pos.menu.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Repository;
+
 import domain.pos.menu.entity.MenuCategory;
 import domain.pos.menu.entity.MenuCategoryInfo;
 import domain.pos.store.entity.Store;
 
+@Repository
 public interface MenuCategoryRepository {
 	MenuCategory postMenuCategory(Store store, MenuCategoryInfo menuCategoryInfo);
 

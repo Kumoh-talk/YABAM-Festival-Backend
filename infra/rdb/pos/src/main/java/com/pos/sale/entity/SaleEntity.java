@@ -45,7 +45,15 @@ public class SaleEntity {
 		this.store = store;
 	}
 
+	private SaleEntity(Long id) {
+		this.id = id;
+	}
+
 	public static SaleEntity from(StoreEntity storeEntity) {
 		return new SaleEntity(storeEntity);
+	}
+
+	public static SaleEntity from(Long id) {
+		return new SaleEntity(id);
 	}
 }

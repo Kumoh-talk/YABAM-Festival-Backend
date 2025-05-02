@@ -40,8 +40,8 @@ public class TableRepositoryImpl implements TableRepository {
 	}
 
 	@Override
-	public Optional<Table> findByIdWithLock(Long queryTableId) {
-		TableEntity tableEntity = tableJpaRepository.findTableByidForUpdate(queryTableId);
+	public Optional<Table> findByIdWithLock(Long queryTableId, Long storeId) {
+		TableEntity tableEntity = tableJpaRepository.findByIdAndStoreIdForUpdate(queryTableId, storeId);
 		return Optional.ofNullable(TableMapper.toTable(tableEntity, tableEntity.getStore().getId()));
 	}
 

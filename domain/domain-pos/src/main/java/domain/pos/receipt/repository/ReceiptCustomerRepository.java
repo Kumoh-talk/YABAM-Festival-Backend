@@ -1,7 +1,8 @@
 package domain.pos.receipt.repository;
 
-import domain.pos.receipt.entity.ReceiptCustomer;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface ReceiptCustomerRepository {
-	ReceiptCustomer postReceiptCustomer(Long customerId, Long receiptId);
+	void postReceiptCustomer(Long customerId, Long receiptId);
 }

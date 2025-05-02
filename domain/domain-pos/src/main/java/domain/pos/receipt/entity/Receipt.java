@@ -1,5 +1,9 @@
 package domain.pos.receipt.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import domain.pos.order.entity.Order;
 import domain.pos.store.entity.Sale;
 import domain.pos.table.entity.Table;
 import lombok.Getter;
@@ -7,23 +11,24 @@ import lombok.Getter;
 @Getter
 public class Receipt {
 	private final ReceiptInfo receiptInfo;
-	private final Table table;
 	private final Sale sale;
+	private final Table table;
+	private final List<Order> orders = new ArrayList<>();
 
-	private Receipt(ReceiptInfo receiptInfo, Table table, Sale sale) {
+	private Receipt(ReceiptInfo receiptInfo, Sale sale, Table table) {
 		this.receiptInfo = receiptInfo;
-		this.table = table;
 		this.sale = sale;
+		this.table = table;
 	}
 
 	public static Receipt of(
 		final ReceiptInfo receiptInfo,
-		final Table table,
-		final Sale sale) {
+		final Sale sale,
+		final Table table) {
 		return new Receipt(
 			receiptInfo,
-			table,
-			sale
+			sale,
+			table
 		);
 	}
 }
