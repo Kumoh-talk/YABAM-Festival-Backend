@@ -35,4 +35,23 @@ public class ReviewService {
 		return reviewWriter.postReview(userPassport, receiptInfo, reviewInfo);
 	}
 
+	public Review updateReview(final UserPassport userPassport, final Long reviewId,
+		final ReviewInfo updateReviewInfo) {
+		Review review = reviewReader.getReview(reviewId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.REVIEW_NOT_FOUND));
+		if (!review.isUser(userPassport)) {
+			throw new ServiceException(ErrorCode.REVIEW_NOT_USER);
+		}
+		return reviewWriter.updateReview(review, updateReviewInfo);
+	}
+
+	public void deleteReview(final UserPassport userPassport, final Long reviewId) {
+		Review review = reviewReader.getReview(reviewId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.REVIEW_NOT_FOUND));
+		if (!review.isUser(userPassport)) {
+			throw new ServiceException(ErrorCode.REVIEW_NOT_USER);
+		}
+		reviewWriter.deleteReview(review);
+	}
+
 }

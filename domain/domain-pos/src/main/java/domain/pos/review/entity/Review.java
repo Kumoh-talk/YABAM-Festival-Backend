@@ -22,4 +22,7 @@ public class Review {
 		return new Review(reviewId, reviewInfo, userPassport, receipt);
 	}
 
+	public boolean isUser(UserPassport userPassport) {
+		return this.userPassport.getUserId().equals(userPassport.getUserId());
+	}
 }

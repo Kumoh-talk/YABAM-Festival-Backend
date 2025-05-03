@@ -1,5 +1,6 @@
 package domain.pos.review.service;
 
+import static fixtures.member.UserFixture.*;
 import static fixtures.receipt.ReceiptFixture.*;
 import static fixtures.review.ReviewFixture.*;
 import static org.assertj.core.api.SoftAssertions.*;
@@ -7,6 +8,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -156,6 +158,156 @@ class ReviewServiceTest extends ServiceTest {
 			});
 		}
 
+	}
+
+	@Nested
+	@DisplayName("리뷰 수정")
+	class updateReview {
+		@Test
+		void 성공() {
+			// given
+			Review savedReview = GENERAL_REVIEW(GENERAL_ADJUSTMENT_RECEIPT());
+			ReviewInfo updateReviewInfo = GENERAL_REVIEW_INFO();
+			Long queryReviewId = savedReview.getReviewId();
+			UserPassport queryUserPassport = savedReview.getUserPassport();
+
+			doReturn(Optional.ofNullable(savedReview))
+				.when(reviewReader).getReview(anyLong());
+			doReturn(savedReview)
+				.when(reviewWriter).updateReview(any(Review.class), any(ReviewInfo.class));
+
+			// when
+			Review review = reviewService.updateReview(queryUserPassport, queryReviewId, updateReviewInfo);
+
+			// then
+			assertSoftly(softly -> {
+				verify(reviewReader)
+					.getReview(anyLong());
+				verify(reviewWriter)
+					.updateReview(any(Review.class), any(ReviewInfo.class));
+				softly.assertThat(review).isEqualTo(savedReview);
+			});
+		}
+
+		@Test
+		void 실패_없는_리뷰_수정_시도() {
+			// given
+			Review savedReview = GENERAL_REVIEW(GENERAL_ADJUSTMENT_RECEIPT());
+			ReviewInfo updateReviewInfo = GENERAL_REVIEW_INFO();
+			Long queryReviewId = savedReview.getReviewId();
+			UserPassport queryUserPassport = savedReview.getUserPassport();
+
+			doReturn(Optional.empty())
+				.when(reviewReader).getReview(anyLong());
+
+			// when->then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(
+						() -> reviewService.updateReview(queryUserPassport, queryReviewId, updateReviewInfo))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.REVIEW_NOT_FOUND);
+				verify(reviewReader)
+					.getReview(anyLong());
+				verify(reviewWriter, never())
+					.updateReview(any(Review.class), any(ReviewInfo.class));
+			});
+		}
+
+		@Test
+		void 실패_리뷰_소유자가_아닌_요청() {
+			// given
+			Review savedReview = GENERAL_REVIEW(GENERAL_ADJUSTMENT_RECEIPT());
+			ReviewInfo updateReviewInfo = GENERAL_REVIEW_INFO();
+			Long queryReviewId = savedReview.getReviewId();
+			UserPassport queryUserPassport = DIFF_USER_PASSPORT();
+
+			doReturn(Optional.of(savedReview))
+				.when(reviewReader).getReview(anyLong());
+
+			// when->then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(
+						() -> reviewService.updateReview(queryUserPassport, queryReviewId, updateReviewInfo))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.REVIEW_NOT_USER);
+				verify(reviewReader)
+					.getReview(anyLong());
+				verify(reviewWriter, never())
+					.updateReview(any(Review.class), any(ReviewInfo.class));
+			});
+		}
+	}
+
+	@Nested
+	@DisplayName("리뷰 삭제")
+	class deleteReview {
+		@Test
+		void 성공() {
+			// given
+			Review savedReview = GENERAL_REVIEW(GENERAL_ADJUSTMENT_RECEIPT());
+			Long queryReviewId = savedReview.getReviewId();
+			UserPassport queryUserPassport = savedReview.getUserPassport();
+
+			doReturn(Optional.ofNullable(savedReview))
+				.when(reviewReader).getReview(anyLong());
+
+			// when
+			reviewService.deleteReview(queryUserPassport, queryReviewId);
+
+			// then
+			assertSoftly(softly -> {
+				verify(reviewReader)
+					.getReview(anyLong());
+				verify(reviewWriter)
+					.deleteReview(any(Review.class));
+			});
+		}
+
+		@Test
+		void 실패_없는_리뷰_삭제_시도() {
+			// given
+			Review savedReview = GENERAL_REVIEW(GENERAL_ADJUSTMENT_RECEIPT());
+			Long queryReviewId = savedReview.getReviewId();
+			UserPassport queryUserPassport = savedReview.getUserPassport();
+
+			doReturn(Optional.empty())
+				.when(reviewReader).getReview(anyLong());
+
+			// when->then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(
+						() -> reviewService.deleteReview(queryUserPassport, queryReviewId))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.REVIEW_NOT_FOUND);
+				verify(reviewReader)
+					.getReview(anyLong());
+				verify(reviewWriter, never())
+					.deleteReview(any(Review.class));
+			});
+		}
+
+		@Test
+		void 실패_리뷰_소유자가_아닌_요청() {
+			// given
+			Review savedReview = GENERAL_REVIEW(GENERAL_ADJUSTMENT_RECEIPT());
+			Long queryReviewId = savedReview.getReviewId();
+			UserPassport queryUserPassport = DIFF_USER_PASSPORT();
+
+			doReturn(Optional.of(savedReview))
+				.when(reviewReader).getReview(anyLong());
+
+			// when->then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(
+						() -> reviewService.deleteReview(queryUserPassport, queryReviewId))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.REVIEW_NOT_USER);
+				verify(reviewReader)
+					.getReview(anyLong());
+				verify(reviewWriter, never())
+					.deleteReview(any(Review.class));
+			});
+		}
 	}
 
 }

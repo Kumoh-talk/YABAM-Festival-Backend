@@ -17,4 +17,12 @@ public class ReviewWriter {
 	public Review postReview(UserPassport userPassport, ReceiptInfo receiptInfo, ReviewInfo reviewInfo) {
 		return reviewRepository.createReview(userPassport, receiptInfo, reviewInfo);
 	}
+
+	public Review updateReview(Review review, ReviewInfo updateReviewInfo) {
+		return reviewRepository.updateReview(review, updateReviewInfo);
+	}
+
+	public void deleteReview(Review review) {
+		reviewRepository.deleteReview(review);
+	}
 }

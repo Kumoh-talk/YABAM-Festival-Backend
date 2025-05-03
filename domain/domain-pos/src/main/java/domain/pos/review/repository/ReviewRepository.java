@@ -1,5 +1,7 @@
 package domain.pos.review.repository;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Repository;
 
 import domain.pos.member.entity.UserPassport;
@@ -12,4 +14,10 @@ public interface ReviewRepository {
 	Review createReview(UserPassport userPassport, ReceiptInfo receiptInfo, ReviewInfo reviewInfo);
 
 	boolean existsReview(Long receiptId, UserPassport userPassport);
+
+	Optional<Review> findById(Long reviewId);
+
+	Review updateReview(Review review, ReviewInfo updateReviewInfo);
+
+	void deleteReview(Review review);
 }
