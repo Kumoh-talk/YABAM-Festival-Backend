@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.application.presentation.review.api.ReviewApi;
 import com.application.presentation.review.dto.request.ReviewCreateRequest;
-import com.application.presentation.review.dto.request.ReviewCusorRequest;
 import com.application.presentation.review.dto.request.ReviewUpdateRequest;
 import com.application.presentation.review.dto.response.ReviewIdResponse;
 import com.application.presentation.review.dto.response.ReviewsCusorResponse;
@@ -75,11 +74,13 @@ public class ReviewController implements ReviewApi {
 	@GetMapping("/api/v1/reviews")
 	@HasRole(userRole = ROLE_ANONYMOUS)
 	public ResponseEntity<ResponseBody<ReviewsCusorResponse>> getReview(
-		@RequestBody @Valid ReviewCusorRequest reviewCusorRequest
+		@RequestParam Long receiptId,
+		@RequestParam Long lastReviewId,
+		@RequestParam int size
 	) {
 		return ResponseEntity.ok(createSuccessResponse(
 			ReviewsCusorResponse.from(reviewService.getReviews(
-				reviewCusorRequest.receiptId(), reviewCusorRequest.lastReviewId(), reviewCusorRequest.size()))
+				receiptId, lastReviewId, size))
 		));
 	}
 }

@@ -8,6 +8,8 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.exception.ErrorCode;
+import com.exception.ServiceException;
 import com.pos.review.entity.ReviewEntity;
 import com.pos.review.mapper.ReviewMapper;
 import com.pos.review.repository.jpa.ReviewJpaRepository;
@@ -45,7 +47,8 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 	@Override
 	@Transactional
 	public Review updateReview(Review review, ReviewInfo updateReviewInfo) {
-		ReviewEntity reviewEntity = reviewJpaRepository.findById(review.getReviewId()).get();
+		ReviewEntity reviewEntity = reviewJpaRepository.findById(review.getReviewId())
+			.orElseThrow(() -> new ServiceException(ErrorCode.REVIEW_NOT_FOUND));
 		reviewEntity.changeReviewInfo(updateReviewInfo);
 		return ReviewMapper.toReview(reviewEntity);
 	}

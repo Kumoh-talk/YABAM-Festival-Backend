@@ -58,7 +58,7 @@ class ReviewServiceTest extends ServiceTest {
 			doReturn(responReview)
 				.when(reviewWriter).postReview(any(UserPassport.class), any(ReceiptInfo.class), any(ReviewInfo.class));
 			doReturn(isNonExistReceipt)
-				.when(reviewReader).isExitsReview(anyLong(), any(UserPassport.class));
+				.when(reviewReader).isExistsReview(anyLong(), any(UserPassport.class));
 			// when
 			Review review = reviewService.postReview(queryUserPassport, queryReceiptId, queryReviewInfo);
 
@@ -67,7 +67,7 @@ class ReviewServiceTest extends ServiceTest {
 				verify(receiptReader)
 					.getReceiptInfo(anyLong());
 				verify(reviewReader)
-					.isExitsReview(anyLong(), any(UserPassport.class));
+					.isExistsReview(anyLong(), any(UserPassport.class));
 				verify(reviewWriter)
 					.postReview(any(UserPassport.class), any(ReceiptInfo.class), any(ReviewInfo.class));
 				softly.assertThat(review).isEqualTo(responReview);
@@ -93,7 +93,7 @@ class ReviewServiceTest extends ServiceTest {
 				verify(receiptReader)
 					.getReceiptInfo(anyLong());
 				verify(reviewReader, never())
-					.isExitsReview(anyLong(), any(UserPassport.class));
+					.isExistsReview(anyLong(), any(UserPassport.class));
 				verify(reviewWriter, never())
 					.postReview(any(UserPassport.class), any(ReceiptInfo.class), any(ReviewInfo.class));
 			});
@@ -121,7 +121,7 @@ class ReviewServiceTest extends ServiceTest {
 				verify(receiptReader)
 					.getReceiptInfo(anyLong());
 				verify(reviewReader, never())
-					.isExitsReview(anyLong(), any(UserPassport.class));
+					.isExistsReview(anyLong(), any(UserPassport.class));
 				verify(reviewWriter, never())
 					.postReview(any(UserPassport.class), any(ReceiptInfo.class), any(ReviewInfo.class));
 			});
@@ -141,18 +141,18 @@ class ReviewServiceTest extends ServiceTest {
 			doReturn(Optional.ofNullable(savedReceiptInfo))
 				.when(receiptReader).getReceiptInfo(anyLong());
 			doReturn(isExistReceipt)
-				.when(reviewReader).isExitsReview(anyLong(), any(UserPassport.class));
+				.when(reviewReader).isExistsReview(anyLong(), any(UserPassport.class));
 
 			// when->then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
 						() -> reviewService.postReview(queryUserPassport, queryReceiptId, queryReviewInfo))
 					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.REVIEW_ALREADY_EXITS);
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.REVIEW_ALREADY_EXISTS);
 				verify(receiptReader)
 					.getReceiptInfo(anyLong());
 				verify(reviewReader)
-					.isExitsReview(anyLong(), any(UserPassport.class));
+					.isExistsReview(anyLong(), any(UserPassport.class));
 				verify(reviewWriter, never())
 					.postReview(any(UserPassport.class), any(ReceiptInfo.class), any(ReviewInfo.class));
 			});

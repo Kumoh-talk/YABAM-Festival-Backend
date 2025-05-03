@@ -34,7 +34,7 @@ public class ReviewDslRepositoryImpl implements ReviewDslRepository {
 	public Slice<ReviewEntity> findReviewsWithUser(Long receiptId, Long lastReviewId, int size) {
 		List<ReviewEntity> results = queryFactory
 			.selectFrom(qReviewEntity)
-			.where(qReviewEntity.receipt.id.lt(lastReviewId)
+			.where(qReviewEntity.id.lt(lastReviewId)
 				.and(qReviewEntity.receipt.id.eq(receiptId)))
 			.orderBy(qReviewEntity.id.desc())
 			.limit(size + 1)

@@ -30,8 +30,8 @@ public class ReviewService {
 		if (!receiptInfo.isAdjustment()) {
 			throw new ServiceException(ErrorCode.REVIEW_NOT_ADJUSTMENT);
 		}
-		if (reviewReader.isExitsReview(receiptId, userPassport)) {
-			throw new ServiceException(ErrorCode.REVIEW_ALREADY_EXITS);
+		if (reviewReader.isExistsReview(receiptId, userPassport)) {
+			throw new ServiceException(ErrorCode.REVIEW_ALREADY_EXISTS);
 		}
 		return reviewWriter.postReview(userPassport, receiptInfo, reviewInfo);
 	}

@@ -8,7 +8,6 @@ import com.application.global.config.swagger.ApiErrorResponseExplanation;
 import com.application.global.config.swagger.ApiResponseExplanations;
 import com.application.global.config.swagger.ApiSuccessResponseExplanation;
 import com.application.presentation.review.dto.request.ReviewCreateRequest;
-import com.application.presentation.review.dto.request.ReviewCusorRequest;
 import com.application.presentation.review.dto.request.ReviewUpdateRequest;
 import com.application.presentation.review.dto.response.ReviewIdResponse;
 import com.application.presentation.review.dto.response.ReviewsCusorResponse;
@@ -41,7 +40,7 @@ public interface ReviewApi {
 		errors = {
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.RECEIPT_NOT_FOUND),
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.REVIEW_NOT_ADJUSTMENT),
-			@ApiErrorResponseExplanation(errorCode = ErrorCode.REVIEW_ALREADY_EXITS),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.REVIEW_ALREADY_EXISTS),
 		}
 	)
 	ResponseEntity<ResponseBody<ReviewIdResponse>> createReview(
@@ -100,5 +99,7 @@ public interface ReviewApi {
 		)
 	)
 	ResponseEntity<ResponseBody<ReviewsCusorResponse>> getReview(
-		@RequestBody @Valid ReviewCusorRequest reviewCusorRequest);
+		@RequestParam Long receiptId,
+		@RequestParam Long lastReviewId,
+		@RequestParam int size);
 }

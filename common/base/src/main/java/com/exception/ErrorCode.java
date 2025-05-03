@@ -76,7 +76,7 @@ public enum ErrorCode {
 	ORDER_MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER_MENU_0001", "존재하지 않는 주문 메뉴입니다."),
 
 	REVIEW_NOT_ADJUSTMENT(HttpStatus.BAD_REQUEST, "REVIEW_0001", "정산되지 않았으면 리뷰 생성 불가합니다."),
-	REVIEW_ALREADY_EXITS(HttpStatus.CONFLICT, "REVIEW_0002", "이미 리뷰가 존재합니다."),
+	REVIEW_ALREADY_EXISTS(HttpStatus.CONFLICT, "REVIEW_0002", "이미 리뷰가 존재합니다."),
 	REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW_0003", "존재하지 않는 리뷰입니다."),
 	REVIEW_NOT_USER(HttpStatus.BAD_REQUEST, "REVIEW_0004", "해당 사용자가 작성한 리뷰가 아닙니다.");
 

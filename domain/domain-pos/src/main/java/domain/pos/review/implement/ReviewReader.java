@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 public class ReviewReader {
 	private final ReviewRepository reviewRepository;
 
-	public boolean isExitsReview(Long receiptId, UserPassport userPassport) {
+	public boolean isExistsReview(Long receiptId, UserPassport userPassport) {
 		return reviewRepository.existsReview(receiptId, userPassport);
 	}
 
