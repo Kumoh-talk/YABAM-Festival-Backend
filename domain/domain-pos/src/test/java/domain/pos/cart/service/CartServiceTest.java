@@ -11,10 +11,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
+import com.exception.ErrorCode;
+import com.exception.ServiceException;
+
 import base.ServiceTest;
 import domain.pos.cart.entity.Cart;
 import domain.pos.cart.implement.CartWriter;
-import domain.pos.menu.entity.MenuInfo;
 import domain.pos.menu.implement.MenuReader;
 import fixtures.cart.CartFixture;
 
@@ -33,23 +35,27 @@ class CartServiceTest extends ServiceTest {
 	class upsertCartTest {
 		@Test
 		void 성공() {
-			// given
-			final Cart responCart = CartFixture.GENERAL_CART_SINGLE();
-			final Long receiptId = responCart.getReceiptId();
-			final Long menuId = responCart.getCartMenus().get(0).getMenuInfo().getId();
-			final Integer quantity = responCart.getCartMenus().get(0).getQuantity();
-
-			doReturn(responCart.getCartMenus().get(0).getMenuInfo())
-				.when(menuReader).getMenuInfoById(anyLong());
-			doReturn(responCart)
-				.when(cartWriter).upsertCart(anyLong(), any(MenuInfo.class), anyInt());
 			// when
-			final Cart cart = cartService.upsertCart(receiptId, menuId, quantity);
+			cartService.upsertCart(anyLong(), anyLong(), anyInt());
 
 			// then
 			assertSoftly(softly -> {
-				verify(menuReader).getMenuInfoById(anyLong());
-				verify(cartWriter).upsertCart(anyLong(), any(MenuInfo.class), anyInt());
+				verify(cartWriter).upsertCart(anyLong(), anyLong(), anyInt());
+			});
+		}
+
+		@Test
+		void menuId가_유효하지_않은_경우() {
+			// given
+			doThrow(IllegalArgumentException.class)
+				.when(cartWriter).upsertCart(anyLong(), anyLong(), anyInt());
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(() -> cartService.upsertCart(anyLong(), anyLong(), anyInt()))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.MENU_NOT_FOUND);
+				verify(cartWriter).upsertCart(anyLong(), anyLong(), anyInt());
 			});
 		}
 	}
@@ -65,7 +71,7 @@ class CartServiceTest extends ServiceTest {
 			Long menuId = 10L;
 
 			// when
-			cartService.deleteCart(receiptId, menuId);
+			cartService.deleteCartMenu(receiptId, menuId);
 
 			// then
 			assertSoftly(softly -> {

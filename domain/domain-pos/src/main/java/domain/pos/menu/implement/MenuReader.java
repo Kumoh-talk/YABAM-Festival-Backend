@@ -7,9 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 
-import com.exception.ErrorCode;
-import com.exception.ServiceException;
-
 import domain.pos.menu.entity.Menu;
 import domain.pos.menu.entity.MenuInfo;
 import domain.pos.menu.repository.MenuRepository;
@@ -43,8 +40,4 @@ public class MenuReader {
 		return menuRepository.existsMenuOrder(menuCategoryId, menuOrder);
 	}
 
-	public MenuInfo getMenuInfoById(Long menuId) {
-		return menuRepository.getMenuInfoById(menuId)
-			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
-	}
 }

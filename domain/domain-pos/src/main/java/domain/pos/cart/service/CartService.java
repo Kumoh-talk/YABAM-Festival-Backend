@@ -4,10 +4,11 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.exception.ErrorCode;
+import com.exception.ServiceException;
+
 import domain.pos.cart.entity.Cart;
 import domain.pos.cart.implement.CartWriter;
-import domain.pos.menu.entity.MenuInfo;
-import domain.pos.menu.implement.MenuReader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,16 +16,18 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class CartService {
-	private final MenuReader menuReader;
 	private final CartWriter cartWriter;
 
-	public Cart upsertCart(final Long receiptId, final Long menuId, final Integer quantity) {
-		final MenuInfo menuInfo = menuReader.getMenuInfoById(menuId);
-
-		return cartWriter.upsertCart(receiptId, menuInfo, quantity);
+	public void upsertCart(final Long receiptId, final Long menuId, final Integer quantity) {
+		try {
+			cartWriter.upsertCart(receiptId, menuId, quantity);
+		} catch (IllegalArgumentException e) {
+			log.warn(e.getMessage());
+			throw new ServiceException(ErrorCode.MENU_NOT_FOUND);
+		}
 	}
 
-	public void deleteCart(final Long receiptId, final Long menuId) {
+	public void deleteCartMenu(final Long receiptId, final Long menuId) {
 		cartWriter.deleteCartMenu(receiptId, menuId);
 	}
 
