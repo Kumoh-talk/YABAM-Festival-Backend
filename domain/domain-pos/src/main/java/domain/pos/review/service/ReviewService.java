@@ -1,7 +1,6 @@
 package domain.pos.review.service;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
@@ -24,7 +23,6 @@ public class ReviewService {
 	private final ReviewWriter reviewWriter;
 	private final ReviewReader reviewReader;
 
-	@Transactional
 	public Review postReview(final UserPassport userPassport, final Long receiptId, final ReviewInfo reviewInfo) {
 		ReceiptInfo receiptInfo = receiptReader.getReceiptInfo(receiptId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
@@ -35,7 +33,6 @@ public class ReviewService {
 			throw new ServiceException(ErrorCode.REVIEW_ALREADY_EXITS);
 		}
 		return reviewWriter.postReview(userPassport, receiptInfo, reviewInfo);
-
 	}
 
 }
