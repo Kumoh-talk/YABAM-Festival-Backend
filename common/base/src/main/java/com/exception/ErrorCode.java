@@ -73,7 +73,10 @@ public enum ErrorCode {
 	NOT_VALID_VO(HttpStatus.BAD_REQUEST, "VO_0001", "Vo 객체가 유효하지 않습니다."),
 
 	// OrderMenu
-	ORDER_MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER_MENU_0001", "존재하지 않는 주문 메뉴입니다.");
+	ORDER_MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER_MENU_0001", "존재하지 않는 주문 메뉴입니다."),
+
+	REVIEW_NOT_ADJUSTMENT(HttpStatus.BAD_REQUEST, "REVIEW_0001", "정산되지 않았으면 리뷰 생성 불가합니다."),
+	REVIEW_ALREADY_EXITS(HttpStatus.CONFLICT, "Review_0002", "이미 리뷰가 존재합니다.");
 
 	private final HttpStatus status;
 	private final String code;

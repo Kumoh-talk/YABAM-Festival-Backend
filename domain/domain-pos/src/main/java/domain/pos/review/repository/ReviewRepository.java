@@ -1,0 +1,15 @@
+package domain.pos.review.repository;
+
+import org.springframework.stereotype.Repository;
+
+import domain.pos.member.entity.UserPassport;
+import domain.pos.receipt.entity.ReceiptInfo;
+import domain.pos.review.entity.Review;
+import domain.pos.review.entity.ReviewInfo;
+
+@Repository
+public interface ReviewRepository {
+	Review createReview(UserPassport userPassport, ReceiptInfo receiptInfo, ReviewInfo reviewInfo);
+
+	boolean existsReview(Long receiptId, UserPassport userPassport);
+}
