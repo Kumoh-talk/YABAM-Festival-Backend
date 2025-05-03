@@ -2,6 +2,7 @@ package domain.pos.review.repository;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 import domain.pos.member.entity.UserPassport;
@@ -20,4 +21,6 @@ public interface ReviewRepository {
 	Review updateReview(Review review, ReviewInfo updateReviewInfo);
 
 	void deleteReview(Review review);
+
+	Slice<Review> getReviewsWithUser(Long receiptId, Long lastReviewId, int size);
 }

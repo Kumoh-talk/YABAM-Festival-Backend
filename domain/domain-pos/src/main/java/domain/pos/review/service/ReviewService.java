@@ -1,5 +1,6 @@
 package domain.pos.review.service;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import com.exception.ErrorCode;
@@ -52,6 +53,10 @@ public class ReviewService {
 			throw new ServiceException(ErrorCode.REVIEW_NOT_USER);
 		}
 		reviewWriter.deleteReview(review);
+	}
+
+	public Slice<Review> getReviews(final Long receiptId, final Long lastReviewId, final int size) {
+		return reviewReader.getReviews(receiptId, lastReviewId, size);
 	}
 
 }

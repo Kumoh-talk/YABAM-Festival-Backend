@@ -2,6 +2,7 @@ package domain.pos.review.implement;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 
 import domain.pos.member.entity.UserPassport;
@@ -20,5 +21,9 @@ public class ReviewReader {
 
 	public Optional<Review> getReview(Long reviewId) {
 		return reviewRepository.findById(reviewId);
+	}
+
+	public Slice<Review> getReviews(Long receiptId, Long lastReviewId, int size) {
+		return reviewRepository.getReviewsWithUser(receiptId, lastReviewId, size);
 	}
 }
