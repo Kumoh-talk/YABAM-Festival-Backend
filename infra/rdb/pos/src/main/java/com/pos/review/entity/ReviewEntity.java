@@ -1,8 +1,13 @@
 package com.pos.review.entity;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
+import com.pos.global.base.entity.BaseEntity;
 import com.pos.receipt.entity.ReceiptEntity;
 import com.pos.review.entity.vo.ReviewUser;
 
+import domain.pos.review.entity.ReviewInfo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -20,7 +25,9 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @Getter
-public class ReviewEntity {
+@SQLDelete(sql = "UPDATE reviews SET deleted_at = NOW() where id=?")
+@SQLRestriction(value = "deleted_at is NULL")
+public class ReviewEntity extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -49,4 +56,8 @@ public class ReviewEntity {
 		return new ReviewEntity(reviewUser, content, rating, receipt);
 	}
 
+	public void changeReviewInfo(ReviewInfo updateReviewInfo) {
+		this.content = updateReviewInfo.getContent();
+		this.rating = updateReviewInfo.getRating();
+	}
 }
