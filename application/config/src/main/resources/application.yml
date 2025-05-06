@@ -16,4 +16,4 @@ spring:
     import:
       - config-server.properties
 server:
-  port: 8087
+  port: 8888
