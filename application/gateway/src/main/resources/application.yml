@@ -1,6 +1,15 @@
 spring:
   application:
     name: gateway
+
+---
+
+# ----- prod 전용 설정 -----
+
+spring:
+  config:
+    activate:
+      on-profile: local 
   config:
     import:
       configserver:http://localhost:8087,optional:jwt.yml
