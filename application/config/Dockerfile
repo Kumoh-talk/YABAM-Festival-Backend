@@ -1,9 +1,7 @@
 # application/config/Dockerfile
-# Use Eclipse Temurin JRE 17 (multi-arch: arm64/amd64)
 FROM eclipse-temurin:17-jre
 
 WORKDIR /app
-COPY application/config/build/libs/*.jar app.jar
-
+COPY build/libs/*.jar app.jar     # ← 컨텍스트 내부 경로만!
 EXPOSE 8888
 ENTRYPOINT ["java","-jar","/app/app.jar"]
