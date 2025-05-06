@@ -17,3 +17,17 @@ springdoc:
       - name: Yabam API
         url: http://localhost:8072/yabam/v3/api-docs
 
+---
+
+# ----- prod 전용 설정 -----
+spring:
+  config:
+    activate:
+      on-profile: prod 
+  cloud:
+    config:
+      uri: http://192.168.0.171:8888   # 예: 프로덕션 Config-Server 주소
+  config:
+    import:
+      configserver:http://192.168.0.171:8888,optional:jwt.yml
+
