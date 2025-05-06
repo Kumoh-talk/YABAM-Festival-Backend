@@ -1,9 +1,6 @@
 spring:
   application:
     name: gateway
-  cloud:
-    config:
-      uri: http://localhost:8087
   config:
     import:
       configserver:http://localhost:8087,optional:jwt.yml
@@ -24,9 +21,6 @@ spring:
   config:
     activate:
       on-profile: prod 
-  cloud:
-    config:
-      uri: http://192.168.0.171:8888   # 예: 프로덕션 Config-Server 주소
   config:
     import:
       configserver:http://192.168.0.171:8888,optional:jwt.yml
