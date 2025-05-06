@@ -10,7 +10,6 @@ spring:
   config:
     activate:
       on-profile: local 
-  config:
     import:
       configserver:http://localhost:8087,optional:jwt.yml
 
@@ -25,12 +24,11 @@ springdoc:
 
 ---
 
-# ----- prod 전용 설정 -----
+# ----- dev 전용 설정 -----
 spring:
   config:
     activate:
-      on-profile: prod 
-  config:
+      on-profile: dev 
     import:
       configserver:http://192.168.0.171:8888,optional:jwt.yml
 
