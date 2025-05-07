@@ -1,10 +1,15 @@
 spring:
   application:
     name: gateway
-  cloud:
-    config:
-      uri: http://localhost:8087
+
+---
+
+# ----- prod 전용 설정 -----
+
+spring:
   config:
+    activate:
+      on-profile: local 
     import:
       configserver:http://localhost:8087,optional:jwt.yml
 
@@ -16,4 +21,14 @@ springdoc:
     urls:
       - name: Yabam API
         url: http://localhost:8072/yabam/v3/api-docs
+
+---
+
+# ----- dev 전용 설정 -----
+spring:
+  config:
+    activate:
+      on-profile: dev 
+    import:
+      configserver:http://192.168.0.171:8888,optional:jwt.yml
 
