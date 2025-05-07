@@ -6,9 +6,7 @@ import org.hibernate.annotations.SQLRestriction;
 import com.pos.global.base.entity.BaseEntity;
 import com.pos.store.entity.StoreEntity;
 
-import domain.pos.menu.entity.MenuCategoryInfo;
 import domain.pos.menu.entity.MenuInfo;
-import domain.pos.store.entity.Store;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -86,7 +84,7 @@ public class MenuEntity extends BaseEntity {
 		this.id = menuId;
 	}
 
-	public static MenuEntity of(MenuInfo menuInfo, Store store, MenuCategoryInfo menuCategoryInfo) {
+	public static MenuEntity of(MenuInfo menuInfo, StoreEntity storeEntity, MenuCategoryEntity menuCategoryEntity) {
 		return MenuEntity.builder()
 			.order(menuInfo.getOrder())
 			.name(menuInfo.getName())
@@ -95,8 +93,8 @@ public class MenuEntity extends BaseEntity {
 			.imageUrl(menuInfo.getImageUrl())
 			.isSoldOut(menuInfo.isSoldOut())
 			.isRecommended(menuInfo.isRecommended())
-			.store(StoreEntity.from(store.getStoreId()))
-			.menuCategory(MenuCategoryEntity.from(menuCategoryInfo.getId()))
+			.store(storeEntity)
+			.menuCategory(menuCategoryEntity)
 			.build();
 	}
 

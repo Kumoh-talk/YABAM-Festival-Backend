@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,12 +57,17 @@ public class MenuRepositoryImpl implements MenuRepository {
 	}
 
 	@Override
-	public Slice<MenuInfo> getMenuSlice(Pageable pageable, MenuInfo lastMenuInfo, Long menuCategoryId) {
+	public Slice<MenuInfo> getMenuSlice(int pageSize, MenuInfo lastMenuInfo, Long menuCategoryId) {
 		return menuJpaRepository.findSliceByMenuCategoryId(
-			pageable,
+			pageSize,
 			lastMenuInfo == null ? null : lastMenuInfo.getOrder(),
 			menuCategoryId
 		).map(MenuMapper::toMenuInfo);
+	}
+
+	@Override
+	public boolean existsMenu(Long storeId, Long menuId) {
+		return menuJpaRepository.existsByIdAndStoreId(menuId, storeId);
 	}
 
 	@Override
@@ -72,7 +76,7 @@ public class MenuRepositoryImpl implements MenuRepository {
 	}
 
 	@Override
-	public MenuInfo patchMenu(MenuInfo patchMenuInfo) {
+	public MenuInfo patchMenuInfo(MenuInfo patchMenuInfo) {
 		MenuEntity menuEntity = menuJpaRepository.findById(patchMenuInfo.getId()).get();
 		menuEntity.updateWithoutOrder(patchMenuInfo);
 		return MenuMapper.toMenuInfo(menuEntity);
@@ -110,6 +114,11 @@ public class MenuRepositoryImpl implements MenuRepository {
 		menuJpaRepository.delete(menuEntity);
 		menuJpaRepository.decreaseOrderWhereGT(menu.getMenuCategory().getMenuCategoryInfo().getId(),
 			periodOrder);
+	}
+
+	@Override
+	public Long countByIdIn(Long storeId, List<Long> menuIds) {
+		return menuJpaRepository.countByIdIn(storeId, menuIds);
 	}
 
 	@Override

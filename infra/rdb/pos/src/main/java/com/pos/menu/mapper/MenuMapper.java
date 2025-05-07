@@ -1,6 +1,8 @@
 package com.pos.menu.mapper;
 
+import com.pos.menu.entity.MenuCategoryEntity;
 import com.pos.menu.entity.MenuEntity;
+import com.pos.store.mapper.StoreMapper;
 
 import domain.pos.menu.entity.Menu;
 import domain.pos.menu.entity.MenuCategory;
@@ -10,7 +12,8 @@ import domain.pos.store.entity.Store;
 
 public class MenuMapper {
 	public static MenuEntity toMenuEntity(MenuInfo menuInfo, Store store, MenuCategoryInfo menuCategoryInfo) {
-		return MenuEntity.of(menuInfo, store, menuCategoryInfo);
+		return MenuEntity.of(menuInfo, StoreMapper.toStoreEntity(store.getStoreId()),
+			MenuCategoryEntity.from(menuCategoryInfo.getId()));
 	}
 
 	public static Menu toMenu(MenuEntity menuEntity, Store store, MenuCategory menuCategory) {

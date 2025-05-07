@@ -43,22 +43,32 @@ public class MenuQueryDslRepositoryImpl implements MenuQueryDslRepository {
 	}
 
 	@Override
-	public Slice<MenuEntity> findSliceByMenuCategoryId(Pageable pageable, Integer lastMenuOrder, Long menuCategoryId) {
+	public Slice<MenuEntity> findSliceByMenuCategoryId(int pageSize, Integer lastMenuOrder, Long menuCategoryId) {
 		List<MenuEntity> content = jpaQueryFactory
 			.selectFrom(qMenuEntity)
 			.where(qMenuEntity.menuCategory.id.eq(menuCategoryId)
 				.and(lastMenuOrder == null ? Expressions.TRUE : qMenuEntity.order.gt(lastMenuOrder))
 			)
 			.orderBy(qMenuEntity.order.asc())
-			.limit(pageable.getPageSize() + 1)
+			.limit(pageSize + 1)
 			.fetch();
 
-		boolean hasNext = content.size() > pageable.getPageSize();
+		boolean hasNext = content.size() > pageSize;
 		if (hasNext) {
-			content.remove(pageable.getPageSize());
+			content.remove(pageSize);
 		}
 
-		return new SliceImpl<>(content, pageable, hasNext);
+		return new SliceImpl<>(content, Pageable.ofSize(pageSize), hasNext);
+	}
+
+	@Override
+	public boolean existsByIdAndStoreId(Long menuId, Long storeId) {
+		return jpaQueryFactory
+			.selectOne()
+			.from(qMenuEntity)
+			.where(qMenuEntity.id.eq(menuId)
+				.and(qMenuEntity.store.id.eq(storeId)))
+			.fetchFirst() != null;
 	}
 
 	@Override
@@ -101,5 +111,17 @@ public class MenuQueryDslRepositoryImpl implements MenuQueryDslRepository {
 			.where(qMenuEntity.menuCategory.id.eq(menuCategoryId)
 				.and(qMenuEntity.order.gt(deleteOrder)))
 			.execute();
+	}
+
+	@Override
+	public Long countByIdIn(Long storeId, List<Long> menuIds) {
+		return jpaQueryFactory
+			.select(qMenuEntity.count())
+			.from(qMenuEntity)
+			.where(
+				qMenuEntity.store.id.eq(storeId)
+					.and(qMenuEntity.id.in(menuIds))
+			)
+			.fetchOne();
 	}
 }
