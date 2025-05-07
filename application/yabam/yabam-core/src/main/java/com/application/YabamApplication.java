@@ -6,6 +6,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication(scanBasePackages = {
 	"domain.pos",
+	"com.application"
 })
 @EnableDiscoveryClient
 public class YabamApplication {

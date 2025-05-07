@@ -3,6 +3,7 @@ package com.gateway.config;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -13,6 +14,7 @@ import org.springframework.security.web.server.authentication.AuthenticationWebF
 import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;
 import org.springframework.security.web.server.context.ServerSecurityContextRepository;
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
+import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.web.client.RestTemplate;
 
 import com.gateway.exception.handler.CustomAccessDeniedHandler;
@@ -32,6 +34,27 @@ public class SecurityConfig {
 	private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 	private final CustomAccessDeniedHandler accessDeniedHandler;
 	private final CustomAuthenticationFailureHandler authenticationFailureHandler;
+	private static final String[] SWAGGER_WHITELIST = {
+		// springdoc-webflux 기본
+		"/swagger-ui.html",
+		"/swagger-ui/**",
+		"/v3/api-docs",
+		"/v3/api-docs/**",
+		// 사용자 정의 ‘/docs’ 진입점
+		"/docs",
+		"/docs/**",
+	};
+
+	/* ───── ① Swagger 전용 체인 ───── */
+	@Bean
+	@Order(0)
+	public SecurityWebFilterChain swaggerChain(ServerHttpSecurity http) {
+		return http
+			.securityMatcher(ServerWebExchangeMatchers.pathMatchers(SWAGGER_WHITELIST))
+			.csrf(csrf -> csrf.disable())
+			.authorizeExchange(ex -> ex.anyExchange().permitAll())
+			.build();
+	}
 
 	@Bean
 	public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http,
@@ -53,7 +76,7 @@ public class SecurityConfig {
 				new AuthenticationToHeaderFilter(serverSecurityContextRepository, authenticationFailureHandler),
 				SecurityWebFiltersOrder.AUTHENTICATION) // 사용자 정보 헤더 추가 필터 추가
 			.authorizeExchange(exchange -> exchange
-				.anyExchange().authenticated()) // 모든 요청은 인증 필요
+				.anyExchange().authenticated())
 			.exceptionHandling(exceptionHandling ->
 				exceptionHandling
 					.authenticationEntryPoint(authenticationEntryPoint)

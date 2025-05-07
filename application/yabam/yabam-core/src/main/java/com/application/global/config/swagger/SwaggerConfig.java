@@ -9,8 +9,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.filter.ForwardedHeaderFilter;
 import org.springframework.web.method.HandlerMethod;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
@@ -18,16 +16,9 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 @Configuration
-@OpenAPIDefinition(
-	info = @Info(
-		title = "yabam API",
-		version = "v1",
-		description = "yabam API 입니다."
-	)
-)
-@Profile(value = {"local", "dev"})
+@Profile("!test && !prod")
+@RequiredArgsConstructor
 public class SwaggerConfig {
 	private static final String JWT = "JWT";
 	private final Environment environment;
