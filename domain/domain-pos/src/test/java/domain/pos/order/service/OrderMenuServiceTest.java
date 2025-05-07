@@ -18,7 +18,9 @@ import com.exception.ServiceException;
 
 import base.ServiceTest;
 import domain.pos.member.entity.UserPassport;
+import domain.pos.menu.entity.MenuInfo;
 import domain.pos.menu.implement.MenuReader;
+import domain.pos.order.entity.Order;
 import domain.pos.order.entity.OrderMenu;
 import domain.pos.order.implement.OrderMenuReader;
 import domain.pos.order.implement.OrderMenuWriter;
@@ -49,24 +51,27 @@ public class OrderMenuServiceTest extends ServiceTest {
 	class postOrderMenu {
 		private final Long orderId = 1L;
 		private final UserPassport userPassport = UserFixture.GENERAL_USER_PASSPORT();
-		private final OrderMenu orderMenu = OrderMenuFixture.GENERAL_ORDER_MENU();
+		private final Long menuId = 1L;
+		private final Integer quantity = 2;
 
 		@Test
 		void 주문_메뉴_추가_성공() {
 			// given
+			Order order = OrderFixture.GENERAL_ORDER();
+			MenuInfo menuInfo = MenuInfoFixture.GENERAL_MENU_INFO();
 			BDDMockito.given(orderReader.getOrderWithStore(orderId))
-				.willReturn(Optional.of(OrderFixture.GENERAL_ORDER()));
+				.willReturn(Optional.of(order));
 			BDDMockito.given(menuReader.getMenuInfo(any(), any()))
-				.willReturn(Optional.of(MenuInfoFixture.GENERAL_MENU_INFO()));
+				.willReturn(Optional.of(menuInfo));
 
 			// when
-			orderMenuService.postOrderMenu(orderId, userPassport, orderMenu);
+			orderMenuService.postOrderMenu(orderId, userPassport, menuId, quantity);
 
 			// then
 			verify(orderReader).getOrderWithStore(orderId);
 			verify(receiptValidator).validateIsOwner(any(), eq(userPassport));
 			verify(menuReader).getMenuInfo(any(), any());
-			verify(orderMenuWriter).postOrderMenu(orderId, orderMenu);
+			verify(orderMenuWriter).postOrderMenu(menuInfo, quantity, order);
 		}
 
 		@Test
@@ -77,14 +82,14 @@ public class OrderMenuServiceTest extends ServiceTest {
 
 			// when -> then
 			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> orderMenuService.postOrderMenu(orderId, userPassport, orderMenu))
+				softly.assertThatThrownBy(() -> orderMenuService.postOrderMenu(orderId, userPassport, menuId, quantity))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ORDER_NOT_FOUND);
 
 				verify(orderReader).getOrderWithStore(orderId);
 				verify(receiptValidator, never()).validateIsOwner(any(), any());
 				verify(menuReader, never()).getMenuInfo(any(), any());
-				verify(orderMenuWriter, never()).postOrderMenu(any(), any());
+				verify(orderMenuWriter, never()).postOrderMenu(any(), anyInt(), any());
 			});
 		}
 
@@ -99,14 +104,14 @@ public class OrderMenuServiceTest extends ServiceTest {
 
 			// when -> then
 			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> orderMenuService.postOrderMenu(orderId, userPassport, orderMenu))
+				softly.assertThatThrownBy(() -> orderMenuService.postOrderMenu(orderId, userPassport, menuId, quantity))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_ACCESS_DENIED);
 
 				verify(orderReader).getOrderWithStore(orderId);
 				verify(receiptValidator).validateIsOwner(any(), any());
 				verify(menuReader, never()).getMenuInfo(any(), any());
-				verify(orderMenuWriter, never()).postOrderMenu(any(), any());
+				verify(orderMenuWriter, never()).postOrderMenu(any(), anyInt(), any());
 			});
 		}
 
@@ -121,80 +126,14 @@ public class OrderMenuServiceTest extends ServiceTest {
 
 			// when -> then
 			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> orderMenuService.postOrderMenu(orderId, userPassport, orderMenu))
+				softly.assertThatThrownBy(() -> orderMenuService.postOrderMenu(orderId, userPassport, menuId, quantity))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.MENU_NOT_FOUND);
 
 				verify(orderReader).getOrderWithStore(orderId);
 				verify(receiptValidator).validateIsOwner(any(), any());
 				verify(menuReader).getMenuInfo(anyLong(), anyLong());
-				verify(orderMenuWriter, never()).postOrderMenu(any(), any());
-			});
-		}
-	}
-
-	@Nested
-	@DisplayName("주문 메뉴 수량 변경")
-	class patchOrderMenuQuantity {
-		private final Long orderMenuId = 1L;
-		private final UserPassport userPassport = UserFixture.GENERAL_USER_PASSPORT();
-		private final Integer quantity = 2;
-
-		@Test
-		void 주문_메뉴_수량_변경_성공() {
-			// given
-			OrderMenu orderMenu = OrderMenuFixture.GENERAL_ORDER_MENU();
-			BDDMockito.given(orderMenuReader.getOrderMenuWithStore(orderMenuId))
-				.willReturn(Optional.of(orderMenu));
-
-			// when
-			orderMenuService.patchOrderMenuQuantity(orderMenuId, userPassport, quantity);
-
-			// then
-			verify(orderMenuReader).getOrderMenuWithStore(orderMenuId);
-			verify(receiptValidator).validateIsOwner(any(), eq(userPassport));
-			verify(orderMenuWriter).patchOrderMenuQuantity(orderMenu, quantity);
-		}
-
-		@Test
-		void 주문_메뉴_조회_실패() {
-			// given
-			BDDMockito.given(orderMenuReader.getOrderMenuWithStore(orderMenuId))
-				.willReturn(Optional.empty());
-
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> orderMenuService.patchOrderMenuQuantity(orderMenuId, userPassport, quantity))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ORDER_MENU_NOT_FOUND);
-
-				verify(orderMenuReader).getOrderMenuWithStore(orderMenuId);
-				verify(receiptValidator, never()).validateIsOwner(any(), any());
-				verify(orderMenuWriter, never()).patchOrderMenuQuantity(any(), anyInt());
-			});
-		}
-
-		@Test
-		void 요청_유저_점주_불일치_실패() {
-			// given
-			OrderMenu orderMenu = OrderMenuFixture.GENERAL_ORDER_MENU();
-			BDDMockito.given(orderMenuReader.getOrderMenuWithStore(orderMenuId))
-				.willReturn(Optional.of(orderMenu));
-
-			doThrow(new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED))
-				.when(receiptValidator).validateIsOwner(any(), any());
-
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> orderMenuService.patchOrderMenuQuantity(orderMenuId, userPassport, quantity))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_ACCESS_DENIED);
-
-				verify(orderMenuReader).getOrderMenuWithStore(orderMenuId);
-				verify(receiptValidator).validateIsOwner(any(), any());
-				verify(orderMenuWriter, never()).patchOrderMenuQuantity(any(), anyInt());
+				verify(orderMenuWriter, never()).postOrderMenu(any(), anyInt(), any());
 			});
 		}
 	}
@@ -203,28 +142,27 @@ public class OrderMenuServiceTest extends ServiceTest {
 	@DisplayName("주문 메뉴 삭제")
 	class deleteOrderMenu {
 		private final Long orderMenuId = 1L;
-		private final UserPassport userPassport = UserFixture.GENERAL_USER_PASSPORT();
+		private UserPassport userPassport = UserFixture.OWNER_USER_PASSPORT();
 
 		@Test
 		void 주문_메뉴_삭제_성공() {
 			// given
 			OrderMenu orderMenu = OrderMenuFixture.GENERAL_ORDER_MENU();
-			BDDMockito.given(orderMenuReader.getOrderMenuWithStore(orderMenuId))
+			BDDMockito.given(orderMenuReader.getOrderMenuWithOrderAndStore(orderMenuId))
 				.willReturn(Optional.of(orderMenu));
 
 			// when
 			orderMenuService.deleteOrderMenu(orderMenuId, userPassport);
 
 			// then
-			verify(orderMenuReader).getOrderMenuWithStore(orderMenuId);
-			verify(receiptValidator).validateIsOwner(any(), eq(userPassport));
-			verify(orderMenuWriter).deleteOrderMenu(orderMenuId);
+			verify(orderMenuReader).getOrderMenuWithOrderAndStore(orderMenuId);
+			verify(orderMenuWriter).deleteOrderMenu(orderMenu);
 		}
 
 		@Test
 		void 주문_메뉴_조회_실패() {
 			// given
-			BDDMockito.given(orderMenuReader.getOrderMenuWithStore(orderMenuId))
+			BDDMockito.given(orderMenuReader.getOrderMenuWithOrderAndStore(orderMenuId))
 				.willReturn(Optional.empty());
 
 			// when -> then
@@ -233,8 +171,7 @@ public class OrderMenuServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ORDER_MENU_NOT_FOUND);
 
-				verify(orderMenuReader).getOrderMenuWithStore(orderMenuId);
-				verify(receiptValidator, never()).validateIsOwner(any(), any());
+				verify(orderMenuReader).getOrderMenuWithOrderAndStore(orderMenuId);
 				verify(orderMenuWriter, never()).deleteOrderMenu(any());
 			});
 		}
@@ -242,20 +179,18 @@ public class OrderMenuServiceTest extends ServiceTest {
 		@Test
 		void 요청_유저_점주_불일치_실패() {
 			// given
-			OrderMenu orderMenu = OrderMenuFixture.GENERAL_ORDER_MENU();
-			BDDMockito.given(orderMenuReader.getOrderMenuWithStore(orderMenuId))
-				.willReturn(Optional.of(orderMenu));
+			userPassport = UserFixture.DIFF_OWNER_PASSPORT();
 
-			doThrow(new ServiceException(ErrorCode.RECEIPT_ACCESS_DENIED))
-				.when(receiptValidator).validateIsOwner(any(), any());
+			OrderMenu orderMenu = OrderMenuFixture.GENERAL_ORDER_MENU();
+			BDDMockito.given(orderMenuReader.getOrderMenuWithOrderAndStore(orderMenuId))
+				.willReturn(Optional.of(orderMenu));
 
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(() -> orderMenuService.deleteOrderMenu(orderMenuId, userPassport))
 					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_ACCESS_DENIED);
-				verify(orderMenuReader).getOrderMenuWithStore(orderMenuId);
-				verify(receiptValidator).validateIsOwner(any(), any());
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ORDER_MENU_ACCESS_DENIED);
+				verify(orderMenuReader).getOrderMenuWithOrderAndStore(orderMenuId);
 				verify(orderMenuWriter, never()).deleteOrderMenu(any());
 			});
 		}

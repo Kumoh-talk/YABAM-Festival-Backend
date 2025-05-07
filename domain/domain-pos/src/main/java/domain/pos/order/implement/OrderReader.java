@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 import domain.pos.order.entity.Order;
+import domain.pos.order.entity.vo.OrderStatus;
 import domain.pos.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -14,15 +15,19 @@ import lombok.RequiredArgsConstructor;
 public class OrderReader {
 	private final OrderRepository orderRepository;
 
-	public Optional<Order> getOrder(Long orderId) {
-		return orderRepository.getOrder(orderId);
+	public Optional<Order> getOrderWithMenu(Long orderId) {
+		return orderRepository.getOrderWithMenu(orderId);
 	}
 
 	public Optional<Order> getOrderWithStore(Long orderId) {
 		return orderRepository.getOrderWithStore(orderId);
 	}
 
-	public List<Order> getReceiptOrders(Long receiptId) {
-		return orderRepository.getReceiptOrders(receiptId);
+	public List<Order> getSaleOrdersWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses) {
+		return orderRepository.getSaleOrdersWithMenuAndTable(saleId, orderStatuses);
+	}
+
+	public List<Order> getReceiptOrdersWithMenu(Long receiptId) {
+		return orderRepository.getReceiptOrdersWithMenu(receiptId);
 	}
 }
