@@ -2,6 +2,7 @@ package com.pos.menu.repository.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Slice;
@@ -117,7 +118,7 @@ public class MenuRepositoryImpl implements MenuRepository {
 	}
 
 	@Override
-	public Long countByIdIn(Long storeId, List<Long> menuIds) {
+	public Long countByIdIn(Long storeId, Set<Long> menuIds) {
 		return menuJpaRepository.countByIdIn(storeId, menuIds);
 	}
 

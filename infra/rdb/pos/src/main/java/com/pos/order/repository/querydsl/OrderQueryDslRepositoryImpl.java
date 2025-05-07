@@ -21,7 +21,7 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 		QOrderMenuEntity qOrderMenu = QOrderMenuEntity.orderMenuEntity;
 
 		OrderEntity orderEntity = jpaQueryFactory
-			.selectFrom(qOrderEntity)
+			.selectFrom(qOrderEntity).distinct()
 			.join(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
 			.join(qOrderMenu.menu).fetchJoin()
 			.where(qOrderEntity.id.eq(orderId))
@@ -48,7 +48,7 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 		QOrderMenuEntity qOrderMenu = QOrderMenuEntity.orderMenuEntity;
 
 		return jpaQueryFactory
-			.selectFrom(qOrderEntity)
+			.selectFrom(qOrderEntity).distinct()
 			.join(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
 			.join(qOrderMenu.menu).fetchJoin()
 			.join(qOrderEntity.receipt).fetchJoin()
@@ -63,7 +63,7 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 		QOrderMenuEntity qOrderMenu = QOrderMenuEntity.orderMenuEntity;
 
 		return jpaQueryFactory
-			.selectFrom(qOrderEntity)
+			.selectFrom(qOrderEntity).distinct()
 			.join(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
 			.join(qOrderMenu.menu).fetchJoin()
 			.where(qOrderEntity.receipt.id.eq(receiptId))

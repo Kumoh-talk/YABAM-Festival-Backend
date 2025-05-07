@@ -2,6 +2,7 @@ package domain.pos.menu.implement;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
@@ -39,7 +40,7 @@ public class MenuReader {
 		return menuRepository.existsMenuOrder(menuCategoryId, menuOrder);
 	}
 
-	public Long countByIdIn(Long storeId, List<Long> menuIds) {
+	public Long countByIdIn(Long storeId, Set<Long> menuIds) {
 		return menuRepository.countByIdIn(storeId, menuIds);
 	}
 

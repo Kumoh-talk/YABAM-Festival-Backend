@@ -45,6 +45,7 @@ public class OrderWriter {
 	}
 
 	public void completeOrder(Order order) {
+		order.setOrderStatus(OrderStatus.COMPLETED);
 		orderRepository.patchOrderStatus(order, OrderStatus.COMPLETED);
 	}
 }

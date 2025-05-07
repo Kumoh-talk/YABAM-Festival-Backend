@@ -2,6 +2,7 @@ package com.pos.menu.repository.querydsl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -114,7 +115,7 @@ public class MenuQueryDslRepositoryImpl implements MenuQueryDslRepository {
 	}
 
 	@Override
-	public Long countByIdIn(Long storeId, List<Long> menuIds) {
+	public Long countByIdIn(Long storeId, Set<Long> menuIds) {
 		return jpaQueryFactory
 			.select(qMenuEntity.count())
 			.from(qMenuEntity)

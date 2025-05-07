@@ -2,6 +2,7 @@ package com.pos.menu.repository.querydsl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Slice;
 
@@ -24,6 +25,6 @@ public interface MenuQueryDslRepository {
 
 	void decreaseOrderWhereGT(Long menuCategoryId, Integer deleteOrder);
 
-	Long countByIdIn(Long storeId, List<Long> menuIds);
+	Long countByIdIn(Long storeId, Set<Long> menuIds);
 
 }

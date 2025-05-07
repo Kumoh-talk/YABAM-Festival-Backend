@@ -143,7 +143,8 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 
 	@Override
 	public Optional<ReceiptEntity> findByIdWithOrders(Long receiptId) {
-		ReceiptEntity receiptEntity = jpaQueryFactory.selectFrom(qReceiptEntity)
+		ReceiptEntity receiptEntity = jpaQueryFactory
+			.selectFrom(qReceiptEntity).distinct()
 			.join(qReceiptEntity.orders).fetchJoin()
 			.where(qReceiptEntity.id.eq(receiptId))
 			.fetchOne();

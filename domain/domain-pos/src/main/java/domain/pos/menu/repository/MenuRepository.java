@@ -2,6 +2,7 @@ package domain.pos.menu.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
@@ -31,7 +32,7 @@ public interface MenuRepository {
 
 	void deleteMenu(Menu menu);
 
-	Long countByIdIn(Long storeId, List<Long> menuIds);
+	Long countByIdIn(Long storeId, Set<Long> menuIds);
 
 	Optional<MenuInfo> getMenuInfoById(Long menuId);
 }

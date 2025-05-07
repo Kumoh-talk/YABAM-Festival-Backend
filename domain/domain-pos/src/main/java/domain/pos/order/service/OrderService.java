@@ -1,6 +1,8 @@
 package domain.pos.order.service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,9 +62,9 @@ public class OrderService {
 
 		// 모든 장바구니 메뉴가 store에 해당하는 메뉴인지 검증
 		Long storeId = receipt.getSale().getStore().getStoreId();
-		List<Long> menuIds = cart.getCartMenus().stream()
+		Set<Long> menuIds = cart.getCartMenus().stream()
 			.map(cartMenu -> cartMenu.getMenuInfo().getId())
-			.toList();
+			.collect(Collectors.toSet());
 		if (menuReader.countByIdIn(storeId, menuIds) != menuIds.size()) {
 			throw new ServiceException(ErrorCode.MENU_NOT_FOUND);
 		}

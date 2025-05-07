@@ -25,7 +25,7 @@ public class OrderMenu {
 
 	public static OrderMenu of(CartMenu cartMenu, Order order) {
 		return OrderMenu.builder()
-			.orderMenuStatus(null)
+			.orderMenuStatus(OrderMenuStatus.ORDERED)
 			.quantity(cartMenu.getQuantity())
 			.order(order)
 			.menu(Menu.of(cartMenu.getMenuInfo(), null, null))
