@@ -73,7 +73,6 @@ public class ReceiptService {
 			});
 	}
 
-	// TODO : application 계층 one-indexed-parameters 설정 추가
 	// Owner api
 	public Page<ReceiptInfo> getAdjustedReceiptPageBySale(Pageable pageable, UserPassport userPassport, Long saleId) {
 		Sale sale = saleReader.readSingleSale(saleId)
@@ -158,9 +157,16 @@ public class ReceiptService {
 		return receiptInfo != null ? receiptInfo.getReceiptId() : null;
 	}
 
-	public Slice<Receipt> getCustomerReceiptSlice(Pageable pageable, UserPassport userPassport, Long customerId) {
+	public Slice<Receipt> getCustomerReceiptSlice(int pageSize, UserPassport userPassport, Long customerId,
+		Long lastReceiptId) {
 		userPassportValidator.validateUserPassport(userPassport, customerId);
-		return receiptReader.getCustomerReceiptSlice(pageable, customerId);
+		if (lastReceiptId != null) {
+			if (!receiptReader.existsReceipt(lastReceiptId)) {
+				log.warn("lastReceipt 을 찾을 수 없습니다. receiptId: {}", lastReceiptId);
+				throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
+			}
+		}
+		return receiptReader.getCustomerReceiptSlice(pageSize, lastReceiptId, customerId);
 	}
 
 }

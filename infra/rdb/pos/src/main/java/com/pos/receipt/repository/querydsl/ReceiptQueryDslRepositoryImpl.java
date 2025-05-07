@@ -13,6 +13,7 @@ import org.springframework.data.domain.SliceImpl;
 import com.pos.receipt.entity.QReceiptCustomerEntity;
 import com.pos.receipt.entity.QReceiptEntity;
 import com.pos.receipt.entity.ReceiptEntity;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import domain.pos.receipt.entity.Receipt;
@@ -60,6 +61,20 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 	}
 
 	@Override
+	public Optional<ReceiptEntity> findNonStopReceiptsByIdWithTableAndStoreAndLock(Long receiptId) {
+		ReceiptEntity receiptEntity = jpaQueryFactory.selectFrom(qReceiptEntity)
+			.join(qReceiptEntity.table).fetchJoin()
+			.join(qReceiptEntity.sale).fetchJoin()
+			.join(qReceiptEntity.sale.store).fetchJoin()
+			.where(qReceiptEntity.id.eq(receiptId)
+				.and(qReceiptEntity.stopUsageTime.isNull()))
+			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
+			.fetchOne();
+
+		return Optional.ofNullable(receiptEntity);
+	}
+
+	@Override
 	public List<ReceiptEntity> findNonStopReceiptsByIdWithStoreAndLock(List<Long> receiptIds) {
 		return jpaQueryFactory.selectFrom(qReceiptEntity)
 			.join(qReceiptEntity.sale).fetchJoin()
@@ -102,7 +117,8 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 	}
 
 	@Override
-	public Slice<ReceiptEntity> findCustomerReceiptSliceWithStore(Pageable pageable, Long customerId) {
+	public Slice<ReceiptEntity> findCustomerReceiptSliceWithStore(int pageSize, Long lastReceiptId,
+		Long customerId) {
 		QReceiptCustomerEntity qReceiptCustomerEntity = QReceiptCustomerEntity.receiptCustomerEntity;
 
 		List<ReceiptEntity> receipts = jpaQueryFactory
@@ -111,18 +127,18 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 			.join(qReceiptEntity.sale.store).fetchJoin()
 			.join(qReceiptCustomerEntity).on(qReceiptCustomerEntity.receipt.id.eq(qReceiptEntity.id))
 			.where(qReceiptCustomerEntity.customerId.eq(customerId)
+				.and(lastReceiptId == null ? Expressions.TRUE : qReceiptEntity.id.lt(lastReceiptId))
 				.and(qReceiptEntity.isAdjustment.isTrue()))
 			.orderBy(qReceiptEntity.createdAt.desc())
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize() + 1)
+			.limit(pageSize + 1)
 			.fetch();
 
-		boolean hasNext = receipts.size() > pageable.getPageSize();
+		boolean hasNext = receipts.size() > pageSize;
 		if (hasNext) {
 			receipts.remove(receipts.size() - 1);
 		}
 
-		return new SliceImpl<>(receipts, pageable, hasNext);
+		return new SliceImpl<>(receipts, Pageable.ofSize(pageSize), hasNext);
 	}
 
 	@Override
@@ -152,6 +168,15 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 			.set(qReceiptEntity.isAdjustment, true)
 			.where(qReceiptEntity.id.in(
 				receipts.stream().map(receipt -> receipt.getReceiptInfo().getReceiptId()).toList()))
+			.execute();
+	}
+
+	@Override
+	public void startReceiptUsage(Long receiptId) {
+		jpaQueryFactory.update(qReceiptEntity)
+			.set(qReceiptEntity.startUsageTime, LocalDateTime.now())
+			.where(qReceiptEntity.id.eq(receiptId)
+				.and(qReceiptEntity.startUsageTime.isNull()))
 			.execute();
 	}
 }

@@ -25,13 +25,15 @@ public interface ReceiptRepository {
 
 	List<Receipt> getStopReceiptsWithStore(List<Long> receiptIds);
 
+	Optional<Receipt> getNonStopReceiptsWithTableAndStoreAndLock(Long receiptId);
+
 	List<Receipt> getNonStopReceiptsWithStoreAndLock(List<Long> receiptIds);
 
 	Page<ReceiptInfo> getAdjustedReceiptPageBySale(Pageable pageable, Long saleId);
 
 	ReceiptInfo getNonAdjustReceipt(Long tableId);
 
-	Slice<Receipt> getCustomerReceiptSlice(Pageable pageable, Long customerId);
+	Slice<Receipt> getCustomerReceiptSlice(int pageSize, Long lastReceiptId, Long customerId);
 
 	boolean existsReceipt(Long receiptId);
 

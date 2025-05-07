@@ -18,18 +18,22 @@ public interface ReceiptQueryDslRepository {
 
 	List<ReceiptEntity> findStopReceiptsByIdWithStore(List<Long> receiptIds);
 
+	Optional<ReceiptEntity> findNonStopReceiptsByIdWithTableAndStoreAndLock(Long receiptId);
+
 	List<ReceiptEntity> findNonStopReceiptsByIdWithStoreAndLock(List<Long> receiptIds);
 
 	Page<ReceiptEntity> findAdjustedReceiptPageBySaleId(Pageable pageable, Long saleId);
 
 	ReceiptEntity findNonAdjustReceipt(Long tableId);
 
-	Slice<ReceiptEntity> findCustomerReceiptSliceWithStore(Pageable pageable, Long customerId);
+	Slice<ReceiptEntity> findCustomerReceiptSliceWithStore(int pageSize, Long lastReceiptId, Long customerId);
 
 	Optional<ReceiptEntity> findByIdWithOrders(Long receiptId);
 
 	void restartReceipts(List<Receipt> receipts);
 
 	void adjustReceipts(List<Receipt> receipts);
+
+	void startReceiptUsage(Long receiptId);
 
 }

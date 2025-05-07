@@ -70,6 +70,14 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	}
 
 	@Override
+	public Optional<Receipt> getNonStopReceiptsWithTableAndStoreAndLock(Long receiptId) {
+		return receiptJpaRepository.findNonStopReceiptsByIdWithTableAndStoreAndLock(receiptId)
+			.map(receiptEntity -> ReceiptMapper.toReceipt(receiptEntity,
+				TableMapper.toTable(receiptEntity.getTable(), (Store)null),
+				SaleMapper.toSale(receiptEntity.getSale(), StoreMapper.toStore(receiptEntity.getSale().getStore()))));
+	}
+
+	@Override
 	public List<Receipt> getNonStopReceiptsWithStoreAndLock(List<Long> receiptIds) {
 		return receiptJpaRepository.findNonStopReceiptsByIdWithStoreAndLock(receiptIds)
 			.stream()
@@ -90,8 +98,8 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	}
 
 	@Override
-	public Slice<Receipt> getCustomerReceiptSlice(Pageable pageable, Long customerId) {
-		return receiptJpaRepository.findCustomerReceiptSliceWithStore(pageable, customerId)
+	public Slice<Receipt> getCustomerReceiptSlice(int pageSize, Long lastReceiptId, Long customerId) {
+		return receiptJpaRepository.findCustomerReceiptSliceWithStore(pageSize, lastReceiptId, customerId)
 			.map(receiptEntity -> ReceiptMapper.toReceipt(receiptEntity, null,
 				SaleMapper.toSale(receiptEntity.getSale(), StoreMapper.toStore(receiptEntity.getSale().getStore()))));
 	}
