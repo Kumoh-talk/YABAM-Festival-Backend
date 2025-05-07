@@ -18,4 +18,8 @@ public class Menu {
 	public static Menu of(MenuInfo menuInfo, Store store, MenuCategory menuCategory) {
 		return new Menu(menuInfo, store, menuCategory);
 	}
+
+	public void changeFullInfoMenuInfo(MenuInfo menuInfo) {
+		this.menuInfo = menuInfo;
+	}
 }

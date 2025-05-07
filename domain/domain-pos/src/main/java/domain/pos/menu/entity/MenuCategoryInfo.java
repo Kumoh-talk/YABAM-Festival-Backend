@@ -14,7 +14,7 @@ public class MenuCategoryInfo {
 		this.order = order;
 	}
 
-	public static MenuCategoryInfo of(Long id, String name, int order) {
+	public static MenuCategoryInfo of(Long id, String name, Integer order) {
 		return new MenuCategoryInfo(id, name, order);
 	}
 }
