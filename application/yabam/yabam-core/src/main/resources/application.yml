@@ -4,11 +4,7 @@ spring:
   config:
     activate:
       on-profile: local
-    import: configserver:http://localhost:8087
-
-swagger:
-  server-url: http://localhost:8072 # gateway 주소
-  description: "local 백엔드 서버"
+    import: configserver:http://localhost:8888
 ---
 
 spring:
@@ -17,4 +13,4 @@ spring:
   config:
     activate:
       on-profile: dev
-    import: configserver:http://localhost:8087
+    import: configserver:http://192.168.0.171:8888,optional:jwt.yml
