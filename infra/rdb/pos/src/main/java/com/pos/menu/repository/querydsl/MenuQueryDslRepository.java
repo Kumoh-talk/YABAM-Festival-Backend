@@ -2,8 +2,8 @@ package com.pos.menu.repository.querydsl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 import com.pos.menu.entity.MenuEntity;
@@ -13,7 +13,9 @@ public interface MenuQueryDslRepository {
 
 	List<MenuEntity> findAllByStoreIdWithCategoryAndLock(Long storeId);
 
-	Slice<MenuEntity> findSliceByMenuCategoryId(Pageable pageable, Integer lastMenuOrder, Long menuCategoryId);
+	Slice<MenuEntity> findSliceByMenuCategoryId(int pageSize, Integer lastMenuOrder, Long menuCategoryId);
+
+	boolean existsByIdAndStoreId(Long menuId, Long storeId);
 
 	boolean existsMenuOrder(Long menuCategoryId, int menuOrder);
 
@@ -22,5 +24,7 @@ public interface MenuQueryDslRepository {
 	void increaseOrderInRange(Long menuCategoryId, Integer startOrder, Integer endOrder);
 
 	void decreaseOrderWhereGT(Long menuCategoryId, Integer deleteOrder);
+
+	Long countByIdIn(Long storeId, Set<Long> menuIds);
 
 }

@@ -32,4 +32,8 @@ public class Order {
 	public static Order from(Long orderId) {
 		return new Order(orderId);
 	}
+
+	public void setOrderStatus(OrderStatus orderStatus) {
+		this.orderStatus = orderStatus;
+	}
 }

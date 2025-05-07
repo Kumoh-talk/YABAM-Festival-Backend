@@ -18,8 +18,8 @@ public class MenuWriter {
 		return menuRepository.postMenu(store, menuCategory, menuInfo);
 	}
 
-	public MenuInfo patchMenu(MenuInfo patchMenuInfo) {
-		return menuRepository.patchMenu(patchMenuInfo);
+	public MenuInfo patchMenuInfo(MenuInfo patchMenuInfo) {
+		return menuRepository.patchMenuInfo(patchMenuInfo);
 	}
 
 	public MenuInfo patchMenuOrder(Menu menu, Integer patchOrder) {

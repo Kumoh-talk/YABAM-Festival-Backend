@@ -2,8 +2,8 @@ package domain.pos.menu.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
@@ -20,15 +20,19 @@ public interface MenuRepository {
 
 	List<Menu> getAllByStoreIdWithCategoryAndLock(Long storeId);
 
-	Slice<MenuInfo> getMenuSlice(Pageable pageable, MenuInfo lastMenuInfo, Long menuCategoryId);
+	Slice<MenuInfo> getMenuSlice(int pageSize, MenuInfo lastMenuInfo, Long menuCategoryId);
+
+	boolean existsMenu(Long storeId, Long menuId);
 
 	boolean existsMenuOrder(Long menuCategoryId, Integer menuOrder);
 
-	MenuInfo patchMenu(MenuInfo patchMenuInfo);
+	MenuInfo patchMenuInfo(MenuInfo patchMenuInfo);
 
 	MenuInfo patchMenuOrder(Menu menu, Integer patchOrder);
 
 	void deleteMenu(Menu menu);
+
+	Long countByIdIn(Long storeId, Set<Long> menuIds);
 
 	Optional<MenuInfo> getMenuInfoById(Long menuId);
 }

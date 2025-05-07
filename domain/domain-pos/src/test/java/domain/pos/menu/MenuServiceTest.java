@@ -297,9 +297,9 @@ public class MenuServiceTest extends ServiceTest {
 	@Nested
 	@DisplayName("메뉴 리스트 조회")
 	class getMenuSlice {
-		private final int size = 10;
+		private final int pageSize = 10;
 		private final boolean hasNext = false;
-		private final Pageable pageable = Pageable.ofSize(size);
+		private final Pageable pageable = Pageable.ofSize(pageSize);
 		private final Long lastMenuId = GENERAL_MENU_ID;
 		private final Long storeId = 1L;
 		private final Long menuCategoryId = 1L;
@@ -318,15 +318,15 @@ public class MenuServiceTest extends ServiceTest {
 				.willReturn(Optional.of(store));
 			BDDMockito.given(menuReader.getMenuInfo(storeId, lastMenuId))
 				.willReturn(Optional.of(lastMenuInfo));
-			BDDMockito.given(menuReader.getMenuSlice(pageable, lastMenuInfo, menuCategoryId))
+			BDDMockito.given(menuReader.getMenuSlice(pageSize, lastMenuInfo, menuCategoryId))
 				.willReturn(menuSlice);
 
 			// when
-			Slice<MenuInfo> serviceMenuSlice = menuService.getMenuSlice(pageable, lastMenuId, storeId, menuCategoryId);
+			Slice<MenuInfo> serviceMenuSlice = menuService.getMenuSlice(pageSize, lastMenuId, storeId, menuCategoryId);
 
 			// then
 			assertSoftly(softly -> {
-				softly.assertThat(serviceMenuSlice.getSize()).isEqualTo(size);
+				softly.assertThat(serviceMenuSlice.getSize()).isEqualTo(pageSize);
 				softly.assertThat(serviceMenuSlice.hasNext()).isEqualTo(hasNext);
 				softly.assertThat(serviceMenuSlice.getContent().get(0).getOrder())
 					.isEqualTo(GENERAL_MENU_ORDER + 1);
@@ -337,7 +337,7 @@ public class MenuServiceTest extends ServiceTest {
 				verify(menuReader)
 					.getMenuInfo(storeId, lastMenuId);
 				verify(menuReader)
-					.getMenuSlice(pageable, lastMenuInfo, menuCategoryId);
+					.getMenuSlice(pageSize, lastMenuInfo, menuCategoryId);
 			});
 		}
 
@@ -350,7 +350,7 @@ public class MenuServiceTest extends ServiceTest {
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
-						() -> menuService.getMenuSlice(pageable, lastMenuId, storeId, menuCategoryId))
+						() -> menuService.getMenuSlice(pageSize, lastMenuId, storeId, menuCategoryId))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
 				verify(storeReader)
@@ -360,7 +360,7 @@ public class MenuServiceTest extends ServiceTest {
 				verify(menuReader, never())
 					.getMenuInfo(anyLong(), anyLong());
 				verify(menuReader, never())
-					.getMenuSlice(any(), any(), anyLong());
+					.getMenuSlice(anyInt(), any(), anyLong());
 			});
 		}
 
@@ -378,7 +378,7 @@ public class MenuServiceTest extends ServiceTest {
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
-						() -> menuService.getMenuSlice(pageable, lastMenuId, storeId, menuCategoryId))
+						() -> menuService.getMenuSlice(pageSize, lastMenuId, storeId, menuCategoryId))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.MENU_CATEGORY_NOT_FOUND);
 				verify(storeReader)
@@ -388,7 +388,7 @@ public class MenuServiceTest extends ServiceTest {
 				verify(menuReader, never())
 					.getMenuInfo(anyLong(), anyLong());
 				verify(menuReader, never())
-					.getMenuSlice(any(), any(), anyLong());
+					.getMenuSlice(anyInt(), any(), anyLong());
 			});
 		}
 
@@ -404,7 +404,7 @@ public class MenuServiceTest extends ServiceTest {
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
-						() -> menuService.getMenuSlice(pageable, lastMenuId, storeId, menuCategoryId))
+						() -> menuService.getMenuSlice(pageSize, lastMenuId, storeId, menuCategoryId))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.MENU_NOT_FOUND);
 				verify(storeReader)
@@ -414,7 +414,7 @@ public class MenuServiceTest extends ServiceTest {
 				verify(menuReader)
 					.getMenuInfo(storeId, lastMenuId);
 				verify(menuReader, never())
-					.getMenuSlice(any(), any(), anyLong());
+					.getMenuSlice(anyInt(), any(), anyLong());
 			});
 		}
 	}
@@ -434,11 +434,11 @@ public class MenuServiceTest extends ServiceTest {
 				.willReturn(store);
 			BDDMockito.given(menuReader.getMenuInfo(storeId, patchMenuInfo.getId()))
 				.willReturn(Optional.of(patchMenuInfo));
-			BDDMockito.given(menuWriter.patchMenu(patchMenuInfo))
+			BDDMockito.given(menuWriter.patchMenuInfo(patchMenuInfo))
 				.willReturn(patchMenuInfo);
 
 			// when
-			MenuInfo servicePatchMenuInfo = menuService.patchMenu(storeId, userPassport, patchMenuInfo);
+			MenuInfo servicePatchMenuInfo = menuService.patchMenuInfo(storeId, userPassport, patchMenuInfo);
 
 			// then
 			assertSoftly(softly -> {
@@ -454,7 +454,7 @@ public class MenuServiceTest extends ServiceTest {
 				verify(menuReader)
 					.getMenuInfo(storeId, patchMenuInfo.getId());
 				verify(menuWriter)
-					.patchMenu(patchMenuInfo);
+					.patchMenuInfo(patchMenuInfo);
 			});
 		}
 
@@ -468,7 +468,7 @@ public class MenuServiceTest extends ServiceTest {
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
-						() -> menuService.patchMenu(storeId, userPassport, patchMenuInfo))
+						() -> menuService.patchMenuInfo(storeId, userPassport, patchMenuInfo))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
 				verify(storeValidator)
@@ -476,7 +476,7 @@ public class MenuServiceTest extends ServiceTest {
 				verify(menuReader, never())
 					.getMenuInfo(anyLong(), anyLong());
 				verify(menuWriter, never())
-					.patchMenu(any());
+					.patchMenuInfo(any());
 			});
 		}
 
@@ -490,7 +490,7 @@ public class MenuServiceTest extends ServiceTest {
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
-						() -> menuService.patchMenu(storeId, userPassport, patchMenuInfo))
+						() -> menuService.patchMenuInfo(storeId, userPassport, patchMenuInfo))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
 				verify(storeValidator)
@@ -498,7 +498,7 @@ public class MenuServiceTest extends ServiceTest {
 				verify(menuReader, never())
 					.getMenuInfo(anyLong(), anyLong());
 				verify(menuWriter, never())
-					.patchMenu(any());
+					.patchMenuInfo(any());
 			});
 		}
 
@@ -514,7 +514,7 @@ public class MenuServiceTest extends ServiceTest {
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
-						() -> menuService.patchMenu(storeId, userPassport, patchMenuInfo))
+						() -> menuService.patchMenuInfo(storeId, userPassport, patchMenuInfo))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.MENU_NOT_FOUND);
 				verify(storeValidator)
@@ -522,7 +522,7 @@ public class MenuServiceTest extends ServiceTest {
 				verify(menuReader)
 					.getMenuInfo(storeId, patchMenuInfo.getId());
 				verify(menuWriter, never())
-					.patchMenu(any());
+					.patchMenuInfo(any());
 			});
 		}
 	}

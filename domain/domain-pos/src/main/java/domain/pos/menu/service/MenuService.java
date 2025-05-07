@@ -1,6 +1,5 @@
 package domain.pos.menu.service;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +52,7 @@ public class MenuService {
 			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
 	}
 
-	public Slice<MenuInfo> getMenuSlice(Pageable pageable, Long lastMenuId, Long storeId, Long menuCategoryId) {
+	public Slice<MenuInfo> getMenuSlice(int pageSize, Long lastMenuId, Long storeId, Long menuCategoryId) {
 		storeReader.readSingleStore(storeId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.NOT_FOUND_STORE));
 		menuCategoryValidator.validateMenuCategory(storeId, menuCategoryId);
@@ -63,20 +62,19 @@ public class MenuService {
 			lastMenuInfo = menuReader.getMenuInfo(storeId, lastMenuId)
 				.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
 		}
-		return menuReader.getMenuSlice(pageable, lastMenuInfo, menuCategoryId);
+		return menuReader.getMenuSlice(pageSize, lastMenuInfo, menuCategoryId);
 	}
 
 	@Transactional
-	public MenuInfo patchMenu(Long storeId, UserPassport userPassport, MenuInfo patchMenuInfo) {
+	public MenuInfo patchMenuInfo(Long storeId, UserPassport userPassport, MenuInfo patchMenuInfo) {
 		Store store = storeValidator.validateStoreOwner(userPassport, storeId);
 		validateStoreOpen(store);
 
 		menuReader.getMenuInfo(storeId, patchMenuInfo.getId())
 			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
-		return menuWriter.patchMenu(patchMenuInfo);
+		return menuWriter.patchMenuInfo(patchMenuInfo);
 	}
 
-	// TODO : 컨트롤러에서 patchOrder not null 및 양수체크
 	@Transactional
 	public MenuInfo patchMenuOrder(Long storeId, UserPassport userPassport, Long menuId,
 		Integer patchOrder) {
@@ -95,7 +93,7 @@ public class MenuService {
 		MenuInfo menuInfo = menuReader.getMenuInfo(storeId, menuId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
 		menuInfo.updateSoldOut(isSoldOut);
-		return menuWriter.patchMenu(menuInfo);
+		return menuWriter.patchMenuInfo(menuInfo);
 	}
 
 	@Transactional

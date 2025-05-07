@@ -26,4 +26,8 @@ public class CartWriter {
 	public Optional<Cart> getCart(Long receiptId) {
 		return cartRepository.getCart(receiptId);
 	}
+
+	public void deleteCartAndCartMenuByReceiptId(Long receiptId) {
+		cartRepository.deleteCartAndCartMenuByReceiptId(receiptId);
+	}
 }

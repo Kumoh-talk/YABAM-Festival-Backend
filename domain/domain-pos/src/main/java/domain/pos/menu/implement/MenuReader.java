@@ -2,8 +2,8 @@ package domain.pos.menu.implement;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 
@@ -28,16 +28,20 @@ public class MenuReader {
 			.findFirst();
 	}
 
-	public Slice<MenuInfo> getMenuSlice(Pageable pageable, MenuInfo lastMenuInfo, Long menuCategoryId) {
-		return menuRepository.getMenuSlice(pageable, lastMenuInfo, menuCategoryId);
+	public Slice<MenuInfo> getMenuSlice(int pageSize, MenuInfo lastMenuInfo, Long menuCategoryId) {
+		return menuRepository.getMenuSlice(pageSize, lastMenuInfo, menuCategoryId);
 	}
 
 	public boolean existsMenu(Long storeId, Long menuId) {
-		return menuRepository.getMenuInfo(storeId, menuId).isPresent();
+		return menuRepository.existsMenu(storeId, menuId);
 	}
 
 	public boolean existsMenuOrder(Long menuCategoryId, int menuOrder) {
 		return menuRepository.existsMenuOrder(menuCategoryId, menuOrder);
+	}
+
+	public Long countByIdIn(Long storeId, Set<Long> menuIds) {
+		return menuRepository.countByIdIn(storeId, menuIds);
 	}
 
 }

@@ -6,6 +6,8 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorCode {
+	// Common
+	INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "COMMON_0001", "잘못된 입력 값입니다."),
 	// Owner
 	NOT_VALID_OWNER(HttpStatus.BAD_REQUEST, "OWNER_0001", "해당 사용자는 가게 점주가 아닙니다"),
 
@@ -33,6 +35,7 @@ public enum ErrorCode {
 	EXIST_MENU_ORDER(HttpStatus.CONFLICT, "MENU_0002", "이미 존재하는 메뉴 순서입니다."),
 	STORE_IS_OPEN_MENU_WRITE(HttpStatus.CONFLICT, "MENU_0003", "운영중인 가게는 메뉴를 추가 및 수정할 수 없습니다."),
 	MENU_ORDER_INVALID(HttpStatus.BAD_REQUEST, "MENU_0004", "메뉴 순서가 유효하지 않습니다."),
+	MENU_SOLD_OUT(HttpStatus.BAD_REQUEST, "MENU_0005", "메뉴가 품절되었습니다."),
 
 	// MenuCategory
 	MENU_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "MENU_CATEGORY_0001", "존재하지 않는 메뉴 카테고리입니다."),
@@ -55,6 +58,7 @@ public enum ErrorCode {
 	// Sale
 	NOT_FOUND_SALE(HttpStatus.NOT_FOUND, "SALE_0001", "존재하지 않는 세일입니다."),
 	CLOSE_SALE(HttpStatus.CONFLICT, "SALE_0002", "영업이 종료되었습니다."),
+	SALE_ACCESS_DENIED(HttpStatus.FORBIDDEN, "SALE_0003", "대상 영업에 접근 가능한 요청이 아닙니다."),
 
 	// Receipt
 	RECEIPT_NOT_FOUND(HttpStatus.NOT_FOUND, "RECEIPT_0001", "존재하지 않는 영수증입니다."),
@@ -66,15 +70,26 @@ public enum ErrorCode {
 	ORDER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "ORDER_0002", "대상 주문에 접근 가능한 요청이 아닙니다."),
 	INVALID_STATE_TRANSITION(HttpStatus.BAD_REQUEST, "ORDER_0003", "주문 상태 전환이 불가능합니다."),
 	ALREADY_RECEIVED_ORDER(HttpStatus.BAD_REQUEST, "ORDER_0004", "이미 접수된 주문입니다."),
-	ALREADY_CANCELLED_ORDER(HttpStatus.BAD_REQUEST, "ORDER_0005", "이미 취소된 주문입니다."),
+	ALREADY_CANCELED_ORDER(HttpStatus.BAD_REQUEST, "ORDER_0005", "이미 취소된 주문입니다."),
 	ALREADY_COMPLETED_ORDER(HttpStatus.BAD_REQUEST, "ORDER_0006", "이미 완료된 주문입니다."),
+	TRANSFER_INVALID_STATUS(HttpStatus.BAD_REQUEST, "ORDER_0007", "주문 상태 전환이 불가능합니다."),
+	ORDER_STATUS_NOT_RECEIVED(HttpStatus.BAD_REQUEST, "ORDER_0008", "주문 상태가 접수되지 않았습니다."),
 
 	// VoException
 	NOT_VALID_VO(HttpStatus.BAD_REQUEST, "VO_0001", "Vo 객체가 유효하지 않습니다."),
 
 	// OrderMenu
 	ORDER_MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER_MENU_0001", "존재하지 않는 주문 메뉴입니다."),
+	ORDER_MENU_ACCESS_DENIED(HttpStatus.FORBIDDEN, "ORDER_MENU_0002", "대상 주문 메뉴에 접근 가능한 요청이 아닙니다."),
+	ALREADY_COOKING_ORDER_MENU(HttpStatus.BAD_REQUEST, "ORDER_MENU_0003", "이미 조리중인 메뉴입니다."),
+	ALREADY_CANCELED_ORDER_MENU(HttpStatus.BAD_REQUEST, "ORDER_MENU_0004", "이미 취소된 메뉴입니다."),
+	ALREADY_COMPLETED_ORDER_MENU(HttpStatus.BAD_REQUEST, "ORDER_MENU_0005", "이미 완료된 메뉴입니다."),
 
+	// Cart
+	CART_NOT_FOUND(HttpStatus.NOT_FOUND, "CART_0001", "존재하지 않는 장바구니입니다."),
+	CART_EMPTY(HttpStatus.BAD_REQUEST, "CART_0002", "장바구니가 비어있습니다."),
+
+	// Review
 	REVIEW_NOT_ADJUSTMENT(HttpStatus.BAD_REQUEST, "REVIEW_0001", "정산되지 않았으면 리뷰 생성 불가합니다."),
 	REVIEW_ALREADY_EXISTS(HttpStatus.CONFLICT, "REVIEW_0002", "이미 리뷰가 존재합니다."),
 	REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW_0003", "존재하지 않는 리뷰입니다."),

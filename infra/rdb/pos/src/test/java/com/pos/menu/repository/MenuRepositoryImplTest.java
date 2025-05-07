@@ -10,7 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 import com.pos.fixtures.menu.MenuCategoryEntityFixture;
@@ -135,13 +134,12 @@ class MenuRepositoryImplTest extends RepositoryTest {
 	@Nested
 	@DisplayName("메뉴 슬라이스 조회")
 	class getMenuSlice {
-		private Pageable pageable;
+		private int pageSize = 5;
 		private MenuInfo lastMenuInfo;
 		private Long menuCategoryId;
 
 		@BeforeEach
 		void setUp() {
-			pageable = Pageable.ofSize(5);
 			menuCategoryId = savedMenuCategory.getMenuCategoryInfo().getId();
 		}
 
@@ -161,7 +159,7 @@ class MenuRepositoryImplTest extends RepositoryTest {
 			lastMenuInfo = MenuInfoFixture.GENERAL_MENU_INFO();
 
 			// when
-			Slice<MenuInfo> menuInfos = menuRepository.getMenuSlice(pageable, lastMenuInfo, menuCategoryId);
+			Slice<MenuInfo> menuInfos = menuRepository.getMenuSlice(pageSize, lastMenuInfo, menuCategoryId);
 
 			// then
 			assertSoftly(softly -> {
@@ -188,7 +186,7 @@ class MenuRepositoryImplTest extends RepositoryTest {
 			lastMenuInfo = null;
 
 			// when
-			Slice<MenuInfo> menuInfos = menuRepository.getMenuSlice(pageable, lastMenuInfo, menuCategoryId);
+			Slice<MenuInfo> menuInfos = menuRepository.getMenuSlice(pageSize, lastMenuInfo, menuCategoryId);
 
 			// then
 			assertSoftly(softly -> {
@@ -212,7 +210,7 @@ class MenuRepositoryImplTest extends RepositoryTest {
 		MenuInfo patchMenuInfo = MenuInfoFixture.PATCH_MENU_INFO(menuInfo);
 
 		// when
-		MenuInfo savedMenuInfo = menuRepository.patchMenu(patchMenuInfo);
+		MenuInfo savedMenuInfo = menuRepository.patchMenuInfo(patchMenuInfo);
 
 		// then
 		assertSoftly(softly -> {

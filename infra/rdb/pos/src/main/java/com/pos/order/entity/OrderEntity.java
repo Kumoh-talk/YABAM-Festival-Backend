@@ -1,10 +1,12 @@
 package com.pos.order.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
+import com.pos.global.base.entity.BaseEntity;
 import com.pos.receipt.entity.ReceiptEntity;
 
 import domain.pos.order.entity.vo.OrderStatus;
@@ -21,6 +23,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,7 +33,7 @@ import lombok.NoArgsConstructor;
 @SQLDelete(sql = "UPDATE orders SET deleted_at = NOW() where id=?")
 @SQLRestriction(value = "deleted_at is NULL")
 @Getter
-public class OrderEntity {
+public class OrderEntity extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -38,7 +41,7 @@ public class OrderEntity {
 	@Enumerated(value = EnumType.STRING)
 	private OrderStatus status;
 
-	@Column(name = "table_price", nullable = false)
+	@Column(name = "table_price")
 	private Integer totalPrice;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -46,14 +49,13 @@ public class OrderEntity {
 	private ReceiptEntity receipt;
 
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<OrderMenuEntity> orderMenus;
+	private List<OrderMenuEntity> orderMenus = new ArrayList<>();
 
-	public OrderEntity(OrderStatus status, Integer totalPrice, ReceiptEntity receipt,
-		List<OrderMenuEntity> orderMenus) {
+	@Builder
+	public OrderEntity(OrderStatus status, Integer totalPrice, ReceiptEntity receipt) {
 		this.status = status;
 		this.totalPrice = totalPrice;
 		this.receipt = receipt;
-		this.orderMenus = orderMenus;
 	}
 
 	public OrderEntity(Long id) {
@@ -62,5 +64,9 @@ public class OrderEntity {
 
 	public static OrderEntity from(Long id) {
 		return new OrderEntity(id);
+	}
+
+	public void setOrderStatus(OrderStatus orderStatus) {
+		this.status = orderStatus;
 	}
 }

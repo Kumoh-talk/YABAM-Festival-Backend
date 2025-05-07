@@ -115,7 +115,7 @@ public class OrderWriterTest {
 				softly.assertThatThrownBy(
 						() -> orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole()))
 					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_CANCELLED_ORDER);
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_CANCELED_ORDER);
 
 				verify(orderRepository, never()).patchOrderStatus(order, orderStatus);
 			});
@@ -142,7 +142,7 @@ public class OrderWriterTest {
 	@Nested
 	@DisplayName("주문 상태 CANCELLED로 변경")
 	class patchOrderStatusToCANCELLED {
-		private final OrderStatus orderStatus = OrderStatus.CANCELLED;
+		private final OrderStatus orderStatus = OrderStatus.CANCELED;
 
 		@Test
 		void ORDERED_TO_CANCELLED_점주_성공() {
@@ -211,7 +211,7 @@ public class OrderWriterTest {
 				softly.assertThatThrownBy(
 						() -> orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole()))
 					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_CANCELLED_ORDER);
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_CANCELED_ORDER);
 
 				verify(orderRepository, never()).patchOrderStatus(order, orderStatus);
 			});

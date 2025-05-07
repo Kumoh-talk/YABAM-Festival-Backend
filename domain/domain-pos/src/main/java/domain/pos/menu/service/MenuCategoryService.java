@@ -54,7 +54,6 @@ public class MenuCategoryService {
 		return menuCategoryWriter.patchMenuCategory(patchMenuCategoryInfo);
 	}
 
-	// TODO : 컨트롤러에서 patchOrder not null 및 양수체크
 	@Transactional
 	public MenuCategoryInfo patchMenuCategoryOrder(Long storeId, UserPassport userPassport, Long menuCategoryId,
 		Integer patchOrder) {
@@ -66,6 +65,7 @@ public class MenuCategoryService {
 		return menuCategoryWriter.patchMenuCategoryOrder(storeId, menuCategoryInfo, patchOrder);
 	}
 
+	@Transactional
 	public void deleteMenuCategory(Long storeId, UserPassport userPassport, Long categoryId) {
 		Store store = storeValidator.validateStoreOwner(userPassport, storeId);
 		validateStoreOpen(store);

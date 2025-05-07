@@ -13,7 +13,6 @@ import com.pos.sale.entity.SaleEntity;
 import com.pos.table.entity.TableEntity;
 
 import domain.pos.receipt.entity.ReceiptInfo;
-import domain.pos.store.entity.Sale;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -78,9 +77,10 @@ public class ReceiptEntity extends BaseEntity {
 	}
 
 	public static ReceiptEntity of(
-		Sale sale, domain.pos.table.entity.Table table) {
+		SaleEntity saleEntity, TableEntity tableEntity) {
 		return ReceiptEntity.builder()
-			.sale(SaleEntity.from(sale.getSaleId()))
+			.sale(saleEntity)
+			.table(tableEntity)
 			.build();
 	}
 

@@ -48,7 +48,7 @@ public class OrderFixture {
 	public static Order CANCELLED_ORDER() {
 		return Order.builder()
 			.orderId(GENERAL_ORDER_ID)
-			.orderStatus(OrderStatus.CANCELLED)
+			.orderStatus(OrderStatus.CANCELED)
 			.totalPrice(GENERAL_TOTAL_PRICE)
 			.receipt(GENERAL_RECEIPT)
 			.orderMenus(GENERAL_ORDER_MENUS)
