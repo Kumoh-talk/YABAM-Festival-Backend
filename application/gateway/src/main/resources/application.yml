@@ -4,23 +4,15 @@ spring:
 
 ---
 
-# ----- prod 전용 설정 -----
+# ----- local 전용 설정 -----
 
 spring:
   config:
     activate:
-      on-profile: local 
+      on-profile: local
     import:
-      configserver:http://localhost:8087,optional:jwt.yml
+      configserver:http://localhost:8888,optional:jwt.yml
 
-
-
-springdoc:
-  swagger-ui:
-    path: /docs
-    urls:
-      - name: Yabam API
-        url: http://localhost:8072/yabam/v3/api-docs
 
 ---
 
@@ -28,7 +20,7 @@ springdoc:
 spring:
   config:
     activate:
-      on-profile: dev 
+      on-profile: dev
     import:
       configserver:http://192.168.0.171:8888,optional:jwt.yml
 
