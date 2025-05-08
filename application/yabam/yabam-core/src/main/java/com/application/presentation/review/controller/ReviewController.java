@@ -1,7 +1,7 @@
 package com.application.presentation.review.controller;
 
 import static com.response.ResponseUtil.*;
-import static domain.pos.member.entity.UserRole.*;
+import static com.vo.UserRole.*;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,8 +20,8 @@ import com.application.presentation.review.dto.response.ReviewsCusorResponse;
 import com.authorization.AssignUserPassport;
 import com.authorization.HasRole;
 import com.response.ResponseBody;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.review.entity.Review;
 import domain.pos.review.service.ReviewService;
 import jakarta.validation.Valid;

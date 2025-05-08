@@ -2,7 +2,8 @@ package domain.pos.store.implement;
 
 import org.springframework.stereotype.Component;
 
-import domain.pos.member.entity.UserPassport;
+import com.vo.UserPassport;
+
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
 import domain.pos.store.repository.StoreRepository;

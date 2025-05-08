@@ -16,9 +16,9 @@ import org.mockito.Mock;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
+import com.vo.UserPassport;
 
 import base.ServiceTest;
-import domain.pos.member.entity.UserPassport;
 import domain.pos.store.entity.Sale;
 import domain.pos.store.entity.Store;
 import domain.pos.store.implement.SaleReader;

@@ -5,7 +5,8 @@ import java.util.Optional;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 
-import domain.pos.member.entity.UserPassport;
+import com.vo.UserPassport;
+
 import domain.pos.review.entity.Review;
 import domain.pos.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;

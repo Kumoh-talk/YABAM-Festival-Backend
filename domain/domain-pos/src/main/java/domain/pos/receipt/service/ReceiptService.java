@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.member.implement.UserPassportValidator;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.entity.ReceiptInfo;

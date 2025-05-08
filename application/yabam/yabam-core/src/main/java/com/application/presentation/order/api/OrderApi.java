@@ -16,8 +16,8 @@ import com.application.presentation.order.dto.response.OrderInfoResponse;
 import com.application.presentation.order.dto.response.OrderResponse;
 import com.exception.ErrorCode;
 import com.response.ResponseBody;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.order.entity.vo.OrderStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

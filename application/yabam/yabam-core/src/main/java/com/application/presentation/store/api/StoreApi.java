@@ -12,8 +12,8 @@ import com.application.presentation.store.dto.response.StoreIdResponse;
 import com.application.presentation.store.dto.response.StoreInfoResponse;
 import com.exception.ErrorCode;
 import com.response.ResponseBody;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

@@ -26,9 +26,9 @@ import org.springframework.data.domain.Pageable;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
+import com.vo.UserPassport;
 
 import base.ServiceTest;
-import domain.pos.member.entity.UserPassport;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.receipt.implement.ReceiptReader;

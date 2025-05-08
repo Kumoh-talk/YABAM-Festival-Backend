@@ -10,8 +10,8 @@ import com.pos.store.entity.QStoreEntity;
 import com.pos.store.entity.StoreEntity;
 import com.pos.store.mapper.StoreMapper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
 import domain.pos.store.repository.StoreRepository;

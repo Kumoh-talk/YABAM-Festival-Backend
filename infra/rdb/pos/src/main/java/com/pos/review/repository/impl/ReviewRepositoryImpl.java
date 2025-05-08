@@ -13,8 +13,8 @@ import com.exception.ServiceException;
 import com.pos.review.entity.ReviewEntity;
 import com.pos.review.mapper.ReviewMapper;
 import com.pos.review.repository.jpa.ReviewJpaRepository;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.review.entity.Review;
 import domain.pos.review.entity.ReviewInfo;

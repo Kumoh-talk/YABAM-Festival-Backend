@@ -3,7 +3,8 @@ package fixtures.store;
 import static fixtures.member.UserFixture.*;
 import static fixtures.store.StoreInfoFixture.*;
 
-import domain.pos.member.entity.UserPassport;
+import com.vo.UserPassport;
+
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
 

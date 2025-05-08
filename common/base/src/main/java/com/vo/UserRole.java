@@ -1,4 +1,4 @@
-package domain.pos.member.entity;
+package com.vo;
 
 public enum UserRole {
 	ROLE_ANONYMOUS,

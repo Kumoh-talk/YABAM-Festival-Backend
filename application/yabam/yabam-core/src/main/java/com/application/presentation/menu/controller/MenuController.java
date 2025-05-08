@@ -1,7 +1,7 @@
 package com.application.presentation.menu.controller;
 
 import static com.response.ResponseUtil.*;
-import static domain.pos.member.entity.UserRole.*;
+import static com.vo.UserRole.*;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +24,8 @@ import com.application.presentation.menu.dto.response.MenuResponse;
 import com.authorization.AssignUserPassport;
 import com.authorization.HasRole;
 import com.response.ResponseBody;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.menu.entity.Menu;
 import domain.pos.menu.entity.MenuInfo;
 import domain.pos.menu.service.MenuService;

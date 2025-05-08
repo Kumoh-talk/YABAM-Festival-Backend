@@ -15,8 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.order.entity.Order;
 import domain.pos.order.entity.vo.OrderStatus;
 import domain.pos.order.repository.OrderRepository;

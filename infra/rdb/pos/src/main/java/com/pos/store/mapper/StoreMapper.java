@@ -3,8 +3,8 @@ package com.pos.store.mapper;
 import java.awt.geom.Point2D;
 
 import com.pos.store.entity.StoreEntity;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
 import lombok.AccessLevel;

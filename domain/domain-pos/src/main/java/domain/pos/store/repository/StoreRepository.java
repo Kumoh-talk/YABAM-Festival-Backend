@@ -4,7 +4,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
-import domain.pos.member.entity.UserPassport;
+import com.vo.UserPassport;
+
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
 

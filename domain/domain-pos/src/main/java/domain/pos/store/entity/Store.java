@@ -1,6 +1,7 @@
 package domain.pos.store.entity;
 
-import domain.pos.member.entity.UserPassport;
+import com.vo.UserPassport;
+
 import lombok.Getter;
 
 @Getter

@@ -2,7 +2,8 @@ package domain.pos.review.implement;
 
 import org.springframework.stereotype.Component;
 
-import domain.pos.member.entity.UserPassport;
+import com.vo.UserPassport;
+
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.review.entity.Review;
 import domain.pos.review.entity.ReviewInfo;

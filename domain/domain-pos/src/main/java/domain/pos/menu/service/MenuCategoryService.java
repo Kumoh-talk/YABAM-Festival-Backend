@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.menu.entity.MenuCategory;
 import domain.pos.menu.entity.MenuCategoryInfo;
 import domain.pos.menu.implement.MenuCategoryReader;

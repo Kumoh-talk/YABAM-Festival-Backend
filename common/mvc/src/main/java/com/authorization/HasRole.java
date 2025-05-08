@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import domain.pos.member.entity.UserRole;
+import com.vo.UserRole;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)

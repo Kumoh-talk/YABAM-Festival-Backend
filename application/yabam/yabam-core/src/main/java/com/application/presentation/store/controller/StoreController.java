@@ -1,7 +1,7 @@
 package com.application.presentation.store.controller;
 
 import static com.response.ResponseUtil.*;
-import static domain.pos.member.entity.UserRole.*;
+import static com.vo.UserRole.*;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,8 +19,8 @@ import com.application.presentation.store.dto.response.StoreInfoResponse;
 import com.authorization.AssignUserPassport;
 import com.authorization.HasRole;
 import com.response.ResponseBody;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.store.service.StoreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

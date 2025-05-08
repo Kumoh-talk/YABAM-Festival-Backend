@@ -20,8 +20,8 @@ import com.application.presentation.receipt.dto.response.ReceiptInfoResponse;
 import com.application.presentation.receipt.dto.response.ReceiptResponse;
 import com.exception.ErrorCode;
 import com.response.ResponseBody;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

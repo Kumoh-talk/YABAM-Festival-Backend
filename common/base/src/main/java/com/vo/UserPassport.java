@@ -1,4 +1,4 @@
-package domain.pos.member.entity;
+package com.vo;
 
 import lombok.Getter;
 
