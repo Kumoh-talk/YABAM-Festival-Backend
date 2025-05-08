@@ -5,6 +5,10 @@ spring:
     activate:
       on-profile: local
     import: configserver:http://localhost:8888
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
 ---
 
 spring:

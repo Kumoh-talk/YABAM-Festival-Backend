@@ -55,6 +55,7 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 			.join(qOrderEntity.receipt.table).fetchJoin()
 			.where(qOrderEntity.receipt.sale.id.eq(saleId)
 				.and(qOrderEntity.status.in(orderStatuses)))
+			.orderBy(qOrderEntity.createdAt.asc(), qOrderEntity.id.asc())
 			.fetch();
 	}
 
@@ -67,6 +68,7 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 			.join(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
 			.join(qOrderMenu.menu).fetchJoin()
 			.where(qOrderEntity.receipt.id.eq(receiptId))
+			.orderBy(qOrderEntity.createdAt.asc(), qOrderEntity.id.asc())
 			.fetch();
 	}
 

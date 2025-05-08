@@ -46,6 +46,7 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 			.where(qReceiptEntity.id.in(receiptIds)
 				.and(qReceiptEntity.stopUsageTime.isNotNull())
 				.and(qReceiptEntity.isAdjustment.isFalse()))
+			.orderBy(qReceiptEntity.id.asc())
 			.fetch();
 	}
 
@@ -57,6 +58,7 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 			.where(qReceiptEntity.id.in(receiptIds)
 				.and(qReceiptEntity.stopUsageTime.isNotNull())
 				.and(qReceiptEntity.isAdjustment.isFalse()))
+			.orderBy(qReceiptEntity.id.asc())
 			.fetch();
 	}
 
@@ -82,6 +84,7 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 			.where(qReceiptEntity.id.in(receiptIds)
 				.and(qReceiptEntity.stopUsageTime.isNull()))
 			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
+			.orderBy(qReceiptEntity.id.asc())
 			.fetch();
 	}
 
@@ -93,6 +96,7 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 				.and(qReceiptEntity.isAdjustment.isTrue()))
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
+			.orderBy(qReceiptEntity.createdAt.desc(), qReceiptEntity.id.desc())
 			.fetch();
 
 		Long total = jpaQueryFactory
@@ -129,7 +133,7 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 			.where(qReceiptCustomerEntity.customerId.eq(customerId)
 				.and(lastReceiptId == null ? Expressions.TRUE : qReceiptEntity.id.lt(lastReceiptId))
 				.and(qReceiptEntity.isAdjustment.isTrue()))
-			.orderBy(qReceiptEntity.createdAt.desc())
+			.orderBy(qReceiptEntity.id.desc())
 			.limit(pageSize + 1)
 			.fetch();
 

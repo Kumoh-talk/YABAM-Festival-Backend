@@ -4,6 +4,7 @@ import static com.exception.ErrorCode.*;
 import static com.response.ResponseUtil.*;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -34,5 +35,15 @@ public class GlobalExceptionHandler {
 		String message = exception.getMessage();
 		return ResponseEntity.status(NOT_VALID_VO.getStatus())
 			.body(createFailureResponse(NOT_VALID_VO, message));
+	}
+
+	@ExceptionHandler(MethodArgumentNotValidException.class) // Valid
+	public ResponseEntity<ResponseBody<Void>> handleMethodArgumentNotValidException(
+		MethodArgumentNotValidException exception) {
+		String errorMessage = exception.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+
+		log.error("MethodArgumentNotValidException : {}", errorMessage);
+		return ResponseEntity.badRequest()
+			.body(createFailureResponse(ErrorCode.INVALID_INPUT_VALUE, errorMessage));
 	}
 }
