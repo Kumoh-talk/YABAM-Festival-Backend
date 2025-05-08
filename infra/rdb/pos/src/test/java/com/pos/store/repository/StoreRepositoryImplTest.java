@@ -95,4 +95,25 @@ class StoreRepositoryImplTest extends RepositoryTest {
 			softly.assertThat(findStoreEntity.isOpen()).isTrue();
 		});
 	}
+
+	@Test
+	void store_존재여부_테스트() {
+		// given
+		Store savedStore = GENERAL_CLOSE_STORE();
+		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(savedStore));
+		testEntityManager.flush();
+		testEntityManager.clear();
+
+		// when
+		System.out.println("===StoreRepositoryImplTest.store_존재여부_테스트 쿼리===");
+		boolean exists = storeRepository.isExistsById(savedStoreEntity.getId());
+		boolean exists2 = storeRepository.isExistsById(savedStoreEntity.getId() + 1);
+		System.out.println("===StoreRepositoryImplTest.store_존재여부_테스트 쿼리===");
+
+		// then
+		assertSoftly(softly -> {
+			softly.assertThat(exists).isTrue();
+			softly.assertThat(exists2).isFalse();
+		});
+	}
 }

@@ -6,6 +6,7 @@ import org.hibernate.annotations.SQLRestriction;
 import com.pos.global.base.entity.BaseEntity;
 import com.pos.receipt.entity.ReceiptEntity;
 import com.pos.review.entity.vo.ReviewUser;
+import com.pos.store.entity.StoreEntity;
 
 import domain.pos.review.entity.ReviewInfo;
 import jakarta.persistence.Column;
@@ -42,18 +43,25 @@ public class ReviewEntity extends BaseEntity {
 	private Integer rating;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "receipt_id")
+	@JoinColumn(name = "store_id", nullable = false)
+	private StoreEntity store;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "receipt_id", nullable = false)
 	private ReceiptEntity receipt;
 
-	private ReviewEntity(ReviewUser reviewUser, String content, Integer rating, ReceiptEntity receipt) {
+	private ReviewEntity(ReviewUser reviewUser, String content, Integer rating, StoreEntity store,
+		ReceiptEntity receipt) {
 		this.reviewUser = reviewUser;
 		this.content = content;
 		this.rating = rating;
+		this.store = store;
 		this.receipt = receipt;
 	}
 
-	public static ReviewEntity of(ReviewUser reviewUser, String content, Integer rating, ReceiptEntity receipt) {
-		return new ReviewEntity(reviewUser, content, rating, receipt);
+	public static ReviewEntity of(ReviewUser reviewUser, String content, Integer rating, StoreEntity store,
+		ReceiptEntity receipt) {
+		return new ReviewEntity(reviewUser, content, rating, store, receipt);
 	}
 
 	public void changeReviewInfo(ReviewInfo updateReviewInfo) {

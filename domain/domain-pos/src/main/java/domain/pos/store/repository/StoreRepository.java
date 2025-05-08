@@ -19,4 +19,6 @@ public interface StoreRepository {
 	void deleteStore(Store previousStore);
 
 	Store changeStoreOpenStatus(Store previousStore);
+
+	boolean isExistsById(Long storeId);
 }

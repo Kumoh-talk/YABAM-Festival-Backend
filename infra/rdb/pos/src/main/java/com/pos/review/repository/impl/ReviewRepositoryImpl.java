@@ -27,8 +27,9 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 	private final ReviewJpaRepository reviewJpaRepository;
 
 	@Override
-	public Review createReview(UserPassport userPassport, ReceiptInfo receiptInfo, ReviewInfo reviewInfo) {
-		ReviewEntity reviewEntity = ReviewMapper.toReviewEntity(userPassport, receiptInfo, reviewInfo);
+	public Review createReview(UserPassport userPassport, Long storeId, ReceiptInfo receiptInfo,
+		ReviewInfo reviewInfo) {
+		ReviewEntity reviewEntity = ReviewMapper.toReviewEntity(userPassport, storeId, receiptInfo, reviewInfo);
 		ReviewEntity savedReviewEntity = reviewJpaRepository.save(reviewEntity);
 		return ReviewMapper.toReview(savedReviewEntity, userPassport);
 	}

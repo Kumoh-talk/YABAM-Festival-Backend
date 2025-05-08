@@ -65,4 +65,13 @@ public class StoreRepositoryImpl implements StoreRepository {
 			.execute();
 		return previousStore.open();
 	}
+
+	@Override
+	public boolean isExistsById(Long storeId) {
+		return queryFactory
+			.selectOne()
+			.from(qStoreEntity)
+			.where(qStoreEntity.id.eq(storeId))
+			.fetchFirst() != null;
+	}
 }

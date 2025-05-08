@@ -12,7 +12,7 @@ import domain.pos.review.entity.ReviewInfo;
 
 @Repository
 public interface ReviewRepository {
-	Review createReview(UserPassport userPassport, ReceiptInfo receiptInfo, ReviewInfo reviewInfo);
+	Review createReview(UserPassport userPassport, Long storeId, ReceiptInfo receiptInfo, ReviewInfo reviewInfo);
 
 	boolean existsReview(Long receiptId, UserPassport userPassport);
 
