@@ -5,6 +5,10 @@ spring:
     activate:
       on-profile: local
     import: configserver:http://localhost:8888
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
 ---
 
 spring:
@@ -14,3 +18,7 @@ spring:
     activate:
       on-profile: dev
     import: configserver:http://192.168.0.171:8888,optional:jwt.yml
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
