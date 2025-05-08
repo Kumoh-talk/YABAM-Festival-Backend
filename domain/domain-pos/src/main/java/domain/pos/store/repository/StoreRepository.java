@@ -21,4 +21,6 @@ public interface StoreRepository {
 	Store changeStoreOpenStatus(Store previousStore);
 
 	boolean isExistsById(Long storeId);
+
+	void postDetailImage(Store previousStore, String imageUrl);
 }

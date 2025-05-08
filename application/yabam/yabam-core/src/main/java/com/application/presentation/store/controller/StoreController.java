@@ -79,4 +79,15 @@ public class StoreController implements StoreApi {
 			.ok(createSuccessResponse());
 	}
 
+	@PostMapping("/api/v1/store/image")
+	@HasRole(userRole = ROLE_OWNER)
+	@AssignUserPassport
+	public ResponseEntity<ResponseBody<Void>> uploadStoreImage(
+		UserPassport userPassport,
+		@RequestParam @Valid final Long storeId,
+		@RequestParam @Valid final String detailImageUrl) {
+		storeService.postDetailImage(userPassport, storeId, detailImageUrl);
+		return ResponseEntity
+			.ok(createSuccessResponse());
+	}
 }

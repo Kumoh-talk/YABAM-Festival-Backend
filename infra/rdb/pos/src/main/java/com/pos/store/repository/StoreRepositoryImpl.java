@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class StoreRepositoryImpl implements StoreRepository {
 	private final StoreJpaRepository storeJpaRepository;
+	private final StoreDetailImageJpaRepository storeDetailImageJpaRepository;
 	private final JPAQueryFactory queryFactory;
 
 	private final QStoreEntity qStoreEntity = QStoreEntity.storeEntity;
@@ -83,5 +84,15 @@ public class StoreRepositoryImpl implements StoreRepository {
 			.from(qStoreEntity)
 			.where(qStoreEntity.id.eq(storeId))
 			.fetchFirst() != null;
+	}
+
+	@Override
+	public void postDetailImage(Store previousStore, String imageUrl) {
+		storeDetailImageJpaRepository.save(
+			StoreDetailImageEntity.of(
+				imageUrl,
+				StoreEntity.from(previousStore.getStoreId())
+			)
+		);
 	}
 }
