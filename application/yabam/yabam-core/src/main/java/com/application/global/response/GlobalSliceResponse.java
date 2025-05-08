@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@Schema(name = "GlobalNoOffsetPageResponse", description = "no-offset 방식 페이지 응답")
+@Schema(name = "GlobalSliceResponse", description = "no-offset 방식 페이지 응답")
 public class GlobalSliceResponse<T> {
 	@Schema(description = "다음 페이지 존재 여부", example = "true")
 	protected boolean nextPage;

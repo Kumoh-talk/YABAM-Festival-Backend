@@ -93,7 +93,7 @@ public class ReceiptController implements ReceiptApi {
 		return ResponseEntity.ok(createSuccessResponse());
 	}
 
-	@PatchMapping("/api/v1/receipts//adjust")
+	@PatchMapping("/api/v1/receipts/adjust")
 	@HasRole(userRole = ROLE_OWNER)
 	@AssignUserPassport
 	public ResponseEntity<ResponseBody<Void>> adjustReceipts(
@@ -119,7 +119,7 @@ public class ReceiptController implements ReceiptApi {
 		return ResponseEntity.ok(createSuccessResponse(receiptId));
 	}
 
-	@DeleteMapping("/api/v1/customers/{customerId}/receipts")
+	@GetMapping("/api/v1/customers/{customerId}/receipts")
 	@HasRole(userRole = ROLE_USER)
 	@AssignUserPassport
 	public ResponseEntity<ResponseBody<GlobalSliceResponse<ReceiptInfoResponse>>> getCustomerReceiptSlice(
