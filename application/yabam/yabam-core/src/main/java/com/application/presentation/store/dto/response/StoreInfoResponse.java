@@ -13,10 +13,6 @@ public record StoreInfoResponse(
 	Long storeId,
 	@Schema(description = "가게 오픈 여부", example = "true")
 	boolean isOpen,
-	@Schema(description = "점주 고유 ID", example = "1")
-	Long userId,
-	@Schema(description = "점주 닉네임", example = "강민기")
-	String userNickname,
 	@Schema(description = "가게 이름", example = "가게 이름")
 	String storeName,
 	@Schema(description = "가게 위도", example = "37.123456")
@@ -40,8 +36,6 @@ public record StoreInfoResponse(
 		return StoreInfoResponse.builder()
 			.storeId(store.getStoreId())
 			.isOpen(store.getIsOpen())
-			.userId(store.getOwnerPassport().getUserId())
-			.userNickname(store.getOwnerPassport().getUserNickname())
 			.storeName(store.getStoreInfo().getStoreName())
 			.latitude(store.getStoreInfo().getLocation().getX())
 			.longitude(store.getStoreInfo().getLocation().getY())
