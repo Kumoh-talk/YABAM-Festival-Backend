@@ -95,4 +95,23 @@ public class StoreRepositoryImpl implements StoreRepository {
 			)
 		);
 	}
+
+	@Override
+	public boolean isExistsImageUrl(Long storeId, String imageUrl) {
+		return queryFactory
+			.selectOne()
+			.from(qStoreDetailImageEntity)
+			.where(qStoreDetailImageEntity.imageUrl.eq(imageUrl)
+				.and(qStoreDetailImageEntity.store.id.eq(storeId)))
+			.fetchFirst() != null;
+	}
+
+	@Override
+	@Transactional
+	public void deleteDetailImage(Store previousStore, String imageUrl) {
+		queryFactory
+			.delete(qStoreDetailImageEntity)
+			.where(qStoreDetailImageEntity.imageUrl.eq(imageUrl))
+			.execute();
+	}
 }

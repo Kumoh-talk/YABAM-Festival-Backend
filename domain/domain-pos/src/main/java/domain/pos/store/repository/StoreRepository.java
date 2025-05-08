@@ -23,4 +23,8 @@ public interface StoreRepository {
 	boolean isExistsById(Long storeId);
 
 	void postDetailImage(Store previousStore, String imageUrl);
+
+	boolean isExistsImageUrl(Long storeId, String imageUrl);
+
+	void deleteDetailImage(Store previousStore, String imageUrl);
 }

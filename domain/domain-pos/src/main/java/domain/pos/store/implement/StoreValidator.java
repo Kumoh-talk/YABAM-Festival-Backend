@@ -43,4 +43,11 @@ public class StoreValidator {
 			throw new ServiceException(ErrorCode.NOT_FOUND_STORE);
 		}
 	}
+
+	public void validateExistDetailImage(Store previousStore, String imageUrl) {
+		if (!storeRepository.isExistsImageUrl(previousStore.getStoreId(), imageUrl)) {
+			log.warn("해당 Store에 존재하지 않는 이미지 URL: storeId={}, imageUrl={}", previousStore.getStoreId(), imageUrl);
+			throw new ServiceException(ErrorCode.NOT_FOUND_STORE_IMAGE);
+		}
+	}
 }

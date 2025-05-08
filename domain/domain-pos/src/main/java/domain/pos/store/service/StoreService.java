@@ -62,4 +62,11 @@ public class StoreService {
 		log.info("가게 상세 이미지 등록 성공 : userId={}, storeId={}", ownerPassport.getUserId(), storeId);
 	}
 
+	public void deleteDetailImage(final UserPassport ownerPassport, final Long storeId, final String imageUrl) {
+		final Store previousStore = storeValidator.validateStoreOwner(ownerPassport, storeId);
+		storeValidator.validateExistDetailImage(previousStore, imageUrl);
+		storeWriter.deleteDetailImage(previousStore, imageUrl);
+		log.info("가게 상세 이미지 삭제 성공 : userId={}, storeId={}", ownerPassport.getUserId(), storeId);
+	}
+
 }

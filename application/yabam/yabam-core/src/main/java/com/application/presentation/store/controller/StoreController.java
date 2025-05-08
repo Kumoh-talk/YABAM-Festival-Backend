@@ -90,4 +90,16 @@ public class StoreController implements StoreApi {
 		return ResponseEntity
 			.ok(createSuccessResponse());
 	}
+
+	@DeleteMapping("/api/v1/store/image")
+	@HasRole(userRole = ROLE_OWNER)
+	@AssignUserPassport
+	public ResponseEntity<ResponseBody<Void>> deleteStoreImage(
+		UserPassport userPassport,
+		@RequestParam @Valid final Long storeId,
+		@RequestParam @Valid final String detailImageUrl) {
+		storeService.deleteDetailImage(userPassport, storeId, detailImageUrl);
+		return ResponseEntity
+			.ok(createSuccessResponse());
+	}
 }
