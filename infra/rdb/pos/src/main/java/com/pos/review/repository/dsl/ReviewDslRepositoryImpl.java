@@ -31,11 +31,11 @@ public class ReviewDslRepositoryImpl implements ReviewDslRepository {
 	}
 
 	@Override
-	public Slice<ReviewEntity> findReviewsWithUser(Long receiptId, Long lastReviewId, int size) {
+	public Slice<ReviewEntity> findReviewsWithUser(Long reviewId, Long lastReviewId, int size) {
 		List<ReviewEntity> results = queryFactory
 			.selectFrom(qReviewEntity)
 			.where(qReviewEntity.id.lt(lastReviewId)
-				.and(qReviewEntity.receipt.id.eq(receiptId)))
+				.and(qReviewEntity.store.id.eq(reviewId)))
 			.orderBy(qReviewEntity.id.desc())
 			.limit(size + 1)
 			.fetch();

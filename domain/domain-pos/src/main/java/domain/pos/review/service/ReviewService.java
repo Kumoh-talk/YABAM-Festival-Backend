@@ -64,8 +64,8 @@ public class ReviewService {
 		reviewWriter.deleteReview(review);
 	}
 
-	public Slice<Review> getReviews(final Long receiptId, final Long lastReviewId, final int size) {
-		return reviewReader.getReviews(receiptId, lastReviewId, size);
+	public Slice<Review> getReviews(final Long storeId, final Long lastReviewId, final int size) {
+		return reviewReader.getReviews(storeId, lastReviewId, size);
 	}
 
 }

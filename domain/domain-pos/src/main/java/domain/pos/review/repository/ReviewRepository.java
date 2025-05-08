@@ -22,5 +22,5 @@ public interface ReviewRepository {
 
 	void deleteReview(Review review);
 
-	Slice<Review> getReviewsWithUser(Long receiptId, Long lastReviewId, int size);
+	Slice<Review> getReviewsWithUser(Long storeId, Long lastReviewId, int size);
 }

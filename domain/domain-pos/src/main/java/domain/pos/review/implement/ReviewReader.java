@@ -23,7 +23,7 @@ public class ReviewReader {
 		return reviewRepository.findById(reviewId);
 	}
 
-	public Slice<Review> getReviews(Long receiptId, Long lastReviewId, int size) {
-		return reviewRepository.getReviewsWithUser(receiptId, lastReviewId, size);
+	public Slice<Review> getReviews(Long storeId, Long lastReviewId, int size) {
+		return reviewRepository.getReviewsWithUser(storeId, lastReviewId, size);
 	}
 }

@@ -60,8 +60,8 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 	}
 
 	@Override
-	public Slice<Review> getReviewsWithUser(Long receiptId, Long lastReviewId, int size) {
-		Slice<ReviewEntity> reviewsWithUser = reviewJpaRepository.findReviewsWithUser(receiptId, lastReviewId, size);
+	public Slice<Review> getReviewsWithUser(Long storeId, Long lastReviewId, int size) {
+		Slice<ReviewEntity> reviewsWithUser = reviewJpaRepository.findReviewsWithUser(storeId, lastReviewId, size);
 		List<Review> reviews = reviewsWithUser.getContent().stream()
 			.map(reviewEntity -> ReviewMapper.toReview(reviewEntity))
 			.toList();
