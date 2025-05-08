@@ -55,4 +55,5 @@ public class StoreService {
 		storeWriter.deleteStore(previousStore);
 		log.info("가게 삭제 성공 : userId={}, storeId={}", ownerPassport.getUserId(), storeId);
 	}
+
 }

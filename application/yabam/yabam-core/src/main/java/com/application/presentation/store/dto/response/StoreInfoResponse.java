@@ -1,5 +1,7 @@
 package com.application.presentation.store.dto.response;
 
+import java.util.List;
+
 import domain.pos.store.entity.Store;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -30,7 +32,9 @@ public record StoreInfoResponse(
 	@Schema(description = "가게 테이블 시간", example = "30")
 	Integer tableTime,
 	@Schema(description = "가게 테이블 비용", example = "10000")
-	Integer tableCost
+	Integer tableCost,
+	@Schema(description = "가게 상세 이미지 URL", example = "[\"https://example.com/image1.jpg\", \"https://example.com/image2.jpg\"]")
+	List<String> detailImageUrls
 ) {
 	public static StoreInfoResponse of(Store store) {
 		return StoreInfoResponse.builder()
@@ -46,6 +50,7 @@ public record StoreInfoResponse(
 			.university(store.getStoreInfo().getUniversity())
 			.tableTime(store.getStoreInfo().getTableTime())
 			.tableCost(store.getStoreInfo().getTableCost())
+			.detailImageUrls(store.getDetailImageUrls())
 			.build();
 	}
 }

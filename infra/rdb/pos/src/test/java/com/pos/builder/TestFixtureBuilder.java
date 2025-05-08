@@ -9,6 +9,7 @@ import com.pos.cart.entity.CartEntity;
 import com.pos.menu.entity.MenuCategoryEntity;
 import com.pos.menu.entity.MenuEntity;
 import com.pos.sale.entity.SaleEntity;
+import com.pos.store.entity.StoreDetailImageEntity;
 import com.pos.store.entity.StoreEntity;
 import com.pos.table.entity.TableEntity;
 
@@ -43,5 +44,10 @@ public class TestFixtureBuilder {
 
 	public CartEntity buildCartEntity(CartEntity cartEntity) {
 		return bs.getCartJpaRepository().save(cartEntity);
+	}
+
+	public List<StoreDetailImageEntity> buildStoreDetailImageEntities(
+		List<StoreDetailImageEntity> storeDetailImageEntities) {
+		return bs.getStoreDetailImageJpaRepository().saveAll(storeDetailImageEntities);
 	}
 }

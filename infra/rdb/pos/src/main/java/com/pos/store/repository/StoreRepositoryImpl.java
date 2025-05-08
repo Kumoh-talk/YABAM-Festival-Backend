@@ -1,12 +1,15 @@
 package com.pos.store.repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.pos.store.entity.QStoreDetailImageEntity;
 import com.pos.store.entity.QStoreEntity;
+import com.pos.store.entity.StoreDetailImageEntity;
 import com.pos.store.entity.StoreEntity;
 import com.pos.store.mapper.StoreMapper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -24,6 +27,7 @@ public class StoreRepositoryImpl implements StoreRepository {
 	private final JPAQueryFactory queryFactory;
 
 	private final QStoreEntity qStoreEntity = QStoreEntity.storeEntity;
+	private final QStoreDetailImageEntity qStoreDetailImageEntity = QStoreDetailImageEntity.storeDetailImageEntity;
 
 	private static final boolean IS_CLOSED = false;
 
@@ -35,8 +39,14 @@ public class StoreRepositoryImpl implements StoreRepository {
 
 	@Override
 	public Optional<Store> findStoreByStoreId(Long storeId) {
-		return storeJpaRepository.findById(storeId)
-			.map(storeEntity -> StoreMapper.toStore(storeEntity));
+		List<StoreDetailImageEntity> storeDetailImageEntities = queryFactory
+			.select(qStoreDetailImageEntity)
+			.from(qStoreDetailImageEntity)
+			.join(qStoreDetailImageEntity.store, qStoreEntity).fetchJoin()
+			.where(qStoreEntity.id.eq(storeId))
+			.fetch();
+
+		return StoreMapper.toStore(storeDetailImageEntities);
 	}
 
 	@Override
