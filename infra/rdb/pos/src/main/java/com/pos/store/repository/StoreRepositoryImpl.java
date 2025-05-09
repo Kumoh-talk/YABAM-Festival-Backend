@@ -111,7 +111,8 @@ public class StoreRepositoryImpl implements StoreRepository {
 	public void deleteDetailImage(Store previousStore, String imageUrl) {
 		queryFactory
 			.delete(qStoreDetailImageEntity)
-			.where(qStoreDetailImageEntity.imageUrl.eq(imageUrl))
+			.where(qStoreDetailImageEntity.imageUrl.eq(imageUrl)
+				.and(qStoreDetailImageEntity.store.id.eq(previousStore.getStoreId())))
 			.execute();
 	}
 }
