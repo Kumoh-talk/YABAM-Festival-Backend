@@ -24,7 +24,7 @@ public class StoreHeadDto {
 		this.description = description;
 		this.ratingAverage = ratingAverage;
 		this.reviewCount = reviewCount;
-		this.storeDetailImageUrls = storeDetailImageUrls;
+		this.storeDetailImageUrls = storeDetailImageUrls != null ? List.copyOf(storeDetailImageUrls) : List.of();
 	}
 
 	public static StoreHeadDto of(Long storeId, String storeName, Boolean isOpened, String headImageUrl,
