@@ -1,5 +1,6 @@
 package domain.pos.store.service;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import com.exception.ErrorCode;
@@ -8,6 +9,7 @@ import com.exception.ServiceException;
 import domain.pos.member.entity.UserPassport;
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
+import domain.pos.store.entity.dto.StoreHeadDto;
 import domain.pos.store.implement.StoreReader;
 import domain.pos.store.implement.StoreValidator;
 import domain.pos.store.implement.StoreWriter;
@@ -35,6 +37,11 @@ public class StoreService {
 				log.warn("가게 조회 실패: storeId={}", storeId);
 				throw new ServiceException(ErrorCode.NOT_FOUND_STORE);
 			});
+	}
+
+	public Slice<StoreHeadDto> findStores(final Long cursorReviewCount, final Long cursorId, final int size) {
+		log.info("가게 목록 조회: cursorReviewCount={}, size={}", cursorReviewCount, size);
+		return storeReader.readStores(cursorReviewCount, cursorId, size);
 	}
 
 	public Store updateStoreInfo(

@@ -2,11 +2,13 @@ package domain.pos.store.repository;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 import domain.pos.member.entity.UserPassport;
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
+import domain.pos.store.entity.dto.StoreHeadDto;
 
 @Repository
 public interface StoreRepository {
@@ -27,4 +29,6 @@ public interface StoreRepository {
 	boolean isExistsImageUrl(Long storeId, String imageUrl);
 
 	void deleteDetailImage(Store previousStore, String imageUrl);
+
+	Slice<StoreHeadDto> findStoresCursorOrderByReviewCount(Long cursorReviewCount, Long cursorStoreId, int size);
 }

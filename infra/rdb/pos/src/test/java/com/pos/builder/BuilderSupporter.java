@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import com.pos.cart.repository.CartJpaRepository;
 import com.pos.menu.repository.jpa.MenuCategoryJpaRepository;
 import com.pos.menu.repository.jpa.MenuJpaRepository;
+import com.pos.receipt.repository.jpa.ReceiptJpaRepository;
+import com.pos.review.repository.jpa.ReviewJpaRepository;
 import com.pos.sale.repository.SaleJpaRepository;
 import com.pos.store.repository.StoreDetailImageJpaRepository;
 import com.pos.store.repository.StoreJpaRepository;
@@ -34,6 +36,12 @@ public class BuilderSupporter {
 	@Autowired
 	private StoreDetailImageJpaRepository storeDetailImageJpaRepository;
 
+	@Autowired
+	private ReviewJpaRepository reviewJpaRepository;
+
+	@Autowired
+	private ReceiptJpaRepository receiptJpaRepository;
+
 	public StoreJpaRepository getStoreJpaRepository() {
 		return storeJpaRepository;
 	}
@@ -60,5 +68,13 @@ public class BuilderSupporter {
 
 	public StoreDetailImageJpaRepository getStoreDetailImageJpaRepository() {
 		return storeDetailImageJpaRepository;
+	}
+
+	public ReviewJpaRepository getReviewJpaRepository() {
+		return reviewJpaRepository;
+	}
+
+	public ReceiptJpaRepository getReceiptJpaRepository() {
+		return receiptJpaRepository;
 	}
 }

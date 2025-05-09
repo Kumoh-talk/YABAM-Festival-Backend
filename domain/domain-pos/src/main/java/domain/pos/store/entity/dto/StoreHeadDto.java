@@ -1,12 +1,35 @@
 package domain.pos.store.entity.dto;
 
-public class StoreHeadDto {
-	private Long storeId;
-	private String storeName;
-	private Boolean isOpened;
-	private String headImageUrl;
-	private String description;
-	private Integer ratingAverage;
-	private Integer reviewCount;
+import java.util.List;
 
+import lombok.Getter;
+
+@Getter
+public class StoreHeadDto {
+	private final Long storeId;
+	private final String storeName;
+	private final Boolean isOpened;
+	private final String headImageUrl;
+	private final String description;
+	private final Integer ratingAverage;
+	private final Integer reviewCount;
+	private final List<String> storeDetailImageUrls;
+
+	private StoreHeadDto(Long storeId, String storeName, Boolean isOpened, String headImageUrl, String description,
+		Integer ratingAverage, Integer reviewCount, List<String> storeDetailImageUrls) {
+		this.storeId = storeId;
+		this.storeName = storeName;
+		this.isOpened = isOpened;
+		this.headImageUrl = headImageUrl;
+		this.description = description;
+		this.ratingAverage = ratingAverage;
+		this.reviewCount = reviewCount;
+		this.storeDetailImageUrls = storeDetailImageUrls;
+	}
+
+	public static StoreHeadDto of(Long storeId, String storeName, Boolean isOpened, String headImageUrl,
+		String description, Integer ratingAverage, Integer reviewCount, List<String> storeDetailImageUrls) {
+		return new StoreHeadDto(storeId, storeName, isOpened, headImageUrl, description, ratingAverage, reviewCount,
+			storeDetailImageUrls);
+	}
 }

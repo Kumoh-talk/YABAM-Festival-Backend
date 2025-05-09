@@ -17,7 +17,9 @@ public record ReviewsCusorResponse(
 	@Schema(description = "다음 데이터 존재 여부", example = "true")
 	Boolean hasNextPage,
 	@Schema(description = "마지막 reviewId", example = "1")
-	Long lastReviewId
+	Long lastReviewId,
+	@Schema(description = "리뷰 데이터 리스트", example = "리뷰 데이터 리스트")
+	List<ReviewInfoDto> reviewInfoDtos
 ) {
 	@Schema(description = "리뷰 상세 내용 DTO", name = "ReviewInfoDto")
 	@Builder

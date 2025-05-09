@@ -19,7 +19,7 @@ public class Store {
 		this.isOpen = isOpen;
 		this.storeInfo = storeInfo;
 		this.ownerPassport = ownerPassport;
-		this.detailImageUrls = detailImageUrls;
+		this.detailImageUrls = detailImageUrls != null ? List.copyOf(detailImageUrls) : List.of();
 	}
 
 	public static Store of(Long storeId, Boolean isOpen, StoreInfo storeInfo, UserPassport ownerPassport,

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import domain.pos.member.entity.UserPassport;
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
+import domain.pos.store.entity.dto.StoreHeadDto;
 import domain.pos.store.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -114,5 +116,11 @@ public class StoreRepositoryImpl implements StoreRepository {
 			.where(qStoreDetailImageEntity.imageUrl.eq(imageUrl)
 				.and(qStoreDetailImageEntity.store.id.eq(previousStore.getStoreId())))
 			.execute();
+	}
+
+	@Override
+	public Slice<StoreHeadDto> findStoresCursorOrderByReviewCount(Long cursorReviewCount, Long cursorStoreId,
+		int size) {
+		return storeJpaRepository.findStoreHeadsByReviewCountCursor(cursorReviewCount, cursorStoreId, size);
 	}
 }

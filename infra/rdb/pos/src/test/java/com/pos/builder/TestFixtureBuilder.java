@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import com.pos.cart.entity.CartEntity;
 import com.pos.menu.entity.MenuCategoryEntity;
 import com.pos.menu.entity.MenuEntity;
+import com.pos.receipt.entity.ReceiptEntity;
+import com.pos.review.entity.ReviewEntity;
 import com.pos.sale.entity.SaleEntity;
 import com.pos.store.entity.StoreDetailImageEntity;
 import com.pos.store.entity.StoreEntity;
@@ -49,5 +51,13 @@ public class TestFixtureBuilder {
 	public List<StoreDetailImageEntity> buildStoreDetailImageEntities(
 		List<StoreDetailImageEntity> storeDetailImageEntities) {
 		return bs.getStoreDetailImageJpaRepository().saveAll(storeDetailImageEntities);
+	}
+
+	public ReviewEntity buildReviewEntity(ReviewEntity reviewEntity) {
+		return bs.getReviewJpaRepository().save(reviewEntity);
+	}
+
+	public ReceiptEntity buildReceiptEntity(ReceiptEntity receiptEntity) {
+		return bs.getReceiptJpaRepository().save(receiptEntity);
 	}
 }

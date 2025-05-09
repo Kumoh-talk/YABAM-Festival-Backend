@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.application.presentation.store.api.StoreApi;
+import com.application.presentation.store.dto.request.StoreCursorRequest;
 import com.application.presentation.store.dto.request.StoreWriteRequest;
+import com.application.presentation.store.dto.response.StoreCursorResponse;
 import com.application.presentation.store.dto.response.StoreIdResponse;
 import com.application.presentation.store.dto.response.StoreInfoResponse;
 import com.authorization.AssignUserPassport;
@@ -51,6 +53,18 @@ public class StoreController implements StoreApi {
 		return ResponseEntity
 			.ok(createSuccessResponse(
 				StoreInfoResponse.of(storeService.findStore(storeId))
+			));
+	}
+
+	@GetMapping("/api/v1/stores")
+	@HasRole(userRole = ROLE_ANONYMOUS)
+	public ResponseEntity<ResponseBody<StoreCursorResponse>> getStoreList(
+		@RequestBody @Valid final StoreCursorRequest storeCursorRequest
+	) {
+		return ResponseEntity
+			.ok(createSuccessResponse(StoreCursorResponse.from(
+				storeService.findStores(storeCursorRequest.lastReviewCount(), storeCursorRequest.lastStoreId(),
+					storeCursorRequest.size()))
 			));
 	}
 

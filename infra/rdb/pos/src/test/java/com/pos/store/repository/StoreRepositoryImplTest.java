@@ -1,5 +1,6 @@
 package com.pos.store.repository;
 
+import static com.pos.fixtures.sale.SaleFixture.*;
 import static com.pos.fixtures.store.StoreDetailImageFixture.*;
 import static com.pos.fixtures.store.StoreEntityFixture.*;
 import static fixtures.store.StoreFixture.*;
@@ -7,16 +8,28 @@ import static org.assertj.core.api.SoftAssertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Slice;
 
+import com.pos.fixtures.review.ReviewEntityFixture;
+import com.pos.fixtures.table.TableEntityFixture;
 import com.pos.global.config.RepositoryTest;
+import com.pos.receipt.ReceiptEntityFixture;
+import com.pos.receipt.entity.ReceiptEntity;
+import com.pos.review.entity.ReviewEntity;
+import com.pos.sale.entity.SaleEntity;
 import com.pos.store.entity.StoreDetailImageEntity;
 import com.pos.store.entity.StoreEntity;
 import com.pos.store.mapper.StoreMapper;
+import com.pos.table.entity.TableEntity;
 
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
+import domain.pos.store.entity.dto.StoreHeadDto;
 import domain.pos.store.repository.StoreRepository;
 
 class StoreRepositoryImplTest extends RepositoryTest {
@@ -160,5 +173,53 @@ class StoreRepositoryImplTest extends RepositoryTest {
 				});
 
 		});
+	}
+
+	@Nested
+	@DisplayName("가게 리스트 조회")
+	class StoreListTest {
+		private StoreEntity savedStoreEntity;
+		private TableEntity savedTableEntity;
+		private SaleEntity savedSaleEntity;
+		private ReviewEntity savedReviewEntity;
+		private ReceiptEntity savedReceiptEntity;
+		private List<StoreEntity> savedStoreEntityList;
+
+		@BeforeEach
+		void setUp() {
+			savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(GENERAL_OPEN_STORE()));
+			savedTableEntity = testFixtureBuilder.buildTableEntityList(
+				TableEntityFixture.TABLEENTITY_LIST(1, savedStoreEntity)).get(0);
+			savedSaleEntity = testFixtureBuilder.buildSaleEntity(GENERAL_SALE(savedStoreEntity));
+			savedReceiptEntity = testFixtureBuilder.buildReceiptEntity(
+				ReceiptEntityFixture.GENERAL_ADJUSTMENT_RECEIPT(savedSaleEntity, savedTableEntity));
+			savedReviewEntity = testFixtureBuilder.buildReviewEntity(
+				ReviewEntityFixture.CUSTOM_REVIEW(savedReceiptEntity, savedStoreEntity));
+			StoreEntity storeEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(GENERAL_CLOSE_STORE()));
+			savedStoreEntityList = List.of(
+				savedStoreEntity, storeEntity
+			);
+			testEntityManager.flush();
+			testEntityManager.clear();
+		}
+
+		@Test
+		void 가게_리스트_조회_테스트() {
+			Slice<StoreHeadDto> storesCursorOrderByReviewCount = storeRepository.findStoresCursorOrderByReviewCount(
+				null, null, 10);
+
+			assertSoftly(softly -> {
+				softly.assertThat(storesCursorOrderByReviewCount.getContent().size()).isEqualTo(2);
+				for (int i = 0; i < storesCursorOrderByReviewCount.getContent().size(); i++) {
+					StoreHeadDto storeHeadDto = storesCursorOrderByReviewCount.getContent().get(i);
+					softly.assertThat(storeHeadDto.getStoreId()).isEqualTo(savedStoreEntityList.get(i).getId());
+					softly.assertThat(storeHeadDto.getStoreName()).isEqualTo(savedStoreEntityList.get(i).getName());
+					softly.assertThat(storeHeadDto.getIsOpened()).isEqualTo(savedStoreEntityList.get(i).isOpen());
+					softly.assertThat(storeHeadDto.getHeadImageUrl())
+						.isEqualTo(savedStoreEntityList.get(i).getHeadImageUrl());
+				}
+				softly.assertThat(storesCursorOrderByReviewCount.getContent().get(0).getReviewCount()).isEqualTo(1);
+			});
+		}
 	}
 }
