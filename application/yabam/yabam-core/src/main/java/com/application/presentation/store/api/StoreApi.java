@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.application.global.config.swagger.ApiErrorResponseExplanation;
 import com.application.global.config.swagger.ApiResponseExplanations;
 import com.application.global.config.swagger.ApiSuccessResponseExplanation;
+import com.application.presentation.store.dto.request.StoreCursorRequest;
 import com.application.presentation.store.dto.request.StoreWriteRequest;
+import com.application.presentation.store.dto.response.StoreCursorResponse;
 import com.application.presentation.store.dto.response.StoreIdResponse;
 import com.application.presentation.store.dto.response.StoreInfoResponse;
 import com.exception.ErrorCode;
@@ -132,5 +134,16 @@ public interface StoreApi {
 		@Parameter(hidden = true) UserPassport userPassport,
 		@Schema(description = "가게 고유 ID", example = "1") @RequestParam final Long storeId,
 		@Schema(description = "삭제할 이미지 URL", example = "https://example.com/image.jpg") @RequestParam final String detailImageUrl);
+
+	@Operation(
+		summary = "가게 목록 커서 조회 API",
+		description = "리뷰 수 DESC 기준으로 가게 리스트를 무한 스크롤 방식으로 조회합니다."
+	)
+	@ApiResponse(content = @Content(
+		mediaType = "application/json",
+		schema = @Schema(implementation = StoreCursorResponse.class)))
+	ResponseEntity<ResponseBody<StoreCursorResponse>> getStoreList(
+		@RequestBody @Valid StoreCursorRequest storeCursorRequest
+	);
 
 }
