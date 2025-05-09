@@ -21,6 +21,9 @@ dependencies {
     // common 모듈
     compileOnly project(':common:base')
 
+    // utils 모듈 uuid
+    implementation project(':utils:util-uuid')
+
     // QueryDSL
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"

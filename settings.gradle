@@ -19,7 +19,10 @@ include(":common:mvc")
 // domain
 include(":domain:domain-pos")
 include(":domain:domain-event:store-event")
+
 // infra
 include(":infra:rdb:pos")
 include(":infra:mq:kafka-pos")
 
+// utils
+include(":utils:util-uuid")
