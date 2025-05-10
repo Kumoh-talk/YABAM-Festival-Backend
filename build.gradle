@@ -69,8 +69,6 @@ subprojects {
         // lombok
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
-        testImplementation 'org.junit.platform:junit-platform-launcher'
-        testImplementation 'org.junit.jupiter:junit-jupiter'
     }
 
     tasks.named('test') {
