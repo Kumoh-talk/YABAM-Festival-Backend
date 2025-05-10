@@ -6,6 +6,7 @@ import static domain.pos.member.entity.UserRole.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -59,7 +60,7 @@ public class StoreController implements StoreApi {
 	@GetMapping("/api/v1/stores")
 	@HasRole(userRole = ROLE_ANONYMOUS)
 	public ResponseEntity<ResponseBody<StoreCursorResponse>> getStoreList(
-		@RequestBody @Valid final StoreCursorRequest storeCursorRequest
+		@ModelAttribute @Valid final StoreCursorRequest storeCursorRequest
 	) {
 		return ResponseEntity
 			.ok(createSuccessResponse(StoreCursorResponse.from(

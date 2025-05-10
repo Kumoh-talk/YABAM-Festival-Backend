@@ -61,8 +61,8 @@ public record StoreCursorResponse(
 		return StoreCursorResponse.builder()
 			.totalCount(size)
 			.hasNextPage(storeHeadDtos.hasNext())
-			.lastReviewCount(Long.valueOf(storeHeadDtos.getContent().isEmpty() ? null :
-				storeHeadDtos.getContent().get(size - 1).getReviewCount()))
+			.lastReviewCount(storeHeadDtos.getContent().isEmpty() ? null :
+				Long.valueOf(storeHeadDtos.getContent().get(size - 1).getReviewCount()))
 			.lastStoreId(storeHeadDtos.getContent().isEmpty() ? null :
 				storeHeadDtos.getContent().get(size - 1).getStoreId())
 			.storeInfoDtos(storeHeadDtos.getContent().stream()
