@@ -1,14 +1,16 @@
 package com.vo;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class UserPassport {
-	private final Long userId;
-	private final String userNickname;
-	private final UserRole userRole;
+	private Long userId;
+	private String userNickname;
+	private UserRole userRole;
 
-	private UserPassport(Long userId, String userNickname, UserRole userRole) {
+	public UserPassport(Long userId, String userNickname, UserRole userRole) {
 		this.userId = userId;
 		this.userNickname = userNickname;
 		this.userRole = userRole;
