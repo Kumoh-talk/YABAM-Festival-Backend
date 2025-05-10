@@ -38,16 +38,16 @@ public class RouteConfig {
 				)
 				.uri("lb://auth"))
 
-			// .route("auth_default_route", r -> r
-			// 	.order(2)
-			// 	.path("/auth/**")
-			// 	.and()
-			// 	.predicate(exchange -> !exchange.getRequest().getPath().toString().startsWith("/auth/api/login"))
-			// 	.filters(f -> f
-			// 		.rewritePath("/auth/(?<remaining>.*)", "/${remaining}")
-			// 	)
-			// 	.uri("lb://auth")
-			// )
+			.route("auth_default_route", r -> r
+				.order(2)
+				.path("/auth/**")
+				.and()
+				.predicate(exchange -> !exchange.getRequest().getPath().toString().startsWith("/auth/api/login"))
+				.filters(f -> f
+					.rewritePath("/auth/(?<remaining>.*)", "/${remaining}")
+				)
+				.uri("lb://auth")
+			)
 
 			.build();
 	}
