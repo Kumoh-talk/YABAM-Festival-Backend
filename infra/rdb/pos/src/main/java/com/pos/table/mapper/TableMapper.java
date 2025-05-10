@@ -52,7 +52,7 @@ public class TableMapper {
 			tableEntity.getId(),
 			tableEntity.getTableNumber().getTableNumber(),
 			tableEntity.getIsActive(),
-			Store.of(storeId, null, null, null)
+			Store.of(storeId, null, null, null, null)
 		);
 	}
 }

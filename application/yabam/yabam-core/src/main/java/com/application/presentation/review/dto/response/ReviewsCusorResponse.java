@@ -11,6 +11,7 @@ import lombok.Builder;
 @Schema(description = "리뷰 커서 응답 DTO", name = "ReviewsCusorResponse")
 @Builder
 public record ReviewsCusorResponse(
+	@Schema(description = "리뷰 데이터 리스트", example = "리뷰 데이터 리스트")
 	List<ReviewInfoDto> reviewsContents,
 	@Schema(description = "데이터 수", example = "10")
 	Integer totalCount,

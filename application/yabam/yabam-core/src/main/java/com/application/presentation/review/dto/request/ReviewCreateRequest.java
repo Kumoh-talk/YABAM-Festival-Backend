@@ -11,6 +11,8 @@ import lombok.Builder;
 public record ReviewCreateRequest(
 	@Schema(description = "영수증 ID", example = "1")
 	Long receiptId,
+	@Schema(description = "가게 ID", example = "1")
+	Long storeId,
 	@Schema(description = "리뷰 내용", example = "리뷰 내용")
 	String content,
 	@Schema(description = "리뷰 평점 50점 만점", example = "50")

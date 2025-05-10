@@ -27,8 +27,9 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 	private final ReviewJpaRepository reviewJpaRepository;
 
 	@Override
-	public Review createReview(UserPassport userPassport, ReceiptInfo receiptInfo, ReviewInfo reviewInfo) {
-		ReviewEntity reviewEntity = ReviewMapper.toReviewEntity(userPassport, receiptInfo, reviewInfo);
+	public Review createReview(UserPassport userPassport, Long storeId, ReceiptInfo receiptInfo,
+		ReviewInfo reviewInfo) {
+		ReviewEntity reviewEntity = ReviewMapper.toReviewEntity(userPassport, storeId, receiptInfo, reviewInfo);
 		ReviewEntity savedReviewEntity = reviewJpaRepository.save(reviewEntity);
 		return ReviewMapper.toReview(savedReviewEntity, userPassport);
 	}
@@ -59,8 +60,8 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 	}
 
 	@Override
-	public Slice<Review> getReviewsWithUser(Long receiptId, Long lastReviewId, int size) {
-		Slice<ReviewEntity> reviewsWithUser = reviewJpaRepository.findReviewsWithUser(receiptId, lastReviewId, size);
+	public Slice<Review> getReviewsWithUser(Long storeId, Long lastReviewId, int size) {
+		Slice<ReviewEntity> reviewsWithUser = reviewJpaRepository.findReviewsWithUser(storeId, lastReviewId, size);
 		List<Review> reviews = reviewsWithUser.getContent().stream()
 			.map(reviewEntity -> ReviewMapper.toReview(reviewEntity))
 			.toList();

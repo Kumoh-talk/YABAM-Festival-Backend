@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.application.presentation.sale.api.SaleApi;
 import com.application.presentation.sale.dto.response.SaleIdResponse;
 import com.authorization.AssignUserPassport;
 import com.authorization.HasRole;
@@ -20,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-public class SaleController {
+public class SaleController implements SaleApi {
 	private final SaleService saleService;
 
 	@PostMapping("/api/v1/sale/open")

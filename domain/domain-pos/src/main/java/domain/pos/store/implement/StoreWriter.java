@@ -28,4 +28,12 @@ public class StoreWriter {
 	public Store modifyStoreOpenStatus(Store previousStore) {
 		return storeRepository.changeStoreOpenStatus(previousStore);
 	}
+
+	public void postDetailImage(Store previousStore, String imageUrl) {
+		storeRepository.postDetailImage(previousStore, imageUrl);
+	}
+
+	public void deleteDetailImage(Store previousStore, String imageUrl) {
+		storeRepository.deleteDetailImage(previousStore, imageUrl);
+	}
 }
