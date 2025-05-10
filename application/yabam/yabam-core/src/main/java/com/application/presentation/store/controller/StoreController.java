@@ -6,6 +6,7 @@ import static domain.pos.member.entity.UserRole.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.application.presentation.store.api.StoreApi;
+import com.application.presentation.store.dto.request.StorePresignedUrlRequest;
 import com.application.presentation.store.dto.request.StoreWriteRequest;
 import com.application.presentation.store.dto.response.StoreIdResponse;
 import com.application.presentation.store.dto.response.StoreInfoResponse;
@@ -77,6 +79,18 @@ public class StoreController implements StoreApi {
 		storeService.deleteStore(userPassport, storeId);
 		return ResponseEntity
 			.ok(createSuccessResponse());
+	}
+
+	@GetMapping("/api/v1/store/image")
+	@HasRole(userRole = ROLE_OWNER)
+	@AssignUserPassport
+	public ResponseEntity<ResponseBody<String>> getStoreImage(
+		UserPassport userPassport,
+		@ModelAttribute @Valid StorePresignedUrlRequest storePresignedUrlRequest) {
+		return ResponseEntity
+			.ok(createSuccessResponse(
+				storeService.getPresignedUrl(userPassport, storePresignedUrlRequest.storeId(),
+					storePresignedUrlRequest.storeImageProperty())));
 	}
 
 }

@@ -12,11 +12,12 @@ import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 
+import domain.pos.store.repository.PresignedUrlGenerator;
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class S3PresignedUrlGenerator {
+public class S3PresignedUrlGenerator implements PresignedUrlGenerator {
 	private static final Integer EXPIRATION_TIME = 1000 * 60 * 2;
 
 	@Value("${cloud.aws.s3.bucket}")

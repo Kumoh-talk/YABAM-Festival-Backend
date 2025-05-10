@@ -9,16 +9,16 @@ dependencies {
     // web
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.data:spring-data-commons'
-    
+
     // config client
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
 
     // discovery client module
     implementation(project(':common:discovery-client'))
+
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
 
     // common module
     implementation(project(':common:base'))
@@ -37,4 +37,7 @@ dependencies {
 
     // runtimeOnly
     runtimeOnly(project(':infra:rdb:pos'))
+
+    // s3
+    runtimeOnly(project(':infra:aws:infra-s3'))
 }

@@ -5,6 +5,9 @@ jar {
     enabled = true
 }
 dependencies {
+    // domain-pos
+    compileOnly project(":domain:domain-pos")
+
     // Spring
     compileOnly "org.springframework.boot:spring-boot-starter-web"
 
