@@ -20,8 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import com.gateway.exception.handler.CustomAccessDeniedHandler;
 import com.gateway.exception.handler.CustomAuthenticationEntryPoint;
 import com.gateway.exception.handler.CustomAuthenticationFailureHandler;
-import com.gateway.filter.AuthenticationToHeaderFilter;
-import com.gateway.filter.ExceptionHandlerFilter;
+import com.gateway.filter.pre.AuthenticationToHeaderFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -71,7 +70,7 @@ public class SecurityConfig {
 			.httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
 			.formLogin(ServerHttpSecurity.FormLoginSpec::disable)
 			.addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION) // JWT 인증 필터 추가
-			.addFilterBefore(new ExceptionHandlerFilter(), SecurityWebFiltersOrder.AUTHENTICATION) // 예외 처리 필터 추가
+			// .addFilterBefore(new ExceptionHandlerFilter(), SecurityWebFiltersOrder.AUTHENTICATION) // 예외 처리 필터 추가
 			.addFilterAfter(
 				new AuthenticationToHeaderFilter(serverSecurityContextRepository, authenticationFailureHandler),
 				SecurityWebFiltersOrder.AUTHENTICATION) // 사용자 정보 헤더 추가 필터 추가

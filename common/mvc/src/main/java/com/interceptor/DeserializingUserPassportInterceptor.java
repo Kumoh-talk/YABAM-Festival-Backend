@@ -8,6 +8,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.http.HttpHeaderName;
 import com.vo.UserPassport;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,11 +20,10 @@ public class DeserializingUserPassportInterceptor implements HandlerInterceptor 
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	public static final String USER_INFO_ATTRIBUTE = "userInfo";
-	public static final String USER_INFO_HEADER = "X-User-Info";
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-		String userInfoHeader = request.getHeader(USER_INFO_HEADER);
+		String userInfoHeader = request.getHeader(HttpHeaderName.REQUEST_USER_INFO_HEADER);
 
 		if (StringUtils.hasText(userInfoHeader)) {
 			try {
@@ -35,7 +35,6 @@ public class DeserializingUserPassportInterceptor implements HandlerInterceptor 
 			} catch (IOException e) {
 				request.setAttribute(USER_INFO_ATTRIBUTE, UserPassport.anonymous());
 			}
-
 		}
 
 		return true;

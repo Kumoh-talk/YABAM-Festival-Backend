@@ -1,6 +1,6 @@
-package com.gateway.filter;
+package com.gateway.filter.pre;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.security.core.context.SecurityContext;
@@ -15,6 +15,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gateway.exception.JwtTokenInvalidException;
 import com.gateway.jwt.JwtAuthentication;
+import com.http.HttpHeaderName;
 
 import reactor.core.publisher.Mono;
 
@@ -26,7 +27,6 @@ public class AuthenticationToHeaderFilter implements WebFilter {
 	private final String USER_ID = "userId";
 	private final String USER_NICKNAME = "userNickname";
 	private final String USER_ROLE = "userRole";
-	private final String USER_INFO_HEADER = "X-User-Info";
 
 	public AuthenticationToHeaderFilter(ServerSecurityContextRepository securityContextRepository,
 		ServerAuthenticationFailureHandler authenticationFailureHandler) {
@@ -41,14 +41,14 @@ public class AuthenticationToHeaderFilter implements WebFilter {
 			.flatMap(authentication -> {
 				JwtAuthentication jwtAuthentication = (JwtAuthentication)authentication;
 
-				Map<String, Object> userInfo = new HashMap<>();
-				userInfo.put(USER_ID, String.valueOf(jwtAuthentication.userId()));
+				Map<String, Object> userInfo = new LinkedHashMap<>();
+				userInfo.put(USER_ID, jwtAuthentication.userId());
 				userInfo.put(USER_NICKNAME, jwtAuthentication.userNickname());
 				userInfo.put(USER_ROLE, jwtAuthentication.userRole().name());
 
 				try {
 					String userInfoJson = objectMapper.writeValueAsString(userInfo);
-					exchange.getRequest().getHeaders().add(USER_INFO_HEADER, userInfoJson);
+					exchange.getRequest().getHeaders().add(HttpHeaderName.REQUEST_USER_INFO_HEADER, userInfoJson);
 				} catch (JsonProcessingException e) {
 					authenticationFailureHandler.onAuthenticationFailure(new WebFilterExchange(exchange, chain),
 						new JwtTokenInvalidException(e));
