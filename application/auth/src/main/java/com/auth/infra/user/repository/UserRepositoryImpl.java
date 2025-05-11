@@ -38,6 +38,7 @@ public class UserRepositoryImpl implements UserRepository {
 	}
 
 	@Override
+	@Transactional
 	public UserPassport createOwner(String email, OidcProvider provider, String providerId) {
 		UserEntity userEntity = UserEntity.builder()
 			.email(email)

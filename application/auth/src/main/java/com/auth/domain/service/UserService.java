@@ -14,7 +14,7 @@ public class UserService {
 	private final UserHandler userHandler;
 
 	public UserPassport findOrCreateUser(String providerId, String email, OidcProvider provider) {
-		UserPassport userPassport = userHandler.findByEmailAndProviderAndProviderId(providerId, email, provider);
+		UserPassport userPassport = userHandler.findByEmailAndProviderAndProviderId(email, provider, providerId);
 
 		return userPassport != null ? userPassport : userHandler.createUser(providerId, email, provider);
 	}

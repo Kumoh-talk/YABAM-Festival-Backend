@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 public class UserHandler {
 	private final UserRepository userRepository;
 
-	public UserPassport findByEmailAndProviderAndProviderId(String providerId, String email, OidcProvider provider) {
+	public UserPassport findByEmailAndProviderAndProviderId(String email, OidcProvider provider, String providerId) {
 		return userRepository.findByEmailAndProviderAndProviderId(email, provider, providerId);
 	}
 

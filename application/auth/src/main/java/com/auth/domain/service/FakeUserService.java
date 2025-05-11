@@ -1,5 +1,6 @@
 package com.auth.domain.service;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import com.auth.domain.implement.UserHandler;
@@ -8,6 +9,7 @@ import com.vo.UserPassport;
 
 import lombok.RequiredArgsConstructor;
 
+@Profile({"local", "dev", "test"})
 @Service
 @RequiredArgsConstructor
 public class FakeUserService {
@@ -25,8 +27,8 @@ public class FakeUserService {
 
 	public UserPassport fakeUserLogin() {
 		if (fakeUserPassport == null) {
-			UserPassport userPassport = userHandler.findByEmailAndProviderAndProviderId(fakeProviderId, fakeUserEmail,
-				fakeProvider);
+			UserPassport userPassport = userHandler.findByEmailAndProviderAndProviderId(fakeUserEmail, fakeProvider,
+				fakeProviderId);
 
 			if (userPassport != null) {
 				fakeUserPassport = userPassport;
@@ -40,8 +42,8 @@ public class FakeUserService {
 
 	public UserPassport fakeOwnerLogin() {
 		if (fakeOwnerPassport == null) {
-			UserPassport userPassport = userHandler.findByEmailAndProviderAndProviderId(fakeProviderId, fakeOwnerEmail,
-				fakeProvider);
+			UserPassport userPassport = userHandler.findByEmailAndProviderAndProviderId(fakeOwnerEmail, fakeProvider,
+				fakeProviderId);
 
 			if (userPassport != null) {
 				fakeOwnerPassport = userPassport;
