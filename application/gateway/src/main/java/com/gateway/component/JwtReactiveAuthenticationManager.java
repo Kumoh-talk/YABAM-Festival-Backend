@@ -11,8 +11,6 @@ import com.gateway.jwt.JwtAuthentication;
 import com.gateway.jwt.JwtAuthenticationToken;
 import com.gateway.jwt.JwtHandler;
 import com.gateway.jwt.JwtUserClaim;
-import com.gateway.user.Role;
-import com.gateway.user.UserRestTemplate;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +21,7 @@ import reactor.core.publisher.Mono;
 public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationManager {
 
 	private final JwtHandler jwtHandler;
-	private final UserRestTemplate userRestTemplate;
+	// private final UserRestTemplate userRestTemplate;
 
 	@Override
 	public Mono<Authentication> authenticate(Authentication authentication) {
@@ -37,7 +35,7 @@ public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationM
 		return Mono.fromCallable(() -> {
 			try {
 				JwtUserClaim claims = jwtHandler.parseToken(tokenValue);
-				validateAdminRole(claims);
+				// validateAdminRole(claims);
 				return new JwtAuthentication(claims);
 			} catch (ExpiredJwtException e) {
 				throw new JwtTokenExpiredException(e);
@@ -49,11 +47,11 @@ public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationM
 		});
 	}
 
-	private void validateAdminRole(JwtUserClaim claims) {
-		if (Role.ROLE_ADMIN.equals(claims.userRole())
-			// TODO : RestTemplate 사용하여 admin인지 확인
-			&& !userRestTemplate.isAdmin(claims.userId())) {
-			throw new JwtAccessDeniedException();
-		}
-	}
+	// private void validateAdminRole(JwtUserClaim claims) {
+	// 	if (Role.ROLE_ADMIN.equals(claims.userRole())
+	// 		// TODO : RestTemplate 사용하여 admin인지 확인
+	// 		&& !userRestTemplate.isAdmin(claims.userId())) {
+	// 		throw new JwtAccessDeniedException();
+	// 	}
+	// }
 }

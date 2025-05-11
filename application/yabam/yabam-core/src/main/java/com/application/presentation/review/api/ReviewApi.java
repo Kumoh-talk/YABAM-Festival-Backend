@@ -13,8 +13,8 @@ import com.application.presentation.review.dto.response.ReviewIdResponse;
 import com.application.presentation.review.dto.response.ReviewsCusorResponse;
 import com.exception.ErrorCode;
 import com.response.ResponseBody;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

@@ -3,9 +3,10 @@ package fixtures.store;
 import static fixtures.member.UserFixture.*;
 import static fixtures.store.StoreInfoFixture.*;
 
+import com.vo.UserPassport;
+
 import java.util.List;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
 

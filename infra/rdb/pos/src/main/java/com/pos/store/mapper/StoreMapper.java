@@ -6,8 +6,8 @@ import java.util.Optional;
 
 import com.pos.store.entity.StoreDetailImageEntity;
 import com.pos.store.entity.StoreEntity;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
 import lombok.AccessLevel;

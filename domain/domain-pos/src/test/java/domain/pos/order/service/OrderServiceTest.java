@@ -15,10 +15,10 @@ import org.mockito.Mock;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
+import com.vo.UserPassport;
 
 import base.ServiceTest;
 import domain.pos.cart.implement.CartWriter;
-import domain.pos.member.entity.UserPassport;
 import domain.pos.menu.implement.MenuReader;
 import domain.pos.order.entity.Order;
 import domain.pos.order.entity.vo.OrderStatus;

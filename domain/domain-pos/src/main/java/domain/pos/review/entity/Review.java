@@ -2,7 +2,8 @@ package domain.pos.review.entity;
 
 import java.time.LocalDateTime;
 
-import domain.pos.member.entity.UserPassport;
+import com.vo.UserPassport;
+
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.store.entity.Store;
 import lombok.Getter;

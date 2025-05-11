@@ -4,8 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
-
-import domain.pos.member.entity.UserPassport;
+import com.vo.UserPassport;
 
 @Component
 public class UserPassportValidator {

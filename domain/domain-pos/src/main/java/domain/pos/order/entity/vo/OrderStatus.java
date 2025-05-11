@@ -2,8 +2,8 @@ package domain.pos.order.entity.vo;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
+import com.vo.UserRole;
 
-import domain.pos.member.entity.UserRole;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

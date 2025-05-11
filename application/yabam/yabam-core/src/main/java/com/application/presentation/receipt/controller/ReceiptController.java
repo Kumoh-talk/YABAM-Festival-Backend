@@ -1,7 +1,7 @@
 package com.application.presentation.receipt.controller;
 
 import static com.response.ResponseUtil.*;
-import static domain.pos.member.entity.UserRole.*;
+import static com.vo.UserRole.*;
 
 import java.util.List;
 
@@ -29,8 +29,8 @@ import com.application.presentation.receipt.dto.response.ReceiptResponse;
 import com.authorization.AssignUserPassport;
 import com.authorization.HasRole;
 import com.response.ResponseBody;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.receipt.service.ReceiptService;

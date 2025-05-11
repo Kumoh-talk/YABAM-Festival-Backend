@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.receipt.implement.ReceiptReader;
 import domain.pos.review.entity.Review;

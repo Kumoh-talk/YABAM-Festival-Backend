@@ -6,9 +6,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import com.authorization.HasRole;
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
+import com.vo.UserPassport;
+import com.vo.UserRole;
 
-import domain.pos.member.entity.UserPassport;
-import domain.pos.member.entity.UserRole;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
