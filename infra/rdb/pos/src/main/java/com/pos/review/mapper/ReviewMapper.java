@@ -3,8 +3,8 @@ package com.pos.review.mapper;
 import com.pos.receipt.entity.ReceiptEntity;
 import com.pos.review.entity.ReviewEntity;
 import com.pos.review.entity.vo.ReviewUser;
-import com.vo.UserPassport;
 import com.pos.store.entity.StoreEntity;
+import com.vo.UserPassport;
 
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.review.entity.Review;

@@ -1,8 +1,8 @@
 package domain.pos.store.entity;
 
-import com.vo.UserPassport;
-
 import java.util.List;
+
+import com.vo.UserPassport;
 
 import lombok.Getter;
 
