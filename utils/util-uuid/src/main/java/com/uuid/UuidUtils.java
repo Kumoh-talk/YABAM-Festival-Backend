@@ -1,12 +1,10 @@
 package com.uuid;
 
 import java.nio.ByteBuffer;
-import java.security.SecureRandom;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class UuidUtils {
-	private static final SecureRandom random = new SecureRandom();
-
 	private UuidUtils() {
 	}
 
@@ -20,12 +18,11 @@ public class UuidUtils {
 
 	public static byte[] randomBytes() {
 		byte[] value = new byte[16];
-		random.nextBytes(value);
+		ThreadLocalRandom.current().nextBytes(value);
 
-		ByteBuffer timestamp = ByteBuffer.allocate(Long.BYTES);
-		timestamp.putLong(System.currentTimeMillis());
-
-		System.arraycopy(timestamp.array(), 2, value, 0, 6);
+		ByteBuffer ts = ByteBuffer.allocate(Long.BYTES)
+			.putLong(System.currentTimeMillis());
+		System.arraycopy(ts.array(), 2, value, 0, 6);
 
 		value[6] = (byte)((value[6] & 0x0F) | 0x70);
 		value[8] = (byte)((value[8] & 0x3F) | 0x80);
