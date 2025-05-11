@@ -7,5 +7,5 @@ import com.pos.review.entity.ReviewEntity;
 public interface ReviewDslRepository {
 	boolean existsByReceiptIdAndUserId(Long receiptId, Long userId);
 
-	Slice<ReviewEntity> findReviewsWithUser(Long receiptId, Long lastReviewId, int size);
+	Slice<ReviewEntity> findReviewsWithUser(Long storeId, Long lastReviewId, int size);
 }

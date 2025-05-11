@@ -86,8 +86,9 @@ public interface ReviewApi {
 		@RequestParam Long reviewId);
 
 	@Operation(
-		summary = "리뷰 목록 조회 API",
-		description = "리뷰를 커서 기반으로 조회합니다."
+		summary = "가게 리뷰 목록 조회 API",
+		description = "리뷰를 커서 기반으로 조회합니다.\n"
+			+ "리뷰는 최신순으로 정렬되어 있습니다.\n"
 	)
 	@ApiResponse(content = @Content(
 		mediaType = "application/json",
@@ -99,7 +100,7 @@ public interface ReviewApi {
 		)
 	)
 	ResponseEntity<ResponseBody<ReviewsCusorResponse>> getReview(
-		@RequestParam Long receiptId,
+		@RequestParam Long storeId,
 		@RequestParam Long lastReviewId,
 		@RequestParam int size);
 }

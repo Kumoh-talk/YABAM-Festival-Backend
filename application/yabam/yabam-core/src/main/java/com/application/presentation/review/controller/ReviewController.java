@@ -39,13 +39,19 @@ public class ReviewController implements ReviewApi {
 		UserPassport userPassport,
 		@RequestBody @Valid ReviewCreateRequest reviewCreateRequest
 	) {
-		Review review = reviewService.postReview(userPassport, reviewCreateRequest.receiptId(),
+		Review review = reviewService.postReview(userPassport, reviewCreateRequest.storeId(),
+			reviewCreateRequest.receiptId(),
 			reviewCreateRequest.getReviewInfo());
 		return ResponseEntity.ok(createSuccessResponse(
 			ReviewIdResponse.from(review)
 		));
 	}
 
+	/**
+	 * @deprecated since 2025-05-08
+	 * 기획상 삭제될 예정.
+	 */
+	@Deprecated(since = "2025-05-08")
 	@PatchMapping("/api/v1/review")
 	@HasRole(userRole = ROLE_USER)
 	@AssignUserPassport
@@ -74,13 +80,13 @@ public class ReviewController implements ReviewApi {
 	@GetMapping("/api/v1/reviews")
 	@HasRole(userRole = ROLE_ANONYMOUS)
 	public ResponseEntity<ResponseBody<ReviewsCusorResponse>> getReview(
-		@RequestParam Long receiptId,
+		@RequestParam Long storeId,
 		@RequestParam Long lastReviewId,
 		@RequestParam int size
 	) {
 		return ResponseEntity.ok(createSuccessResponse(
 			ReviewsCusorResponse.from(reviewService.getReviews(
-				receiptId, lastReviewId, size))
+				storeId, lastReviewId, size))
 		));
 	}
 }

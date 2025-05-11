@@ -15,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 public class ReviewWriter {
 	private final ReviewRepository reviewRepository;
 
-	public Review postReview(UserPassport userPassport, ReceiptInfo receiptInfo, ReviewInfo reviewInfo) {
-		return reviewRepository.createReview(userPassport, receiptInfo, reviewInfo);
+	public Review postReview(UserPassport userPassport, Long storeId, ReceiptInfo receiptInfo, ReviewInfo reviewInfo) {
+		return reviewRepository.createReview(userPassport, storeId, receiptInfo, reviewInfo);
 	}
 
 	public Review updateReview(Review review, ReviewInfo updateReviewInfo) {

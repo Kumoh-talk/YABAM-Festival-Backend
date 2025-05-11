@@ -1,19 +1,25 @@
 spring:
   application:
     name: auth
-  config:
-    import: configserver:http://localhost:8888
 
-oauth2:
-  client:
-    provider:
-      apple:
-        jwks-uri: mock
-        secret: mock_secret
-      google:
-        jwks-uri: https://www.googleapis.com
-        secret: googleSecret
-        issuer: https://accounts.google.com
-      kakao:
-        jwks-uri: mock
-        secret: mock_secret
+---
+
+# ----- local 전용 설정 -----
+
+spring:
+  config:
+    activate:
+      on-profile: local
+    import:
+      configserver:http://localhost:8888
+
+
+---
+
+# ----- dev 전용 설정 -----
+spring:
+  config:
+    activate:
+      on-profile: dev
+    import:
+      configserver:http://192.168.0.171:8888

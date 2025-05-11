@@ -5,6 +5,8 @@ import static fixtures.store.StoreInfoFixture.*;
 
 import com.vo.UserPassport;
 
+import java.util.List;
+
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
 
@@ -23,12 +25,24 @@ public class StoreFixture {
 	private static final StoreInfo GENERAL_STORE_INFO = GENERAL_STORE_INFO();
 	private static final StoreInfo GENERAL_CHANGED_STORE_INFO = CHANGED_GENERAL_STORE_INFO();
 
+	// 가게 상세 이미지 파일 url
+	private static final String STORE_DETAIL_IMAGE_URL = "https://www.yabam.com/store_detail.jpg";
+	private static final String STORE_DETAIL_IMAGE_URL_2 = "https://www.geumoh.com/store_detail.jpg";
+	private static final List<String> STORE_DETAIL_IMAGE_URL_LIST = List.of(
+		STORE_DETAIL_IMAGE_URL,
+		STORE_DETAIL_IMAGE_URL_2
+	);
+	private static final List<String> STORE_DETAIL_IMAGE_URL_LIST_2 = List.of(
+		STORE_DETAIL_IMAGE_URL
+	);
+
 	public static Store GENERAL_CLOSE_STORE() {
 		return Store.of(
 			STORE_ID,
 			IS_CLOSED,
 			GENERAL_STORE_INFO,
-			GENERAL_STORE_OWNER
+			GENERAL_STORE_OWNER,
+			STORE_DETAIL_IMAGE_URL_LIST
 		);
 	}
 
@@ -37,7 +51,8 @@ public class StoreFixture {
 			STORE_ID,
 			IS_CLOSED,
 			GENERAL_CHANGED_STORE_INFO,
-			GENERAL_STORE_OWNER
+			GENERAL_STORE_OWNER,
+			STORE_DETAIL_IMAGE_URL_LIST
 		);
 	}
 
@@ -46,7 +61,8 @@ public class StoreFixture {
 			STORE_ID,
 			IS_OPEN,
 			GENERAL_STORE_INFO,
-			GENERAL_STORE_OWNER
+			GENERAL_STORE_OWNER,
+			STORE_DETAIL_IMAGE_URL_LIST
 		);
 	}
 
@@ -55,7 +71,8 @@ public class StoreFixture {
 			storeId,
 			IS_CLOSED,
 			storeInfo,
-			ownerPassport
+			ownerPassport,
+			STORE_DETAIL_IMAGE_URL_LIST
 		);
 	}
 }

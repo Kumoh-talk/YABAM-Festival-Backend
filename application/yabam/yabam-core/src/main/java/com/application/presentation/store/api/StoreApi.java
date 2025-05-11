@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.application.global.config.swagger.ApiErrorResponseExplanation;
 import com.application.global.config.swagger.ApiResponseExplanations;
 import com.application.global.config.swagger.ApiSuccessResponseExplanation;
+import com.application.presentation.store.dto.request.StoreCursorRequest;
 import com.application.presentation.store.dto.request.StoreWriteRequest;
+import com.application.presentation.store.dto.response.StoreCursorResponse;
 import com.application.presentation.store.dto.response.StoreIdResponse;
 import com.application.presentation.store.dto.response.StoreInfoResponse;
 import com.exception.ErrorCode;
@@ -95,4 +97,53 @@ public interface StoreApi {
 	ResponseEntity<ResponseBody<Void>> deleteStore(
 		@Parameter(hidden = true) UserPassport userPassport,
 		@RequestParam final Long storeId);
+
+	@Operation(
+		summary = "가게 상세 이미지 업로드 API",
+		description = "가게의 상세 이미지를 업로드합니다."
+	)
+	@ApiResponseExplanations(
+		success = @ApiSuccessResponseExplanation(
+			description = "가게 이미지 업로드 성공"
+		),
+		errors = {
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.NOT_FOUND_STORE),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.NOT_EQUAL_STORE_OWNER)
+		}
+	)
+	ResponseEntity<ResponseBody<Void>> uploadStoreImage(
+		@Parameter(hidden = true) UserPassport userPassport,
+		@Schema(description = "가게 고유 ID", example = "1") @RequestParam final Long storeId,
+		@Schema(description = "이미지 URL", example = "https://example.com/image.jpg") @RequestParam final String detailImageUrl);
+
+	@Operation(
+		summary = "가게 상세 이미지 삭제 API",
+		description = "가게의 상세 이미지를 삭제합니다."
+	)
+	@ApiResponseExplanations(
+		success = @ApiSuccessResponseExplanation(
+			description = "가게 이미지 삭제 성공"
+		),
+		errors = {
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.NOT_FOUND_STORE),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.NOT_EQUAL_STORE_OWNER),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.NOT_FOUND_STORE_IMAGE)
+		}
+	)
+	ResponseEntity<ResponseBody<Void>> deleteStoreImage(
+		@Parameter(hidden = true) UserPassport userPassport,
+		@Schema(description = "가게 고유 ID", example = "1") @RequestParam final Long storeId,
+		@Schema(description = "삭제할 이미지 URL", example = "https://example.com/image.jpg") @RequestParam final String detailImageUrl);
+
+	@Operation(
+		summary = "가게 목록 커서 조회 API",
+		description = "리뷰 수 DESC 기준으로 가게 리스트를 무한 스크롤 방식으로 조회합니다."
+	)
+	@ApiResponse(content = @Content(
+		mediaType = "application/json",
+		schema = @Schema(implementation = StoreCursorResponse.class)))
+	ResponseEntity<ResponseBody<StoreCursorResponse>> getStoreList(
+		@RequestBody @Valid StoreCursorRequest storeCursorRequest
+	);
+
 }
