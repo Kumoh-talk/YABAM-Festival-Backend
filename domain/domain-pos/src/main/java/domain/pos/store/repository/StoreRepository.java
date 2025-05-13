@@ -32,4 +32,6 @@ public interface StoreRepository {
 	void deleteDetailImage(Store previousStore, String imageUrl);
 
 	Slice<StoreHeadDto> findStoresCursorOrderByReviewCount(Long cursorReviewCount, Long cursorStoreId, int size);
+
+	boolean isExistsByOwnerIdAndStoreId(Long userId, Long storeId);
 }

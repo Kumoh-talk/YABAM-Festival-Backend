@@ -50,4 +50,8 @@ public class StoreValidator {
 			throw new ServiceException(ErrorCode.NOT_FOUND_STORE_IMAGE);
 		}
 	}
+
+	public boolean isStoreOwner(UserPassport ownerPassport, Long storeId) {
+		return storeRepository.isExistsByOwnerIdAndStoreId(ownerPassport.getUserId(), storeId);
+	}
 }
