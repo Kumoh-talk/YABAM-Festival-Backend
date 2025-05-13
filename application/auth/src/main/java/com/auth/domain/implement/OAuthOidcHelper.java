@@ -1,5 +1,6 @@
 package com.auth.domain.implement;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
@@ -54,7 +55,8 @@ public class OAuthOidcHelper {
 		OidcClient client = oauthOidcClients.get(provider).keySet().iterator().next();
 		OidcClientProperties properties = oauthOidcClients.get(provider).values().iterator().next();
 		OidcPublicKeyResponse response = client.getOidcPublicKey();
-		return getPayloadFromIdToken(idToken, properties.getIssuer(), oauthId, properties.getSecret(), nonce, response);
+		return getPayloadFromIdToken(idToken, properties.getIssuer(), oauthId, properties.getSecrets(), nonce,
+			response);
 	}
 
 	/**
@@ -64,14 +66,14 @@ public class OAuthOidcHelper {
 	 * @param idToken  : idToken
 	 * @param iss      : ID Token을 발급한 provider의 URL
 	 * @param sub      : ID Token의 subject (사용자 식별자)
-	 * @param aud      : ID Token이 발급된 앱의 앱 키
+	 * @param auds      : ID Token이 발급된 앱의 앱 키
 	 * @param nonce    : 인증 서버 로그인 요청 시 전달한 임의의 문자열
 	 * @param response : 공개키 목록
 	 * @return OidcPayload : ID Token의 payload
 	 */
-	private OidcPayload getPayloadFromIdToken(String idToken, String iss, String sub, String aud, String nonce,
+	private OidcPayload getPayloadFromIdToken(String idToken, String iss, String sub, List<String> auds, String nonce,
 		OidcPublicKeyResponse response) {
-		String kid = jwtOidcProvider.getKidFromUnsignedTokenHeader(idToken, iss, sub, aud, nonce);
+		String kid = jwtOidcProvider.getKidFromUnsignedTokenHeader(idToken, iss, sub, auds, nonce);
 		OidcPublicKey key = response.getKeys().stream()
 			.filter(k -> k.kid().equals(kid))
 			.findFirst()
