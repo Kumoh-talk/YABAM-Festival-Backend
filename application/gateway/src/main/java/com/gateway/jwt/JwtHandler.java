@@ -1,6 +1,7 @@
 package com.gateway.jwt;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
@@ -56,7 +57,7 @@ public class JwtHandler {
 
 		return reactiveRedisTemplate
 			.opsForValue()
-			.set(refreshKey, refreshToken)
+			.set(refreshKey, refreshToken, Duration.ofSeconds(jwtProperties.getRefreshTokenExpireIn()))
 			.thenReturn(Token.builder()
 				.accessToken(accessToken)
 				.refreshToken(refreshToken)
@@ -104,5 +105,13 @@ public class JwtHandler {
 			claims.get(USER_NICKNAME, String.class),
 			Role.valueOf(claims.get(USER_ROLE, String.class))
 		);
+	}
+
+	public Mono<Void> deleteRefreshToken(String userId) {
+		return reactiveRedisTemplate.delete(userId).then();
+	}
+
+	public Mono<String> getRefreshToken(Long userId) {
+		return reactiveRedisTemplate.opsForValue().get(String.valueOf(userId));
 	}
 }

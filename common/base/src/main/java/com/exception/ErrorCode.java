@@ -48,6 +48,8 @@ public enum ErrorCode {
 	JWT_EXPIRED(HttpStatus.UNAUTHORIZED, "SECURITY_0003", "JWT 토큰이 만료되었습니다."),
 	JWT_INVALID(HttpStatus.UNAUTHORIZED, "SECURITY_0004", "JWT 토큰이 올바르지 않습니다."),
 	JWT_NOT_EXIST(HttpStatus.UNAUTHORIZED, "SECURITY_0005", "JWT 토큰이 존재하지 않습니다."),
+	INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "SECURITY_0006", "Access Token이 유효하지 않습니다."),
+	INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "SECURITY_0007", "Refresh Token이 유효하지 않습니다."),
 
 	// Table
 	EXIST_TABLE(HttpStatus.CONFLICT, "TABLE_0001", "이미 존재하는 테이블입니다"),

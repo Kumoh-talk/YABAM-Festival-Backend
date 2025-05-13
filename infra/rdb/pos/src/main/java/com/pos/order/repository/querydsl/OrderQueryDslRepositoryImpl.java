@@ -7,6 +7,7 @@ import com.pos.order.entity.OrderEntity;
 import com.pos.order.entity.QOrderEntity;
 import com.pos.order.entity.QOrderMenuEntity;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
 
 import domain.pos.order.entity.vo.OrderStatus;
 import lombok.RequiredArgsConstructor;
@@ -83,11 +84,18 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 
 	@Override
 	public void updateOrderStatus(Long orderId, OrderStatus orderStatus) {
-		jpaQueryFactory
+		JPAUpdateClause updateClause = jpaQueryFactory
 			.update(qOrderEntity)
-			.set(qOrderEntity.status, orderStatus)
-			.where(qOrderEntity.id.eq(orderId))
-			.execute();
+			.where(qOrderEntity.id.eq(orderId));
+
+		if (orderStatus == OrderStatus.CANCELED) {
+			updateClause.set(qOrderEntity.status, orderStatus)
+				.set(qOrderEntity.totalPrice, 0);
+		} else {
+			updateClause.set(qOrderEntity.status, orderStatus);
+		}
+
+		updateClause.execute();
 	}
 
 	@Override
