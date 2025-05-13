@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 import com.pos.call.entity.CallEntity;
 import com.pos.call.entity.QCallEntity;
 import com.pos.receipt.entity.QReceiptEntity;
+import com.pos.sale.entity.QSaleEntity;
+import com.pos.store.entity.QStoreEntity;
 import com.pos.table.entity.QTableEntity;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -23,6 +25,8 @@ public class CallDslRepositoryImpl implements CallDslRepository {
 	private final QCallEntity qCallEntity = QCallEntity.callEntity;
 	private final QReceiptEntity qReceiptEntity = QReceiptEntity.receiptEntity;
 	private final QTableEntity qTableEntity = QTableEntity.tableEntity;
+	private final QSaleEntity qSaleEntity = QSaleEntity.saleEntity;
+	private final QStoreEntity qStoreEntity = QStoreEntity.storeEntity;
 
 	@Override
 	public Slice<CallEntity> getNonCompleteCallsWithReceiptTable(Long saleId, Long lastCallId, int size) {
@@ -41,6 +45,18 @@ public class CallDslRepositoryImpl implements CallDslRepository {
 			fetch.remove(size);
 		}
 		return new SliceImpl<>(fetch, PageRequest.of(0, fetch.size()), hasNext);
+	}
+
+	@Override
+	public boolean isExistsCallOwner(Long callId, Long userId) {
+		return queryFactory
+			.select(qCallEntity.id)
+			.from(qCallEntity)
+			.join(qCallEntity.sale, qSaleEntity)
+			.join(qSaleEntity.store, qStoreEntity)
+			.where(qCallEntity.id.eq(callId)
+				.and(qStoreEntity.ownerId.eq(userId)))
+			.fetchFirst() != null;
 	}
 
 	private BooleanExpression cursorWhereCondition(Long saleId, Long lastCallId) {

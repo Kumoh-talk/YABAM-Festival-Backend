@@ -50,7 +50,8 @@ public interface CallApi {
 			description = "호출 완료 처리 성공"
 		),
 		errors = {
-			@ApiErrorResponseExplanation(errorCode = ErrorCode.NOT_FOUND_CALL)
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.NOT_FOUND_CALL),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.NOT_VALID_CALL_OWNER)
 		}
 	)
 	ResponseEntity<ResponseBody<Void>> completeCall(

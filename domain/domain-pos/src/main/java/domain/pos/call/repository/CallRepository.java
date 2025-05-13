@@ -2,6 +2,8 @@ package domain.pos.call.repository;
 
 import org.springframework.data.domain.Slice;
 
+import com.vo.UserPassport;
+
 import domain.pos.call.entity.Call;
 import domain.pos.call.entity.CallMessage;
 
@@ -11,4 +13,6 @@ public interface CallRepository {
 	Slice<Call> getNonCompleteCalls(Long saleId, Long lastCallId, int size);
 
 	void modifyCallComplete(Long callId);
+
+	boolean isExistsCallOwner(Long callId, UserPassport ownerPassport);
 }

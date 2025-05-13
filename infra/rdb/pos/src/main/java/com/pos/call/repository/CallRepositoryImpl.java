@@ -9,6 +9,7 @@ import com.exception.ServiceException;
 import com.pos.call.entity.CallEntity;
 import com.pos.call.mapper.CallMapper;
 import com.pos.call.repository.jpa.CallJpaRepository;
+import com.vo.UserPassport;
 
 import domain.pos.call.entity.Call;
 import domain.pos.call.entity.CallMessage;
@@ -37,5 +38,10 @@ public class CallRepositoryImpl implements CallRepository {
 		CallEntity callEntity = callJpaRepository.findById(callId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.NOT_FOUND_CALL));
 		callEntity.completeCall();
+	}
+
+	@Override
+	public boolean isExistsCallOwner(Long callId, UserPassport ownerPassport) {
+		return callJpaRepository.isExistsCallOwner(callId, ownerPassport.getUserId());
 	}
 }

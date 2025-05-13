@@ -6,4 +6,6 @@ import com.pos.call.entity.CallEntity;
 
 public interface CallDslRepository {
 	Slice<CallEntity> getNonCompleteCallsWithReceiptTable(Long storeId, Long lastCallId, int size);
+
+	boolean isExistsCallOwner(Long callId, Long userId);
 }
