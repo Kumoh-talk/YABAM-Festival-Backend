@@ -39,7 +39,6 @@ public interface ReviewApi {
 		),
 		errors = {
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.RECEIPT_NOT_FOUND),
-			@ApiErrorResponseExplanation(errorCode = ErrorCode.REVIEW_NOT_ADJUSTMENT),
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.REVIEW_ALREADY_EXISTS),
 		}
 	)
