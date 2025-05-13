@@ -31,9 +31,6 @@ public class ReviewService {
 		storeValidator.validateStore(storeId);
 		ReceiptInfo receiptInfo = receiptReader.getReceiptInfo(receiptId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
-		if (!receiptInfo.isAdjustment()) {
-			throw new ServiceException(ErrorCode.REVIEW_NOT_ADJUSTMENT);
-		}
 		if (reviewReader.isExistsReview(receiptId, userPassport)) {
 			throw new ServiceException(ErrorCode.REVIEW_ALREADY_EXISTS);
 		}

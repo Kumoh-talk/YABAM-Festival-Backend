@@ -142,37 +142,6 @@ class ReviewServiceTest extends ServiceTest {
 		}
 
 		@Test
-		void 실패_영수증이_정산이_안됨() {
-			// given
-			Receipt savedReceipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
-			ReceiptInfo savedReceiptInfo = savedReceipt.getReceiptInfo();
-			Review responReview = GENERAL_REVIEW(savedReceipt);
-			Long queryStoreId = responReview.getStore().getStoreId();
-			Long queryReceiptId = savedReceipt.getReceiptInfo().getReceiptId();
-			UserPassport queryUserPassport = responReview.getUserPassport();
-			ReviewInfo queryReviewInfo = responReview.getReviewInfo();
-
-			doReturn(Optional.ofNullable(savedReceiptInfo))
-				.when(receiptReader).getReceiptInfo(anyLong());
-
-			// when->then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> reviewService.postReview(queryUserPassport, queryStoreId, queryReceiptId, queryReviewInfo))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.REVIEW_NOT_ADJUSTMENT);
-				verify(storeValidator)
-					.validateStore(anyLong());
-				verify(receiptReader)
-					.getReceiptInfo(anyLong());
-				verify(reviewReader, never())
-					.isExistsReview(anyLong(), any(UserPassport.class));
-				verify(reviewWriter, never())
-					.postReview(any(UserPassport.class), anyLong(), any(ReceiptInfo.class), any(ReviewInfo.class));
-			});
-		}
-
-		@Test
 		void 실패_이미_영수증이_있음() {
 			// given
 			Receipt savedReceipt = GENERAL_ADJUSTMENT_RECEIPT();
