@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gateway.jwt.JwtHandler;
 import com.gateway.jwt.JwtUserClaim;
@@ -33,6 +34,10 @@ public class JwtIssueFunction implements RewriteFunction<String, String> {
 	@Override
 	public Mono<String> apply(ServerWebExchange exchange, String originalBody) {
 		return Mono.defer(() -> {
+			if (exchange.getResponse().isCommitted()) {
+				return Mono.just(originalBody);
+			}
+
 			String userInfoHeader = exchange.getResponse()
 				.getHeaders()
 				.getFirst(HttpHeaderName.RESPONSE_USER_INFO_HEADER);
@@ -40,19 +45,23 @@ public class JwtIssueFunction implements RewriteFunction<String, String> {
 				return Mono.just(originalBody);
 			}
 
-			return Mono.fromCallable(() ->
-					objectMapper.readValue(URLDecoder.decode(userInfoHeader,
-						StandardCharsets.UTF_8), JwtUserClaim.class))
+			return Mono.fromCallable(() -> {
+					// 디코딩 및 JSON 파싱
+					return objectMapper.readValue(
+						URLDecoder.decode(userInfoHeader, StandardCharsets.UTF_8),
+						JwtUserClaim.class
+					);
+				})
 				.flatMap(jwtHandler::createTokens)
-				.map(token -> {
+				.flatMap(token -> {
 					try {
 						ResponseBody<Token> responseBody = createSuccessResponse(token);
-						return objectMapper.writeValueAsString(responseBody);
-					} catch (Exception e) {
-						throw new RuntimeException("JSON serialization failed", e);
+						String json = objectMapper.writeValueAsString(responseBody);
+						return Mono.just(json);
+					} catch (JsonProcessingException e) {
+						return Mono.error(new RuntimeException("JSON serialization failed", e));
 					}
-				})
-				.onErrorResume(e -> Mono.just(originalBody));
+				});
 		});
 	}
 }
