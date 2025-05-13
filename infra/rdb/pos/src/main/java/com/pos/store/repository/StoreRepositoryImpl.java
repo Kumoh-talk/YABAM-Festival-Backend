@@ -1,6 +1,7 @@
 package com.pos.store.repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Slice;
@@ -125,6 +126,13 @@ public class StoreRepositoryImpl implements StoreRepository {
 
 	@Override
 	public List<Store> findMyStores(Long userId) {
-		return null;
+		List<StoreEntity> storeEntities = queryFactory.select(qStoreEntity)
+			.from(qStoreEntity)
+			.join(qStoreEntity.storeDetailImageEntity, qStoreDetailImageEntity).fetchJoin()
+			.where(qStoreEntity.ownerId.eq(userId))
+			.fetch();
+		return storeEntities.stream()
+			.map(StoreMapper::toStore)
+			.toList();
 	}
 }
