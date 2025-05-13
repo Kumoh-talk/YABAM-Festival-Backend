@@ -8,6 +8,7 @@ import com.application.global.config.swagger.ApiErrorResponseExplanation;
 import com.application.global.config.swagger.ApiResponseExplanations;
 import com.application.global.config.swagger.ApiSuccessResponseExplanation;
 import com.application.presentation.store.dto.request.StoreWriteRequest;
+import com.application.presentation.store.dto.response.MyStoreResopnse;
 import com.application.presentation.store.dto.response.StoreCursorResponse;
 import com.application.presentation.store.dto.response.StoreIdResponse;
 import com.application.presentation.store.dto.response.StoreInfoResponse;
@@ -154,6 +155,23 @@ public interface StoreApi {
 		Long lastStoreId,
 		@Schema(description = "가게 개수", example = "10")
 		Integer size
+	);
+
+	@Operation(
+		summary = "내가 등록한 가게 목록 조회 API",
+		description = "점주가 등록한 모든 가게 목록을 조회합니다."
+	)
+	@ApiResponse(content = @Content(
+		mediaType = "application/json",
+		schema = @Schema(implementation = MyStoreResopnse.class)))
+	@ApiResponseExplanations(
+		success = @ApiSuccessResponseExplanation(
+			responseClass = MyStoreResopnse.class,
+			description = "가게 목록 조회 성공"
+		)
+	)
+	ResponseEntity<ResponseBody<MyStoreResopnse>> getMyStoreList(
+		@Parameter(hidden = true) UserPassport userPassport
 	);
 
 }

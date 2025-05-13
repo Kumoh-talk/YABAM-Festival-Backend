@@ -1,6 +1,7 @@
 package com.pos.store.repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Slice;
@@ -121,5 +122,17 @@ public class StoreRepositoryImpl implements StoreRepository {
 	public Slice<StoreHeadDto> findStoresCursorOrderByReviewCount(Long cursorReviewCount, Long cursorStoreId,
 		int size) {
 		return storeJpaRepository.findStoreHeadsByReviewCountCursor(cursorReviewCount, cursorStoreId, size);
+	}
+
+	@Override
+	public List<Store> findMyStores(Long userId) {
+		List<StoreEntity> storeEntities = queryFactory.select(qStoreEntity)
+			.from(qStoreEntity)
+			.join(qStoreEntity.storeDetailImageEntity, qStoreDetailImageEntity).fetchJoin()
+			.where(qStoreEntity.ownerId.eq(userId))
+			.fetch();
+		return storeEntities.stream()
+			.map(StoreMapper::toStore)
+			.toList();
 	}
 }
