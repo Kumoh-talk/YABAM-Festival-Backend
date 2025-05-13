@@ -124,13 +124,4 @@ public class StoreRepositoryImpl implements StoreRepository {
 		return storeJpaRepository.findStoreHeadsByReviewCountCursor(cursorReviewCount, cursorStoreId, size);
 	}
 
-	@Override
-	public boolean isExistsByOwnerIdAndStoreId(Long userId, Long storeId) {
-		return queryFactory
-			.select(qStoreEntity.id)
-			.from(qStoreEntity)
-			.where(qStoreEntity.ownerId.eq(userId)
-				.and(qStoreEntity.id.eq(storeId)))
-			.fetchFirst() != null;
-	}
 }

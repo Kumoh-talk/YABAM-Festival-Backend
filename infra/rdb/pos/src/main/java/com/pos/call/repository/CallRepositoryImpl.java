@@ -2,6 +2,13 @@ package com.pos.call.repository;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.exception.ErrorCode;
+import com.exception.ServiceException;
+import com.pos.call.entity.CallEntity;
+import com.pos.call.mapper.CallMapper;
+import com.pos.call.repository.jpa.CallJpaRepository;
 
 import domain.pos.call.entity.Call;
 import domain.pos.call.entity.CallMessage;
@@ -11,17 +18,24 @@ import lombok.RequiredArgsConstructor;
 @Repository
 @RequiredArgsConstructor
 public class CallRepositoryImpl implements CallRepository {
+	private final CallJpaRepository callJpaRepository;
+
 	@Override
-	public void createCall(Long receiptId, CallMessage callMessage) {
+	public void createCall(Long receiptId, Long saleId, CallMessage callMessage) {
+		CallEntity callEntity = CallMapper.toCallEntity(receiptId, saleId, callMessage);
+		callJpaRepository.save(callEntity);
 	}
 
 	@Override
-	public Slice<Call> getNonCompleteCalls(Long storeId) {
-		return null;
+	public Slice<Call> getNonCompleteCalls(Long saleId, Long lastCallId, int size) {
+		return CallMapper.toCallSlice(callJpaRepository.getNonCompleteCallsWithReceiptTable(saleId, lastCallId, size));
 	}
 
 	@Override
+	@Transactional
 	public void modifyCallComplete(Long callId) {
-
+		CallEntity callEntity = callJpaRepository.findById(callId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.NOT_FOUND_CALL));
+		callEntity.completeCall();
 	}
 }

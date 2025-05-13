@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 public class CallReader {
 	private final CallRepository callRepository;
 
-	public Slice<Call> getNonCompleteCalls(Long storeId) {
-		return callRepository.getNonCompleteCalls(storeId);
+	public Slice<Call> getNonCompleteCalls(Long saleId, Long lastCallId, int size) {
+		return callRepository.getNonCompleteCalls(saleId, lastCallId, size);
 	}
 }

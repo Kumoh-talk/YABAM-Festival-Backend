@@ -13,6 +13,7 @@ import domain.pos.call.implement.CallReader;
 import domain.pos.call.implement.CallWriter;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.implement.ReceiptReader;
+import domain.pos.store.implement.SaleReader;
 import domain.pos.store.implement.StoreValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ public class CallService {
 	private final CallWriter callWriter;
 	private final StoreValidator storeValidator;
 	private final CallReader callReader;
+	private final SaleReader saleReader;
 
 	public void postCall(Long receiptId, Long storeId, CallMessage callMessage) {
 		Receipt receipt = receiptReader.getReceiptWithTableAndStore(receiptId)
@@ -40,7 +42,7 @@ public class CallService {
 		if (!receipt.getSale().getStore().getStoreId().equals(storeId)) {
 			throw new ServiceException(ErrorCode.STORE_NOT_MATCH);
 		}
-		callWriter.createCall(receiptId, callMessage);
+		callWriter.createCall(receiptId, receipt.getSale().getSaleId(), callMessage);
 
 	}
 
@@ -52,14 +54,12 @@ public class CallService {
 		return !receipt.getSale().getCloseDateTime().isEmpty() || !receipt.getSale().getStore().getIsOpen();
 	}
 
-	public Slice<Call> getNonCompleteCalls(UserPassport ownerPassport, Long storeId) {
-		if (!storeValidator.isStoreOwner(ownerPassport, storeId)) {
-			throw new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER);
-		}
-		return callReader.getNonCompleteCalls(storeId);
+	// TODO : 해당 사장 권한 validation 코드를 추가해야할듯한데 어디 범위까지 해야할지 고민(ex. store table...)
+	public Slice<Call> getNonCompleteCalls(UserPassport ownerPassport, Long saleId, Long lastCallId, int pageSize) {
+		return callReader.getNonCompleteCalls(saleId, lastCallId, pageSize);
 	}
 
-	// TODO : 해당 직원 호출 완료 권한 validation 코드를 추가해야할듯한데.. 어디 범위까지 해야할지 고민(ex. store table...)
+	// TODO : 해당 직원 호출 완료 권한 validation 코드를 추가해야할듯한데 어디 범위까지 해야할지 고민(ex. store table...)
 	public void completeCall(UserPassport ownerPassport, Long callId) {
 		callWriter.completeCall(callId);
 	}

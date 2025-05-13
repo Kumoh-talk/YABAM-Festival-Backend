@@ -1,19 +1,18 @@
 package domain.pos.call.entity;
 
-import domain.pos.call.entity.vo.CallCategory;
+import lombok.Getter;
 
+@Getter
 public class CallMessage {
 	private final String message;
-	private final CallCategory callCategory;
 	private final Boolean isComplete;
 
-	private CallMessage(String message, CallCategory callCategory, Boolean isComplete) {
+	private CallMessage(String message, Boolean isComplete) {
 		this.message = message;
-		this.callCategory = callCategory;
 		this.isComplete = isComplete;
 	}
 
-	public static CallMessage of(String message, CallCategory callCategory, Boolean isComplete) {
-		return new CallMessage(message, callCategory, isComplete);
+	public static CallMessage of(String message, Boolean isComplete) {
+		return new CallMessage(message, isComplete);
 	}
 }

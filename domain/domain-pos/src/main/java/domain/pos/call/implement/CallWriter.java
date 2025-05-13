@@ -11,8 +11,8 @@ import lombok.RequiredArgsConstructor;
 public class CallWriter {
 	private final CallRepository callRepository;
 
-	public void createCall(Long receiptId, CallMessage callMessage) {
-		callRepository.createCall(receiptId, callMessage);
+	public void createCall(Long receiptId, Long saleId, CallMessage callMessage) {
+		callRepository.createCall(receiptId, saleId, callMessage);
 	}
 
 	public void completeCall(Long callId) {

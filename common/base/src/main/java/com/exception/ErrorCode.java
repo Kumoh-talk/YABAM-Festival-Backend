@@ -98,7 +98,8 @@ public enum ErrorCode {
 	REVIEW_NOT_USER(HttpStatus.BAD_REQUEST, "REVIEW_0004", "해당 사용자가 작성한 리뷰가 아닙니다."),
 
 	// Call
-	STORE_NOT_MATCH(HttpStatus.BAD_REQUEST, "CALL_0001", "가게와 일치하지 않는 영수증에 대한 호출입니다.");
+	STORE_NOT_MATCH(HttpStatus.BAD_REQUEST, "CALL_0001", "가게와 일치하지 않는 영수증에 대한 호출입니다."),
+	NOT_FOUND_CALL(HttpStatus.FOUND, "CALL_0002", "존재하지 않는 호출입니다.");
 
 	private final HttpStatus status;
 	private final String code;

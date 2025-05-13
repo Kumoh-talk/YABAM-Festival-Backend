@@ -33,5 +33,4 @@ public interface StoreRepository {
 
 	Slice<StoreHeadDto> findStoresCursorOrderByReviewCount(Long cursorReviewCount, Long cursorStoreId, int size);
 
-	boolean isExistsByOwnerIdAndStoreId(Long userId, Long storeId);
 }
