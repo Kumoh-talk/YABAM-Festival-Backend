@@ -45,7 +45,7 @@ public class StoreRepositoryImpl implements StoreRepository {
 		StoreEntity storeEntities = queryFactory
 			.select(qStoreEntity)
 			.from(qStoreEntity)
-			.join(qStoreEntity.storeDetailImageEntity, qStoreDetailImageEntity).fetchJoin()
+			.leftJoin(qStoreEntity.storeDetailImageEntity, qStoreDetailImageEntity).fetchJoin()
 			.where(qStoreEntity.id.eq(storeId))
 			.fetchFirst();
 
@@ -128,7 +128,7 @@ public class StoreRepositoryImpl implements StoreRepository {
 	public List<Store> findMyStores(Long userId) {
 		List<StoreEntity> storeEntities = queryFactory.select(qStoreEntity)
 			.from(qStoreEntity)
-			.join(qStoreEntity.storeDetailImageEntity, qStoreDetailImageEntity).fetchJoin()
+			.leftJoin(qStoreEntity.storeDetailImageEntity, qStoreDetailImageEntity).fetchJoin()
 			.where(qStoreEntity.ownerId.eq(userId))
 			.fetch();
 		return storeEntities.stream()
