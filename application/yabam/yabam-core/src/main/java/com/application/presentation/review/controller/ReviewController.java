@@ -78,10 +78,9 @@ public class ReviewController implements ReviewApi {
 	}
 
 	@GetMapping("/api/v1/reviews")
-	@HasRole(userRole = ROLE_ANONYMOUS)
 	public ResponseEntity<ResponseBody<ReviewsCusorResponse>> getReview(
 		@RequestParam Long storeId,
-		@RequestParam Long lastReviewId,
+		@RequestParam(required = false) Long lastReviewId,
 		@RequestParam int size
 	) {
 		return ResponseEntity.ok(createSuccessResponse(
