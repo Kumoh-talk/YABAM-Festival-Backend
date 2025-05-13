@@ -1,5 +1,9 @@
 package com.pos.call.entity;
 
+import java.time.LocalDateTime;
+
+import org.springframework.data.annotation.CreatedDate;
+
 import com.pos.receipt.entity.ReceiptEntity;
 import com.pos.sale.entity.SaleEntity;
 
@@ -38,6 +42,10 @@ public class CallEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "sale_id", nullable = false)
 	private SaleEntity sale;
+
+	@CreatedDate
+	@Column(name = "created_at", updatable = false)
+	private LocalDateTime createdAt;
 
 	private CallEntity(Boolean isCompleted, String message, ReceiptEntity receipt, SaleEntity sale) {
 		this.isCompleted = isCompleted;

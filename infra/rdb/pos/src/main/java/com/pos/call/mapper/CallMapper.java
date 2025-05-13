@@ -43,7 +43,8 @@ public class CallMapper {
 			CallMessage.of(
 				callEntity.getMessage(),
 				callEntity.getIsCompleted()
-			)
+			),
+			callEntity.getCreatedAt()
 		);
 	}
 
