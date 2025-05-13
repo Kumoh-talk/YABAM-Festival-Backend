@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.application.global.config.swagger.ApiErrorResponseExplanation;
 import com.application.global.config.swagger.ApiResponseExplanations;
 import com.application.global.config.swagger.ApiSuccessResponseExplanation;
-import com.application.presentation.store.dto.request.StoreCursorRequest;
 import com.application.presentation.store.dto.request.StoreWriteRequest;
 import com.application.presentation.store.dto.response.StoreCursorResponse;
 import com.application.presentation.store.dto.response.StoreIdResponse;
@@ -142,8 +141,19 @@ public interface StoreApi {
 	@ApiResponse(content = @Content(
 		mediaType = "application/json",
 		schema = @Schema(implementation = StoreCursorResponse.class)))
+	@ApiResponseExplanations(
+		success = @ApiSuccessResponseExplanation(
+			description = "가게 커서 목록 조회 성공",
+			responseClass = StoreCursorResponse.class
+		)
+	)
 	ResponseEntity<ResponseBody<StoreCursorResponse>> getStoreList(
-		@RequestBody @Valid StoreCursorRequest storeCursorRequest
+		@Schema(description = "마지막 리뷰 수 만약 첫 조회면 null", example = "131")
+		Long lastReviewCount,
+		@Schema(description = "마지막 가게 ID 만약 첫 조회면 null", example = "1")
+		Long lastStoreId,
+		@Schema(description = "가게 개수", example = "10")
+		Integer size
 	);
 
 }
