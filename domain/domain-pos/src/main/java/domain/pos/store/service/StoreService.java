@@ -1,5 +1,7 @@
 package domain.pos.store.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
@@ -74,6 +76,10 @@ public class StoreService {
 		storeValidator.validateExistDetailImage(previousStore, imageUrl);
 		storeWriter.deleteDetailImage(previousStore, imageUrl);
 		log.info("가게 상세 이미지 삭제 성공 : userId={}, storeId={}", ownerPassport.getUserId(), storeId);
+	}
+
+	public List<Store> getMyStores(final UserPassport ownerPassport) {
+		return storeReader.readMyStores(ownerPassport);
 	}
 
 }

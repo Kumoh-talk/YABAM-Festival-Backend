@@ -123,4 +123,9 @@ public class StoreRepositoryImpl implements StoreRepository {
 		int size) {
 		return storeJpaRepository.findStoreHeadsByReviewCountCursor(cursorReviewCount, cursorStoreId, size);
 	}
+
+	@Override
+	public List<Store> findMyStores(Long userId) {
+		return null;
+	}
 }

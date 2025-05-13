@@ -1,9 +1,12 @@
 package domain.pos.store.implement;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
+
+import com.vo.UserPassport;
 
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.dto.StoreHeadDto;
@@ -21,5 +24,9 @@ public class StoreReader {
 
 	public Slice<StoreHeadDto> readStores(Long cursorReviewCount, Long cursorStoreId, int size) {
 		return storeRepository.findStoresCursorOrderByReviewCount(cursorReviewCount, cursorStoreId, size);
+	}
+
+	public List<Store> readMyStores(UserPassport ownerPassport) {
+		return storeRepository.findMyStores(ownerPassport.getUserId());
 	}
 }
