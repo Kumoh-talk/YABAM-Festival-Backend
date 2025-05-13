@@ -28,4 +28,15 @@ class UuidUtilsTest {
 
 		assertTrue(comparison < 0, "uuid1 should be lexically less than uuid2");
 	}
+
+	@Test
+	void uuid속도_테스트() {
+		long startTime = System.currentTimeMillis();
+		for (int i = 0; i < 1000000000; i++) {
+			UuidUtils.randomV7();
+		}
+		long endTime = System.currentTimeMillis();
+		System.out.println("UUID 생성 시간: " + (endTime - startTime) + "ms");
+		assertTrue((endTime - startTime) < 100000, "UUID generation took too long");
+	}
 }

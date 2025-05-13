@@ -6,7 +6,6 @@ import static com.vo.UserRole.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.application.presentation.store.api.StoreApi;
-import com.application.presentation.store.dto.request.StoreCursorRequest;
 import com.application.presentation.store.dto.request.StoreWriteRequest;
 import com.application.presentation.store.dto.response.StoreCursorResponse;
 import com.application.presentation.store.dto.response.StoreIdResponse;
@@ -48,7 +46,6 @@ public class StoreController implements StoreApi {
 	}
 
 	@GetMapping("/api/v1/store")
-	@HasRole(userRole = ROLE_ANONYMOUS)
 	public ResponseEntity<ResponseBody<StoreInfoResponse>> getStoreInfo(
 		@RequestParam @Valid final Long storeId) {
 		return ResponseEntity
@@ -58,14 +55,15 @@ public class StoreController implements StoreApi {
 	}
 
 	@GetMapping("/api/v1/stores")
-	@HasRole(userRole = ROLE_ANONYMOUS)
 	public ResponseEntity<ResponseBody<StoreCursorResponse>> getStoreList(
-		@ModelAttribute @Valid final StoreCursorRequest storeCursorRequest
+		@RequestParam(required = false) Long lastReviewCount,
+		@RequestParam(required = false) Long lastStoreId,
+		@RequestParam Integer size
 	) {
 		return ResponseEntity
 			.ok(createSuccessResponse(StoreCursorResponse.from(
-				storeService.findStores(storeCursorRequest.lastReviewCount(), storeCursorRequest.lastStoreId(),
-					storeCursorRequest.size()))
+				storeService.findStores(lastReviewCount, lastStoreId,
+					size))
 			));
 	}
 

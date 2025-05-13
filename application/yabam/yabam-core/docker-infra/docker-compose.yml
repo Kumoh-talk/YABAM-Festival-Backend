@@ -2,15 +2,16 @@ version: '3.7'
 
 services:
   mysql:
-    image: mysql:latest
+    image: mysql:8.0                # 필요에 따라 버전 조정
     container_name: kumoh_yabam
     ports:
-      - 3315:3306
+      - "3315:3306"                 # 호스트 3315 → 컨테이너 3306
     environment:
-      MYSQL_DATABASE: local_mydb
-      MYSQL_CHARSET: utf8mb4
-      MYSQL_ROOT_PASSWORD: 1234
-      MYSQL_COLLATION: utf8mb4_unicode_ci
+      MYSQL_ROOT_PASSWORD: "1234"   # root 비밀번호
+      MYSQL_DATABASE: "local_mydb"  # 최초 자동 생성될 DB
+      MYSQL_CHARSET: "utf8mb4"
+      MYSQL_COLLATION: "utf8mb4_unicode_ci"
     volumes:
-      - ./data/:/var/lib/mysql
-    restart: always  # 자동 재시작 설정
+      - ./data:/var/lib/mysql
+      - ./docker/mysql/initdb:/docker-entrypoint-initdb.d
+    restart: always
