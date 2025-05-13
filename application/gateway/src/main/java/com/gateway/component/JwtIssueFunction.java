@@ -45,13 +45,9 @@ public class JwtIssueFunction implements RewriteFunction<String, String> {
 				return Mono.just(originalBody);
 			}
 
-			return Mono.fromCallable(() -> {
-					// 디코딩 및 JSON 파싱
-					return objectMapper.readValue(
-						URLDecoder.decode(userInfoHeader, StandardCharsets.UTF_8),
-						JwtUserClaim.class
-					);
-				})
+			return Mono.fromCallable(
+					() -> objectMapper.readValue(URLDecoder.decode(userInfoHeader, StandardCharsets.UTF_8),
+						JwtUserClaim.class))
 				.flatMap(jwtHandler::createTokens)
 				.flatMap(token -> {
 					try {
