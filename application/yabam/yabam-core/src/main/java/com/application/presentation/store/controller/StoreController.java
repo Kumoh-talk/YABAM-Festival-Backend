@@ -117,7 +117,7 @@ public class StoreController implements StoreApi {
 			.ok(createSuccessResponse());
 	}
 
-	@GetMapping("/api/v1/stores")
+	@GetMapping("/api/v1/mystore")
 	@HasRole(userRole = ROLE_OWNER)
 	@AssignUserPassport
 	public ResponseEntity<ResponseBody<MyStoreResopnse>> getMyStoreList(
