@@ -18,4 +18,8 @@ public class UserService {
 
 		return userPassport != null ? userPassport : userHandler.createUser(providerId, email, provider);
 	}
+
+	public UserPassport getUserInfo(Long userId) {
+		return userHandler.getUserInfo(userId);
+	}
 }

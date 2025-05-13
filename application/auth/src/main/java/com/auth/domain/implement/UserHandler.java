@@ -17,6 +17,10 @@ public class UserHandler {
 		return userRepository.findByEmailAndProviderAndProviderId(email, provider, providerId);
 	}
 
+	public UserPassport getUserInfo(Long userId) {
+		return userRepository.getUserInfo(userId);
+	}
+
 	public UserPassport createUser(String providerId, String email, OidcProvider provider) {
 		return userRepository.createUser(email, provider, providerId);
 	}
