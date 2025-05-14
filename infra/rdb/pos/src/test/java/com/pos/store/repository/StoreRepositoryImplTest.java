@@ -40,8 +40,8 @@ class StoreRepositoryImplTest extends RepositoryTest {
 	@Test
 	void StoreInfo_변경_테스트() {
 		// given
-		Store savedStore = GENERAL_CLOSE_STORE();
-		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(savedStore));
+		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(GENERAL_CLOSE_STORE()));
+		Store savedStore = StoreMapper.toStore(savedStoreEntity);
 		testEntityManager.flush();
 		testEntityManager.clear();
 
