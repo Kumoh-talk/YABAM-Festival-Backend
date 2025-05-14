@@ -43,6 +43,7 @@ public record CallCursorResponse(
 	}
 
 	public static CallCursorResponse from(Slice<Call> calls) {
+		final Long saleId = calls.getContent().isEmpty() ? null : calls.getContent().get(0).getSaleId();
 		List<CallInfoDto> callInfoDtos = calls.getContent().stream()
 			.map(call -> {
 				return CallInfoDto.builder()
@@ -57,7 +58,7 @@ public record CallCursorResponse(
 		return CallCursorResponse.builder()
 			.totalCount(calls.getNumberOfElements())
 			.hasNextPage(calls.hasNext())
-			.saleId(calls.getContent().get(0).getSaleId())
+			.saleId(saleId)
 			.callInfoDtos(callInfoDtos)
 			.build();
 	}

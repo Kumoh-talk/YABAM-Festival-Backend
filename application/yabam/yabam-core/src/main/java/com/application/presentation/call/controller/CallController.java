@@ -31,8 +31,6 @@ public class CallController implements CallApi {
 	private final CallService callService;
 
 	@PostMapping("/api/v1/call")
-	@HasRole(userRole = UserRole.ROLE_USER)
-	@AssignUserPassport
 	public ResponseEntity<ResponseBody<Void>> postCall(
 		UserPassport userPassport,
 		@RequestBody @Valid CallCreateRequest callCreateRequest) {
