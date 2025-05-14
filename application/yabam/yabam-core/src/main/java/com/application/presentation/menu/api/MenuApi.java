@@ -101,7 +101,8 @@ public interface MenuApi {
 		@PathVariable Long storeId,
 		@RequestParam @Min(1) int pageSize,
 		@Schema(description = "이전 페이지 가장 마지막 메뉴 Id(첫 페이지 조회 시 생략)") @RequestParam(required = false) Long lastMenuId,
-		@Schema(description = "이전 페이지 가장 마지막 메뉴의 카테고리 Id(첫 페이지 조회 시 생략)") @RequestParam(required = false) Long lastMenuCategoryId);
+		@Schema(description = "이전 페이지 가장 마지막 메뉴의 카테고리 Id(첫 페이지 조회 시 생략)")
+		@RequestParam(required = false) Long lastMenuCategoryId);
 
 	@Operation(
 		summary = "카테고리 별 메뉴 리스트 조회 API",

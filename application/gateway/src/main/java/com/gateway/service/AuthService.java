@@ -27,23 +27,20 @@ public class AuthService {
 		JwtAuthenticationToken jwtAuthenticationToken = (JwtAuthenticationToken)authentication;
 
 		return Mono.fromCallable(() -> {
-				try {
-					if (jwtAuthenticationToken.token() == null) {
-						throw new JwtTokenInvalidException();
-					}
-
-					JwtUserClaim claims = jwtHandler.parseToken(jwtAuthenticationToken.token());
-					return new JwtAuthentication(claims);
-				} catch (ExpiredJwtException e) {
-					throw new JwtTokenExpiredException(e);
-				} catch (JwtAccessDeniedException e) {
-					throw e; // 예외를 그대로 던짐
-				} catch (Exception e) {
-					throw new JwtTokenInvalidException(e);
+			try {
+				if (jwtAuthenticationToken.token() == null) {
+					throw new JwtTokenInvalidException();
 				}
-			})
-			.flatMap(claims -> jwtHandler.deleteRefreshToken(String.valueOf(claims.userId())))
-			.then();
+				JwtUserClaim claims = jwtHandler.parseToken(jwtAuthenticationToken.token());
+				return new JwtAuthentication(claims);
+			} catch (ExpiredJwtException e) {
+				throw new JwtTokenExpiredException(e);
+			} catch (JwtAccessDeniedException e) {
+				throw e;
+			} catch (Exception e) {
+				throw new JwtTokenInvalidException(e);
+			}
+		}).flatMap(claims -> jwtHandler.deleteRefreshToken(String.valueOf(claims.userId()))).then();
 	}
 
 	public Mono<Token> refresh(String accessToken, String refreshToken) {
