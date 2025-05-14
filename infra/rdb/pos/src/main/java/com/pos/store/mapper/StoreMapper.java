@@ -51,7 +51,7 @@ public class StoreMapper {
 			storeEntity.getId(),
 			storeEntity.isOpen(),
 			toStoreInfo(storeEntity),
-			UserPassport.of(storeEntity.getId(), null, null),
+			UserPassport.of(storeEntity.getOwnerId(), null, null),
 			null
 		);
 	}
@@ -68,7 +68,7 @@ public class StoreMapper {
 			storeEntity.getId(),
 			storeEntity.isOpen(),
 			toStoreInfo(storeEntity),
-			UserPassport.of(storeEntity.getId(), null, null),
+			UserPassport.of(storeEntity.getOwnerId(), null, null),
 			detailImageUrls
 		));
 	}
@@ -81,7 +81,7 @@ public class StoreMapper {
 			storeEntity.getId(),
 			storeEntity.isOpen(),
 			toStoreInfo(storeEntity),
-			UserPassport.of(storeEntity.getId(), null, null),
+			UserPassport.of(storeEntity.getOwnerId(), null, null),
 			storeEntity.getStoreDetailImageEntity().stream()
 				.map(StoreDetailImageEntity::getImageUrl)
 				.toList()
