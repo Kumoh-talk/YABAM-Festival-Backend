@@ -45,7 +45,7 @@ public class CallDslRepositoryImpl implements CallDslRepository {
 			hasNext = true;
 			fetch.remove(size);
 		}
-		return new SliceImpl<>(fetch, PageRequest.of(0, fetch.size()), hasNext);
+		return new SliceImpl<>(fetch, PageRequest.of(0, size), hasNext);
 	}
 
 	@Override

@@ -27,7 +27,7 @@ public class CallMapper {
 	public static Slice<Call> toCallSlice(Slice<CallEntity> nonCompleteCalls) {
 		return new SliceImpl<>(
 			nonCompleteCalls.map(CallMapper::toCall).toList(),
-			PageRequest.of(0, nonCompleteCalls.getSize()),
+			PageRequest.of(0, nonCompleteCalls.getPageable().getPageSize()),
 			nonCompleteCalls.hasNext());
 	}
 
