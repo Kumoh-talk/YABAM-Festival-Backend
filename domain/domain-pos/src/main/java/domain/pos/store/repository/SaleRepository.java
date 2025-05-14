@@ -13,5 +13,7 @@ public interface SaleRepository {
 
 	Optional<Sale> findSaleWithStoreBySaleId(Long saleId);
 
+	Optional<Sale> getOpenSaleByStoreId(Long storeId);
+
 	Sale closeSale(Sale savedSale, Store closeStore);
 }

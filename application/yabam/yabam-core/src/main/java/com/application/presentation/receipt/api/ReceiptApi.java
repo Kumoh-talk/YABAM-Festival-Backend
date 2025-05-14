@@ -16,6 +16,7 @@ import com.application.global.config.swagger.ApiSuccessResponseExplanation;
 import com.application.global.response.GlobalPageResponse;
 import com.application.global.response.GlobalSliceResponse;
 import com.application.presentation.receipt.dto.response.ReceiptAndOrdersResponse;
+import com.application.presentation.receipt.dto.response.ReceiptIdResponse;
 import com.application.presentation.receipt.dto.response.ReceiptInfoResponse;
 import com.application.presentation.receipt.dto.response.ReceiptResponse;
 import com.exception.ErrorCode;
@@ -53,7 +54,7 @@ public interface ReceiptApi {
 		}
 	)
 	ResponseEntity<ResponseBody<ReceiptResponse>> registerReceipt(
-		@RequestParam @NotNull Long queryTableId, @RequestParam @NotNull Long querySaleId);
+		@RequestParam @NotNull Long storeId, @RequestParam @NotNull Long tableId);
 
 	@Operation(
 		summary = "영수증 세부정보 조회 API",
@@ -178,14 +179,14 @@ public interface ReceiptApi {
 	)
 	@ApiResponse(content = @Content(
 		mediaType = "application/json",
-		schema = @Schema(implementation = Long.class)))
+		schema = @Schema(implementation = ReceiptIdResponse.class)))
 	@ApiResponseExplanations(
 		success = @ApiSuccessResponseExplanation(
-			responseClass = Long.class,
+			responseClass = ReceiptIdResponse.class,
 			description = "영수증 id 조회 성공"
 		)
 	)
-	ResponseEntity<ResponseBody<Long>> getNonAdjustReceiptId(@PathVariable Long tableId);
+	ResponseEntity<ResponseBody<ReceiptIdResponse>> getNonAdjustReceiptId(@PathVariable Long tableId);
 
 	@Operation(
 		summary = "고객 별 영수증 내역 무한스크롤 조회 API",

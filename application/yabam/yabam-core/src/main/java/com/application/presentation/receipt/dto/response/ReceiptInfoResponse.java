@@ -25,6 +25,9 @@ public record ReceiptInfoResponse(
 	Integer occupancyFee
 ) {
 	public static ReceiptInfoResponse from(ReceiptInfo receiptInfo) {
+		if (receiptInfo == null) {
+			return null;
+		}
 		return ReceiptInfoResponse.builder()
 			.receiptId(receiptInfo.getReceiptId())
 			.isAdjustment(receiptInfo.isAdjustment())
