@@ -102,12 +102,12 @@ public class ApiErrorResponseHandler {
 	public static class ExampleFailedResponseBody {
 		private final String success;
 		private final String code;
-		private final String message;
+		private final String msg;
 
 		public ExampleFailedResponseBody(String success, FailedResponseBody failedResponseBody) {
 			this.success = success;
 			this.code = failedResponseBody.getCode();
-			this.message = failedResponseBody.getMsg();
+			this.msg = failedResponseBody.getMsg();
 		}
 
 	}
