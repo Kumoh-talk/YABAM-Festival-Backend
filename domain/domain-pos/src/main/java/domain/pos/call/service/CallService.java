@@ -26,7 +26,7 @@ public class CallService {
 	private final CallWriter callWriter;
 	private final CallReader callReader;
 
-	public void postCall(final UUID receiptId, final Long storeId, final CallMessage callMessage) {
+	public void postCall(final UUID receiptId, final CallMessage callMessage) {
 		Receipt receipt = receiptReader.getReceiptWithTableAndStore(receiptId)
 			.orElseThrow(() -> {
 				throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
@@ -37,9 +37,7 @@ public class CallService {
 		if (isNonActiveTable(receipt)) {
 			throw new ServiceException(ErrorCode.TABLE_NOT_ACTIVE);
 		}
-		if (!receipt.getSale().getStore().getStoreId().equals(storeId)) {
-			throw new ServiceException(ErrorCode.STORE_NOT_MATCH);
-		}
+
 		callWriter.createCall(receiptId, receipt.getSale().getSaleId(), callMessage);
 
 	}

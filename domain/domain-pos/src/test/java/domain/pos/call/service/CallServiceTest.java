@@ -58,14 +58,13 @@ class CallServiceTest extends ServiceTest {
 			Sale sale = SaleFixture.GENERAL_OPEN_SALE(store);
 			Receipt receipt = CUSTOM_ADJUSTMENT_RECEIPT(sale, table); // isActive = true, store.isOpen = true
 			CallMessage queryCallMessage = CUSTOM_GENERAL_CALL(sale, table, receipt).getCallMessage();
-			Long queryStoreId = store.getStoreId();
 			UUID receiptId = receipt.getReceiptInfo().getReceiptId();
 
 			doReturn(Optional.of(receipt))
 				.when(receiptReader).getReceiptWithTableAndStore(any(UUID.class));
 
 			// when
-			callService.postCall(receiptId, queryStoreId, queryCallMessage);
+			callService.postCall(receiptId, queryCallMessage);
 
 			// then
 			assertSoftly(softly -> {
@@ -87,7 +86,6 @@ class CallServiceTest extends ServiceTest {
 			void 실패_영수증_없음() {
 				// given
 				UUID queryReceiptId = UUID.randomUUID();
-				Long queryStoreId = 10L;
 
 				doReturn(Optional.empty())
 					.when(receiptReader).getReceiptWithTableAndStore(any(UUID.class));
@@ -95,7 +93,7 @@ class CallServiceTest extends ServiceTest {
 				// when -> then
 				assertSoftly(softly -> {
 					softly.assertThatThrownBy(
-							() -> callService.postCall(queryReceiptId, queryStoreId, queryCallMessage))
+							() -> callService.postCall(queryReceiptId, queryCallMessage))
 						.isInstanceOf(ServiceException.class)
 						.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
 
@@ -114,7 +112,6 @@ class CallServiceTest extends ServiceTest {
 				Receipt receipt = CUSTOM_ADJUSTMENT_RECEIPT(sale, table);
 
 				UUID queryReceiptId = receipt.getReceiptInfo().getReceiptId();
-				Long queryStoreId = store.getStoreId();
 
 				doReturn(Optional.of(receipt))
 					.when(receiptReader).getReceiptWithTableAndStore(any(UUID.class));
@@ -122,7 +119,7 @@ class CallServiceTest extends ServiceTest {
 				// when -> then
 				assertSoftly(softly -> {
 					softly.assertThatThrownBy(
-							() -> callService.postCall(queryReceiptId, queryStoreId, queryCallMessage))
+							() -> callService.postCall(queryReceiptId, queryCallMessage))
 						.isInstanceOf(ServiceException.class)
 						.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CONFLICT_CLOSE_STORE);
 
@@ -140,7 +137,6 @@ class CallServiceTest extends ServiceTest {
 				Receipt receipt = CUSTOM_ADJUSTMENT_RECEIPT(sale, table);
 
 				UUID queryReceiptId = receipt.getReceiptInfo().getReceiptId();
-				Long queryStoreId = store.getStoreId();
 
 				doReturn(Optional.of(receipt))
 					.when(receiptReader).getReceiptWithTableAndStore(any(UUID.class));
@@ -148,35 +144,9 @@ class CallServiceTest extends ServiceTest {
 				// when -> then
 				assertSoftly(softly -> {
 					softly.assertThatThrownBy(
-							() -> callService.postCall(queryReceiptId, queryStoreId, queryCallMessage))
+							() -> callService.postCall(queryReceiptId, queryCallMessage))
 						.isInstanceOf(ServiceException.class)
 						.hasFieldOrPropertyWithValue("errorCode", ErrorCode.TABLE_NOT_ACTIVE);
-
-					verify(callWriter, never()).createCall(any(UUID.class), anyLong(), any(CallMessage.class));
-				});
-			}
-
-			@Test
-			@DisplayName("스토어 ID 불일치 시 STORE_NOT_MATCH")
-			void 실패_스토어_ID_불일치() {
-				// given
-				Store store = GENERAL_OPEN_STORE();            // storeId = 10
-				Table table = GENERAL_ACTIVE_TABLE(store);
-				Sale sale = SaleFixture.GENERAL_OPEN_SALE(store);
-				Receipt receipt = CUSTOM_ADJUSTMENT_RECEIPT(sale, table);
-
-				UUID queryReceiptId = receipt.getReceiptInfo().getReceiptId();
-				Long wrongStoreId = 999L;
-
-				doReturn(Optional.of(receipt))
-					.when(receiptReader).getReceiptWithTableAndStore(any(UUID.class));
-
-				// when -> then
-				assertSoftly(softly -> {
-					softly.assertThatThrownBy(
-							() -> callService.postCall(queryReceiptId, wrongStoreId, queryCallMessage))
-						.isInstanceOf(ServiceException.class)
-						.hasFieldOrPropertyWithValue("errorCode", ErrorCode.STORE_NOT_MATCH);
 
 					verify(callWriter, never()).createCall(any(UUID.class), anyLong(), any(CallMessage.class));
 				});
