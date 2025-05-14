@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.application.presentation.store.api.StoreApi;
 import com.application.presentation.store.dto.request.StoreWriteRequest;
+import com.application.presentation.store.dto.response.MyStoreResopnse;
 import com.application.presentation.store.dto.response.StoreCursorResponse;
 import com.application.presentation.store.dto.response.StoreIdResponse;
 import com.application.presentation.store.dto.response.StoreInfoResponse;
@@ -114,5 +115,17 @@ public class StoreController implements StoreApi {
 		storeService.deleteDetailImage(userPassport, storeId, detailImageUrl);
 		return ResponseEntity
 			.ok(createSuccessResponse());
+	}
+
+	@GetMapping("/api/v1/mystore")
+	@HasRole(userRole = ROLE_OWNER)
+	@AssignUserPassport
+	public ResponseEntity<ResponseBody<MyStoreResopnse>> getMyStoreList(
+		UserPassport userPassport
+	) {
+		return ResponseEntity.ok(createSuccessResponse(
+			MyStoreResopnse
+				.from(storeService.getMyStores(userPassport))
+		));
 	}
 }

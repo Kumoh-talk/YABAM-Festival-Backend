@@ -175,6 +175,38 @@ class StoreRepositoryImplTest extends RepositoryTest {
 		});
 	}
 
+	@Test
+	void 상세이미지_없을시_가게조회_테스트() {
+		// given
+		Store savedStore = GENERAL_CLOSE_STORE();
+		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(savedStore));
+		testEntityManager.flush();
+		testEntityManager.clear();
+
+		// when
+		System.out.println("===StoreRepositoryImplTest.가게조회_테스트 쿼리===");
+		Store store = storeRepository.findStoreByStoreId(savedStoreEntity.getId()).get();
+		System.out.println("===StoreRepositoryImplTest.가게조회_테스트 쿼리===");
+
+		// then
+		assertSoftly(softly -> {
+			softly.assertThat(store.getStoreId()).isEqualTo(savedStoreEntity.getId());
+			softly.assertThat(store.getStoreInfo().getStoreName()).isEqualTo(savedStoreEntity.getName());
+			softly.assertThat(store.getStoreInfo().getLocation().x)
+				.isEqualTo(savedStoreEntity.getLocation().getLatitude());
+			softly.assertThat(store.getStoreInfo().getLocation().y)
+				.isEqualTo(savedStoreEntity.getLocation().getLongitude());
+			softly.assertThat(store.getStoreInfo().getDescription()).isEqualTo(savedStoreEntity.getDescription());
+			softly.assertThat(store.getStoreInfo().getHeadImageUrl()).isEqualTo(savedStoreEntity.getHeadImageUrl());
+			softly.assertThat(store.getStoreInfo().getUniversity()).isEqualTo(savedStoreEntity.getUniversity());
+			softly.assertThat(store.getStoreInfo().getTableCost())
+				.isEqualTo(savedStoreEntity.getTableCostPerTime().getTableCost());
+			softly.assertThat(store.getStoreInfo().getTableTime())
+				.isEqualTo(savedStoreEntity.getTableCostPerTime().getTableTime());
+
+		});
+	}
+
 	@Nested
 	@DisplayName("가게 리스트 조회")
 	class StoreListTest {

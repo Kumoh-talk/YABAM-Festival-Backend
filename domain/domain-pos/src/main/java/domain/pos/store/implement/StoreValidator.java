@@ -25,7 +25,7 @@ public class StoreValidator {
 				throw new ServiceException(ErrorCode.NOT_FOUND_STORE);
 			});
 
-		if (isEqualSavedStoreOwnerAndQueryOwner(ownerPassport.getUserId(), previousStore)) {
+		if (!isEqualSavedStoreOwnerAndQueryOwner(ownerPassport.getUserId(), previousStore)) {
 			log.warn("요청 유저는 Store 소유자와 다름: userId={}, queryStoreId={}", ownerPassport.getUserId(), queryStoreId);
 			throw new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER);
 		}
