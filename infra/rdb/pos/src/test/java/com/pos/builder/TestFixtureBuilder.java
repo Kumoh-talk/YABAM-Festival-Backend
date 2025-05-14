@@ -65,4 +65,8 @@ public class TestFixtureBuilder {
 	public CallEntity buildCallEntity(CallEntity callEntity) {
 		return bs.getCallJpaRepository().save(callEntity);
 	}
+
+	public TableEntity buildTableEntity(TableEntity tableEntity) {
+		return bs.getTableJpaRepository().save(tableEntity);
+	}
 }

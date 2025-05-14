@@ -7,6 +7,7 @@ import static org.assertj.core.api.SoftAssertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,6 +23,7 @@ import base.ServiceTest;
 import domain.pos.store.entity.Store;
 import domain.pos.store.implement.StoreValidator;
 import domain.pos.table.entity.Table;
+import domain.pos.table.entity.TablePoint;
 import domain.pos.table.implement.TableReader;
 import domain.pos.table.implement.TableWriter;
 
@@ -50,230 +52,379 @@ class TableServiceTest extends ServiceTest {
 			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
-			Integer queryTableNumber = 1;
 
 			Store responStore = GENERAL_CLOSE_STORE();
 			Table createdTable = GENERAL_IN_ACTIVE_TABLE(responStore);
-			List<Table> createdTables = List.of(createdTable);
 
 			doReturn(responStore)
-				.when(storeValidator).validateStoreOwner(queryUserPassport, queryStoreId);
+				.when(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
 			doReturn(IS_NOT_EXISTS_TABLE)
-				.when(tableReader).isExistsTable(responStore);
-			doReturn(createdTables)
-				.when(tableWriter).createTables(responStore, queryTableNumber);
+				.when(tableReader).isExistsTableByStoreAndTableNumWithLock(any(Store.class), anyInt());
+			doReturn(createdTable.getTableId())
+				.when(tableWriter).createTable(any(Store.class), anyInt(), any(TablePoint.class));
 			// when
-			List<Table> resultTable = tableService.createTable(queryUserPassport, queryStoreId, queryTableNumber);
+			Long createdTableId = tableService.createTable(queryUserPassport, queryStoreId,
+				createdTable.getTableNumber(), createdTable.getTablePoint());
 
 			// then
 			assertSoftly(softly -> {
-				softly.assertThat(resultTable).hasSize(queryTableNumber);
 
-				verify(storeValidator).validateStoreOwner(queryUserPassport, queryStoreId);
+				verify(storeValidator)
+					.validateStoreOwner(any(UserPassport.class), anyLong());
 				verify(tableReader)
-					.isExistsTable(responStore);
-				verify(tableWriter).createTables(responStore, queryTableNumber);
+					.isExistsTableByStoreAndTableNumWithLock(any(Store.class), anyInt());
+				verify(tableWriter)
+					.createTable(any(Store.class), anyInt(), any(TablePoint.class));
 			});
 		}
 
 		@Test
-		void 실패_운영중인_가게에서_테이블_생성불가() {
+		@DisplayName("실패 – 가게가 운영 중이면 STORE_IS_OPEN_TABLE_WRITE")
+		void 실패_가게_운영중() {
 			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
-			Long queryStoreId = GENERAL_OPEN_STORE().getStoreId();
-			Integer queryTableNumber = 1;
-
 			Store responStore = GENERAL_OPEN_STORE();
+			Long queryStoreId = responStore.getStoreId();
+			Integer queryTableNum = GENERAL_ACTIVE_TABLE(responStore).getTableNumber();
+			TablePoint queryTablePoint = GENERAL_ACTIVE_TABLE(responStore).getTablePoint();
 
 			doReturn(responStore)
-				.when(storeValidator).validateStoreOwner(queryUserPassport, queryStoreId);
-
-			// when -> then
-			assertSoftly(
-				softly -> {
-					softly.assertThatThrownBy(
-							() -> tableService.createTable(queryUserPassport, queryStoreId, queryTableNumber))
-						.isInstanceOf(ServiceException.class)
-						.hasFieldOrPropertyWithValue("errorCode", ErrorCode.STORE_IS_OPEN_TABLE_WRITE);
-
-					verify(storeValidator)
-						.validateStoreOwner(any(UserPassport.class), anyLong());
-					verify(tableReader, never())
-						.isExistsTable(any(Store.class));
-					verify(tableWriter, never())
-						.createTables(any(Store.class), anyInt());
-				}
-			);
-		}
-
-		@Test
-		void 실패_유효하지_않은_storeId() {
-			// given
-			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
-			Long queryStoreId = 0L;
-			Integer queryTableNumber = 1;
-
-			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE))
-				.when(storeValidator).validateStoreOwner(queryUserPassport, queryStoreId);
+				.when(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
 
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
-						() -> tableService.createTable(queryUserPassport, queryStoreId, queryTableNumber))
+						() -> tableService.createTable(
+							queryUserPassport,
+							queryStoreId,
+							queryTableNum,
+							queryTablePoint))
 					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.STORE_IS_OPEN_TABLE_WRITE);
 
-				verify(storeValidator)
-					.validateStoreOwner(queryUserPassport, queryStoreId);
-				verify(tableReader, never())
-					.isExistsTable(any(Store.class));
-				verify(tableWriter, never())
-					.createTables(any(Store.class), anyInt());
+				verify(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
+				verify(tableReader, never()).isExistsTableByStoreAndTableNumWithLock(any(Store.class), anyInt());
+				verify(tableWriter, never()).createTable(any(), anyInt(), any());
 			});
 		}
 
 		@Test
-		void 실패_점주_주인과_요청유저가_불일치() {
+		@DisplayName("실패 – 이미 존재하는 테이블이면 EXIST_TABLE")
+		void 실패_이미_존재하는_테이블() {
 			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
-			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
-			Integer queryTableNumber = 1;
-
-			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
-				.when(storeValidator).validateStoreOwner(queryUserPassport, queryStoreId);
-
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> tableService.createTable(queryUserPassport, queryStoreId, queryTableNumber))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
-
-				verify(storeValidator)
-					.validateStoreOwner(queryUserPassport, queryStoreId);
-				verify(tableReader, never())
-					.isExistsTable(any(Store.class));
-				verify(tableWriter, never())
-					.createTables(any(Store.class), anyInt());
-			});
-		}
-
-		@Test
-		void 실패_존재하는_테이블() {
-			// given
-			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
-			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
-			Integer queryTableNumber = GENERAL_IN_ACTIVE_TABLE(GENERAL_CLOSE_STORE()).getTableNumber();
-
-			Store responStore = GENERAL_CLOSE_STORE();
-			Table createdTable = GENERAL_IN_ACTIVE_TABLE(responStore);
+			Store responStore = GENERAL_CLOSE_STORE();  // isOpen = false
+			Long queryStoreId = responStore.getStoreId();
+			Integer queryTableNum = GENERAL_ACTIVE_TABLE(responStore).getTableNumber();
+			TablePoint queryTablePoint = GENERAL_ACTIVE_TABLE(responStore).getTablePoint();
 
 			doReturn(responStore)
-				.when(storeValidator).validateStoreOwner(queryUserPassport, queryStoreId);
+				.when(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
 			doReturn(IS_EXISTS_TABLE)
-				.when(tableReader).isExistsTable(responStore);
+				.when(tableReader).isExistsTableByStoreAndTableNumWithLock(any(Store.class), anyInt());
 
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
-						() -> tableService.createTable(queryUserPassport, queryStoreId, queryTableNumber))
+						() -> tableService.createTable(
+							queryUserPassport,
+							queryStoreId,
+							queryTableNum,
+							queryTablePoint))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.EXIST_TABLE);
 
-				verify(storeValidator)
-					.validateStoreOwner(queryUserPassport, queryStoreId);
-				verify(tableReader)
-					.isExistsTable(responStore);
-				verify(tableWriter, never())
-					.createTables(responStore, queryTableNumber);
+				verify(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
+				verify(tableReader).isExistsTableByStoreAndTableNumWithLock(any(Store.class), anyInt());
+				verify(tableWriter, never()).createTable(any(), anyInt(), any());
+			});
+		}
+
+		@Test
+		@DisplayName("실패 – 유효하지 않은 가게 ID면 NOT_FOUND_STORE")
+		void 실패_유효하지_않은_가게_ID() {
+			// given
+			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
+			Store responStore = GENERAL_CLOSE_STORE();  // isOpen = false
+			Long queryStoreId = responStore.getStoreId();
+			Integer queryTableNum = GENERAL_ACTIVE_TABLE(responStore).getTableNumber();
+			TablePoint queryTablePoint = GENERAL_ACTIVE_TABLE(responStore).getTablePoint();
+
+			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE))
+				.when(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(
+						() -> tableService.createTable(
+							queryUserPassport,
+							queryStoreId,
+							queryTableNum,
+							queryTablePoint))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
+
+				verify(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
+				verify(tableReader, never()).isExistsTableByStoreAndTableNumWithLock(any(), anyInt());
+				verify(tableWriter, never()).createTable(any(), anyInt(), any());
+			});
+		}
+
+		@Test
+		@DisplayName("실패 – 점주 ID 불일치면 NOT_EQUAL_STORE_OWNER")
+		void 실패_점주_ID_불일치() {
+			// given
+			UserPassport diffOwnerPassport = DIFF_OWNER_PASSPORT();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+
+			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
+				.when(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(
+						() -> tableService.createTable(
+							diffOwnerPassport,
+							queryStoreId,
+							GENERAL_ACTIVE_TABLE(GENERAL_CLOSE_STORE()).getTableNumber(),
+							GENERAL_ACTIVE_TABLE(GENERAL_CLOSE_STORE()).getTablePoint()))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
+
+				verify(storeValidator).validateStoreOwner(diffOwnerPassport, queryStoreId);
+				verify(tableReader, never()).isExistsTableByStoreAndTableNumWithLock(any(), anyInt());
+				verify(tableWriter, never()).createTable(any(), anyInt(), any());
 			});
 		}
 	}
 
 	@Nested
-	@DisplayName("가게 테이블 수 조정")
+	@DisplayName("가게 테이블 업데이트")
 	class updateTable {
+
 		private static final boolean IS_EXISTS_TABLE = true;
 		private static final boolean IS_NOT_EXISTS_TABLE = false;
 
 		@Test
+		@DisplayName("성공")
 		void 성공() {
 			// given
-			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
-			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
-			Integer queryUpdateTableNumber = 2;
-
+			UserPassport ownerPassport = OWNER_USER_PASSPORT();
 			Store responStore = GENERAL_CLOSE_STORE();
-			Table createTable1 = GENERAL_IN_ACTIVE_TABLE(responStore);
-			Table createTable2 = GENERAL_IN_ACTIVE_TABLE(responStore);
-			List<Table> createdTables = List.of(
-				createTable1,
-				createTable2);
-
-			doReturn(responStore)
-				.when(storeValidator).validateStoreOwner(queryUserPassport, queryStoreId);
+			Table savedTable = GENERAL_IN_ACTIVE_TABLE(responStore);
+			Long queryTableId = savedTable.getTableId();
+			Integer updateTableNumber = savedTable.getTableNumber() + 1;
+			TablePoint updateTablePoint = savedTable.getTablePoint();
+			doReturn(Optional.of(savedTable))
+				.when(tableReader).findTableWithStoreByTableId(queryTableId);
+			doReturn(IS_NOT_EXISTS_TABLE)
+				.when(tableReader).isExistsTableByStoreAndTableNumWithLock(responStore, updateTableNumber);
 
 			// when
-			tableService.updateTableNum(queryUserPassport, queryStoreId,
-				queryUpdateTableNumber);
+			tableService.updateTable(
+				ownerPassport,
+				queryTableId,
+				updateTableNumber,
+				updateTablePoint);
 
 			// then
 			assertSoftly(softly -> {
-				verify(storeValidator)
-					.validateStoreOwner(any(UserPassport.class), anyLong());
-				verify(tableWriter)
-					.modifyTableNum(any(Store.class), anyInt());
-
+				verify(tableReader).findTableWithStoreByTableId(queryTableId);
+				verify(tableReader).isExistsTableByStoreAndTableNumWithLock(responStore, updateTableNumber);
+				verify(tableWriter).updateTable(savedTable, updateTableNumber, updateTablePoint);
 			});
 		}
 
 		@Test
-		void 실패_운영중인_가게에서_테이블_수_조정불가() {
+		@DisplayName("실패 – 테이블이 없으면 NOT_FOUND_TABLE")
+		void 실패_테이블_없음() {
 			// given
-			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
-			Long queryStoreId = GENERAL_OPEN_STORE().getStoreId();
-			Integer queryUpdateTableNumber = 2;
-
-			Store responStore = GENERAL_OPEN_STORE();
-
-			doReturn(responStore)
-				.when(storeValidator).validateStoreOwner(queryUserPassport, queryStoreId);
+			Long invalidTableId = 999L;
+			UserPassport ownerPassport = OWNER_USER_PASSPORT();
+			doReturn(Optional.empty())
+				.when(tableReader).findTableWithStoreByTableId(invalidTableId);
 
 			// when -> then
 			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> tableService.updateTableNum(queryUserPassport, queryStoreId, queryUpdateTableNumber))
+				softly.assertThatThrownBy(() -> tableService.updateTable(
+						ownerPassport,
+						invalidTableId,
+						1,
+						TablePoint.of(0, 0)))
 					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.STORE_IS_OPEN_TABLE_WRITE);
-
-				verify(storeValidator)
-					.validateStoreOwner(any(UserPassport.class), anyLong());
-				verify(tableWriter, never())
-					.modifyTableNum(any(Store.class), anyInt());
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_TABLE);
+				verify(tableReader).findTableWithStoreByTableId(invalidTableId);
+				verify(tableReader, never()).isExistsTableByStoreAndTableNumWithLock(any(), anyInt());
+				verify(tableWriter, never()).updateTable(any(), anyInt(), any());
 			});
 		}
 
 		@Test
-		void 실패_점주가_아닌_사용자() {
+		@DisplayName("실패 – 점주 ID 불일치면 NOT_EQUAL_STORE_OWNER")
+		void 실패_점주_ID_불일치() {
 			// given
-			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
-			Long queryStoreId = 0L;
-			Integer queryUpdateTableNumber = 2;
-
-			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
-				.when(storeValidator).validateStoreOwner(queryUserPassport, queryStoreId);
+			UserPassport diffOwnerPassport = DIFF_OWNER_PASSPORT();
+			Store responStore = GENERAL_CLOSE_STORE();
+			Table savedTable = GENERAL_IN_ACTIVE_TABLE(responStore);
+			Long queryTableId = savedTable.getTableId();
+			doReturn(Optional.of(savedTable))
+				.when(tableReader).findTableWithStoreByTableId(queryTableId);
 
 			// when -> then
 			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> tableService.updateTableNum(queryUserPassport, queryStoreId, queryUpdateTableNumber))
+				softly.assertThatThrownBy(() -> tableService.updateTable(
+						diffOwnerPassport,
+						queryTableId,
+						savedTable.getTableNumber(),
+						savedTable.getTablePoint()))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
+				verify(tableReader).findTableWithStoreByTableId(queryTableId);
+				verify(tableReader, never()).isExistsTableByStoreAndTableNumWithLock(any(), anyInt());
+				verify(tableWriter, never()).updateTable(any(), anyInt(), any());
+			});
+		}
 
-				verify(storeValidator)
-					.validateStoreOwner(queryUserPassport, queryStoreId);
-				verify(tableWriter, never())
-					.modifyTableNum(any(Store.class), anyInt());
+		@Test
+		@DisplayName("실패 – 가게가 운영 중이면 STORE_IS_OPEN_TABLE_WRITE")
+		void 실패_가게_운영중() {
+			// given
+			UserPassport ownerPassport = OWNER_USER_PASSPORT();
+			Store openStore = GENERAL_OPEN_STORE();
+			Table savedTable = GENERAL_IN_ACTIVE_TABLE(openStore);
+			Long queryTableId = savedTable.getTableId();
+			doReturn(Optional.of(savedTable))
+				.when(tableReader).findTableWithStoreByTableId(queryTableId);
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(() -> tableService.updateTable(
+						ownerPassport,
+						queryTableId,
+						savedTable.getTableNumber(),
+						savedTable.getTablePoint()))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.STORE_IS_OPEN_TABLE_WRITE);
+				verify(tableReader).findTableWithStoreByTableId(queryTableId);
+				verify(tableReader, never()).isExistsTableByStoreAndTableNumWithLock(any(), anyInt());
+				verify(tableWriter, never()).updateTable(any(), anyInt(), any());
+			});
+		}
+
+		@Test
+		@DisplayName("실패 – 수정하려는 번호가 기존과 다르고 이미 존재하면 EXIST_TABLE")
+		void 실패_이미_존재하는_테이블번호() {
+			// given
+			UserPassport ownerPassport = OWNER_USER_PASSPORT();
+			Store responStore = GENERAL_CLOSE_STORE();
+			Table savedTable = GENERAL_IN_ACTIVE_TABLE(responStore);
+			Long queryTableId = savedTable.getTableId();
+			Integer updateTableNumber = savedTable.getTableNumber() + 1;
+			TablePoint updatePoint = savedTable.getTablePoint();
+			doReturn(Optional.of(savedTable))
+				.when(tableReader).findTableWithStoreByTableId(queryTableId);
+			doReturn(IS_EXISTS_TABLE)
+				.when(tableReader).isExistsTableByStoreAndTableNumWithLock(responStore, updateTableNumber);
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(() -> tableService.updateTable(
+						ownerPassport,
+						queryTableId,
+						updateTableNumber,
+						updatePoint))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.EXIST_TABLE);
+				verify(tableReader).findTableWithStoreByTableId(queryTableId);
+				verify(tableReader).isExistsTableByStoreAndTableNumWithLock(responStore, updateTableNumber);
+				verify(tableWriter, never()).updateTable(any(), anyInt(), any());
+			});
+		}
+	}
+
+	@Nested
+	@DisplayName("가게 테이블 삭제")
+	class deleteTable {
+
+		@Test
+		@DisplayName("성공")
+		void 성공() {
+			// given
+			UserPassport ownerPassport = OWNER_USER_PASSPORT();
+			Store responStore = GENERAL_CLOSE_STORE();
+			Table savedTable = GENERAL_IN_ACTIVE_TABLE(responStore);
+			Long queryTableId = savedTable.getTableId();
+			doReturn(Optional.of(savedTable))
+				.when(tableReader).findTableWithStoreByTableId(queryTableId);
+
+			// when
+			tableService.deleteTable(ownerPassport, queryTableId);
+
+			// then
+			assertSoftly(softly -> {
+				verify(tableReader).findTableWithStoreByTableId(queryTableId);
+				verify(tableWriter).deleteTable(savedTable);
+			});
+		}
+
+		@Test
+		@DisplayName("실패 – 테이블이 없으면 NOT_FOUND_TABLE")
+		void 실패_테이블_없음() {
+			// given
+			Long invalidTableId = 999L;
+			UserPassport ownerPassport = OWNER_USER_PASSPORT();
+			doReturn(Optional.empty())
+				.when(tableReader).findTableWithStoreByTableId(invalidTableId);
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(() -> tableService.deleteTable(ownerPassport, invalidTableId))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_TABLE);
+				verify(tableReader).findTableWithStoreByTableId(invalidTableId);
+				verify(tableWriter, never()).deleteTable(any());
+			});
+		}
+
+		@Test
+		@DisplayName("실패 – 점주 ID 불일치면 NOT_EQUAL_STORE_OWNER")
+		void 실패_점주_ID_불일치() {
+			// given
+			UserPassport diffOwnerPassport = DIFF_OWNER_PASSPORT();
+			Store responStore = GENERAL_CLOSE_STORE();
+			Table savedTable = GENERAL_IN_ACTIVE_TABLE(responStore);
+			Long queryTableId = savedTable.getTableId();
+			doReturn(Optional.of(savedTable))
+				.when(tableReader).findTableWithStoreByTableId(queryTableId);
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(() -> tableService.deleteTable(diffOwnerPassport, queryTableId))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
+				verify(tableReader).findTableWithStoreByTableId(queryTableId);
+				verify(tableWriter, never()).deleteTable(any());
+			});
+		}
+
+		@Test
+		@DisplayName("실패 – 가게가 운영 중이면 STORE_IS_OPEN_TABLE_WRITE")
+		void 실패_가게_운영중() {
+			// given
+			UserPassport ownerPassport = OWNER_USER_PASSPORT();
+			Store openStore = GENERAL_OPEN_STORE();
+			Table savedTable = GENERAL_IN_ACTIVE_TABLE(openStore);
+			Long queryTableId = savedTable.getTableId();
+			doReturn(Optional.of(savedTable))
+				.when(tableReader).findTableWithStoreByTableId(queryTableId);
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(() -> tableService.deleteTable(ownerPassport, queryTableId))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.STORE_IS_OPEN_TABLE_WRITE);
+				verify(tableReader).findTableWithStoreByTableId(queryTableId);
+				verify(tableWriter, never()).deleteTable(any());
 			});
 		}
 	}

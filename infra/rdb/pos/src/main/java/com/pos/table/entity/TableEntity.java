@@ -6,6 +6,7 @@ import org.hibernate.annotations.SQLRestriction;
 import com.pos.global.base.entity.BaseEntity;
 import com.pos.store.entity.StoreEntity;
 import com.pos.table.vo.TableNumber;
+import com.pos.table.vo.TablePointVo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -35,6 +36,9 @@ public class TableEntity extends BaseEntity {
 	@Embedded
 	private TableNumber tableNumber;
 
+	@Embedded
+	private TablePointVo tablePoint;
+
 	@Column(name = "is_active", nullable = false)
 	private Boolean isActive;
 
@@ -42,8 +46,9 @@ public class TableEntity extends BaseEntity {
 	@JoinColumn(name = "store_id", nullable = false)
 	private StoreEntity store;
 
-	private TableEntity(TableNumber tableNumber, Boolean isActive, StoreEntity store) {
+	private TableEntity(TableNumber tableNumber, TablePointVo tablePoint, Boolean isActive, StoreEntity store) {
 		this.tableNumber = tableNumber;
+		this.tablePoint = tablePoint;
 		this.isActive = isActive;
 		this.store = store;
 	}
@@ -52,9 +57,11 @@ public class TableEntity extends BaseEntity {
 		this.id = id;
 	}
 
-	public static TableEntity of(TableNumber tableNumber, Boolean isActive, StoreEntity store) {
+	public static TableEntity of(TableNumber tableNumber, TablePointVo tablePoint, Boolean isActive,
+		StoreEntity store) {
 		return new TableEntity(
 			tableNumber,
+			tablePoint,
 			isActive,
 			store
 		);

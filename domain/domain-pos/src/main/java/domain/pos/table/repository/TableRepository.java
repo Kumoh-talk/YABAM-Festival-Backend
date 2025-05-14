@@ -7,18 +7,24 @@ import org.springframework.stereotype.Repository;
 
 import domain.pos.store.entity.Store;
 import domain.pos.table.entity.Table;
+import domain.pos.table.entity.TablePoint;
 
 @Repository
 public interface TableRepository {
-	List<Table> createTablesAll(Store responStore, Integer queryTableNumber);
-
-	boolean existsTableByStoreWithLock(Store responStore);
 
 	Optional<Table> findByIdWithLock(Long queryTableId, Long storeId);
 
 	Table changeTableActiveStatus(boolean isActive, Table savedInActiveTable);
 
-	List<Table> updateTableNum(Store store, Integer queryUpdateTableNumber);
-
 	List<Table> findTablesByStoreId(Long storeId);
+
+	boolean existsTableByStoreAndTableNumWithLock(Store store, Integer tableNumber);
+
+	Long saveTable(Store store, Integer tableNumber, TablePoint tablePoint);
+
+	Optional<Table> findTableWithStoreByTableId(Long qureyTableId);
+
+	void updateTableInfo(Table table, Integer updateTableNumber, TablePoint updateTablePoint);
+
+	void deleteTable(Table table);
 }

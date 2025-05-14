@@ -1,4 +1,4 @@
-package com.application.presentation.table.dto;
+package com.application.presentation.table.dto.response;
 
 import java.util.List;
 
