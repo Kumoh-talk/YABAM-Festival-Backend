@@ -6,7 +6,6 @@ import static com.vo.UserRole.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -131,12 +130,12 @@ public class StoreController implements StoreApi {
 		));
 	}
 
-	@GetMapping("/api/v1/store/image")
+	@PatchMapping("/api/v1/store/image")
 	@HasRole(userRole = ROLE_OWNER)
 	@AssignUserPassport
 	public ResponseEntity<ResponseBody<String>> getStoreImage(
 		UserPassport userPassport,
-		@ModelAttribute @Valid StorePresignedUrlRequest storePresignedUrlRequest) {
+		@RequestBody @Valid StorePresignedUrlRequest storePresignedUrlRequest) {
 		return ResponseEntity
 			.ok(createSuccessResponse(
 				storeService.getPresignedUrl(userPassport, storePresignedUrlRequest.storeId(),
