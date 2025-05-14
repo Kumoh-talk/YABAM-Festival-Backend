@@ -1,10 +1,13 @@
 package com.pos.store.mapper;
 
 import java.awt.geom.Point2D;
+import java.util.List;
+import java.util.Optional;
 
+import com.pos.store.entity.StoreDetailImageEntity;
 import com.pos.store.entity.StoreEntity;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
 import lombok.AccessLevel;
@@ -48,7 +51,40 @@ public class StoreMapper {
 			storeEntity.getId(),
 			storeEntity.isOpen(),
 			toStoreInfo(storeEntity),
-			UserPassport.of(storeEntity.getId(), null, null)
+			UserPassport.of(storeEntity.getOwnerId(), null, null),
+			null
 		);
+	}
+
+	public static Optional<Store> toStore(List<StoreDetailImageEntity> storeDetailImageEntities) {
+		if (storeDetailImageEntities.isEmpty()) {
+			return Optional.empty();
+		}
+		StoreEntity storeEntity = storeDetailImageEntities.get(0).getStore();
+		List<String> detailImageUrls = storeDetailImageEntities.stream()
+			.map(StoreDetailImageEntity::getImageUrl)
+			.toList();
+		return Optional.of(Store.of(
+			storeEntity.getId(),
+			storeEntity.isOpen(),
+			toStoreInfo(storeEntity),
+			UserPassport.of(storeEntity.getOwnerId(), null, null),
+			detailImageUrls
+		));
+	}
+
+	public static Optional<Store> toStoreWithStoreDetailImages(StoreEntity storeEntity) {
+		if (storeEntity == null) {
+			return Optional.empty();
+		}
+		return Optional.of(Store.of(
+			storeEntity.getId(),
+			storeEntity.isOpen(),
+			toStoreInfo(storeEntity),
+			UserPassport.of(storeEntity.getOwnerId(), null, null),
+			storeEntity.getStoreDetailImageEntity().stream()
+				.map(StoreDetailImageEntity::getImageUrl)
+				.toList()
+		));
 	}
 }

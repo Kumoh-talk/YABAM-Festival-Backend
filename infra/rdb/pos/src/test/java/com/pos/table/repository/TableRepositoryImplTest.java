@@ -6,6 +6,7 @@ import static fixtures.store.StoreFixture.*;
 import static org.assertj.core.api.SoftAssertions.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,15 +14,15 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.exception.ErrorCode;
-import com.exception.ServiceException;
 import com.pos.global.config.RepositoryTest;
 import com.pos.store.entity.StoreEntity;
 import com.pos.store.mapper.StoreMapper;
 import com.pos.table.entity.TableEntity;
+import com.pos.table.mapper.TableMapper;
 
 import domain.pos.store.entity.Store;
 import domain.pos.table.entity.Table;
+import domain.pos.table.entity.TablePoint;
 import domain.pos.table.repository.TableRepository;
 
 class TableRepositoryImplTest extends RepositoryTest {
@@ -38,44 +39,6 @@ class TableRepositoryImplTest extends RepositoryTest {
 		savedStore = StoreMapper.toStore(savedStoreEntity);
 		testEntityManager.flush();
 		testEntityManager.clear();
-	}
-
-	@Test
-	void 테이블_수량_만큼_생성() {
-		// given
-		Integer tableCount = 5;
-
-		// when
-		System.out.println("===TableRepositoryImplTest.테이블_수량_만큼_생성 쿼리===");
-		List<Table> tablesAll = tableRepository.createTablesAll(savedStore, tableCount);
-		testEntityManager.flush();
-		testEntityManager.clear();
-		System.out.println("===TableRepositoryImplTest.테이블_수량_만큼_생성 쿼리===");
-
-		// then
-		assertSoftly(softly -> {
-			softly.assertThat(tablesAll).hasSize(tableCount);
-			for (int i = 0; i < tableCount; i++) {
-				softly.assertThat(tablesAll.get(i).getStore().getStoreId()).isEqualTo(savedStore.getStoreId());
-				softly.assertThat(tablesAll.get(i).getTableNumber()).isEqualTo(i + 1);
-				softly.assertThat(tablesAll.get(i).getTableId()).isNotNull();
-			}
-		});
-
-	}
-
-	@Test
-	void EXISTS_락_조회_테스트() {
-		// when
-		System.out.println("===TableRepositoryImplTest.EXISTS_락_조회_테스트 쿼리===");
-		boolean existsTable = tableRepository.existsTableByStoreWithLock(savedStore);
-		testEntityManager.flush();
-		testEntityManager.clear();
-		System.out.println("===TableRepositoryImplTest.EXISTS_락_조회_테스트 쿼리===");
-		// then
-		assertSoftly(softly -> {
-			softly.assertThat(existsTable).isFalse();
-		});
 	}
 
 	@Test
@@ -100,97 +63,99 @@ class TableRepositoryImplTest extends RepositoryTest {
 	}
 
 	@Nested
-	@DisplayName("테이블 수 변경 테스트")
-	class updateTableCount {
-		@Test
-		void 성공_테이블수보다_더많게_변경할수있다() {
-			// given
-			Integer previousCount = 5;
-			Integer newCount = 7;
-			List<Table> tablesAll = tableRepository.createTablesAll(savedStore, previousCount);
-			testEntityManager.flush();
-			testEntityManager.clear();
+	@DisplayName("existsTableByStoreAndTableNumWithLock")
+	class ExistsTableLock {
 
+		@Test
+		void false_테이블없음() {
 			// when
-			System.out.println("===TableRepositoryImplTest.성공_테이블수보다_더많게_변경할수있다 쿼리===");
-			List<Table> modifiedTables = tableRepository.updateTableNum(savedStore, newCount);
-			testEntityManager.flush();
-			testEntityManager.clear();
-			System.out.println("===TableRepositoryImplTest.성공_테이블수보다_더많게_변경할수있다 쿼리===");
-
+			System.out.println("===TableRepositoryImplTest.existsTableByStoreAndTableNumWithLock 쿼리===");
+			boolean exists = tableRepository.existsTableByStoreAndTableNumWithLock(savedStore, 1);
+			System.out.println("===TableRepositoryImplTest.existsTableByStoreAndTableNumWithLock 쿼리===");
 			// then
-			assertSoftly(softly -> {
-				List<Table> tables = tableRepository.findTablesByStoreId(savedStore.getStoreId());
-				softly.assertThat(tables).hasSize(newCount);
-				softly.assertThat(modifiedTables).hasSize(newCount);
-				for (int i = 0; i < newCount; i++) {
-					softly.assertThat(tables.get(i).getTableNumber()).isEqualTo(i + 1);
-					softly.assertThat(tables.get(i).getIsActive()).isFalse();
-					softly.assertThat(modifiedTables.get(i).getTableNumber()).isEqualTo(i + 1);
-				}
-			});
+			assertSoftly(softly -> softly.assertThat(exists).isFalse());
 		}
 
 		@Test
-		void 성공_테이블수보다_적게_변경할수있다() {
+		void true_테이블존재() {
 			// given
-			Integer previousCount = 5;
-			Integer newCount = 3;
-			List<Table> tablesAll = tableRepository.createTablesAll(savedStore, previousCount);
+			testFixtureBuilder.buildTableEntityList(TABLEENTITY_LIST(2, savedStoreEntity));
 			testEntityManager.flush();
 			testEntityManager.clear();
-
 			// when
-			System.out.println("===TableRepositoryImplTest.성공_테이블수보다_적게_변경할수있다 쿼리===");
-			List<Table> modifiedTables = tableRepository.updateTableNum(savedStore, newCount);
-			testEntityManager.flush();
-			testEntityManager.clear();
-			System.out.println("===TableRepositoryImplTest.성공_테이블수보다_적게_변경할수있다 쿼리===");
-
+			System.out.println("===TableRepositoryImplTest.existsTableByStoreAndTableNumWithLock 쿼리===");
+			boolean exists = tableRepository.existsTableByStoreAndTableNumWithLock(savedStore, 2);
+			System.out.println("===TableRepositoryImplTest.existsTableByStoreAndTableNumWithLock 쿼리===");
 			// then
-			assertSoftly(softly -> {
-				List<Table> tables = tableRepository.findTablesByStoreId(savedStore.getStoreId());
-				softly.assertThat(tables).hasSize(newCount);
-				softly.assertThat(modifiedTables).hasSize(newCount);
-				for (int i = 0; i < newCount; i++) {
-					softly.assertThat(tables.get(i).getTableNumber()).isEqualTo(i + 1);
-					softly.assertThat(tables.get(i).getIsActive()).isFalse();
-					softly.assertThat(modifiedTables.get(i).getIsActive()).isFalse();
-					softly.assertThat(modifiedTables.get(i).getTableNumber()).isEqualTo(i + 1);
-				}
-			});
+			assertSoftly(softly -> softly.assertThat(exists).isTrue());
 		}
+	}
 
-		@Test
-		void 실패_테이블_수가_없으면_실패한다() {
-			// given
-			Integer newCount = 2;
+	@Test
+	@DisplayName("saveTable – 저장 후 ID 반환")
+	void saveTable() {
+		// given
+		Integer tableNum = 1;
+		TablePoint point = TablePoint.of(3, 4);
+		// when
+		System.out.println("===TableRepositoryImplTest.saveTable 쿼리===");
+		Long id = tableRepository.saveTable(savedStore, tableNum, point);
+		System.out.println("===TableRepositoryImplTest.saveTable 쿼리===");
+		testEntityManager.flush();
+		testEntityManager.clear();
+		// then
+		assertSoftly(softly -> {
+			TableEntity entity = testEntityManager.find(TableEntity.class, id);
+			softly.assertThat(entity).isNotNull();
+			softly.assertThat(entity.getTableNumber().getTableNumber()).isEqualTo(tableNum);
+			softly.assertThat(entity.getTablePoint().getTableX()).isEqualTo(3);
+			softly.assertThat(entity.getTablePoint().getTableY()).isEqualTo(4);
+		});
+	}
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> tableRepository.updateTableNum(savedStore, newCount))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.TABLE_NOT_FOUND);
-			});
-		}
+	@Test
+	@DisplayName("findTableWithStoreByTableId – 테이블과 가게 조인 조회")
+	void findTableJoinStore() {
+		// given
+		TableEntity tableEntity = testFixtureBuilder.buildTableEntity(GENERAL_TABLE_ENTITY(savedStoreEntity));
+		testEntityManager.flush();
+		testEntityManager.clear();
+		// when
+		System.out.println("===TableRepositoryImplTest.findTableJoinStore 쿼리===");
+		Optional<Table> opt = tableRepository.findTableWithStoreByTableId(tableEntity.getId());
+		System.out.println("===TableRepositoryImplTest.findTableJoinStore 쿼리===");
+		// then
+		assertSoftly(softly -> {
+			softly.assertThat(opt).isPresent();
+			Table table = opt.get();
+			softly.assertThat(table.getTableId()).isEqualTo(tableEntity.getId());
+			softly.assertThat(table.getStore().getStoreId()).isEqualTo(savedStore.getStoreId());
+		});
+	}
 
-		@Test
-		void 실패_변경_테이블_수가_기존과_같으면_실패한다() {
-			// given
-			Integer previousCount = 5;
-			Integer newCount = 5;
-			tableRepository.createTablesAll(savedStore, previousCount);
-			testEntityManager.flush();
-			testEntityManager.clear();
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> tableRepository.updateTableNum(savedStore, newCount))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.TABLE_NOT_EQUAL_MODIFY);
-			});
-		}
+	@Test
+	@DisplayName("updateTableInfo – 번호와 좌표 수정")
+	void updateTableInfo() {
+		// given
+		TableEntity tableEntity = testFixtureBuilder.buildTableEntity(GENERAL_TABLE_ENTITY(savedStoreEntity));
+		testEntityManager.flush();
+		testEntityManager.clear();
+		Table table = TableMapper.toTable(tableEntity, savedStore);
+		Integer newNumber = table.getTableNumber() + 2;
+		TablePoint newPoint = TablePoint.of(7, 8);
+		// when
+		System.out.println("===TableRepositoryImplTest.updateTableInfo 쿼리===");
+		tableRepository.updateTableInfo(table, newNumber, newPoint);
+		System.out.println("===TableRepositoryImplTest.updateTableInfo 쿼리===");
+		testEntityManager.flush();
+		testEntityManager.clear();
+		// then
+		assertSoftly(softly -> {
+			TableEntity updated = testEntityManager.find(TableEntity.class, tableEntity.getId());
+			softly.assertThat(updated.getTableNumber().getTableNumber()).isEqualTo(newNumber);
+			softly.assertThat(updated.getTablePoint().getTableX()).isEqualTo(7);
+			softly.assertThat(updated.getTablePoint().getTableY()).isEqualTo(8);
+		});
 	}
 
 }

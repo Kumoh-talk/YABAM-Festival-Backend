@@ -1,7 +1,7 @@
 package com.application.presentation.menu.controller;
 
 import static com.response.ResponseUtil.*;
-import static domain.pos.member.entity.UserRole.*;
+import static com.vo.UserRole.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,8 +24,8 @@ import com.application.presentation.menu.dto.response.MenuCategoryInfoResponse;
 import com.authorization.AssignUserPassport;
 import com.authorization.HasRole;
 import com.response.ResponseBody;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.menu.entity.MenuCategory;
 import domain.pos.menu.entity.MenuCategoryInfo;
 import domain.pos.menu.service.MenuCategoryService;
@@ -39,6 +39,8 @@ import lombok.RequiredArgsConstructor;
 @Validated
 public class MenuCategoryController implements MenuCategoryApi {
 	private final MenuCategoryService menuCategoryService;
+
+	// TODO : 메뉴 카테고리 생성 100개 이하로 제한되어있음 (사유 : order 재정렬 문제)
 
 	@PostMapping("/api/v1/stores/{storeId}/menu-categories")
 	@HasRole(userRole = ROLE_OWNER)

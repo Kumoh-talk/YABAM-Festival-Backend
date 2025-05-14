@@ -16,9 +16,9 @@ import org.mockito.Mock;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
+import com.vo.UserPassport;
 
 import base.ServiceTest;
-import domain.pos.member.entity.UserPassport;
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
 import domain.pos.store.implement.StoreReader;
@@ -263,6 +263,183 @@ class StoreServiceTest extends ServiceTest {
 					.validateStoreOwner(any(UserPassport.class), any(Long.class));
 				verify(storeWriter, never())
 					.deleteStore(any(Store.class));
+			});
+		}
+	}
+
+	@Nested
+	@DisplayName("가게 상세 이미지 등록")
+	class postDetailImage {
+		@Test
+		void 성공() {
+			// given
+			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			Store savedStore = GENERAL_CLOSE_STORE();
+			String imageUrl = "https://example.com/image.jpg";
+
+			doReturn(savedStore)
+				.when(storeValidator).validateStoreOwner(queryUserPassport, queryStoreId);
+
+			// when
+			storeService.postDetailImage(queryUserPassport, queryStoreId, imageUrl);
+
+			// then
+			assertSoftly(softly -> {
+				verify(storeValidator)
+					.validateStoreOwner(any(UserPassport.class), any(Long.class));
+				verify(storeWriter)
+					.postDetailImage(any(Store.class), eq(imageUrl));
+			});
+		}
+
+		@Test
+		void 실패_유효하지_않는_가게_ID() {
+			// given
+			UserPassport queryOwnerPassport = OWNER_USER_PASSPORT();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			String imageUrl = "https://example.com/image.jpg";
+
+			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE))
+				.when(storeValidator).validateStoreOwner(queryOwnerPassport, queryStoreId);
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(
+						() -> storeService.postDetailImage(queryOwnerPassport, queryStoreId, imageUrl))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
+
+				verify(storeValidator)
+					.validateStoreOwner(any(UserPassport.class), any(Long.class));
+				verify(storeWriter, never())
+					.postDetailImage(any(Store.class), anyString());
+			});
+		}
+
+		@Test
+		void 실패_가게ID와_점주ID가_다를시() {
+			// given
+			UserPassport queryDiffOwnerPassport = DIFF_OWNER_PASSPORT();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			String imageUrl = "https://example.com/image.jpg";
+
+			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
+				.when(storeValidator).validateStoreOwner(queryDiffOwnerPassport, queryStoreId);
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(
+						() -> storeService.postDetailImage(queryDiffOwnerPassport, queryStoreId, imageUrl))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
+
+				verify(storeValidator)
+					.validateStoreOwner(any(UserPassport.class), any(Long.class));
+				verify(storeWriter, never())
+					.postDetailImage(any(Store.class), anyString());
+			});
+		}
+	}
+
+	@Nested
+	@DisplayName("가게 상세 이미지 삭제")
+	class deleteDetailImage {
+		@Test
+		void 성공() {
+			// given
+			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			Store savedStore = GENERAL_CLOSE_STORE();
+			String imageUrl = "https://example.com/image.jpg";
+
+			doReturn(savedStore)
+				.when(storeValidator).validateStoreOwner(queryUserPassport, queryStoreId);
+
+			doNothing()
+				.when(storeValidator).validateExistDetailImage(savedStore, imageUrl);
+
+			// when
+			storeService.deleteDetailImage(queryUserPassport, queryStoreId, imageUrl);
+
+			// then
+			assertSoftly(softly -> {
+				verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
+				verify(storeValidator).validateExistDetailImage(any(Store.class), eq(imageUrl));
+				verify(storeWriter).deleteDetailImage(any(Store.class), eq(imageUrl));
+			});
+		}
+
+		@Test
+		void 실패_유효하지_않는_가게_ID() {
+			// given
+			UserPassport queryOwnerPassport = OWNER_USER_PASSPORT();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			String imageUrl = "https://example.com/image.jpg";
+
+			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE))
+				.when(storeValidator).validateStoreOwner(queryOwnerPassport, queryStoreId);
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(
+						() -> storeService.deleteDetailImage(queryOwnerPassport, queryStoreId, imageUrl))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
+
+				verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
+				verify(storeValidator, never()).validateExistDetailImage(any(Store.class), anyString());
+				verify(storeWriter, never()).deleteDetailImage(any(Store.class), anyString());
+			});
+		}
+
+		@Test
+		void 실패_가게ID와_점주ID가_다를시() {
+			// given
+			UserPassport queryDiffOwnerPassport = DIFF_OWNER_PASSPORT();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			String imageUrl = "https://example.com/image.jpg";
+
+			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
+				.when(storeValidator).validateStoreOwner(queryDiffOwnerPassport, queryStoreId);
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(
+						() -> storeService.deleteDetailImage(queryDiffOwnerPassport, queryStoreId, imageUrl))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
+
+				verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
+				verify(storeValidator, never()).validateExistDetailImage(any(Store.class), anyString());
+				verify(storeWriter, never()).deleteDetailImage(any(Store.class), anyString());
+			});
+		}
+
+		@Test
+		void 실패_존재하지_않는_이미지_URL() {
+			// given
+			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			Store savedStore = GENERAL_CLOSE_STORE();
+			String imageUrl = "https://example.com/non-existent-image.jpg";
+
+			doReturn(savedStore)
+				.when(storeValidator).validateStoreOwner(queryUserPassport, queryStoreId);
+
+			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE_IMAGE))
+				.when(storeValidator).validateExistDetailImage(savedStore, imageUrl);
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(
+						() -> storeService.deleteDetailImage(queryUserPassport, queryStoreId, imageUrl))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE_IMAGE);
+
+				verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
+				verify(storeValidator).validateExistDetailImage(any(Store.class), anyString());
+				verify(storeWriter, never()).deleteDetailImage(any(Store.class), anyString());
 			});
 		}
 	}

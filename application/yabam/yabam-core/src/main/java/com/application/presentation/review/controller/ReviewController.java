@@ -1,7 +1,7 @@
 package com.application.presentation.review.controller;
 
 import static com.response.ResponseUtil.*;
-import static domain.pos.member.entity.UserRole.*;
+import static com.vo.UserRole.*;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,8 +20,8 @@ import com.application.presentation.review.dto.response.ReviewsCusorResponse;
 import com.authorization.AssignUserPassport;
 import com.authorization.HasRole;
 import com.response.ResponseBody;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.review.entity.Review;
 import domain.pos.review.service.ReviewService;
 import jakarta.validation.Valid;
@@ -39,13 +39,19 @@ public class ReviewController implements ReviewApi {
 		UserPassport userPassport,
 		@RequestBody @Valid ReviewCreateRequest reviewCreateRequest
 	) {
-		Review review = reviewService.postReview(userPassport, reviewCreateRequest.receiptId(),
+		Review review = reviewService.postReview(userPassport, reviewCreateRequest.storeId(),
+			reviewCreateRequest.receiptId(),
 			reviewCreateRequest.getReviewInfo());
 		return ResponseEntity.ok(createSuccessResponse(
 			ReviewIdResponse.from(review)
 		));
 	}
 
+	/**
+	 * @deprecated since 2025-05-08
+	 * 기획상 삭제될 예정.
+	 */
+	@Deprecated(since = "2025-05-08")
 	@PatchMapping("/api/v1/review")
 	@HasRole(userRole = ROLE_USER)
 	@AssignUserPassport
@@ -72,15 +78,14 @@ public class ReviewController implements ReviewApi {
 	}
 
 	@GetMapping("/api/v1/reviews")
-	@HasRole(userRole = ROLE_ANONYMOUS)
 	public ResponseEntity<ResponseBody<ReviewsCusorResponse>> getReview(
-		@RequestParam Long receiptId,
-		@RequestParam Long lastReviewId,
+		@RequestParam Long storeId,
+		@RequestParam(required = false) Long lastReviewId,
 		@RequestParam int size
 	) {
 		return ResponseEntity.ok(createSuccessResponse(
 			ReviewsCusorResponse.from(reviewService.getReviews(
-				receiptId, lastReviewId, size))
+				storeId, lastReviewId, size))
 		));
 	}
 }

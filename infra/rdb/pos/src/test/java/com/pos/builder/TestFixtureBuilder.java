@@ -5,10 +5,14 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.pos.call.entity.CallEntity;
 import com.pos.cart.entity.CartEntity;
 import com.pos.menu.entity.MenuCategoryEntity;
 import com.pos.menu.entity.MenuEntity;
+import com.pos.receipt.entity.ReceiptEntity;
+import com.pos.review.entity.ReviewEntity;
 import com.pos.sale.entity.SaleEntity;
+import com.pos.store.entity.StoreDetailImageEntity;
 import com.pos.store.entity.StoreEntity;
 import com.pos.table.entity.TableEntity;
 
@@ -43,5 +47,26 @@ public class TestFixtureBuilder {
 
 	public CartEntity buildCartEntity(CartEntity cartEntity) {
 		return bs.getCartJpaRepository().save(cartEntity);
+	}
+
+	public List<StoreDetailImageEntity> buildStoreDetailImageEntities(
+		List<StoreDetailImageEntity> storeDetailImageEntities) {
+		return bs.getStoreDetailImageJpaRepository().saveAll(storeDetailImageEntities);
+	}
+
+	public ReviewEntity buildReviewEntity(ReviewEntity reviewEntity) {
+		return bs.getReviewJpaRepository().save(reviewEntity);
+	}
+
+	public ReceiptEntity buildReceiptEntity(ReceiptEntity receiptEntity) {
+		return bs.getReceiptJpaRepository().save(receiptEntity);
+	}
+
+	public CallEntity buildCallEntity(CallEntity callEntity) {
+		return bs.getCallJpaRepository().save(callEntity);
+	}
+
+	public TableEntity buildTableEntity(TableEntity tableEntity) {
+		return bs.getTableJpaRepository().save(tableEntity);
 	}
 }

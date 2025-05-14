@@ -1,7 +1,7 @@
 package com.application.presentation.order.controller;
 
 import static com.response.ResponseUtil.*;
-import static domain.pos.member.entity.UserRole.*;
+import static com.vo.UserRole.*;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,8 +19,8 @@ import com.application.presentation.order.dto.response.OrderMenuResponse;
 import com.authorization.AssignUserPassport;
 import com.authorization.HasRole;
 import com.response.ResponseBody;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.order.entity.OrderMenu;
 import domain.pos.order.entity.vo.OrderMenuStatus;
 import domain.pos.order.service.OrderMenuService;

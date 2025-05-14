@@ -1,6 +1,7 @@
 package com.pos.review.repository.dsl;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.pos.review.entity.QReviewEntity;
 import com.pos.review.entity.ReviewEntity;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +23,7 @@ public class ReviewDslRepositoryImpl implements ReviewDslRepository {
 	private final QReviewEntity qReviewEntity = QReviewEntity.reviewEntity;
 
 	@Override
-	public boolean existsByReceiptIdAndUserId(Long receiptId, Long userId) {
+	public boolean existsByReceiptIdAndUserId(UUID receiptId, Long userId) {
 		return queryFactory
 			.select(qReviewEntity.count())
 			.from(qReviewEntity)
@@ -31,11 +33,10 @@ public class ReviewDslRepositoryImpl implements ReviewDslRepository {
 	}
 
 	@Override
-	public Slice<ReviewEntity> findReviewsWithUser(Long receiptId, Long lastReviewId, int size) {
+	public Slice<ReviewEntity> findReviewsWithUser(Long storeId, Long lastReviewId, int size) {
 		List<ReviewEntity> results = queryFactory
 			.selectFrom(qReviewEntity)
-			.where(qReviewEntity.id.lt(lastReviewId)
-				.and(qReviewEntity.receipt.id.eq(receiptId)))
+			.where(reviewCusorWhereCondition(storeId, lastReviewId))
 			.orderBy(qReviewEntity.id.desc())
 			.limit(size + 1)
 			.fetch();
@@ -45,6 +46,14 @@ public class ReviewDslRepositoryImpl implements ReviewDslRepository {
 		}
 
 		return new SliceImpl<>(results, PageRequest.of(0, size), hasNext);
+	}
+
+	private BooleanExpression reviewCusorWhereCondition(Long storeId, Long lastReviewId) {
+		if (lastReviewId == null) {
+			return qReviewEntity.store.id.eq(storeId);
+		}
+		return qReviewEntity.id.lt(lastReviewId)
+			.and(qReviewEntity.store.id.eq(storeId));
 	}
 
 }

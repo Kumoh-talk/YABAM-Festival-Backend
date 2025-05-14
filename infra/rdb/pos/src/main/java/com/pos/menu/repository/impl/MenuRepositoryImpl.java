@@ -9,6 +9,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.exception.ErrorCode;
+import com.exception.ServiceException;
 import com.pos.menu.entity.MenuEntity;
 import com.pos.menu.mapper.MenuCategoryMapper;
 import com.pos.menu.mapper.MenuMapper;
@@ -38,6 +40,16 @@ public class MenuRepositoryImpl implements MenuRepository {
 	@Transactional
 	public Menu postMenu(Store store, MenuCategoryInfo menuCategoryInfo, MenuInfo menuInfo) {
 		MenuEntity menuEntity = MenuMapper.toMenuEntity(menuInfo, store, menuCategoryInfo);
+		menuJpaRepository.findMaxOrderByMenuCategoryId(menuCategoryInfo.getId())
+			.ifPresentOrElse(
+				order -> {
+					if (order > 99) {
+						throw new ServiceException(ErrorCode.MENU_QUANTITY_OVERFLOW);
+					}
+					menuEntity.updateOrder(order + 1);
+				},
+				() -> menuEntity.updateOrder(1)
+			);
 		menuJpaRepository.save(menuEntity);
 		return MenuMapper.toMenu(menuEntity, store, MenuCategory.fromWithoutStore(menuCategoryInfo));
 	}
@@ -45,6 +57,13 @@ public class MenuRepositoryImpl implements MenuRepository {
 	@Override
 	public Optional<MenuInfo> getMenuInfo(Long storeId, Long menuId) {
 		return menuJpaRepository.findByIdAndStoreId(menuId, storeId)
+			.map(MenuMapper::toMenuInfo);
+	}
+
+	@Override
+	public Optional<MenuInfo> getMenuInfo(Long storeId, Long menuId, Long lastMenuCategoryId) {
+		return menuJpaRepository.findByIdAndStoreIdAndMenuCategoryId(menuId, storeId, lastMenuCategoryId)
+			.filter(menuEntity -> menuEntity.getMenuCategory().getId().equals(lastMenuCategoryId))
 			.map(MenuMapper::toMenuInfo);
 	}
 
@@ -58,12 +77,24 @@ public class MenuRepositoryImpl implements MenuRepository {
 	}
 
 	@Override
-	public Slice<MenuInfo> getMenuSlice(int pageSize, MenuInfo lastMenuInfo, Long menuCategoryId) {
+	public Slice<Menu> getMenuSlice(int pageSize, Long storeId, MenuInfo lastMenuInfo,
+		MenuCategoryInfo lastMenuCategoryInfo) {
 		return menuJpaRepository.findSliceByMenuCategoryId(
-			pageSize,
-			lastMenuInfo == null ? null : lastMenuInfo.getOrder(),
-			menuCategoryId
-		).map(MenuMapper::toMenuInfo);
+				pageSize,
+				storeId,
+				lastMenuInfo == null ? null : lastMenuInfo.getOrder(),
+				lastMenuCategoryInfo
+			)
+			.map(menuEntity -> MenuMapper.toMenu(menuEntity, null,
+				MenuCategoryMapper.toMenuCategory(menuEntity.getMenuCategory(), null)));
+	}
+
+	@Override
+	public List<MenuInfo> getCategoryMenuList(Long storeId, Long menuCategoryId) {
+		return menuJpaRepository.findAllByStoreIdAndMenuCategoryId(storeId, menuCategoryId)
+			.stream()
+			.map(MenuMapper::toMenuInfo)
+			.collect(Collectors.toList());
 	}
 
 	@Override

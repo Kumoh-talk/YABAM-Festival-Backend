@@ -18,7 +18,8 @@ public enum ErrorCode {
 	NOT_EQUAL_STORE_OWNER(HttpStatus.CONFLICT, "STORE_0001", "해당 가게의 점주가 아닙니다"),
 	NOT_FOUND_STORE(HttpStatus.NOT_FOUND, "STORE_0002", "해당 가게를 찾을 수 없습니다"),
 	CONFLICT_OPEN_STORE(HttpStatus.CONFLICT, "STORE_0003", "해당 가게 활성화 여부가 충돌된 요청입니다"),
-	CONFLICT_CLOSE_STORE(HttpStatus.CONFLICT, "STORE_004", "가게가 이미 종료되었습니다."),
+	CONFLICT_CLOSE_STORE(HttpStatus.CONFLICT, "STORE_0004", "가게가 이미 종료되었습니다."),
+	NOT_FOUND_STORE_IMAGE(HttpStatus.NOT_FOUND, "STORE_0005", "존재하지 않는 가게 이미지입니다."),
 
 	// Auth
 	INVALID_ID_TOKEN(HttpStatus.BAD_REQUEST, "AUTH_0001", "해당 ID 토큰은 유효하지 않습니다."),
@@ -36,17 +37,23 @@ public enum ErrorCode {
 	STORE_IS_OPEN_MENU_WRITE(HttpStatus.CONFLICT, "MENU_0003", "운영중인 가게는 메뉴를 추가 및 수정할 수 없습니다."),
 	MENU_ORDER_INVALID(HttpStatus.BAD_REQUEST, "MENU_0004", "메뉴 순서가 유효하지 않습니다."),
 	MENU_SOLD_OUT(HttpStatus.BAD_REQUEST, "MENU_0005", "메뉴가 품절되었습니다."),
+	MENU_QUANTITY_OVERFLOW(HttpStatus.BAD_REQUEST, "MENU_0006", "카테고리 당 등록 가능한 메뉴 개수는 100개 이하입니다."),
 
 	// MenuCategory
 	MENU_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "MENU_CATEGORY_0001", "존재하지 않는 메뉴 카테고리입니다."),
 	EXIST_MENU_CATEGORY_ORDER(HttpStatus.CONFLICT, "MENU_CATEGORY_0002", "이미 존재하는 메뉴 카테고리 순서입니다."),
 	MENU_CATEGORY_ORDER_INVALID(HttpStatus.BAD_REQUEST, "MENU_CATEGORY_0003", "메뉴 카테고리 순서가 유효하지 않습니다."),
+	MENU_CATEGORY_QUANTITY_OVERFLOW(HttpStatus.BAD_REQUEST, "MENU_CATEGORY_0004",
+		"주점 당 등록 가능한 메뉴 카테고리 개수는 100개 이하입니다."),
+
 	// Security
 	NEED_AUTHORIZED(HttpStatus.UNAUTHORIZED, "SECURITY_0001", "인증이 필요합니다."),
 	ACCESS_DENIED(HttpStatus.FORBIDDEN, "SECURITY_0002", "권한이 없습니다."),
 	JWT_EXPIRED(HttpStatus.UNAUTHORIZED, "SECURITY_0003", "JWT 토큰이 만료되었습니다."),
 	JWT_INVALID(HttpStatus.UNAUTHORIZED, "SECURITY_0004", "JWT 토큰이 올바르지 않습니다."),
 	JWT_NOT_EXIST(HttpStatus.UNAUTHORIZED, "SECURITY_0005", "JWT 토큰이 존재하지 않습니다."),
+	INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "SECURITY_0006", "Access Token이 유효하지 않습니다."),
+	INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "SECURITY_0007", "Refresh Token이 유효하지 않습니다."),
 
 	// Table
 	EXIST_TABLE(HttpStatus.CONFLICT, "TABLE_0001", "이미 존재하는 테이블입니다"),
@@ -55,8 +62,9 @@ public enum ErrorCode {
 	STORE_IS_OPEN_TABLE_WRITE(HttpStatus.CONFLICT, "TABLE_0004", "가게가 운영중입니다. 테이블 수 조정 불가"),
 	TABLE_NOT_FOUND(HttpStatus.NOT_FOUND, "TABLE_0005", "테이블이 존재하지 않습니다."),
 	TABLE_NOT_EQUAL_MODIFY(HttpStatus.CONFLICT, "TABLE_0006", "테이블 수가 같습니다."),
+	TABLE_NOT_ACTIVE(HttpStatus.BAD_REQUEST, "TABLE_0007", "비활성화된 테이블입니다."),
 	// Sale
-	NOT_FOUND_SALE(HttpStatus.NOT_FOUND, "SALE_0001", "존재하지 않는 세일입니다."),
+	NOT_FOUND_SALE(HttpStatus.NOT_FOUND, "SALE_0001", "영업이 존재하지 않습니다."),
 	CLOSE_SALE(HttpStatus.CONFLICT, "SALE_0002", "영업이 종료되었습니다."),
 	SALE_ACCESS_DENIED(HttpStatus.FORBIDDEN, "SALE_0003", "대상 영업에 접근 가능한 요청이 아닙니다."),
 
@@ -93,7 +101,12 @@ public enum ErrorCode {
 	REVIEW_NOT_ADJUSTMENT(HttpStatus.BAD_REQUEST, "REVIEW_0001", "정산되지 않았으면 리뷰 생성 불가합니다."),
 	REVIEW_ALREADY_EXISTS(HttpStatus.CONFLICT, "REVIEW_0002", "이미 리뷰가 존재합니다."),
 	REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW_0003", "존재하지 않는 리뷰입니다."),
-	REVIEW_NOT_USER(HttpStatus.BAD_REQUEST, "REVIEW_0004", "해당 사용자가 작성한 리뷰가 아닙니다.");
+	REVIEW_NOT_USER(HttpStatus.BAD_REQUEST, "REVIEW_0004", "해당 사용자가 작성한 리뷰가 아닙니다."),
+
+	// Call
+	STORE_NOT_MATCH(HttpStatus.BAD_REQUEST, "CALL_0001", "가게와 일치하지 않는 영수증에 대한 호출입니다."),
+	NOT_FOUND_CALL(HttpStatus.NOT_FOUND, "CALL_0002", "존재하지 않는 호출입니다."),
+	NOT_VALID_CALL_OWNER(HttpStatus.BAD_REQUEST, "CALL_0003", "해당 직원 호출 내역을 수정할 수 없는 점주입니다.");
 
 	private final HttpStatus status;
 	private final String code;

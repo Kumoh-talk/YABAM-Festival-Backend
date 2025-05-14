@@ -33,6 +33,16 @@ public class ReceiptFixture {
 		);
 	}
 
+	public static Receipt CUSTOM_ADJUSTMENT_RECEIPT(
+		final Sale sale,
+		final Table table) {
+		return Receipt.of(
+			GENERAL_ADJUSTMENT_RECEIPT_INFO,
+			sale,
+			table
+		);
+	}
+
 	public static Receipt GENERAL_ADJUSTMENT_RECEIPT() {
 		return Receipt.of(
 			GENERAL_ADJUSTMENT_RECEIPT_INFO,

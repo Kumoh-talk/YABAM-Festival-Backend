@@ -1,9 +1,10 @@
 package com.application.presentation.order.controller;
 
 import static com.response.ResponseUtil.*;
-import static domain.pos.member.entity.UserRole.*;
+import static com.vo.UserRole.*;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -23,8 +24,8 @@ import com.application.presentation.order.dto.response.OrderResponse;
 import com.authorization.AssignUserPassport;
 import com.authorization.HasRole;
 import com.response.ResponseBody;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.order.entity.Order;
 import domain.pos.order.entity.vo.OrderStatus;
 import domain.pos.order.service.OrderService;
@@ -43,7 +44,7 @@ public class OrderController implements OrderApi {
 	@AssignUserPassport
 	public ResponseEntity<ResponseBody<OrderResponse>> postOrderWithCart(
 		UserPassport userPassport,
-		@PathVariable Long receiptId) {
+		@PathVariable UUID receiptId) {
 		Order order = orderService.postOrderWithCart(receiptId, userPassport);
 		return ResponseEntity.ok(createSuccessResponse(OrderResponse.from(order)));
 	}
@@ -53,7 +54,7 @@ public class OrderController implements OrderApi {
 	@AssignUserPassport
 	public ResponseEntity<ResponseBody<OrderResponse>> postOrderWithoutCart(
 		UserPassport userPassport,
-		@PathVariable Long receiptId, @RequestBody @Valid @NotEmpty List<PostOrderMenuRequest> postOrderMenuRequests) {
+		@PathVariable UUID receiptId, @RequestBody @Valid @NotEmpty List<PostOrderMenuRequest> postOrderMenuRequests) {
 		Order order = orderService.postOrderWithoutCart(receiptId, userPassport, postOrderMenuRequests.stream()
 			.map(PostOrderMenuRequest::toOrderMenu).toList());
 		return ResponseEntity.ok(createSuccessResponse(OrderResponse.from(order)));
@@ -70,7 +71,7 @@ public class OrderController implements OrderApi {
 	}
 
 	@GetMapping("/api/v1/receipts/{receiptId}/orders")
-	public ResponseEntity<ResponseBody<List<OrderAndMenusResponse>>> getReceiptOrders(@PathVariable Long receiptId) {
+	public ResponseEntity<ResponseBody<List<OrderAndMenusResponse>>> getReceiptOrders(@PathVariable UUID receiptId) {
 		List<OrderAndMenusResponse> orderAndMenusResponse = orderService.getReceiptOrders(receiptId).stream()
 			.map(OrderAndMenusResponse::from)
 			.toList();

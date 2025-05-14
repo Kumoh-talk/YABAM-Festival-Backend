@@ -2,6 +2,7 @@ package com.pos.review.repository.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -13,8 +14,8 @@ import com.exception.ServiceException;
 import com.pos.review.entity.ReviewEntity;
 import com.pos.review.mapper.ReviewMapper;
 import com.pos.review.repository.jpa.ReviewJpaRepository;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.review.entity.Review;
 import domain.pos.review.entity.ReviewInfo;
@@ -27,14 +28,15 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 	private final ReviewJpaRepository reviewJpaRepository;
 
 	@Override
-	public Review createReview(UserPassport userPassport, ReceiptInfo receiptInfo, ReviewInfo reviewInfo) {
-		ReviewEntity reviewEntity = ReviewMapper.toReviewEntity(userPassport, receiptInfo, reviewInfo);
+	public Review createReview(UserPassport userPassport, Long storeId, ReceiptInfo receiptInfo,
+		ReviewInfo reviewInfo) {
+		ReviewEntity reviewEntity = ReviewMapper.toReviewEntity(userPassport, storeId, receiptInfo, reviewInfo);
 		ReviewEntity savedReviewEntity = reviewJpaRepository.save(reviewEntity);
 		return ReviewMapper.toReview(savedReviewEntity, userPassport);
 	}
 
 	@Override
-	public boolean existsReview(Long receiptId, UserPassport userPassport) {
+	public boolean existsReview(UUID receiptId, UserPassport userPassport) {
 		return reviewJpaRepository.existsByReceiptIdAndUserId(receiptId, userPassport.getUserId());
 	}
 
@@ -59,8 +61,8 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 	}
 
 	@Override
-	public Slice<Review> getReviewsWithUser(Long receiptId, Long lastReviewId, int size) {
-		Slice<ReviewEntity> reviewsWithUser = reviewJpaRepository.findReviewsWithUser(receiptId, lastReviewId, size);
+	public Slice<Review> getReviewsWithUser(Long storeId, Long lastReviewId, int size) {
+		Slice<ReviewEntity> reviewsWithUser = reviewJpaRepository.findReviewsWithUser(storeId, lastReviewId, size);
 		List<Review> reviews = reviewsWithUser.getContent().stream()
 			.map(reviewEntity -> ReviewMapper.toReview(reviewEntity))
 			.toList();

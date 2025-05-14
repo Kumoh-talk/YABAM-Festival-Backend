@@ -1,6 +1,7 @@
 package com.application.presentation.order.api;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,8 +17,8 @@ import com.application.presentation.order.dto.response.OrderInfoResponse;
 import com.application.presentation.order.dto.response.OrderResponse;
 import com.exception.ErrorCode;
 import com.response.ResponseBody;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.order.entity.vo.OrderStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -54,7 +55,7 @@ public interface OrderApi {
 	)
 	ResponseEntity<ResponseBody<OrderResponse>> postOrderWithCart(
 		@Parameter(hidden = true) UserPassport userPassport,
-		@PathVariable Long receiptId);
+		@PathVariable UUID receiptId);
 
 	@Operation(
 		summary = "메뉴 리스트 기반 주문 생성 API",
@@ -79,7 +80,7 @@ public interface OrderApi {
 	)
 	ResponseEntity<ResponseBody<OrderResponse>> postOrderWithoutCart(
 		@Parameter(hidden = true) UserPassport userPassport,
-		@PathVariable Long receiptId, @RequestBody @Valid @NotEmpty List<PostOrderMenuRequest> postOrderMenuRequests);
+		@PathVariable UUID receiptId, @RequestBody @Valid @NotEmpty List<PostOrderMenuRequest> postOrderMenuRequests);
 
 	@Operation(
 		summary = "주문 상태 변경 API",
@@ -121,7 +122,7 @@ public interface OrderApi {
 
 		}
 	)
-	ResponseEntity<ResponseBody<List<OrderAndMenusResponse>>> getReceiptOrders(@PathVariable Long receiptId);
+	ResponseEntity<ResponseBody<List<OrderAndMenusResponse>>> getReceiptOrders(@PathVariable UUID receiptId);
 
 	@Operation(
 		summary = "영업별 주문 리스트 조회 API",

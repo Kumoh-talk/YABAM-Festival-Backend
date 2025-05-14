@@ -2,6 +2,7 @@ package com.pos.order.repository.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -144,7 +145,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 	}
 
 	@Override
-	public List<Order> getReceiptOrdersWithMenu(Long receiptId) {
+	public List<Order> getReceiptOrdersWithMenu(UUID receiptId) {
 		return orderJpaRepository.findReceiptOrdersWithMenu(receiptId)
 			.stream()
 			.map(orderEntity -> OrderMapper.toOrder(orderEntity, null,

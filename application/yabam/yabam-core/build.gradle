@@ -9,6 +9,7 @@ dependencies {
     // web
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.data:spring-data-commons'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // config client
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
@@ -19,6 +20,7 @@ dependencies {
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
 
     // common module
     implementation(project(':common:base'))

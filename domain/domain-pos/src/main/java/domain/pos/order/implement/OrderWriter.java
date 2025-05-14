@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
+import com.vo.UserRole;
 
 import domain.pos.cart.entity.CartMenu;
-import domain.pos.member.entity.UserRole;
 import domain.pos.order.entity.Order;
 import domain.pos.order.entity.OrderMenu;
 import domain.pos.order.entity.vo.OrderStatus;

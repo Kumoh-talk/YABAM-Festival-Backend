@@ -1,11 +1,13 @@
 package domain.pos.review.implement;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 
-import domain.pos.member.entity.UserPassport;
+import com.vo.UserPassport;
+
 import domain.pos.review.entity.Review;
 import domain.pos.review.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class ReviewReader {
 	private final ReviewRepository reviewRepository;
 
-	public boolean isExistsReview(Long receiptId, UserPassport userPassport) {
+	public boolean isExistsReview(UUID receiptId, UserPassport userPassport) {
 		return reviewRepository.existsReview(receiptId, userPassport);
 	}
 
@@ -23,7 +25,7 @@ public class ReviewReader {
 		return reviewRepository.findById(reviewId);
 	}
 
-	public Slice<Review> getReviews(Long receiptId, Long lastReviewId, int size) {
-		return reviewRepository.getReviewsWithUser(receiptId, lastReviewId, size);
+	public Slice<Review> getReviews(Long storeId, Long lastReviewId, int size) {
+		return reviewRepository.getReviewsWithUser(storeId, lastReviewId, size);
 	}
 }

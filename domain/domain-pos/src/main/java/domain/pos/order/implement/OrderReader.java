@@ -2,6 +2,7 @@ package domain.pos.order.implement;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
@@ -27,7 +28,7 @@ public class OrderReader {
 		return orderRepository.getSaleOrdersWithMenuAndTable(saleId, orderStatuses);
 	}
 
-	public List<Order> getReceiptOrdersWithMenu(Long receiptId) {
+	public List<Order> getReceiptOrdersWithMenu(UUID receiptId) {
 		return orderRepository.getReceiptOrdersWithMenu(receiptId);
 	}
 }

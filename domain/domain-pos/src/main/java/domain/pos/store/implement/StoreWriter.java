@@ -2,7 +2,8 @@ package domain.pos.store.implement;
 
 import org.springframework.stereotype.Component;
 
-import domain.pos.member.entity.UserPassport;
+import com.vo.UserPassport;
+
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
 import domain.pos.store.repository.StoreRepository;
@@ -27,5 +28,13 @@ public class StoreWriter {
 
 	public Store modifyStoreOpenStatus(Store previousStore) {
 		return storeRepository.changeStoreOpenStatus(previousStore);
+	}
+
+	public void postDetailImage(Store previousStore, String imageUrl) {
+		storeRepository.postDetailImage(previousStore, imageUrl);
+	}
+
+	public void deleteDetailImage(Store previousStore, String imageUrl) {
+		storeRepository.deleteDetailImage(previousStore, imageUrl);
 	}
 }

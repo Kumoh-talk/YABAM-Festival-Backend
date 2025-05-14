@@ -7,6 +7,7 @@ import static org.assertj.core.api.SoftAssertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,9 +17,9 @@ import org.mockito.Mock;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
+import com.vo.UserPassport;
 
 import base.ServiceTest;
-import domain.pos.member.entity.UserPassport;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.receipt.implement.ReceiptReader;
@@ -26,8 +27,12 @@ import domain.pos.review.entity.Review;
 import domain.pos.review.entity.ReviewInfo;
 import domain.pos.review.implement.ReviewReader;
 import domain.pos.review.implement.ReviewWriter;
+import domain.pos.store.implement.StoreValidator;
 
 class ReviewServiceTest extends ServiceTest {
+
+	@Mock
+	private StoreValidator storeValidator;
 
 	@Mock
 	private ReviewWriter reviewWriter;
@@ -42,35 +47,70 @@ class ReviewServiceTest extends ServiceTest {
 	private ReviewService reviewService;
 
 	@Nested
+	@DisplayName("리뷰 등록")
 	class CreateReview {
 		@Test
 		void 성공() {
 			// given
 			ReceiptInfo savedReceiptInfo = GENERAL_ADJUSTMENT_RECEIPT().getReceiptInfo();
 			Review responReview = GENERAL_REVIEW(GENERAL_ADJUSTMENT_RECEIPT());
-			Long queryReceiptId = GENERAL_ADJUSTMENT_RECEIPT().getReceiptInfo().getReceiptId();
+			Long queryStoreId = responReview.getStore().getStoreId();
+			UUID queryReceiptId = GENERAL_ADJUSTMENT_RECEIPT().getReceiptInfo().getReceiptId();
 			UserPassport queryUserPassport = responReview.getUserPassport();
 			ReviewInfo queryReviewInfo = responReview.getReviewInfo();
 			boolean isNonExistReceipt = false;
 
 			doReturn(Optional.ofNullable(savedReceiptInfo))
-				.when(receiptReader).getReceiptInfo(anyLong());
+				.when(receiptReader).getReceiptInfo(any());
 			doReturn(responReview)
-				.when(reviewWriter).postReview(any(UserPassport.class), any(ReceiptInfo.class), any(ReviewInfo.class));
+				.when(reviewWriter)
+				.postReview(any(UserPassport.class), anyLong(), any(ReceiptInfo.class), any(ReviewInfo.class));
 			doReturn(isNonExistReceipt)
-				.when(reviewReader).isExistsReview(anyLong(), any(UserPassport.class));
+				.when(reviewReader).isExistsReview(any(), any(UserPassport.class));
 			// when
-			Review review = reviewService.postReview(queryUserPassport, queryReceiptId, queryReviewInfo);
+			Review review = reviewService.postReview(queryUserPassport, queryStoreId, queryReceiptId, queryReviewInfo);
 
 			// then
 			assertSoftly(softly -> {
+				verify(storeValidator)
+					.validateStore(anyLong());
 				verify(receiptReader)
-					.getReceiptInfo(anyLong());
+					.getReceiptInfo(any());
 				verify(reviewReader)
-					.isExistsReview(anyLong(), any(UserPassport.class));
+					.isExistsReview(any(), any(UserPassport.class));
 				verify(reviewWriter)
-					.postReview(any(UserPassport.class), any(ReceiptInfo.class), any(ReviewInfo.class));
+					.postReview(any(UserPassport.class), anyLong(), any(ReceiptInfo.class), any(ReviewInfo.class));
 				softly.assertThat(review).isEqualTo(responReview);
+			});
+		}
+
+		@Test
+		void 실패_유효하지않은_가게() {
+			// given
+			Receipt responReceipt = GENERAL_ADJUSTMENT_RECEIPT();
+			Review responReview = GENERAL_REVIEW(responReceipt);
+			Long queryStoreId = responReview.getStore().getStoreId();
+			UUID queryReceiptId = responReceipt.getReceiptInfo().getReceiptId();
+			UserPassport queryUserPassport = responReview.getUserPassport();
+			ReviewInfo queryReviewInfo = responReview.getReviewInfo();
+
+			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE))
+				.when(storeValidator).validateStore(anyLong());
+
+			// when->then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(
+						() -> reviewService.postReview(queryUserPassport, queryStoreId, queryReceiptId, queryReviewInfo))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
+				verify(storeValidator)
+					.validateStore(anyLong());
+				verify(receiptReader, never())
+					.getReceiptInfo(any());
+				verify(reviewReader, never())
+					.isExistsReview(any(), any(UserPassport.class));
+				verify(reviewWriter, never())
+					.postReview(any(UserPassport.class), anyLong(), any(ReceiptInfo.class), any(ReviewInfo.class));
 			});
 		}
 
@@ -78,52 +118,27 @@ class ReviewServiceTest extends ServiceTest {
 		void 실패_유효하지않은_영수증() {
 			// given
 			Review responReview = GENERAL_REVIEW(GENERAL_ADJUSTMENT_RECEIPT());
-			Long queryReceiptId = GENERAL_ADJUSTMENT_RECEIPT().getReceiptInfo().getReceiptId();
+			Long queryStoreId = responReview.getStore().getStoreId();
+			UUID queryReceiptId = GENERAL_ADJUSTMENT_RECEIPT().getReceiptInfo().getReceiptId();
 			UserPassport queryUserPassport = responReview.getUserPassport();
 			ReviewInfo queryReviewInfo = responReview.getReviewInfo();
 			doReturn(Optional.empty())
-				.when(receiptReader).getReceiptInfo(anyLong());
+				.when(receiptReader).getReceiptInfo(any());
 
 			// when->then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
-						() -> reviewService.postReview(queryUserPassport, queryReceiptId, queryReviewInfo))
+						() -> reviewService.postReview(queryUserPassport, queryStoreId, queryReceiptId, queryReviewInfo))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
+				verify(storeValidator)
+					.validateStore(anyLong());
 				verify(receiptReader)
-					.getReceiptInfo(anyLong());
+					.getReceiptInfo(any());
 				verify(reviewReader, never())
-					.isExistsReview(anyLong(), any(UserPassport.class));
+					.isExistsReview(any(), any(UserPassport.class));
 				verify(reviewWriter, never())
-					.postReview(any(UserPassport.class), any(ReceiptInfo.class), any(ReviewInfo.class));
-			});
-		}
-
-		@Test
-		void 실패_영수증이_정산이_안됨() {
-			// given
-			Receipt savedReceipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
-			ReceiptInfo savedReceiptInfo = savedReceipt.getReceiptInfo();
-			Review responReview = GENERAL_REVIEW(savedReceipt);
-			Long queryReceiptId = savedReceipt.getReceiptInfo().getReceiptId();
-			UserPassport queryUserPassport = responReview.getUserPassport();
-			ReviewInfo queryReviewInfo = responReview.getReviewInfo();
-
-			doReturn(Optional.ofNullable(savedReceiptInfo))
-				.when(receiptReader).getReceiptInfo(anyLong());
-
-			// when->then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> reviewService.postReview(queryUserPassport, queryReceiptId, queryReviewInfo))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.REVIEW_NOT_ADJUSTMENT);
-				verify(receiptReader)
-					.getReceiptInfo(anyLong());
-				verify(reviewReader, never())
-					.isExistsReview(anyLong(), any(UserPassport.class));
-				verify(reviewWriter, never())
-					.postReview(any(UserPassport.class), any(ReceiptInfo.class), any(ReviewInfo.class));
+					.postReview(any(UserPassport.class), anyLong(), any(ReceiptInfo.class), any(ReviewInfo.class));
 			});
 		}
 
@@ -133,28 +148,31 @@ class ReviewServiceTest extends ServiceTest {
 			Receipt savedReceipt = GENERAL_ADJUSTMENT_RECEIPT();
 			ReceiptInfo savedReceiptInfo = savedReceipt.getReceiptInfo();
 			Review responReview = GENERAL_REVIEW(savedReceipt);
-			Long queryReceiptId = savedReceipt.getReceiptInfo().getReceiptId();
+			Long queryStoreId = responReview.getStore().getStoreId();
+			UUID queryReceiptId = savedReceipt.getReceiptInfo().getReceiptId();
 			UserPassport queryUserPassport = responReview.getUserPassport();
 			ReviewInfo queryReviewInfo = responReview.getReviewInfo();
 			boolean isExistReceipt = true;
 
 			doReturn(Optional.ofNullable(savedReceiptInfo))
-				.when(receiptReader).getReceiptInfo(anyLong());
+				.when(receiptReader).getReceiptInfo(any());
 			doReturn(isExistReceipt)
-				.when(reviewReader).isExistsReview(anyLong(), any(UserPassport.class));
+				.when(reviewReader).isExistsReview(any(), any(UserPassport.class));
 
 			// when->then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
-						() -> reviewService.postReview(queryUserPassport, queryReceiptId, queryReviewInfo))
+						() -> reviewService.postReview(queryUserPassport, queryStoreId, queryReceiptId, queryReviewInfo))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.REVIEW_ALREADY_EXISTS);
+				verify(storeValidator)
+					.validateStore(anyLong());
 				verify(receiptReader)
-					.getReceiptInfo(anyLong());
+					.getReceiptInfo(any());
 				verify(reviewReader)
-					.isExistsReview(anyLong(), any(UserPassport.class));
+					.isExistsReview(any(), any(UserPassport.class));
 				verify(reviewWriter, never())
-					.postReview(any(UserPassport.class), any(ReceiptInfo.class), any(ReviewInfo.class));
+					.postReview(any(UserPassport.class), anyLong(), any(ReceiptInfo.class), any(ReviewInfo.class));
 			});
 		}
 

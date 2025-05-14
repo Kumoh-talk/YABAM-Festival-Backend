@@ -15,6 +15,13 @@ dependencies {
 
     // web
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // Mysql
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // JPA
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     // security
     /* JWT */
@@ -28,7 +35,7 @@ dependencies {
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.4.0'
 
-
     // common exception
     implementation project(":common:base")
+    implementation project(":common:mvc")
 }

@@ -1,5 +1,7 @@
 package com.application.presentation.cart.api;
 
+import java.util.UUID;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -31,7 +33,7 @@ public interface CartApi {
 		)
 	)
 	ResponseEntity<ResponseBody<Void>> postCart(
-		@Schema(description = "영수증 ID", example = "1") @RequestParam final Long receiptId,
+		@Schema(description = "영수증 ID", example = "1") @RequestParam final UUID receiptId,
 		@Schema(description = "메뉴 ID", example = "1") @RequestParam final Long menuId,
 		@Schema(description = "수량", example = "2") @RequestParam final Integer quantity);
 
@@ -45,7 +47,7 @@ public interface CartApi {
 		)
 	)
 	ResponseEntity<ResponseBody<Void>> deleteCart(
-		@Schema(description = "영수증 ID", example = "1") @RequestParam final Long receiptId,
+		@Schema(description = "영수증 ID", example = "1") @RequestParam final UUID receiptId,
 		@Schema(description = "메뉴 ID", example = "1") @RequestParam final Long menuId);
 
 	@Operation(
@@ -62,5 +64,5 @@ public interface CartApi {
 		)
 	)
 	ResponseEntity<ResponseBody<CartInfoResponse>> getCart(
-		@Schema(description = "영수증 ID", example = "1") @RequestParam final Long receiptId);
+		@Schema(description = "영수증 ID", example = "1") @RequestParam final UUID receiptId);
 }

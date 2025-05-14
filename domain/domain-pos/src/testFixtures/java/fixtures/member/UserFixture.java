@@ -1,7 +1,7 @@
 package fixtures.member;
 
-import domain.pos.member.entity.UserPassport;
-import domain.pos.member.entity.UserRole;
+import com.vo.UserPassport;
+import com.vo.UserRole;
 
 public class UserFixture {
 	// 유저 고유 id

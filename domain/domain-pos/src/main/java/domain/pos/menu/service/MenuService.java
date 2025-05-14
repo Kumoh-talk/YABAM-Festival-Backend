@@ -1,13 +1,15 @@
 package domain.pos.menu.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import domain.pos.menu.entity.Menu;
 import domain.pos.menu.entity.MenuCategoryInfo;
 import domain.pos.menu.entity.MenuInfo;
@@ -41,7 +43,6 @@ public class MenuService {
 
 		MenuCategoryInfo menuCategoryInfo = menuCategoryReader.getMenuCategoryInfo(storeId, menuCategoryId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_CATEGORY_NOT_FOUND));
-		menuValidator.validateMenuOrder(menuCategoryId, menuInfo);
 		return menuWriter.postMenu(store, menuCategoryInfo, menuInfo);
 	}
 
@@ -52,17 +53,30 @@ public class MenuService {
 			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
 	}
 
-	public Slice<MenuInfo> getMenuSlice(int pageSize, Long lastMenuId, Long storeId, Long menuCategoryId) {
+	public Slice<Menu> getMenuSlice(int pageSize, Long lastMenuId, Long storeId, Long lastMenuCategoryId) {
+		storeReader.readSingleStore(storeId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.NOT_FOUND_STORE));
+
+		MenuCategoryInfo lastMenuCategoryInfo = null;
+		if (lastMenuCategoryId != null) {
+			lastMenuCategoryInfo = menuCategoryReader.getMenuCategoryInfo(storeId, lastMenuCategoryId)
+				.orElseThrow(() -> new ServiceException(ErrorCode.MENU_CATEGORY_NOT_FOUND));
+		}
+
+		MenuInfo lastMenuInfo = null;
+		if (lastMenuId != null) {
+			lastMenuInfo = menuReader.getMenuInfo(storeId, lastMenuId, lastMenuCategoryId)
+				.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
+		}
+		return menuReader.getMenuSlice(pageSize, storeId, lastMenuInfo, lastMenuCategoryInfo);
+	}
+
+	public List<MenuInfo> getCategoryMenuList(Long storeId, Long menuCategoryId) {
 		storeReader.readSingleStore(storeId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.NOT_FOUND_STORE));
 		menuCategoryValidator.validateMenuCategory(storeId, menuCategoryId);
 
-		MenuInfo lastMenuInfo = null;
-		if (lastMenuId != null) {
-			lastMenuInfo = menuReader.getMenuInfo(storeId, lastMenuId)
-				.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
-		}
-		return menuReader.getMenuSlice(pageSize, lastMenuInfo, menuCategoryId);
+		return menuReader.getCategoryMenuList(storeId, menuCategoryId);
 	}
 
 	@Transactional

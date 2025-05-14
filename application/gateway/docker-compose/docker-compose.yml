@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis:7.2-alpine          # 가볍고 최신(2025-05 기준) 이미지
+    container_name: yabam-gateway-local
+    ports:
+      - "6381:6379"                  # host:container
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data             # 영속화(선택)
+
+volumes:
+  redis-data:

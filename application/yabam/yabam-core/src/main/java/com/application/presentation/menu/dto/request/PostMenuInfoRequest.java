@@ -12,9 +12,6 @@ public record PostMenuInfoRequest(
 	@NotNull(message = "카테고리 Id는 필수입니다.")
 	Long menuCategoryId,
 
-	@Schema(description = "메뉴 순서", example = "2")
-	@NotNull(message = "메뉴 순서는 필수입니다.")
-	Integer menuOrder,
 	@Schema(description = "메뉴 이름", example = "불고기")
 	@NotBlank(message = "메뉴 이름은 필수입니다.")
 	String menuName,
@@ -41,7 +38,6 @@ public record PostMenuInfoRequest(
 	public MenuInfo toMenuInfo() {
 		return MenuInfo.builder()
 			.id(null)
-			.order(menuOrder)
 			.name(menuName)
 			.price(menuPrice)
 			.description(menuDescription)

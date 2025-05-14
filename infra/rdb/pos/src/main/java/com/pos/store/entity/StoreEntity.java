@@ -1,5 +1,8 @@
 package com.pos.store.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -11,9 +14,11 @@ import domain.pos.store.entity.StoreInfo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -53,6 +58,9 @@ public class StoreEntity extends BaseEntity {
 
 	@Embedded
 	private TableCostPerTime tableCostPerTime;
+
+	@OneToMany(mappedBy = "store", orphanRemoval = false, fetch = FetchType.LAZY)
+	private List<StoreDetailImageEntity> storeDetailImageEntity = new ArrayList<>();
 
 	private StoreEntity(Long ownerId, boolean isOpen, String name, StorePoint location, String description,
 		String headImageUrl, String university, TableCostPerTime tableCostPerTime) {

@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,10 +16,10 @@ import org.mockito.Mock;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
+import com.vo.UserPassport;
 
 import base.ServiceTest;
 import domain.pos.cart.implement.CartWriter;
-import domain.pos.member.entity.UserPassport;
 import domain.pos.menu.implement.MenuReader;
 import domain.pos.order.entity.Order;
 import domain.pos.order.entity.vo.OrderStatus;
@@ -246,7 +247,7 @@ public class OrderServiceTest extends ServiceTest {
 	@Nested
 	@DisplayName("영수증_별_주문_목록 조회")
 	class getReceiptOrders {
-		private Long receiptId = ReceiptInfoFixture.NON_ADJUSTMENT_RECEIPT_INFO().getReceiptId();
+		private UUID receiptId = ReceiptInfoFixture.NON_ADJUSTMENT_RECEIPT_INFO().getReceiptId();
 
 		@Test
 		void 영수증_별_주문_목록_조회_성공() {

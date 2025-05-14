@@ -31,3 +31,7 @@ jobs:
 
       - name: Build and Test domain module
         run: ./gradlew :domain:domain-pos:clean :domain:domain-pos:build --no-daemon
+
+      - name: Build and Test infra rdb module
+        run: ./gradlew :infra:rdb:pos:clean :infra:rdb:pos:build --no-daemon
+

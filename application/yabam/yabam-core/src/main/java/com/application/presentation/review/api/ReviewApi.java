@@ -13,8 +13,8 @@ import com.application.presentation.review.dto.response.ReviewIdResponse;
 import com.application.presentation.review.dto.response.ReviewsCusorResponse;
 import com.exception.ErrorCode;
 import com.response.ResponseBody;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -39,7 +39,6 @@ public interface ReviewApi {
 		),
 		errors = {
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.RECEIPT_NOT_FOUND),
-			@ApiErrorResponseExplanation(errorCode = ErrorCode.REVIEW_NOT_ADJUSTMENT),
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.REVIEW_ALREADY_EXISTS),
 		}
 	)
@@ -86,8 +85,9 @@ public interface ReviewApi {
 		@RequestParam Long reviewId);
 
 	@Operation(
-		summary = "리뷰 목록 조회 API",
-		description = "리뷰를 커서 기반으로 조회합니다."
+		summary = "가게 리뷰 목록 조회 API",
+		description = "리뷰를 커서 기반으로 조회합니다.\n"
+			+ "리뷰는 최신순으로 정렬되어 있습니다.\n"
 	)
 	@ApiResponse(content = @Content(
 		mediaType = "application/json",
@@ -99,7 +99,7 @@ public interface ReviewApi {
 		)
 	)
 	ResponseEntity<ResponseBody<ReviewsCusorResponse>> getReview(
-		@RequestParam Long receiptId,
+		@RequestParam Long storeId,
 		@RequestParam Long lastReviewId,
 		@RequestParam int size);
 }

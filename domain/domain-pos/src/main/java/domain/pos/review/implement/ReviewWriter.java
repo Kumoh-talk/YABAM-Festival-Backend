@@ -2,7 +2,8 @@ package domain.pos.review.implement;
 
 import org.springframework.stereotype.Component;
 
-import domain.pos.member.entity.UserPassport;
+import com.vo.UserPassport;
+
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.review.entity.Review;
 import domain.pos.review.entity.ReviewInfo;
@@ -14,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 public class ReviewWriter {
 	private final ReviewRepository reviewRepository;
 
-	public Review postReview(UserPassport userPassport, ReceiptInfo receiptInfo, ReviewInfo reviewInfo) {
-		return reviewRepository.createReview(userPassport, receiptInfo, reviewInfo);
+	public Review postReview(UserPassport userPassport, Long storeId, ReceiptInfo receiptInfo, ReviewInfo reviewInfo) {
+		return reviewRepository.createReview(userPassport, storeId, receiptInfo, reviewInfo);
 	}
 
 	public Review updateReview(Review review, ReviewInfo updateReviewInfo) {

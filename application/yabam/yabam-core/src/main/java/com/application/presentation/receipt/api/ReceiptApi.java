@@ -1,6 +1,7 @@
 package com.application.presentation.receipt.api;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -16,12 +17,13 @@ import com.application.global.config.swagger.ApiSuccessResponseExplanation;
 import com.application.global.response.GlobalPageResponse;
 import com.application.global.response.GlobalSliceResponse;
 import com.application.presentation.receipt.dto.response.ReceiptAndOrdersResponse;
+import com.application.presentation.receipt.dto.response.ReceiptIdResponse;
 import com.application.presentation.receipt.dto.response.ReceiptInfoResponse;
 import com.application.presentation.receipt.dto.response.ReceiptResponse;
 import com.exception.ErrorCode;
 import com.response.ResponseBody;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -53,7 +55,7 @@ public interface ReceiptApi {
 		}
 	)
 	ResponseEntity<ResponseBody<ReceiptResponse>> registerReceipt(
-		@RequestParam @NotNull Long queryTableId, @RequestParam @NotNull Long querySaleId);
+		@RequestParam @NotNull Long storeId, @RequestParam @NotNull Long tableId);
 
 	@Operation(
 		summary = "영수증 세부정보 조회 API",
@@ -71,7 +73,7 @@ public interface ReceiptApi {
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.RECEIPT_NOT_FOUND)
 		}
 	)
-	ResponseEntity<ResponseBody<ReceiptInfoResponse>> getReceiptInfo(@PathVariable Long receiptId);
+	ResponseEntity<ResponseBody<ReceiptInfoResponse>> getReceiptInfo(@PathVariable UUID receiptId);
 
 	@Operation(
 		summary = "영업 별 정산 영수증 페이지 조회 API",
@@ -116,7 +118,7 @@ public interface ReceiptApi {
 	)
 	ResponseEntity<ResponseBody<List<ReceiptAndOrdersResponse>>> stopReceiptUsage(
 		@Parameter(hidden = true) UserPassport userPassport,
-		@RequestParam @NotEmpty List<Long> receiptIds);
+		@RequestParam @NotEmpty List<UUID> receiptIds);
 
 	@Operation(
 		summary = "영수증 사용 재시작 API",
@@ -133,7 +135,7 @@ public interface ReceiptApi {
 	)
 	ResponseEntity<ResponseBody<Void>> restartReceiptUsage(
 		@Parameter(hidden = true) UserPassport userPassport,
-		@RequestParam @NotEmpty List<Long> receiptIds);
+		@RequestParam @NotEmpty List<UUID> receiptIds);
 
 	@Operation(
 		summary = "영수증 최종 정산 API",
@@ -152,7 +154,7 @@ public interface ReceiptApi {
 	)
 	ResponseEntity<ResponseBody<Void>> adjustReceipts(
 		@Parameter(hidden = true) UserPassport userPassport,
-		@RequestParam @NotEmpty List<Long> receiptIds);
+		@RequestParam @NotEmpty List<UUID> receiptIds);
 
 	@Operation(
 		summary = "영수증 삭제 API",
@@ -169,7 +171,7 @@ public interface ReceiptApi {
 	)
 	ResponseEntity<ResponseBody<Void>> deleteReceipt(
 		@Parameter(hidden = true) UserPassport userPassport,
-		@PathVariable Long receiptId);
+		@PathVariable UUID receiptId);
 
 	@Operation(
 		summary = "대상 테이블 미정산 영수증 id 조회 API"
@@ -178,14 +180,14 @@ public interface ReceiptApi {
 	)
 	@ApiResponse(content = @Content(
 		mediaType = "application/json",
-		schema = @Schema(implementation = Long.class)))
+		schema = @Schema(implementation = ReceiptIdResponse.class)))
 	@ApiResponseExplanations(
 		success = @ApiSuccessResponseExplanation(
-			responseClass = Long.class,
+			responseClass = ReceiptIdResponse.class,
 			description = "영수증 id 조회 성공"
 		)
 	)
-	ResponseEntity<ResponseBody<Long>> getNonAdjustReceiptId(@PathVariable Long tableId);
+	ResponseEntity<ResponseBody<ReceiptIdResponse>> getNonAdjustReceiptId(@PathVariable Long tableId);
 
 	@Operation(
 		summary = "고객 별 영수증 내역 무한스크롤 조회 API",
@@ -209,5 +211,5 @@ public interface ReceiptApi {
 		@PathVariable Long customerId,
 		@RequestParam @Min(1) int pageSize,
 		@Schema(description = "이전 페이지 가장 마지막 ReceiptId(첫 페이지 조회 시 생략)")
-		@RequestParam(required = false) Long lastReceiptId);
+		@RequestParam(required = false) UUID lastReceiptId);
 }

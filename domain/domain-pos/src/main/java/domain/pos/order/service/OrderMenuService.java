@@ -6,9 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
+import com.vo.UserPassport;
+import com.vo.UserRole;
 
-import domain.pos.member.entity.UserPassport;
-import domain.pos.member.entity.UserRole;
 import domain.pos.menu.entity.MenuInfo;
 import domain.pos.menu.implement.MenuReader;
 import domain.pos.order.entity.Order;

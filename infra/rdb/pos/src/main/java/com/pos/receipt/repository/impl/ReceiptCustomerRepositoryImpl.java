@@ -1,5 +1,7 @@
 package com.pos.receipt.repository.impl;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Repository;
 
 import com.pos.receipt.entity.ReceiptCustomerEntity;
@@ -14,7 +16,7 @@ public class ReceiptCustomerRepositoryImpl implements ReceiptCustomerRepository 
 	private final ReceiptCustomerJpaRepository receiptCustomerJpaRepository;
 
 	@Override
-	public void postReceiptCustomer(Long customerId, Long receiptId) {
+	public void postReceiptCustomer(Long customerId, UUID receiptId) {
 		ReceiptCustomerEntity receiptCustomerEntity = ReceiptCustomerEntity.of(customerId, receiptId);
 		receiptCustomerJpaRepository.save(receiptCustomerEntity);
 	}

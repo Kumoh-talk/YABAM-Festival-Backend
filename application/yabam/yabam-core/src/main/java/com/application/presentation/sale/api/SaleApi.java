@@ -9,11 +9,13 @@ import com.application.global.config.swagger.ApiSuccessResponseExplanation;
 import com.application.presentation.sale.dto.response.SaleIdResponse;
 import com.exception.ErrorCode;
 import com.response.ResponseBody;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Schema(
 	name = "SaleApi",
@@ -24,6 +26,9 @@ public interface SaleApi {
 		summary = "판매 시작",
 		description = "판매를 시작합니다."
 	)
+	@ApiResponse(content = @Content(
+		mediaType = "application/json",
+		schema = @Schema(implementation = SaleIdResponse.class)))
 	@ApiResponseExplanations(
 		success = @ApiSuccessResponseExplanation(
 			responseClass = SaleIdResponse.class,

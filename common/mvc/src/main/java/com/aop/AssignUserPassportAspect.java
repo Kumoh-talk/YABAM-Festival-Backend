@@ -10,8 +10,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.interceptor.DeserializingUserPassportInterceptor;
+import com.vo.UserPassport;
 
-import domain.pos.member.entity.UserPassport;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Aspect

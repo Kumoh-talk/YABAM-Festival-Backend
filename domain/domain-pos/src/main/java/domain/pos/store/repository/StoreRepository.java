@@ -1,12 +1,16 @@
 package domain.pos.store.repository;
 
+import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
-import domain.pos.member.entity.UserPassport;
+import com.vo.UserPassport;
+
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
+import domain.pos.store.entity.dto.StoreHeadDto;
 
 @Repository
 public interface StoreRepository {
@@ -19,4 +23,16 @@ public interface StoreRepository {
 	void deleteStore(Store previousStore);
 
 	Store changeStoreOpenStatus(Store previousStore);
+
+	boolean isExistsById(Long storeId);
+
+	void postDetailImage(Store previousStore, String imageUrl);
+
+	boolean isExistsImageUrl(Long storeId, String imageUrl);
+
+	void deleteDetailImage(Store previousStore, String imageUrl);
+
+	Slice<StoreHeadDto> findStoresCursorOrderByReviewCount(Long cursorReviewCount, Long cursorStoreId, int size);
+
+	List<Store> findMyStores(Long userId);
 }

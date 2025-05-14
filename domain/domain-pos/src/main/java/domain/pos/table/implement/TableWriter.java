@@ -1,11 +1,10 @@
 package domain.pos.table.implement;
 
-import java.util.List;
-
 import org.springframework.stereotype.Component;
 
 import domain.pos.store.entity.Store;
 import domain.pos.table.entity.Table;
+import domain.pos.table.entity.TablePoint;
 import domain.pos.table.repository.TableRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -19,11 +18,15 @@ public class TableWriter {
 		return changeActiveTable;
 	}
 
-	public List<Table> createTables(Store responStore, Integer queryTableNumber) {
-		return tableRepository.createTablesAll(responStore, queryTableNumber);
+	public Long createTable(Store store, Integer tableNumber, TablePoint tablePoint) {
+		return tableRepository.saveTable(store, tableNumber, tablePoint);
 	}
 
-	public List<Table> modifyTableNum(Store store, Integer queryUpdateTableNumber) {
-		return tableRepository.updateTableNum(store, queryUpdateTableNumber);
+	public void updateTable(Table table, Integer updateTableNumber, TablePoint updateTablePoint) {
+		tableRepository.updateTableInfo(table, updateTableNumber, updateTablePoint);
+	}
+
+	public void deleteTable(Table table) {
+		tableRepository.deleteTable(table);
 	}
 }

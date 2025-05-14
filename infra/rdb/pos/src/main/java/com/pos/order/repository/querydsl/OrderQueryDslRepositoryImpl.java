@@ -2,11 +2,13 @@ package com.pos.order.repository.querydsl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.pos.order.entity.OrderEntity;
 import com.pos.order.entity.QOrderEntity;
 import com.pos.order.entity.QOrderMenuEntity;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
 
 import domain.pos.order.entity.vo.OrderStatus;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +62,7 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 	}
 
 	@Override
-	public List<OrderEntity> findReceiptOrdersWithMenu(Long receiptId) {
+	public List<OrderEntity> findReceiptOrdersWithMenu(UUID receiptId) {
 		QOrderMenuEntity qOrderMenu = QOrderMenuEntity.orderMenuEntity;
 
 		return jpaQueryFactory
@@ -73,7 +75,7 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 	}
 
 	@Override
-	public boolean existsOrderByReceiptId(Long receiptId) {
+	public boolean existsOrderByReceiptId(UUID receiptId) {
 		return jpaQueryFactory
 			.selectOne()
 			.from(qOrderEntity)
@@ -83,11 +85,18 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 
 	@Override
 	public void updateOrderStatus(Long orderId, OrderStatus orderStatus) {
-		jpaQueryFactory
+		JPAUpdateClause updateClause = jpaQueryFactory
 			.update(qOrderEntity)
-			.set(qOrderEntity.status, orderStatus)
-			.where(qOrderEntity.id.eq(orderId))
-			.execute();
+			.where(qOrderEntity.id.eq(orderId));
+
+		if (orderStatus == OrderStatus.CANCELED) {
+			updateClause.set(qOrderEntity.status, orderStatus)
+				.set(qOrderEntity.totalPrice, 0);
+		} else {
+			updateClause.set(qOrderEntity.status, orderStatus);
+		}
+
+		updateClause.execute();
 	}
 
 	@Override
