@@ -18,9 +18,14 @@ public interface MenuRepository {
 
 	Optional<MenuInfo> getMenuInfo(Long storeId, Long menuId);
 
+	Optional<MenuInfo> getMenuInfo(Long storeId, Long menuId, Long lastMenuCategoryId);
+
 	List<Menu> getAllByStoreIdWithCategoryAndLock(Long storeId);
 
-	Slice<MenuInfo> getMenuSlice(int pageSize, MenuInfo lastMenuInfo, Long menuCategoryId);
+	Slice<Menu> getMenuSlice(int pageSize, Long storeId, MenuInfo lastMenuInfo,
+		MenuCategoryInfo lastMenuCategoryInfo);
+
+	List<MenuInfo> getCategoryMenuList(Long storeId, Long menuCategoryId);
 
 	boolean existsMenu(Long storeId, Long menuId);
 

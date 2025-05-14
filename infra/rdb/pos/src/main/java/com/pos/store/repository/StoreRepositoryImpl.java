@@ -47,7 +47,7 @@ public class StoreRepositoryImpl implements StoreRepository {
 			.from(qStoreEntity)
 			.leftJoin(qStoreEntity.storeDetailImageEntity, qStoreDetailImageEntity).fetchJoin()
 			.where(qStoreEntity.id.eq(storeId))
-			.fetchFirst();
+			.fetchOne();
 
 		return StoreMapper.toStoreWithStoreDetailImages(storeEntities);
 	}

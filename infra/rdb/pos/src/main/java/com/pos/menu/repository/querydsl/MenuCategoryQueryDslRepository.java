@@ -12,6 +12,8 @@ public interface MenuCategoryQueryDslRepository {
 
 	List<MenuCategoryEntity> findAllByStoreIdWithLock(Long storeId);
 
+	Optional<Integer> findMaxOrderByStoreId(Long storeId);
+
 	boolean existsByIdAndStoreId(Long menuCategoryId, Long storeId);
 
 	boolean existsMenuCategoryOrder(Long storeId, int menuCategoryOrder);
