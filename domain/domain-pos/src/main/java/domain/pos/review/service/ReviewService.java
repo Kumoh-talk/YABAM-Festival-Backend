@@ -1,5 +1,7 @@
 package domain.pos.review.service;
 
+import java.util.UUID;
+
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +28,7 @@ public class ReviewService {
 	private final ReviewReader reviewReader;
 	private final StoreValidator storeValidator;
 
-	public Review postReview(final UserPassport userPassport, final Long storeId, final Long receiptId,
+	public Review postReview(final UserPassport userPassport, final Long storeId, final UUID receiptId,
 		final ReviewInfo reviewInfo) {
 		storeValidator.validateStore(storeId);
 		ReceiptInfo receiptInfo = receiptReader.getReceiptInfo(receiptId)

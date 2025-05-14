@@ -2,6 +2,7 @@ package domain.pos.receipt.implement;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,31 +19,31 @@ import lombok.RequiredArgsConstructor;
 public class ReceiptReader {
 	private final ReceiptRepository receiptRepository;
 
-	public boolean existsReceipt(Long receiptId) {
+	public boolean existsReceipt(UUID receiptId) {
 		return receiptRepository.existsReceipt(receiptId);
 	}
 
-	public Optional<ReceiptInfo> getReceiptInfo(Long receiptId) {
+	public Optional<ReceiptInfo> getReceiptInfo(UUID receiptId) {
 		return receiptRepository.getReceiptInfo(receiptId);
 	}
 
-	public Optional<Receipt> getReceiptWithTableAndStore(Long receiptId) {
+	public Optional<Receipt> getReceiptWithTableAndStore(UUID receiptId) {
 		return receiptRepository.getReceiptWithTableAndStore(receiptId);
 	}
 
-	public List<Receipt> getStopReceiptsWithStore(List<Long> receiptIds) {
+	public List<Receipt> getStopReceiptsWithStore(List<UUID> receiptIds) {
 		return receiptRepository.getStopReceiptsWithStore(receiptIds);
 	}
 
-	public List<Receipt> getStopReceiptsWithTableAndStore(List<Long> receiptIds) {
+	public List<Receipt> getStopReceiptsWithTableAndStore(List<UUID> receiptIds) {
 		return receiptRepository.getStopReceiptsWithTableAndStore(receiptIds);
 	}
 
-	public Optional<Receipt> getNonStopReceiptsWithTableAndStoreAndLock(Long receiptId) {
+	public Optional<Receipt> getNonStopReceiptsWithTableAndStoreAndLock(UUID receiptId) {
 		return receiptRepository.getNonStopReceiptsWithTableAndStoreAndLock(receiptId);
 	}
 
-	public List<Receipt> getNonStopReceiptsWithStoreAndLock(List<Long> receiptIds) {
+	public List<Receipt> getNonStopReceiptsWithStoreAndLock(List<UUID> receiptIds) {
 		return receiptRepository.getNonStopReceiptsWithStoreAndLock(receiptIds);
 	}
 
@@ -54,7 +55,7 @@ public class ReceiptReader {
 		return receiptRepository.getNonAdjustReceipt(tableId);
 	}
 
-	public Slice<Receipt> getCustomerReceiptSlice(int pageSize, Long lastReceiptId, Long customerId) {
+	public Slice<Receipt> getCustomerReceiptSlice(int pageSize, UUID lastReceiptId, Long customerId) {
 		return receiptRepository.getCustomerReceiptSlice(pageSize, lastReceiptId, customerId);
 	}
 }

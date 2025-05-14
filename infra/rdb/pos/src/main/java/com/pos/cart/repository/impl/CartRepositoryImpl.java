@@ -1,6 +1,7 @@
 package com.pos.cart.repository.impl;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,7 @@ public class CartRepositoryImpl implements CartRepository {
 
 	@Override
 	@Transactional
-	public void upsertCart(final Long receiptId, final Long menuId, final Integer quantity) {
+	public void upsertCart(final UUID receiptId, final Long menuId, final Integer quantity) {
 		MenuEntity menuEntity = menuJpaRepository.findById(menuId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 메뉴 id는 유효하지 않습니다." + menuId));
 		CartEntity cartEntity = cartJpaRepository.findCartByReceiptWithLock(receiptId)
@@ -44,12 +45,12 @@ public class CartRepositoryImpl implements CartRepository {
 
 	@Override
 	@Transactional
-	public void deleteCartMenu(final Long receiptId, final Long menuId) {
+	public void deleteCartMenu(final UUID receiptId, final Long menuId) {
 		cartJpaRepository.deleteCartMenuByReceiptIdAndMenuId(receiptId, menuId);
 	}
 
 	@Override
-	public Optional<Cart> getCart(Long receiptId) {
+	public Optional<Cart> getCart(UUID receiptId) {
 		return cartJpaRepository.findCartByReceiptId(receiptId)
 			.map(cartEntity -> {
 				return CartMapper.toCart(receiptId, cartEntity);
@@ -57,7 +58,7 @@ public class CartRepositoryImpl implements CartRepository {
 	}
 
 	@Override
-	public void deleteCartAndCartMenuByReceiptId(Long receiptId) {
+	public void deleteCartAndCartMenuByReceiptId(UUID receiptId) {
 		CartEntity cartEntity = cartJpaRepository.findCartByReceiptId(receiptId).orElseThrow(
 			() -> new IllegalArgumentException("해당 영수증 id에 해당하는 장바구니 내역이 없습니다." + receiptId));
 		cartJpaRepository.delete(cartEntity);

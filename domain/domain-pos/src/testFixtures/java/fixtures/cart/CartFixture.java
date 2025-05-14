@@ -1,14 +1,15 @@
 package fixtures.cart;
 
 import java.util.List;
+import java.util.UUID;
 
 import domain.pos.cart.entity.Cart;
 import domain.pos.cart.entity.CartMenu;
 import fixtures.menu.MenuInfoFixture;
 
 public class CartFixture {
-	public static final Long RECEIPT_ID = 1L;
-
+	public static final UUID RECEIPT_ID = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+	
 	private static final List<CartMenu> SINGLE_CART_MENUS = List.of(
 		CartMenu.of(1, MenuInfoFixture.GENERAL_MENU_INFO())
 	);

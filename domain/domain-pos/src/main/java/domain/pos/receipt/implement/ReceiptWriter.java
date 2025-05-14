@@ -1,6 +1,7 @@
 package domain.pos.receipt.implement;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
@@ -31,7 +32,7 @@ public class ReceiptWriter {
 		receiptRepository.adjustReceipts(receipts);
 	}
 
-	public void deleteReceipt(Long receiptId) {
+	public void deleteReceipt(UUID receiptId) {
 		receiptRepository.deleteReceipt(receiptId);
 	}
 }

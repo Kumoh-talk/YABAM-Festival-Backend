@@ -2,6 +2,7 @@ package com.pos.order.repository.querydsl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.pos.order.entity.OrderEntity;
 
@@ -14,9 +15,9 @@ public interface OrderQueryDslRepository {
 
 	List<OrderEntity> findSaleOrdersWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses);
 
-	List<OrderEntity> findReceiptOrdersWithMenu(Long receiptId);
+	List<OrderEntity> findReceiptOrdersWithMenu(UUID receiptId);
 
-	boolean existsOrderByReceiptId(Long receiptId);
+	boolean existsOrderByReceiptId(UUID receiptId);
 
 	void updateOrderStatus(Long orderId, OrderStatus orderStatus);
 

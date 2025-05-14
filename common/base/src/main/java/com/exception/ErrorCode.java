@@ -64,7 +64,7 @@ public enum ErrorCode {
 	TABLE_NOT_EQUAL_MODIFY(HttpStatus.CONFLICT, "TABLE_0006", "테이블 수가 같습니다."),
 	TABLE_NOT_ACTIVE(HttpStatus.BAD_REQUEST, "TABLE_0007", "비활성화된 테이블입니다."),
 	// Sale
-	NOT_FOUND_SALE(HttpStatus.NOT_FOUND, "SALE_0001", "존재하지 않는 세일입니다."),
+	NOT_FOUND_SALE(HttpStatus.NOT_FOUND, "SALE_0001", "영업이 존재하지 않습니다."),
 	CLOSE_SALE(HttpStatus.CONFLICT, "SALE_0002", "영업이 종료되었습니다."),
 	SALE_ACCESS_DENIED(HttpStatus.FORBIDDEN, "SALE_0003", "대상 영업에 접근 가능한 요청이 아닙니다."),
 

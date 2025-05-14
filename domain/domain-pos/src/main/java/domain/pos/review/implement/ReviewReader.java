@@ -1,6 +1,7 @@
 package domain.pos.review.implement;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class ReviewReader {
 	private final ReviewRepository reviewRepository;
 
-	public boolean isExistsReview(Long receiptId, UserPassport userPassport) {
+	public boolean isExistsReview(UUID receiptId, UserPassport userPassport) {
 		return reviewRepository.existsReview(receiptId, userPassport);
 	}
 

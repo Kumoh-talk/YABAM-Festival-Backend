@@ -1,12 +1,13 @@
 package fixtures.receipt;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import domain.pos.receipt.entity.ReceiptInfo;
 
 public class ReceiptInfoFixture {
 	// receipt 고유 ID
-	public static final Long GENERAL_RECEIPT_ID = 1L;
+	public static final UUID GENERAL_RECEIPT_ID = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 
 	// receipt 정산 여부
 	private static final boolean RECEIPT_IS_ADJUSTMENT = true;
