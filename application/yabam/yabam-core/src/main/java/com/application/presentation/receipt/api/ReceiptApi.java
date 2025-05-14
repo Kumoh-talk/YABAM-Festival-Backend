@@ -1,6 +1,7 @@
 package com.application.presentation.receipt.api;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -72,7 +73,7 @@ public interface ReceiptApi {
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.RECEIPT_NOT_FOUND)
 		}
 	)
-	ResponseEntity<ResponseBody<ReceiptInfoResponse>> getReceiptInfo(@PathVariable Long receiptId);
+	ResponseEntity<ResponseBody<ReceiptInfoResponse>> getReceiptInfo(@PathVariable UUID receiptId);
 
 	@Operation(
 		summary = "영업 별 정산 영수증 페이지 조회 API",
@@ -117,7 +118,7 @@ public interface ReceiptApi {
 	)
 	ResponseEntity<ResponseBody<List<ReceiptAndOrdersResponse>>> stopReceiptUsage(
 		@Parameter(hidden = true) UserPassport userPassport,
-		@RequestParam @NotEmpty List<Long> receiptIds);
+		@RequestParam @NotEmpty List<UUID> receiptIds);
 
 	@Operation(
 		summary = "영수증 사용 재시작 API",
@@ -134,7 +135,7 @@ public interface ReceiptApi {
 	)
 	ResponseEntity<ResponseBody<Void>> restartReceiptUsage(
 		@Parameter(hidden = true) UserPassport userPassport,
-		@RequestParam @NotEmpty List<Long> receiptIds);
+		@RequestParam @NotEmpty List<UUID> receiptIds);
 
 	@Operation(
 		summary = "영수증 최종 정산 API",
@@ -153,7 +154,7 @@ public interface ReceiptApi {
 	)
 	ResponseEntity<ResponseBody<Void>> adjustReceipts(
 		@Parameter(hidden = true) UserPassport userPassport,
-		@RequestParam @NotEmpty List<Long> receiptIds);
+		@RequestParam @NotEmpty List<UUID> receiptIds);
 
 	@Operation(
 		summary = "영수증 삭제 API",
@@ -170,7 +171,7 @@ public interface ReceiptApi {
 	)
 	ResponseEntity<ResponseBody<Void>> deleteReceipt(
 		@Parameter(hidden = true) UserPassport userPassport,
-		@PathVariable Long receiptId);
+		@PathVariable UUID receiptId);
 
 	@Operation(
 		summary = "대상 테이블 미정산 영수증 id 조회 API"
@@ -210,5 +211,5 @@ public interface ReceiptApi {
 		@PathVariable Long customerId,
 		@RequestParam @Min(1) int pageSize,
 		@Schema(description = "이전 페이지 가장 마지막 ReceiptId(첫 페이지 조회 시 생략)")
-		@RequestParam(required = false) Long lastReceiptId);
+		@RequestParam(required = false) UUID lastReceiptId);
 }

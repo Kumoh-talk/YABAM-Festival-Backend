@@ -2,6 +2,7 @@ package com.pos.review.repository.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -35,7 +36,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 	}
 
 	@Override
-	public boolean existsReview(Long receiptId, UserPassport userPassport) {
+	public boolean existsReview(UUID receiptId, UserPassport userPassport) {
 		return reviewJpaRepository.existsByReceiptIdAndUserId(receiptId, userPassport.getUserId());
 	}
 

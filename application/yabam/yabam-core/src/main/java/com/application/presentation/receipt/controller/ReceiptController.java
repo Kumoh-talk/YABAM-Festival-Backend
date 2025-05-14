@@ -4,6 +4,7 @@ import static com.response.ResponseUtil.*;
 import static com.vo.UserRole.*;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -54,7 +55,7 @@ public class ReceiptController implements ReceiptApi {
 	}
 
 	@GetMapping("/api/v1/receipts/{receiptId}")
-	public ResponseEntity<ResponseBody<ReceiptInfoResponse>> getReceiptInfo(@PathVariable Long receiptId) {
+	public ResponseEntity<ResponseBody<ReceiptInfoResponse>> getReceiptInfo(@PathVariable UUID receiptId) {
 		ReceiptInfo receiptInfo = receiptService.getReceiptInfo(receiptId);
 		return ResponseEntity.ok(createSuccessResponse(ReceiptInfoResponse.from(receiptInfo)));
 	}
@@ -77,7 +78,7 @@ public class ReceiptController implements ReceiptApi {
 	@AssignUserPassport
 	public ResponseEntity<ResponseBody<List<ReceiptAndOrdersResponse>>> stopReceiptUsage(
 		UserPassport userPassport,
-		@RequestParam @NotEmpty List<Long> receiptIds) {
+		@RequestParam @NotEmpty List<UUID> receiptIds) {
 		List<ReceiptAndOrdersResponse> receipts = receiptService.stopReceiptUsage(receiptIds, userPassport)
 			.stream().map(ReceiptAndOrdersResponse::from)
 			.toList();
@@ -89,7 +90,7 @@ public class ReceiptController implements ReceiptApi {
 	@AssignUserPassport
 	public ResponseEntity<ResponseBody<Void>> restartReceiptUsage(
 		UserPassport userPassport,
-		@RequestParam @NotEmpty List<Long> receiptIds) {
+		@RequestParam @NotEmpty List<UUID> receiptIds) {
 		receiptService.restartReceiptUsage(receiptIds, userPassport);
 		return ResponseEntity.ok(createSuccessResponse());
 	}
@@ -99,7 +100,7 @@ public class ReceiptController implements ReceiptApi {
 	@AssignUserPassport
 	public ResponseEntity<ResponseBody<Void>> adjustReceipts(
 		UserPassport userPassport,
-		@RequestParam @NotEmpty List<Long> receiptIds) {
+		@RequestParam @NotEmpty List<UUID> receiptIds) {
 		receiptService.adjustReceipts(receiptIds, userPassport);
 		return ResponseEntity.ok(createSuccessResponse());
 	}
@@ -109,14 +110,14 @@ public class ReceiptController implements ReceiptApi {
 	@AssignUserPassport
 	public ResponseEntity<ResponseBody<Void>> deleteReceipt(
 		UserPassport userPassport,
-		@PathVariable Long receiptId) {
+		@PathVariable UUID receiptId) {
 		receiptService.deleteReceipt(receiptId, userPassport);
 		return ResponseEntity.ok(createSuccessResponse());
 	}
 
 	@GetMapping("/api/v1/table/{tableId}/receipts/non-adjust")
 	public ResponseEntity<ResponseBody<ReceiptIdResponse>> getNonAdjustReceiptId(@PathVariable Long tableId) {
-		Long receiptId = receiptService.getNonAdjustReceiptId(tableId);
+		UUID receiptId = receiptService.getNonAdjustReceiptId(tableId);
 		return ResponseEntity.ok(createSuccessResponse(ReceiptIdResponse.from(receiptId)));
 	}
 
@@ -126,7 +127,7 @@ public class ReceiptController implements ReceiptApi {
 	public ResponseEntity<ResponseBody<GlobalSliceResponse<ReceiptInfoResponse>>> getCustomerReceiptSlice(
 		UserPassport userPassport,
 		@PathVariable Long customerId,
-		@RequestParam @Min(1) int pageSize, @RequestParam(required = false) Long lastReceiptId) {
+		@RequestParam @Min(1) int pageSize, @RequestParam(required = false) UUID lastReceiptId) {
 		Slice<ReceiptInfoResponse> receipts = receiptService.getCustomerReceiptSlice(pageSize, userPassport, customerId,
 			lastReceiptId).map(receipt -> ReceiptInfoResponse.from(receipt.getReceiptInfo()));
 		return ResponseEntity.ok(createSuccessResponse(GlobalSliceResponse.from(receipts)));

@@ -2,6 +2,7 @@ package com.pos.order.repository.querydsl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import com.pos.order.entity.OrderEntity;
 import com.pos.order.entity.QOrderEntity;
@@ -61,7 +62,7 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 	}
 
 	@Override
-	public List<OrderEntity> findReceiptOrdersWithMenu(Long receiptId) {
+	public List<OrderEntity> findReceiptOrdersWithMenu(UUID receiptId) {
 		QOrderMenuEntity qOrderMenu = QOrderMenuEntity.orderMenuEntity;
 
 		return jpaQueryFactory
@@ -74,7 +75,7 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 	}
 
 	@Override
-	public boolean existsOrderByReceiptId(Long receiptId) {
+	public boolean existsOrderByReceiptId(UUID receiptId) {
 		return jpaQueryFactory
 			.selectOne()
 			.from(qOrderEntity)

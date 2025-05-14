@@ -3,6 +3,8 @@ package com.application.presentation.cart.controller;
 import static com.response.ResponseUtil.*;
 import static com.vo.UserRole.*;
 
+import java.util.UUID;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +31,7 @@ public class CartController implements CartApi {
 	@HasRole(userRole = ROLE_USER)
 	@AssignUserPassport
 	public ResponseEntity<ResponseBody<Void>> postCart(
-		@RequestParam final Long receiptId,
+		@RequestParam final UUID receiptId,
 		@RequestParam final Long menuId,
 		@RequestParam @Min(value = 1, message = "수량은 최소 1개 이상입니다.") final Integer quantity) {
 		cartService.upsertCart(receiptId, menuId, quantity);
@@ -40,7 +42,7 @@ public class CartController implements CartApi {
 	@HasRole(userRole = ROLE_USER)
 	@AssignUserPassport
 	public ResponseEntity<ResponseBody<Void>> deleteCart(
-		@RequestParam final Long receiptId,
+		@RequestParam final UUID receiptId,
 		@RequestParam final Long menuId) {
 		cartService.deleteCartMenu(receiptId, menuId);
 		return ResponseEntity.ok(createSuccessResponse());
@@ -50,7 +52,7 @@ public class CartController implements CartApi {
 	@HasRole(userRole = ROLE_USER)
 	@AssignUserPassport
 	public ResponseEntity<ResponseBody<CartInfoResponse>> getCart(
-		@RequestParam final Long receiptId) {
+		@RequestParam final UUID receiptId) {
 		return ResponseEntity.ok(createSuccessResponse(
 			cartService.getCart(receiptId)
 				.map(CartInfoResponse::from)

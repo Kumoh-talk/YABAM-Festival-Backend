@@ -1,6 +1,7 @@
 package com.application.presentation.receipt.dto.response;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -11,8 +12,8 @@ import lombok.Builder;
 @Builder
 @Schema(description = "영수증 세부정보 응답 DTO")
 public record ReceiptInfoResponse(
-	@Schema(description = "영수증 id", example = "1")
-	Long receiptId,
+	@Schema(description = "영수증 id", example = "123e4567-e89b-12d3-a456-426614174000")
+	UUID receiptId,
 	@Schema(description = "정산 여부", example = "false")
 	boolean isAdjustment,
 	@Schema(description = "주문 시작 시간", example = "2023-10-01T10:00:00")

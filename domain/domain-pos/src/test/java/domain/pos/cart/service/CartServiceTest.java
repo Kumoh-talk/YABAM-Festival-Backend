@@ -4,6 +4,7 @@ import static org.assertj.core.api.SoftAssertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -36,11 +37,11 @@ class CartServiceTest extends ServiceTest {
 		@Test
 		void 성공() {
 			// when
-			cartService.upsertCart(anyLong(), anyLong(), anyInt());
+			cartService.upsertCart(any(), anyLong(), anyInt());
 
 			// then
 			assertSoftly(softly -> {
-				verify(cartWriter).upsertCart(anyLong(), anyLong(), anyInt());
+				verify(cartWriter).upsertCart(any(), anyLong(), anyInt());
 			});
 		}
 
@@ -48,14 +49,14 @@ class CartServiceTest extends ServiceTest {
 		void menuId가_유효하지_않은_경우() {
 			// given
 			doThrow(IllegalArgumentException.class)
-				.when(cartWriter).upsertCart(anyLong(), anyLong(), anyInt());
+				.when(cartWriter).upsertCart(any(), anyLong(), anyInt());
 
 			// when -> then
 			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> cartService.upsertCart(anyLong(), anyLong(), anyInt()))
+				softly.assertThatThrownBy(() -> cartService.upsertCart(any(), anyLong(), anyInt()))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.MENU_NOT_FOUND);
-				verify(cartWriter).upsertCart(anyLong(), anyLong(), anyInt());
+				verify(cartWriter).upsertCart(any(), anyLong(), anyInt());
 			});
 		}
 	}
@@ -67,7 +68,7 @@ class CartServiceTest extends ServiceTest {
 		@Test
 		void 성공() {
 			// given
-			Long receiptId = 1L;
+			UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 			Long menuId = 10L;
 
 			// when
@@ -89,7 +90,7 @@ class CartServiceTest extends ServiceTest {
 		void 성공_장바구니존재() {
 			// given
 			Cart expected = CartFixture.GENERAL_CART_SINGLE();
-			Long receiptId = expected.getReceiptId();
+			UUID receiptId = expected.getReceiptId();
 
 			doReturn(Optional.of(expected))
 				.when(cartWriter).getCart(receiptId);
@@ -108,7 +109,7 @@ class CartServiceTest extends ServiceTest {
 		@Test
 		void 빈옵션_장바구니없음() {
 			// given
-			Long receiptId = 404L;
+			UUID receiptId = UUID.fromString("445e4567-e89b-12d3-a456-426614174000");
 			doReturn(Optional.empty())
 				.when(cartWriter).getCart(receiptId);
 

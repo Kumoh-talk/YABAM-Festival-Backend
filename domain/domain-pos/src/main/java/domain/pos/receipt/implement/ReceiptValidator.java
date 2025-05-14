@@ -1,5 +1,7 @@
 package domain.pos.receipt.implement;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
 
 import com.exception.ErrorCode;
@@ -17,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ReceiptValidator {
 	private final ReceiptReader receiptReader;
 
-	public void validateReceipt(Long receiptId) {
+	public void validateReceipt(UUID receiptId) {
 		if (!receiptReader.existsReceipt(receiptId)) {
 			log.warn("영수증을 찾을 수 없습니다. receiptId: {}", receiptId);
 			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);

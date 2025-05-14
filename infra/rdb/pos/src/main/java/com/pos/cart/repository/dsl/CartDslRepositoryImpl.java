@@ -1,6 +1,7 @@
 package com.pos.cart.repository.dsl;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 
@@ -25,7 +26,7 @@ public class CartDslRepositoryImpl implements CartDslRepository {
 	private final QMenuEntity qMenuEntity = QMenuEntity.menuEntity;
 
 	@Override
-	public Optional<CartEntity> findCartByReceiptWithLock(Long receiptId) {
+	public Optional<CartEntity> findCartByReceiptWithLock(UUID receiptId) {
 		return Optional.ofNullable(queryFactory
 			.selectFrom(qCartEntity)
 			.from(qCartEntity)
@@ -44,7 +45,7 @@ public class CartDslRepositoryImpl implements CartDslRepository {
 			.fetchOne());
 	}
 
-	public void deleteCartMenuByReceiptIdAndMenuId(final Long receiptId, final Long menuId) {
+	public void deleteCartMenuByReceiptIdAndMenuId(final UUID receiptId, final Long menuId) {
 		queryFactory
 			.delete(qCartMenuEntity)
 			.where(isEqualCartAndReceipt(receiptId)
@@ -52,14 +53,14 @@ public class CartDslRepositoryImpl implements CartDslRepository {
 			.execute();
 	}
 
-	private BooleanExpression isEqualCartAndReceipt(Long receiptId) {
+	private BooleanExpression isEqualCartAndReceipt(UUID receiptId) {
 		return qCartMenuEntity.cart.id.eq(queryFactory.select(qCartEntity.id)
 			.from(qCartEntity)
 			.where(qCartEntity.receipt.id.eq(receiptId))
 			.fetchOne());
 	}
 
-	public Optional<CartEntity> findCartByReceiptId(Long receiptId) {
+	public Optional<CartEntity> findCartByReceiptId(UUID receiptId) {
 		return Optional.ofNullable(queryFactory
 			.selectFrom(qCartEntity)
 			.join(qCartEntity.cartMenus, qCartMenuEntity).fetchJoin()
