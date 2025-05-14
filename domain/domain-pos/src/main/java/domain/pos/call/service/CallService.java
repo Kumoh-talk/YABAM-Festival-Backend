@@ -24,7 +24,7 @@ public class CallService {
 	private final CallWriter callWriter;
 	private final CallReader callReader;
 
-	public void postCall(Long receiptId, Long storeId, CallMessage callMessage) {
+	public void postCall(final Long receiptId, final Long storeId, final CallMessage callMessage) {
 		Receipt receipt = receiptReader.getReceiptWithTableAndStore(receiptId)
 			.orElseThrow(() -> {
 				throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
@@ -51,12 +51,12 @@ public class CallService {
 	}
 
 	// TODO : 해당 사장 권한 validation 코드를 추가해야할듯한데 어디 범위까지 해야할지 고민(ex. store table...)
-	public Slice<Call> getNonCompleteCalls(UserPassport ownerPassport, Long saleId, Long lastCallId, int pageSize) {
+	public Slice<Call> getNonCompleteCalls(final UserPassport ownerPassport, final Long saleId, final Long lastCallId,
+		int pageSize) {
 		return callReader.getNonCompleteCalls(saleId, lastCallId, pageSize);
 	}
 
-	// TODO : 해당 직원 호출 완료 권한 validation 코드를 추가해야할듯한데 어디 범위까지 해야할지 고민(ex. store table...)
-	public void completeCall(UserPassport ownerPassport, Long callId) {
+	public void completeCall(final UserPassport ownerPassport, final Long callId) {
 		callReader.validateCallOwner(callId, ownerPassport);
 		callWriter.completeCall(callId);
 	}

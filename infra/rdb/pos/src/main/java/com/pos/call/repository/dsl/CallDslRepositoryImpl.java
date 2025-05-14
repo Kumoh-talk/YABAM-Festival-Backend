@@ -36,6 +36,7 @@ public class CallDslRepositoryImpl implements CallDslRepository {
 			.join(qCallEntity.receipt, qReceiptEntity).fetchJoin()
 			.join(qReceiptEntity.table, qTableEntity).fetchJoin()
 			.where(cursorWhereCondition(saleId, lastCallId))
+			.orderBy(qCallEntity.id.asc())
 			.limit(size + 1)
 			.fetch();
 
