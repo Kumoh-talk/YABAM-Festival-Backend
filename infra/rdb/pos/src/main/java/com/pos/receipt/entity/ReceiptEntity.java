@@ -3,11 +3,13 @@ package com.pos.receipt.entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import com.pos.global.base.entity.BaseEntity;
+import com.pos.global.uuid.GeneratedUuidV7;
 import com.pos.order.entity.OrderEntity;
 import com.pos.sale.entity.SaleEntity;
 import com.pos.table.entity.TableEntity;
@@ -17,7 +19,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -35,8 +36,8 @@ import lombok.NoArgsConstructor;
 @Getter
 public class ReceiptEntity extends BaseEntity {
 	@Id
-	@GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-	private Long id;
+	@GeneratedUuidV7
+	private UUID id;
 
 	@Column(name = "is_adjustment", nullable = false)
 	private boolean isAdjustment;
@@ -72,7 +73,7 @@ public class ReceiptEntity extends BaseEntity {
 		this.table = table;
 	}
 
-	private ReceiptEntity(Long id) {
+	private ReceiptEntity(UUID id) {
 		this.id = id;
 	}
 
@@ -85,7 +86,7 @@ public class ReceiptEntity extends BaseEntity {
 	}
 
 	public static ReceiptEntity from(
-		final Long receiptId) {
+		final UUID receiptId) {
 		return new ReceiptEntity(receiptId);
 	}
 

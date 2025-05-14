@@ -1,6 +1,7 @@
 package com.pos.review.repository.dsl;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
@@ -22,7 +23,7 @@ public class ReviewDslRepositoryImpl implements ReviewDslRepository {
 	private final QReviewEntity qReviewEntity = QReviewEntity.reviewEntity;
 
 	@Override
-	public boolean existsByReceiptIdAndUserId(Long receiptId, Long userId) {
+	public boolean existsByReceiptIdAndUserId(UUID receiptId, Long userId) {
 		return queryFactory
 			.select(qReviewEntity.count())
 			.from(qReviewEntity)

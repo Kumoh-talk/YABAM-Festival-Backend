@@ -1,5 +1,7 @@
 package com.application.presentation.review.dto.request;
 
+import java.util.UUID;
+
 import domain.pos.review.entity.ReviewInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
@@ -10,7 +12,7 @@ import lombok.Builder;
 @Builder
 public record ReviewCreateRequest(
 	@Schema(description = "영수증 ID", example = "1")
-	Long receiptId,
+	UUID receiptId,
 	@Schema(description = "가게 ID", example = "1")
 	Long storeId,
 	@Schema(description = "리뷰 내용", example = "리뷰 내용")

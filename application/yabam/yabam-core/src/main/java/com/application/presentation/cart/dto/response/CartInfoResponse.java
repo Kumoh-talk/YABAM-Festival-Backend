@@ -1,6 +1,7 @@
 package com.application.presentation.cart.dto.response;
 
 import java.util.List;
+import java.util.UUID;
 
 import domain.pos.cart.entity.Cart;
 import domain.pos.cart.entity.CartMenu;
@@ -11,7 +12,7 @@ import lombok.Builder;
 @Builder
 public record CartInfoResponse(
 	@Schema(description = "영수증 ID", example = "1")
-	Long receiptId,
+	UUID receiptId,
 	@Schema(description = "장바구니 메뉴 리스트", implementation = CartMenuDto.class)
 	List<CartMenuDto> cartMenuDtos
 ) {
@@ -61,7 +62,7 @@ public record CartInfoResponse(
 			.build();
 	}
 
-	public static CartInfoResponse emptyFrom(final Long receiptId) {
+	public static CartInfoResponse emptyFrom(final UUID receiptId) {
 		return CartInfoResponse.builder()
 			.receiptId(receiptId)
 			.cartMenuDtos(List.of())

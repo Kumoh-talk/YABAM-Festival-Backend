@@ -1,5 +1,7 @@
 package com.pos.receipt.entity;
 
+import java.util.UUID;
+
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -40,7 +42,7 @@ public class ReceiptCustomerEntity extends BaseEntity {
 
 	public static ReceiptCustomerEntity of(
 		final Long customerId,
-		final Long receiptId) {
+		final UUID receiptId) {
 		return new ReceiptCustomerEntity(customerId, ReceiptEntity.from(receiptId));
 	}
 }

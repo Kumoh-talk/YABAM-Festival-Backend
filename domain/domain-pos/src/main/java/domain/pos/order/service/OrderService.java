@@ -2,6 +2,7 @@ package domain.pos.order.service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -46,7 +47,7 @@ public class OrderService {
 
 	// TODO : 위치기반으로 특정 범위 내에 유저가 존재해야만 주문이 가능하도록 구현 필요
 	@Transactional
-	public Order postOrderWithCart(Long receiptId, UserPassport userPassport) {
+	public Order postOrderWithCart(UUID receiptId, UserPassport userPassport) {
 		Receipt receipt = receiptReader.getNonStopReceiptsWithTableAndStoreAndLock(receiptId).orElseThrow(
 			() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
 
@@ -88,7 +89,7 @@ public class OrderService {
 	}
 
 	@Transactional
-	public Order postOrderWithoutCart(Long receiptId, UserPassport userPassport, List<OrderMenu> orderMenus) {
+	public Order postOrderWithoutCart(UUID receiptId, UserPassport userPassport, List<OrderMenu> orderMenus) {
 		Receipt receipt = receiptReader.getNonStopReceiptsWithTableAndStoreAndLock(receiptId).orElseThrow(
 			() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
 
@@ -119,7 +120,7 @@ public class OrderService {
 		return orderWriter.patchOrderStatus(order, orderStatus, userRole);
 	}
 
-	public List<Order> getReceiptOrders(Long receiptId) {
+	public List<Order> getReceiptOrders(UUID receiptId) {
 		receiptValidator.validateReceipt(receiptId);
 		return orderReader.getReceiptOrdersWithMenu(receiptId);
 	}

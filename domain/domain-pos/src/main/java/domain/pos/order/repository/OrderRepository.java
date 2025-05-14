@@ -2,6 +2,7 @@ package domain.pos.order.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 
@@ -25,5 +26,5 @@ public interface OrderRepository {
 
 	List<Order> getSaleOrdersWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses);
 
-	List<Order> getReceiptOrdersWithMenu(Long receiptId);
+	List<Order> getReceiptOrdersWithMenu(UUID receiptId);
 }

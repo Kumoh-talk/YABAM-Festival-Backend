@@ -1,6 +1,7 @@
 package domain.pos.receipt.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -65,7 +66,7 @@ public class ReceiptService {
 		return receiptWriter.createReceipt(changedActiveTable, savedSale);
 	}
 
-	public ReceiptInfo getReceiptInfo(Long receiptId) {
+	public ReceiptInfo getReceiptInfo(UUID receiptId) {
 		return receiptReader.getReceiptInfo(receiptId)
 			.orElseThrow(() -> {
 				log.warn("Receipt 을 찾을 수 없습니다. receiptId: {}", receiptId);
@@ -87,7 +88,7 @@ public class ReceiptService {
 	}
 
 	@Transactional
-	public List<Receipt> stopReceiptUsage(List<Long> receiptIds, UserPassport userPassport) {
+	public List<Receipt> stopReceiptUsage(List<UUID> receiptIds, UserPassport userPassport) {
 		List<Receipt> receipts = receiptReader.getNonStopReceiptsWithStoreAndLock(receiptIds);
 		if (receipts.size() != receiptIds.size()) {
 			log.warn("Receipt 을 찾을 수 없습니다.");
@@ -102,7 +103,7 @@ public class ReceiptService {
 	}
 
 	@Transactional
-	public void restartReceiptUsage(List<Long> receiptIds, UserPassport userPassport) {
+	public void restartReceiptUsage(List<UUID> receiptIds, UserPassport userPassport) {
 		List<Receipt> receipts = receiptReader.getStopReceiptsWithStore(receiptIds);
 		if (receipts.size() != receiptIds.size()) {
 			log.warn("Receipt 을 찾을 수 없습니다.");
@@ -118,7 +119,7 @@ public class ReceiptService {
 	// Owner api
 	// TODO : 정산이 끝나면 주문창 세션을 종료시켜야함
 	@Transactional
-	public void adjustReceipts(List<Long> receiptIds, UserPassport userPassport) {
+	public void adjustReceipts(List<UUID> receiptIds, UserPassport userPassport) {
 		List<Receipt> receipts = receiptReader.getStopReceiptsWithTableAndStore(receiptIds);
 		if (receipts.size() != receiptIds.size()) {
 			log.warn("Receipt 을 찾을 수 없습니다.");
@@ -139,7 +140,7 @@ public class ReceiptService {
 
 	// Owner api
 	@Transactional
-	public void deleteReceipt(Long receiptId, UserPassport userPassport) {
+	public void deleteReceipt(UUID receiptId, UserPassport userPassport) {
 		Receipt receipt = receiptReader.getReceiptWithTableAndStore(receiptId)
 			.orElseThrow(() -> {
 				log.warn("Receipt 을 찾을 수 없습니다. receiptId: {}", receiptId);
@@ -152,13 +153,13 @@ public class ReceiptService {
 		receiptWriter.deleteReceipt(receiptId);
 	}
 
-	public Long getNonAdjustReceiptId(Long tableId) {
+	public UUID getNonAdjustReceiptId(Long tableId) {
 		ReceiptInfo receiptInfo = receiptReader.getNonAdjustReceipt(tableId);
 		return receiptInfo != null ? receiptInfo.getReceiptId() : null;
 	}
 
 	public Slice<Receipt> getCustomerReceiptSlice(int pageSize, UserPassport userPassport, Long customerId,
-		Long lastReceiptId) {
+		UUID lastReceiptId) {
 		userPassportValidator.validateUserPassport(userPassport, customerId);
 		if (lastReceiptId != null) {
 			if (!receiptReader.existsReceipt(lastReceiptId)) {
