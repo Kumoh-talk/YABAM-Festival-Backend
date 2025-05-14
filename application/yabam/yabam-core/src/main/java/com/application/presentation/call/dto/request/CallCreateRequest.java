@@ -11,9 +11,6 @@ public record CallCreateRequest(
 	@Schema(description = "영수증 고유 ID", example = "1")
 	@NotNull
 	UUID receiptId,
-	@Schema(description = "가게 고유 ID", example = "1")
-	@NotNull
-	Long storeId,
 	@Schema(description = "직원 호출 메시지", example = "물 주세요")
 	String callMessage
 ) {
