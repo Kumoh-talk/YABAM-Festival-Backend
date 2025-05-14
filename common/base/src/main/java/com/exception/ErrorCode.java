@@ -37,11 +37,15 @@ public enum ErrorCode {
 	STORE_IS_OPEN_MENU_WRITE(HttpStatus.CONFLICT, "MENU_0003", "운영중인 가게는 메뉴를 추가 및 수정할 수 없습니다."),
 	MENU_ORDER_INVALID(HttpStatus.BAD_REQUEST, "MENU_0004", "메뉴 순서가 유효하지 않습니다."),
 	MENU_SOLD_OUT(HttpStatus.BAD_REQUEST, "MENU_0005", "메뉴가 품절되었습니다."),
+	MENU_QUANTITY_OVERFLOW(HttpStatus.BAD_REQUEST, "MENU_0006", "카테고리 당 등록 가능한 메뉴 개수는 100개 이하입니다."),
 
 	// MenuCategory
 	MENU_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "MENU_CATEGORY_0001", "존재하지 않는 메뉴 카테고리입니다."),
 	EXIST_MENU_CATEGORY_ORDER(HttpStatus.CONFLICT, "MENU_CATEGORY_0002", "이미 존재하는 메뉴 카테고리 순서입니다."),
 	MENU_CATEGORY_ORDER_INVALID(HttpStatus.BAD_REQUEST, "MENU_CATEGORY_0003", "메뉴 카테고리 순서가 유효하지 않습니다."),
+	MENU_CATEGORY_QUANTITY_OVERFLOW(HttpStatus.BAD_REQUEST, "MENU_CATEGORY_0004",
+		"주점 당 등록 가능한 메뉴 카테고리 개수는 100개 이하입니다."),
+
 	// Security
 	NEED_AUTHORIZED(HttpStatus.UNAUTHORIZED, "SECURITY_0001", "인증이 필요합니다."),
 	ACCESS_DENIED(HttpStatus.FORBIDDEN, "SECURITY_0002", "권한이 없습니다."),

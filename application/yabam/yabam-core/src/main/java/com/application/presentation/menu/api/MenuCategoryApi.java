@@ -43,7 +43,8 @@ public interface MenuCategoryApi {
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.NOT_FOUND_STORE),
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.NOT_EQUAL_STORE_OWNER),
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.STORE_IS_OPEN_MENU_WRITE),
-			@ApiErrorResponseExplanation(errorCode = ErrorCode.EXIST_MENU_CATEGORY_ORDER)
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.EXIST_MENU_CATEGORY_ORDER),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.MENU_CATEGORY_QUANTITY_OVERFLOW),
 		}
 	)
 	ResponseEntity<ResponseBody<MenuCategoryInfoResponse>> postMenuCategory(

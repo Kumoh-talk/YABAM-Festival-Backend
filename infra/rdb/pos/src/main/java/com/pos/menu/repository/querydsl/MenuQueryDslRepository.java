@@ -15,6 +15,8 @@ public interface MenuQueryDslRepository {
 
 	Slice<MenuEntity> findSliceByMenuCategoryId(int pageSize, Integer lastMenuOrder, Long menuCategoryId);
 
+	Optional<Integer> findMaxOrderByMenuCategoryId(Long storeId);
+
 	boolean existsByIdAndStoreId(Long menuId, Long storeId);
 
 	boolean existsMenuOrder(Long menuCategoryId, int menuOrder);

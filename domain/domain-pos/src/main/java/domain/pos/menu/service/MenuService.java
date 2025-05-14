@@ -41,7 +41,6 @@ public class MenuService {
 
 		MenuCategoryInfo menuCategoryInfo = menuCategoryReader.getMenuCategoryInfo(storeId, menuCategoryId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_CATEGORY_NOT_FOUND));
-		menuValidator.validateMenuOrder(menuCategoryId, menuInfo);
 		return menuWriter.postMenu(store, menuCategoryInfo, menuInfo);
 	}
 

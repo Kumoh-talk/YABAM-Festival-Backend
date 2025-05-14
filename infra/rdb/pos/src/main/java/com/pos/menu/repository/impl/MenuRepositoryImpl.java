@@ -9,6 +9,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.exception.ErrorCode;
+import com.exception.ServiceException;
 import com.pos.menu.entity.MenuEntity;
 import com.pos.menu.mapper.MenuCategoryMapper;
 import com.pos.menu.mapper.MenuMapper;
@@ -38,6 +40,16 @@ public class MenuRepositoryImpl implements MenuRepository {
 	@Transactional
 	public Menu postMenu(Store store, MenuCategoryInfo menuCategoryInfo, MenuInfo menuInfo) {
 		MenuEntity menuEntity = MenuMapper.toMenuEntity(menuInfo, store, menuCategoryInfo);
+		menuJpaRepository.findMaxOrderByMenuCategoryId(menuCategoryInfo.getId())
+			.ifPresentOrElse(
+				order -> {
+					if (order > 100) {
+						throw new ServiceException(ErrorCode.MENU_QUANTITY_OVERFLOW);
+					}
+					menuEntity.updateOrder(order + 1);
+				},
+				() -> menuEntity.updateOrder(1)
+			);
 		menuJpaRepository.save(menuEntity);
 		return MenuMapper.toMenu(menuEntity, store, MenuCategory.fromWithoutStore(menuCategoryInfo));
 	}

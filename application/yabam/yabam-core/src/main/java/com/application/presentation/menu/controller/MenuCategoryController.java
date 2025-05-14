@@ -40,6 +40,8 @@ import lombok.RequiredArgsConstructor;
 public class MenuCategoryController implements MenuCategoryApi {
 	private final MenuCategoryService menuCategoryService;
 
+	// TODO : 메뉴 카테고리 생성 100개 이하로 제한되어있음 (사유 : order 재정렬 문제)
+
 	@PostMapping("/api/v1/stores/{storeId}/menu-categories")
 	@HasRole(userRole = ROLE_OWNER)
 	@AssignUserPassport

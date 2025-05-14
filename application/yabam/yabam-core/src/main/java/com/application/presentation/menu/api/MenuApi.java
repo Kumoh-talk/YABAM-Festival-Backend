@@ -46,6 +46,8 @@ public interface MenuApi {
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.STORE_IS_OPEN_MENU_WRITE),
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.MENU_CATEGORY_NOT_FOUND),
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.EXIST_MENU_ORDER),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.MENU_QUANTITY_OVERFLOW),
+
 		}
 	)
 	ResponseEntity<ResponseBody<MenuResponse>> postMenu(

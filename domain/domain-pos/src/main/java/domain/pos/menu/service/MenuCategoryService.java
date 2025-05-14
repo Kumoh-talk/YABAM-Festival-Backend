@@ -34,7 +34,6 @@ public class MenuCategoryService {
 		Store store = storeValidator.validateStoreOwner(userPassport, storeId);
 		validateStoreOpen(store);
 
-		menuCategoryValidator.validateMenuCategoryOrder(storeId, menuCategoryInfo);
 		return menuCategoryWriter.postMenuCategory(store, menuCategoryInfo);
 	}
 
