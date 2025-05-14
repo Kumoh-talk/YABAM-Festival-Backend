@@ -12,7 +12,7 @@ import lombok.Builder;
 @Builder
 @Schema(description = "영수증 세부정보 응답 DTO")
 public record ReceiptInfoResponse(
-	@Schema(description = "영수증 id", example = "1")
+	@Schema(description = "영수증 id", example = "123e4567-e89b-12d3-a456-426614174000")
 	UUID receiptId,
 	@Schema(description = "정산 여부", example = "false")
 	boolean isAdjustment,
