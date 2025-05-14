@@ -9,6 +9,7 @@ import static org.assertj.core.api.SoftAssertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -58,10 +59,10 @@ class CallServiceTest extends ServiceTest {
 			Receipt receipt = CUSTOM_ADJUSTMENT_RECEIPT(sale, table); // isActive = true, store.isOpen = true
 			CallMessage queryCallMessage = CUSTOM_GENERAL_CALL(sale, table, receipt).getCallMessage();
 			Long queryStoreId = store.getStoreId();
-			Long receiptId = receipt.getReceiptInfo().getReceiptId();
+			UUID receiptId = receipt.getReceiptInfo().getReceiptId();
 
 			doReturn(Optional.of(receipt))
-				.when(receiptReader).getReceiptWithTableAndStore(anyLong());
+				.when(receiptReader).getReceiptWithTableAndStore(any(UUID.class));
 
 			// when
 			callService.postCall(receiptId, queryStoreId, queryCallMessage);
@@ -69,9 +70,9 @@ class CallServiceTest extends ServiceTest {
 			// then
 			assertSoftly(softly -> {
 				verify(receiptReader)
-					.getReceiptWithTableAndStore(anyLong());
+					.getReceiptWithTableAndStore(any(UUID.class));
 				verify(callWriter)
-					.createCall(anyLong(), anyLong(), any(CallMessage.class));
+					.createCall(any(UUID.class), anyLong(), any(CallMessage.class));
 			});
 		}
 
@@ -85,11 +86,11 @@ class CallServiceTest extends ServiceTest {
 			@DisplayName("영수증이 존재하지 않으면 RECEIPT_NOT_FOUND")
 			void 실패_영수증_없음() {
 				// given
-				Long queryReceiptId = 1L;
+				UUID queryReceiptId = UUID.randomUUID();
 				Long queryStoreId = 10L;
 
 				doReturn(Optional.empty())
-					.when(receiptReader).getReceiptWithTableAndStore(anyLong());
+					.when(receiptReader).getReceiptWithTableAndStore(any(UUID.class));
 
 				// when -> then
 				assertSoftly(softly -> {
@@ -98,8 +99,8 @@ class CallServiceTest extends ServiceTest {
 						.isInstanceOf(ServiceException.class)
 						.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
 
-					verify(receiptReader).getReceiptWithTableAndStore(anyLong());
-					verify(callWriter, never()).createCall(anyLong(), anyLong(), any(CallMessage.class));
+					verify(receiptReader).getReceiptWithTableAndStore(any(UUID.class));
+					verify(callWriter, never()).createCall(any(UUID.class), anyLong(), any(CallMessage.class));
 				});
 			}
 
@@ -112,11 +113,11 @@ class CallServiceTest extends ServiceTest {
 				Sale sale = SaleFixture.GENERAL_OPEN_SALE(store);
 				Receipt receipt = CUSTOM_ADJUSTMENT_RECEIPT(sale, table);
 
-				Long queryReceiptId = receipt.getReceiptInfo().getReceiptId();
+				UUID queryReceiptId = receipt.getReceiptInfo().getReceiptId();
 				Long queryStoreId = store.getStoreId();
 
 				doReturn(Optional.of(receipt))
-					.when(receiptReader).getReceiptWithTableAndStore(anyLong());
+					.when(receiptReader).getReceiptWithTableAndStore(any(UUID.class));
 
 				// when -> then
 				assertSoftly(softly -> {
@@ -125,7 +126,7 @@ class CallServiceTest extends ServiceTest {
 						.isInstanceOf(ServiceException.class)
 						.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CONFLICT_CLOSE_STORE);
 
-					verify(callWriter, never()).createCall(anyLong(), anyLong(), any(CallMessage.class));
+					verify(callWriter, never()).createCall(any(UUID.class), anyLong(), any(CallMessage.class));
 				});
 			}
 
@@ -138,11 +139,11 @@ class CallServiceTest extends ServiceTest {
 				Sale sale = SaleFixture.GENERAL_OPEN_SALE(store);
 				Receipt receipt = CUSTOM_ADJUSTMENT_RECEIPT(sale, table);
 
-				Long queryReceiptId = receipt.getReceiptInfo().getReceiptId();
+				UUID queryReceiptId = receipt.getReceiptInfo().getReceiptId();
 				Long queryStoreId = store.getStoreId();
 
 				doReturn(Optional.of(receipt))
-					.when(receiptReader).getReceiptWithTableAndStore(anyLong());
+					.when(receiptReader).getReceiptWithTableAndStore(any(UUID.class));
 
 				// when -> then
 				assertSoftly(softly -> {
@@ -151,7 +152,7 @@ class CallServiceTest extends ServiceTest {
 						.isInstanceOf(ServiceException.class)
 						.hasFieldOrPropertyWithValue("errorCode", ErrorCode.TABLE_NOT_ACTIVE);
 
-					verify(callWriter, never()).createCall(anyLong(), anyLong(), any(CallMessage.class));
+					verify(callWriter, never()).createCall(any(UUID.class), anyLong(), any(CallMessage.class));
 				});
 			}
 
@@ -164,11 +165,11 @@ class CallServiceTest extends ServiceTest {
 				Sale sale = SaleFixture.GENERAL_OPEN_SALE(store);
 				Receipt receipt = CUSTOM_ADJUSTMENT_RECEIPT(sale, table);
 
-				Long queryReceiptId = receipt.getReceiptInfo().getReceiptId();
+				UUID queryReceiptId = receipt.getReceiptInfo().getReceiptId();
 				Long wrongStoreId = 999L;
 
 				doReturn(Optional.of(receipt))
-					.when(receiptReader).getReceiptWithTableAndStore(anyLong());
+					.when(receiptReader).getReceiptWithTableAndStore(any(UUID.class));
 
 				// when -> then
 				assertSoftly(softly -> {
@@ -177,7 +178,7 @@ class CallServiceTest extends ServiceTest {
 						.isInstanceOf(ServiceException.class)
 						.hasFieldOrPropertyWithValue("errorCode", ErrorCode.STORE_NOT_MATCH);
 
-					verify(callWriter, never()).createCall(anyLong(), anyLong(), any(CallMessage.class));
+					verify(callWriter, never()).createCall(any(UUID.class), anyLong(), any(CallMessage.class));
 				});
 			}
 		}

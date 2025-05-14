@@ -1,5 +1,7 @@
 package com.application.presentation.call.dto.request;
 
+import java.util.UUID;
+
 import domain.pos.call.entity.CallMessage;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -8,7 +10,7 @@ import jakarta.validation.constraints.NotNull;
 public record CallCreateRequest(
 	@Schema(description = "영수증 고유 ID", example = "1")
 	@NotNull
-	Long receiptId,
+	UUID receiptId,
 	@Schema(description = "가게 고유 ID", example = "1")
 	@NotNull
 	Long storeId,

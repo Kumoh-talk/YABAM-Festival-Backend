@@ -1,5 +1,7 @@
 package domain.pos.call.service;
 
+import java.util.UUID;
+
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +26,7 @@ public class CallService {
 	private final CallWriter callWriter;
 	private final CallReader callReader;
 
-	public void postCall(final Long receiptId, final Long storeId, final CallMessage callMessage) {
+	public void postCall(final UUID receiptId, final Long storeId, final CallMessage callMessage) {
 		Receipt receipt = receiptReader.getReceiptWithTableAndStore(receiptId)
 			.orElseThrow(() -> {
 				throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);

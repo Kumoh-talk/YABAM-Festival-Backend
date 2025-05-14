@@ -1,6 +1,7 @@
 package fixtures.call;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import domain.pos.call.entity.Call;
 import domain.pos.call.entity.CallMessage;
@@ -15,7 +16,7 @@ public class CallFixture {
 	private static final Long SALE_ID = 100L;
 	private static final Long TABLE_ID = 10L;
 	private static final Integer TABLE_NUMBER = 5;
-	private static final Long RECEIPT_ID = 200L;
+	private static final UUID RECEIPT_ID = UUID.randomUUID();
 	private static final String MESSAGE = "직원 호출 요청입니다.";
 	private static final Boolean IS_COMPLETE = false;
 	private static final LocalDateTime CREATED_AT = LocalDateTime.of(2025, 5, 1, 12, 0);

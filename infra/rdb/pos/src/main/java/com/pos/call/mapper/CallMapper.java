@@ -1,5 +1,7 @@
 package com.pos.call.mapper;
 
+import java.util.UUID;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -17,7 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CallMapper {
 
-	public static CallEntity toCallEntity(Long receiptId, Long saleId, CallMessage callMessage) {
+	public static CallEntity toCallEntity(UUID receiptId, Long saleId, CallMessage callMessage) {
 		ReceiptEntity receiptEntity = ReceiptEntity.from(receiptId);
 		SaleEntity saleEntity = SaleEntity.from(saleId);
 		return CallEntity

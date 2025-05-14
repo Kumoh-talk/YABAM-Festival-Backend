@@ -1,5 +1,7 @@
 package com.pos.call.repository;
 
+import java.util.UUID;
+
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +24,7 @@ public class CallRepositoryImpl implements CallRepository {
 	private final CallJpaRepository callJpaRepository;
 
 	@Override
-	public void createCall(Long receiptId, Long saleId, CallMessage callMessage) {
+	public void createCall(UUID receiptId, Long saleId, CallMessage callMessage) {
 		CallEntity callEntity = CallMapper.toCallEntity(receiptId, saleId, callMessage);
 		callJpaRepository.save(callEntity);
 	}

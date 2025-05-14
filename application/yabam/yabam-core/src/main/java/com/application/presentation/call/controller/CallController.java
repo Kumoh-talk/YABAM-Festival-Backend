@@ -32,7 +32,6 @@ public class CallController implements CallApi {
 
 	@PostMapping("/api/v1/call")
 	public ResponseEntity<ResponseBody<Void>> postCall(
-		UserPassport userPassport,
 		@RequestBody @Valid CallCreateRequest callCreateRequest) {
 		callService.postCall(callCreateRequest.receiptId(), callCreateRequest.storeId(),
 			callCreateRequest.getCallMessage());

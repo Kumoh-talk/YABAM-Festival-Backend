@@ -9,6 +9,8 @@ import static fixtures.member.UserFixture.*;
 import static fixtures.store.StoreFixture.*;
 import static org.assertj.core.api.SoftAssertions.*;
 
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -72,7 +74,7 @@ class CallRepositoryImplTest extends RepositoryTest {
 	@Test
 	void 호출_저장_및_조회() {
 		// given
-		Long receiptId = savedReceiptEntity.getId();
+		UUID receiptId = savedReceiptEntity.getId();
 		Long saleId = savedSaleEntity.getId();
 		CallMessage callMessage = GENERAL_CALL_MESSAGE();
 
@@ -99,7 +101,7 @@ class CallRepositoryImplTest extends RepositoryTest {
 	@Test
 	void 미완료_호출_슬라이스_조회() {
 		// given : 호출 3건 저장
-		Long receiptId = savedReceiptEntity.getId();
+		UUID receiptId = savedReceiptEntity.getId();
 		Long saleId = savedSaleEntity.getId();
 
 		for (int i = 0; i < 3; i++) {
@@ -123,7 +125,7 @@ class CallRepositoryImplTest extends RepositoryTest {
 	@Test
 	void 호출_완료_처리() {
 		// given
-		Long receiptId = savedReceiptEntity.getId();
+		UUID receiptId = savedReceiptEntity.getId();
 		Long saleId = savedSaleEntity.getId();
 		callRepository.createCall(receiptId, saleId, GENERAL_CALL_MESSAGE());
 		testEntityManager.flush();
@@ -172,7 +174,7 @@ class CallRepositoryImplTest extends RepositoryTest {
 
 		@BeforeEach
 		void createCall() {
-			Long receiptId = savedReceiptEntity.getId();
+			UUID receiptId = savedReceiptEntity.getId();
 			Long saleId = savedSaleEntity.getId();
 			callRepository.createCall(receiptId, saleId, GENERAL_CALL_MESSAGE());
 			testEntityManager.flush();

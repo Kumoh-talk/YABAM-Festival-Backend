@@ -38,7 +38,6 @@ public interface CallApi {
 		}
 	)
 	ResponseEntity<ResponseBody<Void>> postCall(
-		@Parameter(hidden = true) UserPassport userPassport,
 		@RequestBody @Valid CallCreateRequest callCreateRequest);
 
 	@Operation(
