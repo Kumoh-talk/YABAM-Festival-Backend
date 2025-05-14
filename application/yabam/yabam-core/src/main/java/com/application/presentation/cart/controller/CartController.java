@@ -1,7 +1,6 @@
 package com.application.presentation.cart.controller;
 
 import static com.response.ResponseUtil.*;
-import static com.vo.UserRole.*;
 
 import java.util.UUID;
 
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.application.presentation.cart.api.CartApi;
 import com.application.presentation.cart.dto.response.CartInfoResponse;
-import com.authorization.AssignUserPassport;
-import com.authorization.HasRole;
 import com.response.ResponseBody;
 
 import domain.pos.cart.service.CartService;
@@ -28,8 +25,6 @@ public class CartController implements CartApi {
 	private final CartService cartService;
 
 	@PostMapping("/api/v1/cart")
-	@HasRole(userRole = ROLE_USER)
-	@AssignUserPassport
 	public ResponseEntity<ResponseBody<Void>> postCart(
 		@RequestParam final UUID receiptId,
 		@RequestParam final Long menuId,
@@ -39,8 +34,6 @@ public class CartController implements CartApi {
 	}
 
 	@DeleteMapping("/api/v1/cart/menu")
-	@HasRole(userRole = ROLE_USER)
-	@AssignUserPassport
 	public ResponseEntity<ResponseBody<Void>> deleteCart(
 		@RequestParam final UUID receiptId,
 		@RequestParam final Long menuId) {
@@ -49,8 +42,6 @@ public class CartController implements CartApi {
 	}
 
 	@GetMapping("/api/v1/cart")
-	@HasRole(userRole = ROLE_USER)
-	@AssignUserPassport
 	public ResponseEntity<ResponseBody<CartInfoResponse>> getCart(
 		@RequestParam final UUID receiptId) {
 		return ResponseEntity.ok(createSuccessResponse(
