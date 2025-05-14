@@ -57,7 +57,7 @@ public class TableService {
 				log.warn("해당 테이블 존재하지 않음 : tableId={}", qureyTableId);
 				throw new ServiceException(ErrorCode.NOT_FOUND_TABLE);
 			});
-		if (isStoreOwnerOfTable(ownerPassport, table)) {
+		if (isNotStoreOwnerOfTable(ownerPassport, table)) {
 			log.warn("요청 유저는 테이블 소유자와 다름 : userId={}, tableId={}", ownerPassport.getUserId(), qureyTableId);
 			throw new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER);
 		}
@@ -80,7 +80,7 @@ public class TableService {
 		return !table.getTableNumber().equals(updateTableNumber);
 	}
 
-	private static boolean isStoreOwnerOfTable(UserPassport ownerPassport, Table table) {
+	private static boolean isNotStoreOwnerOfTable(UserPassport ownerPassport, Table table) {
 		return !table.getStore().getOwnerPassport().getUserId().equals(ownerPassport.getUserId());
 	}
 
@@ -93,7 +93,7 @@ public class TableService {
 				log.warn("해당 테이블 존재하지 않음 : tableId={}", queryTableId);
 				throw new ServiceException(ErrorCode.NOT_FOUND_TABLE);
 			});
-		if (isStoreOwnerOfTable(ownerPassport, table)) {
+		if (isNotStoreOwnerOfTable(ownerPassport, table)) {
 			log.warn("요청 유저는 테이블 소유자와 다름 : userId={}, tableId={}", ownerPassport.getUserId(), queryTableId);
 			throw new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER);
 		}

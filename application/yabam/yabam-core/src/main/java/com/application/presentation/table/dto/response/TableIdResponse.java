@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "테이블 ID 응답 DTO", name = "TableIdResponse")
 public record TableIdResponse(
+	@Schema(description = "테이블 ID", example = "1")
 	Long tableId
 ) {
 	public static TableIdResponse from(Long tableId) {

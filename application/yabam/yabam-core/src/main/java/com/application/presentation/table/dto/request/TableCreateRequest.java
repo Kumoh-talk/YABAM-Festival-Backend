@@ -3,10 +3,12 @@ package com.application.presentation.table.dto.request;
 import domain.pos.table.entity.TablePoint;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "테이블 생성 요청 DTO", name = "TableCreateRequest")
 public record TableCreateRequest(
 	@Schema(description = "가게 ID", example = "1")
+	@NotNull
 	Long storeId,
 	@Schema(description = "테이블 X 좌표", example = "1")
 	Integer tableX,

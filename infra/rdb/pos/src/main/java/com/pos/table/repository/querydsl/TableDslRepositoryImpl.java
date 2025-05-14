@@ -75,12 +75,15 @@ public class TableDslRepositoryImpl implements TableDslRepository {
 	@Override
 	@Transactional
 	public void updateTableInfoById(Long tableId, Integer updateTableNumber, TablePointVo tablePointVo) {
-		queryFactory
+		long success = queryFactory
 			.update(qTableEntity)
 			.set(qTableEntity.tableNumber.tableNumber, updateTableNumber)
 			.set(qTableEntity.tablePoint.tableX, tablePointVo.getTableX())
 			.set(qTableEntity.tablePoint.tableY, tablePointVo.getTableY())
 			.where(qTableEntity.id.eq(tableId))
 			.execute();
+		if (success == 0) {
+			throw new IllegalArgumentException("테이블 정보 수정에 실패했습니다.");
+		}
 	}
 }
