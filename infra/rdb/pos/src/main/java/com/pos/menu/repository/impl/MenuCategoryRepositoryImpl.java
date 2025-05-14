@@ -35,7 +35,7 @@ public class MenuCategoryRepositoryImpl implements MenuCategoryRepository {
 		menuCategoryJpaRepository.findMaxOrderByStoreId(store.getStoreId())
 			.ifPresentOrElse(
 				order -> {
-					if (order > 100) {
+					if (order > 99) {
 						throw new ServiceException(ErrorCode.MENU_CATEGORY_QUANTITY_OVERFLOW);
 					}
 					menuCategoryEntity.updateOrder(order + 1);
