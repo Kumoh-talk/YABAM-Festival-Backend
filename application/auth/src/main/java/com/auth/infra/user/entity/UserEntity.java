@@ -31,6 +31,9 @@ public class UserEntity {
 	@Enumerated(value = EnumType.STRING)
 	private UserRole role;
 
+	@Column(name = "nickname", unique = true)
+	private String nickname;
+
 	@Column(name = "provider", nullable = false)
 	@Enumerated(value = EnumType.STRING)
 	private OidcProvider provider;
@@ -39,10 +42,15 @@ public class UserEntity {
 	private String providerId;
 
 	@Builder
-	public UserEntity(String email, UserRole role, OidcProvider provider, String providerId) {
+	public UserEntity(String email, UserRole role, String nickname, OidcProvider provider, String providerId) {
 		this.email = email;
 		this.role = role;
+		this.nickname = nickname;
 		this.provider = provider;
 		this.providerId = providerId;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 }

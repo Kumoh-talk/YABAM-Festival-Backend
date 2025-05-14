@@ -1,5 +1,7 @@
 package com.gateway.config;
 
+import java.util.Collections;
+
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +18,9 @@ import org.springframework.security.web.server.context.ServerSecurityContextRepo
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsWebFilter;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 import com.gateway.exception.handler.CustomAccessDeniedHandler;
 import com.gateway.exception.handler.CustomAuthenticationEntryPoint;
@@ -93,6 +98,21 @@ public class SecurityConfig {
 	@Bean
 	public ServerSecurityContextRepository securityContextRepository() {
 		return new WebSessionServerSecurityContextRepository();
+	}
+
+	// TODO : Nginx 도입 후 삭제해도 되는 필터
+	@Bean
+	public CorsWebFilter corsWebFilter() {
+		CorsConfiguration config = new CorsConfiguration();
+		config.setAllowedOriginPatterns(Collections.singletonList("*"));
+		config.addAllowedHeader("*");
+		config.addAllowedMethod("*");
+		config.setAllowCredentials(true);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", config);
+
+		return new CorsWebFilter(source);
 	}
 
 }

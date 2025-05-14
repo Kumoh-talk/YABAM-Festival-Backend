@@ -43,21 +43,21 @@ public class ReceiptService {
 
 	// TODO : 이것도 SSE로 전송해야하지 않을까..?
 	@Transactional
-	public Receipt registerReceipt(final Long queryTableId, final Long querySaleId) {
-		final Sale savedSale = saleReader.readSingleSale(querySaleId)
+	public Receipt registerReceipt(final Long storeId, final Long tableId) {
+		final Sale savedSale = saleReader.getOpenSaleByStoreId(storeId)
 			.orElseThrow(() -> {
-				log.warn("Sale 을 찾을 수 없습니다. saleId: {}", querySaleId);
+				log.warn("Open된 Sale 을 찾을 수 없습니다. tableId: {}", tableId);
 				throw new ServiceException(ErrorCode.NOT_FOUND_SALE);
 			});
 
-		final Table savedTable = tableReader.findLockTableById(queryTableId, savedSale.getStore().getStoreId())
+		final Table savedTable = tableReader.findLockTableById(tableId, storeId)
 			.orElseThrow(() -> {
-				log.warn("Table 을 찾을 수 없습니다. tableId: {}", queryTableId);
+				log.warn("Table 을 찾을 수 없습니다. tableId: {}", tableId);
 				throw new ServiceException(ErrorCode.NOT_FOUND_TABLE);
 			});
 
 		if (savedTable.getIsActive()) {
-			log.warn("Table 이 이미 활성화 되어 있습니다. tableId: {}", queryTableId);
+			log.warn("Table 이 이미 활성화 되어 있습니다. tableId: {}", tableId);
 			throw new ServiceException(ErrorCode.ALREADY_ACTIVE_TABLE);
 		}
 

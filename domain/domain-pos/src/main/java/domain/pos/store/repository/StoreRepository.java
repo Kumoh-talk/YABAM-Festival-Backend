@@ -1,5 +1,6 @@
 package domain.pos.store.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Slice;
@@ -33,4 +34,5 @@ public interface StoreRepository {
 
 	Slice<StoreHeadDto> findStoresCursorOrderByReviewCount(Long cursorReviewCount, Long cursorStoreId, int size);
 
+	List<Store> findMyStores(Long userId);
 }

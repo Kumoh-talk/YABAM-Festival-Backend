@@ -17,4 +17,8 @@ public class SaleReader {
 		return saleRepository.findSaleWithStoreBySaleId(saleId);
 	}
 
+	public Optional<Sale> getOpenSaleByStoreId(Long storeId) {
+		return saleRepository.getOpenSaleByStoreId(storeId);
+	}
+
 }

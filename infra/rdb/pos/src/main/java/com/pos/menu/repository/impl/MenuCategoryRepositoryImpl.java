@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.exception.ErrorCode;
+import com.exception.ServiceException;
 import com.pos.menu.entity.MenuCategoryEntity;
 import com.pos.menu.mapper.MenuCategoryMapper;
 import com.pos.menu.repository.jpa.MenuCategoryJpaRepository;
@@ -30,6 +32,17 @@ public class MenuCategoryRepositoryImpl implements MenuCategoryRepository {
 	@Override
 	public MenuCategory postMenuCategory(Store store, MenuCategoryInfo menuCategoryInfo) {
 		MenuCategoryEntity menuCategoryEntity = MenuCategoryMapper.toMenuCategoryEntity(menuCategoryInfo, store);
+		menuCategoryJpaRepository.findMaxOrderByStoreId(store.getStoreId())
+			.ifPresentOrElse(
+				order -> {
+					if (order > 99) {
+						throw new ServiceException(ErrorCode.MENU_CATEGORY_QUANTITY_OVERFLOW);
+					}
+					menuCategoryEntity.updateOrder(order + 1);
+				},
+				() -> menuCategoryEntity.updateOrder(1)
+			);
+
 		menuCategoryJpaRepository.save(menuCategoryEntity);
 		return MenuCategoryMapper.toMenuCategory(menuCategoryEntity, store);
 	}

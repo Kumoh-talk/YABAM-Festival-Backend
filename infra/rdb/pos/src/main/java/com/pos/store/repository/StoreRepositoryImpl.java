@@ -42,14 +42,14 @@ public class StoreRepositoryImpl implements StoreRepository {
 
 	@Override
 	public Optional<Store> findStoreByStoreId(Long storeId) {
-		List<StoreDetailImageEntity> storeDetailImageEntities = queryFactory
-			.select(qStoreDetailImageEntity)
-			.from(qStoreDetailImageEntity)
-			.join(qStoreDetailImageEntity.store, qStoreEntity).fetchJoin()
+		StoreEntity storeEntities = queryFactory
+			.select(qStoreEntity)
+			.from(qStoreEntity)
+			.leftJoin(qStoreEntity.storeDetailImageEntity, qStoreDetailImageEntity).fetchJoin()
 			.where(qStoreEntity.id.eq(storeId))
-			.fetch();
+			.fetchOne();
 
-		return StoreMapper.toStore(storeDetailImageEntities);
+		return StoreMapper.toStoreWithStoreDetailImages(storeEntities);
 	}
 
 	@Override
@@ -124,4 +124,15 @@ public class StoreRepositoryImpl implements StoreRepository {
 		return storeJpaRepository.findStoreHeadsByReviewCountCursor(cursorReviewCount, cursorStoreId, size);
 	}
 
+	@Override
+	public List<Store> findMyStores(Long userId) {
+		List<StoreEntity> storeEntities = queryFactory.select(qStoreEntity)
+			.from(qStoreEntity)
+			.leftJoin(qStoreEntity.storeDetailImageEntity, qStoreDetailImageEntity).fetchJoin()
+			.where(qStoreEntity.ownerId.eq(userId))
+			.fetch();
+		return storeEntities.stream()
+			.map(StoreMapper::toStore)
+			.toList();
+	}
 }

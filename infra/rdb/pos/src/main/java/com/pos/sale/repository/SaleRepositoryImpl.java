@@ -44,6 +44,18 @@ public class SaleRepositoryImpl implements SaleRepository {
 	}
 
 	@Override
+	public Optional<Sale> getOpenSaleByStoreId(Long storeId) {
+		Optional<SaleEntity> saleEntity = Optional.ofNullable(queryFactory
+			.selectFrom(qSaleEntity)
+			.join(qSaleEntity.store, qStoreEntity).fetchJoin()
+			.where(qSaleEntity.store.id.eq(storeId)
+				.and(qSaleEntity.closeDateTime.isNull()))
+			.fetchOne());
+		return saleEntity
+			.map(SaleMapper::toSaleWithStore);
+	}
+
+	@Override
 	public Sale closeSale(Sale savedSale, Store closeStore) {
 		LocalDateTime now = LocalDateTime.now();
 		queryFactory

@@ -1,5 +1,7 @@
 package com.application.presentation.menu.api;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +15,7 @@ import com.application.presentation.menu.dto.request.PatchMenuInfoRequest;
 import com.application.presentation.menu.dto.request.PostMenuInfoRequest;
 import com.application.presentation.menu.dto.response.MenuInfoResponse;
 import com.application.presentation.menu.dto.response.MenuResponse;
+import com.application.presentation.menu.dto.response.MenuSliceResponse;
 import com.exception.ErrorCode;
 import com.response.ResponseBody;
 import com.vo.UserPassport;
@@ -46,6 +49,8 @@ public interface MenuApi {
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.STORE_IS_OPEN_MENU_WRITE),
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.MENU_CATEGORY_NOT_FOUND),
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.EXIST_MENU_ORDER),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.MENU_QUANTITY_OVERFLOW),
+
 		}
 	)
 	ResponseEntity<ResponseBody<MenuResponse>> postMenu(
@@ -80,7 +85,7 @@ public interface MenuApi {
 	)
 	@ApiResponse(content = @Content(
 		mediaType = "application/json",
-		schema = @Schema(implementation = MenuInfoResponse.class)))
+		schema = @Schema(implementation = MenuSliceResponse.class)))
 	@ApiResponseExplanations(
 		success = @ApiSuccessResponseExplanation(
 			responseClass = GlobalSliceResponse.class,
@@ -92,11 +97,32 @@ public interface MenuApi {
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.MENU_NOT_FOUND)
 		}
 	)
-	ResponseEntity<ResponseBody<GlobalSliceResponse<MenuInfoResponse>>> getMenuSlice(
+	ResponseEntity<ResponseBody<GlobalSliceResponse<MenuSliceResponse>>> getMenuSlice(
 		@PathVariable Long storeId,
 		@RequestParam @Min(1) int pageSize,
-		@Schema(description = "이전 페이지 가장 마지막 menuId(첫 페이지 조회 시 생략)") @RequestParam(required = false) Long lastMenuId,
-		@RequestParam @NotNull Long menuCategoryId);
+		@Schema(description = "이전 페이지 가장 마지막 메뉴 Id(첫 페이지 조회 시 생략)") @RequestParam(required = false) Long lastMenuId,
+		@Schema(description = "이전 페이지 가장 마지막 메뉴의 카테고리 Id(첫 페이지 조회 시 생략)")
+		@RequestParam(required = false) Long lastMenuCategoryId);
+
+	@Operation(
+		summary = "카테고리 별 메뉴 리스트 조회 API",
+		description = "카테고리 별 전체 메뉴 리스트를 조회합니다."
+	)
+	@ApiResponse(content = @Content(
+		mediaType = "application/json",
+		schema = @Schema(implementation = MenuInfoResponse.class)))
+	@ApiResponseExplanations(
+		success = @ApiSuccessResponseExplanation(
+			responseClass = MenuInfoResponse.class,
+			description = "해당 카테고리 전체 메뉴 리스트 조회 성공"
+		),
+		errors = {
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.NOT_FOUND_STORE),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.MENU_CATEGORY_NOT_FOUND)
+		}
+	)
+	ResponseEntity<ResponseBody<List<MenuInfoResponse>>> getCategoryMenuList(
+		@PathVariable Long storeId, @PathVariable Long menuCategoryId);
 
 	@Operation(
 		summary = "메뉴 세부정보 수정 API",

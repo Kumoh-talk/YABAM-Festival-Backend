@@ -31,7 +31,7 @@ public class MenuCategoryQueryDslRepositoryImpl implements MenuCategoryQueryDslR
 			.selectFrom(qMenuCategoryEntity)
 			.where(qMenuCategoryEntity.store.id.eq(storeId))
 			.orderBy(qMenuCategoryEntity.order.asc())
-			.stream().toList();
+			.fetch();
 	}
 
 	@Override
@@ -41,6 +41,17 @@ public class MenuCategoryQueryDslRepositoryImpl implements MenuCategoryQueryDslR
 			.where(qMenuCategoryEntity.store.id.eq(storeId))
 			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
 			.fetch();
+	}
+
+	@Override
+	public Optional<Integer> findMaxOrderByStoreId(Long storeId) {
+		Integer maxOrder = jpaQueryFactory
+			.select(qMenuCategoryEntity.order.max())
+			.from(qMenuCategoryEntity)
+			.where(qMenuCategoryEntity.store.id.eq(storeId))
+			.fetchOne();
+
+		return Optional.ofNullable(maxOrder);
 	}
 
 	@Override
@@ -67,10 +78,18 @@ public class MenuCategoryQueryDslRepositoryImpl implements MenuCategoryQueryDslR
 	public void decreaseOrderInRange(Long storeId, Integer startOrder, Integer endOrder) {
 		jpaQueryFactory
 			.update(qMenuCategoryEntity)
-			.set(qMenuCategoryEntity.order, qMenuCategoryEntity.order.subtract(1))
+			.set(qMenuCategoryEntity.order, qMenuCategoryEntity.order.subtract(100))
 			.where(qMenuCategoryEntity.store.id.eq(storeId)
 				.and(qMenuCategoryEntity.order.gt(startOrder))
 				.and(qMenuCategoryEntity.order.loe(endOrder)))
+			.execute();
+
+		jpaQueryFactory
+			.update(qMenuCategoryEntity)
+			.set(qMenuCategoryEntity.order, qMenuCategoryEntity.order.add(99))
+			.where(qMenuCategoryEntity.store.id.eq(storeId)
+				.and(qMenuCategoryEntity.order.gt(startOrder - 100))
+				.and(qMenuCategoryEntity.order.loe(endOrder - 100)))
 			.execute();
 	}
 
@@ -78,10 +97,18 @@ public class MenuCategoryQueryDslRepositoryImpl implements MenuCategoryQueryDslR
 	public void increaseOrderInRange(Long storeId, Integer startOrder, Integer endOrder) {
 		jpaQueryFactory
 			.update(qMenuCategoryEntity)
-			.set(qMenuCategoryEntity.order, qMenuCategoryEntity.order.add(1))
+			.set(qMenuCategoryEntity.order, qMenuCategoryEntity.order.subtract(100))
 			.where(qMenuCategoryEntity.store.id.eq(storeId)
 				.and(qMenuCategoryEntity.order.goe(startOrder))
 				.and(qMenuCategoryEntity.order.lt(endOrder)))
+			.execute();
+
+		jpaQueryFactory
+			.update(qMenuCategoryEntity)
+			.set(qMenuCategoryEntity.order, qMenuCategoryEntity.order.add(101))
+			.where(qMenuCategoryEntity.store.id.eq(storeId)
+				.and(qMenuCategoryEntity.order.goe(startOrder - 100))
+				.and(qMenuCategoryEntity.order.lt(endOrder - 100)))
 			.execute();
 	}
 
@@ -89,9 +116,17 @@ public class MenuCategoryQueryDslRepositoryImpl implements MenuCategoryQueryDslR
 	public void decreaseOrderWhereGT(Long storeId, Integer deleteOrder) {
 		jpaQueryFactory
 			.update(qMenuCategoryEntity)
-			.set(qMenuCategoryEntity.order, qMenuCategoryEntity.order.subtract(1))
+			.set(qMenuCategoryEntity.order, qMenuCategoryEntity.order.subtract(100))
 			.where(qMenuCategoryEntity.store.id.eq(storeId)
 				.and(qMenuCategoryEntity.order.gt(deleteOrder)))
+			.execute();
+
+		jpaQueryFactory
+			.update(qMenuCategoryEntity)
+			.set(qMenuCategoryEntity.order, qMenuCategoryEntity.order.add(99))
+			.where(qMenuCategoryEntity.store.id.eq(storeId)
+				.and(qMenuCategoryEntity.order.gt(deleteOrder - 100))
+				.and(qMenuCategoryEntity.order.loe(0)))
 			.execute();
 	}
 }

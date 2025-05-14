@@ -13,4 +13,6 @@ public interface UserRepository {
 
 	UserPassport createOwner(String email, OidcProvider provider, String providerId);
 
+	UserPassport getUserInfo(Long userId);
+
 }

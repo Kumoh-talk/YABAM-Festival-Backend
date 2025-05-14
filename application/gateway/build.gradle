@@ -16,6 +16,9 @@ dependencies {
     // Common Module
     implementation project(':common:base')
 
+    // Validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    
     // swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.4.0'
 

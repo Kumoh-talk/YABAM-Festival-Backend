@@ -19,7 +19,7 @@ public class UserRepositoryImpl implements UserRepository {
 	@Override
 	public UserPassport findByEmailAndProviderAndProviderId(String email, OidcProvider provider, String providerId) {
 		return userJpaRepository.findByEmailAndProviderAndProviderId(email, provider, providerId)
-			.map(userEntity -> UserPassport.of(userEntity.getId(), userEntity.getEmail(), userEntity.getRole()))
+			.map(userEntity -> UserPassport.of(userEntity.getId(), userEntity.getNickname(), userEntity.getRole()))
 			.orElse(null);
 	}
 
@@ -34,7 +34,8 @@ public class UserRepositoryImpl implements UserRepository {
 			.build();
 
 		UserEntity savedUserEntity = userJpaRepository.save(userEntity);
-		return UserPassport.of(savedUserEntity.getId(), savedUserEntity.getEmail(), savedUserEntity.getRole());
+		savedUserEntity.setNickname("금붕이" + savedUserEntity.getId());
+		return UserPassport.of(savedUserEntity.getId(), savedUserEntity.getNickname(), savedUserEntity.getRole());
 	}
 
 	@Override
@@ -48,6 +49,14 @@ public class UserRepositoryImpl implements UserRepository {
 			.build();
 
 		UserEntity savedUserEntity = userJpaRepository.save(userEntity);
-		return UserPassport.of(savedUserEntity.getId(), savedUserEntity.getEmail(), savedUserEntity.getRole());
+		savedUserEntity.setNickname("금붕이" + savedUserEntity.getId());
+		return UserPassport.of(savedUserEntity.getId(), savedUserEntity.getNickname(), savedUserEntity.getRole());
+	}
+
+	@Override
+	public UserPassport getUserInfo(Long userId) {
+		UserEntity userEntity = userJpaRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException("User not found"));
+		return UserPassport.of(userEntity.getId(), userEntity.getNickname(), userEntity.getRole());
 	}
 }

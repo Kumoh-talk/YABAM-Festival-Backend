@@ -3,6 +3,7 @@ package domain.pos.table.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
@@ -24,6 +25,7 @@ public class TableService {
 	private final TableReader tableReader;
 	private final TableWriter tableWriter;
 
+	@Transactional
 	public List<Table> createTable(final UserPassport ownerPassport, final Long queryStoreId,
 		final Integer queryTableNumber) {
 		final Store store = storeValidator.validateStoreOwner(ownerPassport, queryStoreId);

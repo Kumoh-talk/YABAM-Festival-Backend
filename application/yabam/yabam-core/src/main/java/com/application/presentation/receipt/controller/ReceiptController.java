@@ -24,6 +24,7 @@ import com.application.global.response.GlobalPageResponse;
 import com.application.global.response.GlobalSliceResponse;
 import com.application.presentation.receipt.api.ReceiptApi;
 import com.application.presentation.receipt.dto.response.ReceiptAndOrdersResponse;
+import com.application.presentation.receipt.dto.response.ReceiptIdResponse;
 import com.application.presentation.receipt.dto.response.ReceiptInfoResponse;
 import com.application.presentation.receipt.dto.response.ReceiptResponse;
 import com.authorization.AssignUserPassport;
@@ -47,8 +48,8 @@ public class ReceiptController implements ReceiptApi {
 
 	@PostMapping("/api/v1/receipts")
 	public ResponseEntity<ResponseBody<ReceiptResponse>> registerReceipt(
-		@RequestParam @NotNull Long queryTableId, @RequestParam @NotNull Long querySaleId) {
-		Receipt receipt = receiptService.registerReceipt(queryTableId, querySaleId);
+		@RequestParam @NotNull Long storeId, @RequestParam @NotNull Long tableId) {
+		Receipt receipt = receiptService.registerReceipt(storeId, tableId);
 		return ResponseEntity.ok(createSuccessResponse(ReceiptResponse.from(receipt)));
 	}
 
@@ -114,9 +115,9 @@ public class ReceiptController implements ReceiptApi {
 	}
 
 	@GetMapping("/api/v1/table/{tableId}/receipts/non-adjust")
-	public ResponseEntity<ResponseBody<Long>> getNonAdjustReceiptId(@PathVariable Long tableId) {
+	public ResponseEntity<ResponseBody<ReceiptIdResponse>> getNonAdjustReceiptId(@PathVariable Long tableId) {
 		Long receiptId = receiptService.getNonAdjustReceiptId(tableId);
-		return ResponseEntity.ok(createSuccessResponse(receiptId));
+		return ResponseEntity.ok(createSuccessResponse(ReceiptIdResponse.from(receiptId)));
 	}
 
 	@GetMapping("/api/v1/customers/{customerId}/receipts")
