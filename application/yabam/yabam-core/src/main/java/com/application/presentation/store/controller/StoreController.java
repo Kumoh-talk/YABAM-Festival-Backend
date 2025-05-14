@@ -130,10 +130,10 @@ public class StoreController implements StoreApi {
 		));
 	}
 
-	@PatchMapping("/api/v1/store/image")
+	@PostMapping("/api/v1/store/presigned-url")
 	@HasRole(userRole = ROLE_OWNER)
 	@AssignUserPassport
-	public ResponseEntity<ResponseBody<String>> getStoreImage(
+	public ResponseEntity<ResponseBody<String>> getPresignedUrl(
 		UserPassport userPassport,
 		@RequestBody @Valid StorePresignedUrlRequest storePresignedUrlRequest) {
 		return ResponseEntity

@@ -72,11 +72,10 @@ public class StoreService {
 	public String getPresignedUrl(final UserPassport ownerPassport, final Long storeId,
 		final StoreImageProperty storeImageProperty) {
 		storeValidator.validateStoreOwner(ownerPassport, storeId);
-		String url;
+		String url = UrlHandleUtil.generatreDetailUrl(storeId);
 		if (storeImageProperty.equals(StoreImageProperty.STORE_HEAD)) {
 			url = UrlHandleUtil.generatreHeadUrl(storeId);
 		}
-		url = UrlHandleUtil.generatreDetailUrl(storeId);
 		return storeImageHandler.generatePresignedUrl(url);
 	}
 

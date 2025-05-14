@@ -1,7 +1,6 @@
 package com.application.presentation.store.api;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -189,8 +188,8 @@ public interface StoreApi {
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.NOT_EQUAL_STORE_OWNER)
 		}
 	)
-	ResponseEntity<ResponseBody<String>> getStoreImage(
+	ResponseEntity<ResponseBody<String>> getPresignedUrl(
 		@Parameter(hidden = true) UserPassport userPassport,
-		@ModelAttribute @Valid StorePresignedUrlRequest storePresignedUrlRequest);
+		@RequestBody @Valid StorePresignedUrlRequest storePresignedUrlRequest);
 
 }
