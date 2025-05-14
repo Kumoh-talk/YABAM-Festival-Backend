@@ -61,6 +61,13 @@ public class MenuRepositoryImpl implements MenuRepository {
 	}
 
 	@Override
+	public Optional<MenuInfo> getMenuInfo(Long storeId, Long menuId, Long lastMenuCategoryId) {
+		return menuJpaRepository.findByIdAndStoreIdAndMenuCategoryId(menuId, storeId, lastMenuCategoryId)
+			.filter(menuEntity -> menuEntity.getMenuCategory().getId().equals(lastMenuCategoryId))
+			.map(MenuMapper::toMenuInfo);
+	}
+
+	@Override
 	public List<Menu> getAllByStoreIdWithCategoryAndLock(Long storeId) {
 		return menuJpaRepository.findAllByStoreIdWithCategoryAndLock(storeId)
 			.stream()
@@ -70,12 +77,24 @@ public class MenuRepositoryImpl implements MenuRepository {
 	}
 
 	@Override
-	public Slice<MenuInfo> getMenuSlice(int pageSize, MenuInfo lastMenuInfo, Long menuCategoryId) {
+	public Slice<Menu> getMenuSlice(int pageSize, Long storeId, MenuInfo lastMenuInfo,
+		MenuCategoryInfo lastMenuCategoryInfo) {
 		return menuJpaRepository.findSliceByMenuCategoryId(
-			pageSize,
-			lastMenuInfo == null ? null : lastMenuInfo.getOrder(),
-			menuCategoryId
-		).map(MenuMapper::toMenuInfo);
+				pageSize,
+				storeId,
+				lastMenuInfo == null ? null : lastMenuInfo.getOrder(),
+				lastMenuCategoryInfo
+			)
+			.map(menuEntity -> MenuMapper.toMenu(menuEntity, null,
+				MenuCategoryMapper.toMenuCategory(menuEntity.getMenuCategory(), null)));
+	}
+
+	@Override
+	public List<MenuInfo> getCategoryMenuList(Long storeId, Long menuCategoryId) {
+		return menuJpaRepository.findAllByStoreIdAndMenuCategoryId(storeId, menuCategoryId)
+			.stream()
+			.map(MenuMapper::toMenuInfo)
+			.collect(Collectors.toList());
 	}
 
 	@Override

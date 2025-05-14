@@ -3,6 +3,8 @@ package com.application.presentation.menu.controller;
 import static com.response.ResponseUtil.*;
 import static com.vo.UserRole.*;
 
+import java.util.List;
+
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,6 +23,7 @@ import com.application.presentation.menu.dto.request.PatchMenuInfoRequest;
 import com.application.presentation.menu.dto.request.PostMenuInfoRequest;
 import com.application.presentation.menu.dto.response.MenuInfoResponse;
 import com.application.presentation.menu.dto.response.MenuResponse;
+import com.application.presentation.menu.dto.response.MenuSliceResponse;
 import com.authorization.AssignUserPassport;
 import com.authorization.HasRole;
 import com.response.ResponseBody;
@@ -62,14 +65,23 @@ public class MenuController implements MenuApi {
 	}
 
 	@GetMapping("/api/v1/stores/{storeId}/menus")
-	public ResponseEntity<ResponseBody<GlobalSliceResponse<MenuInfoResponse>>> getMenuSlice(
+	public ResponseEntity<ResponseBody<GlobalSliceResponse<MenuSliceResponse>>> getMenuSlice(
 		@PathVariable Long storeId,
 		@RequestParam @Min(1) int pageSize,
 		@RequestParam(required = false) Long lastMenuId,
-		@RequestParam @NotNull Long menuCategoryId) {
-		Slice<MenuInfoResponse> menuSliceResponse = menuService.getMenuSlice(pageSize, lastMenuId, storeId,
-			menuCategoryId).map(MenuInfoResponse::from);
+		@RequestParam(required = false) Long lastMenuCategoryId) {
+		Slice<MenuSliceResponse> menuSliceResponse = menuService.getMenuSlice(pageSize, lastMenuId, storeId,
+			lastMenuCategoryId).map(MenuSliceResponse::from);
 		return ResponseEntity.ok(createSuccessResponse(GlobalSliceResponse.from(menuSliceResponse)));
+	}
+
+	@GetMapping("/api/v1/stores/{storeId}/menu-category/{menuCategoryId}/menus")
+	public ResponseEntity<ResponseBody<List<MenuInfoResponse>>> getCategoryMenuList(
+		@PathVariable Long storeId, @PathVariable Long menuCategoryId) {
+		List<MenuInfoResponse> menuSliceResponse = menuService.getCategoryMenuList(storeId, menuCategoryId).stream()
+			.map(MenuInfoResponse::from)
+			.toList();
+		return ResponseEntity.ok(createSuccessResponse(menuSliceResponse));
 	}
 
 	@PatchMapping("/api/v1/stores/{storeId}/menus/{menuId}/info")

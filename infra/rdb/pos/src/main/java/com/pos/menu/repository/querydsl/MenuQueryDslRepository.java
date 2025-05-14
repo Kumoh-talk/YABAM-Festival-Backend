@@ -8,12 +8,19 @@ import org.springframework.data.domain.Slice;
 
 import com.pos.menu.entity.MenuEntity;
 
+import domain.pos.menu.entity.MenuCategoryInfo;
+
 public interface MenuQueryDslRepository {
 	Optional<MenuEntity> findByIdAndStoreId(Long menuId, Long storeId);
 
+	Optional<MenuEntity> findByIdAndStoreIdAndMenuCategoryId(Long menuId, Long storeId, Long menuCategoryId);
+
 	List<MenuEntity> findAllByStoreIdWithCategoryAndLock(Long storeId);
 
-	Slice<MenuEntity> findSliceByMenuCategoryId(int pageSize, Integer lastMenuOrder, Long menuCategoryId);
+	Slice<MenuEntity> findSliceByMenuCategoryId(int pageSize, Long storeId, Integer lastMenuOrder,
+		MenuCategoryInfo lastMenuCategoryInfo);
+
+	List<MenuEntity> findAllByStoreIdAndMenuCategoryId(Long storeId, Long menuCategoryId);
 
 	Optional<Integer> findMaxOrderByMenuCategoryId(Long storeId);
 

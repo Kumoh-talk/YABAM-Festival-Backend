@@ -10,9 +10,11 @@ import org.springframework.data.domain.SliceImpl;
 
 import com.pos.menu.entity.MenuEntity;
 import com.pos.menu.entity.QMenuEntity;
-import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import domain.pos.menu.entity.MenuCategoryInfo;
 import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +35,18 @@ public class MenuQueryDslRepositoryImpl implements MenuQueryDslRepository {
 	}
 
 	@Override
+	public Optional<MenuEntity> findByIdAndStoreIdAndMenuCategoryId(Long menuId, Long storeId, Long menuCategoryId) {
+		MenuEntity menuEntity = jpaQueryFactory
+			.selectFrom(qMenuEntity)
+			.where(qMenuEntity.id.eq(menuId)
+				.and(qMenuEntity.store.id.eq(storeId))
+				.and(qMenuEntity.menuCategory.id.eq(menuCategoryId)))
+			.fetchOne();
+
+		return Optional.ofNullable(menuEntity);
+	}
+
+	@Override
 	public List<MenuEntity> findAllByStoreIdWithCategoryAndLock(Long storeId) {
 		return jpaQueryFactory
 			.selectFrom(qMenuEntity)
@@ -44,13 +58,25 @@ public class MenuQueryDslRepositoryImpl implements MenuQueryDslRepository {
 	}
 
 	@Override
-	public Slice<MenuEntity> findSliceByMenuCategoryId(int pageSize, Integer lastMenuOrder, Long menuCategoryId) {
+	public Slice<MenuEntity> findSliceByMenuCategoryId(int pageSize, Long storeId, Integer lastMenuOrder,
+		MenuCategoryInfo lastMenuCategoryInfo) {
+		BooleanBuilder where = new BooleanBuilder();
+
+		if (lastMenuOrder != null && lastMenuCategoryInfo != null) {
+			BooleanExpression inSameCategory = qMenuEntity.menuCategory.id.eq(lastMenuCategoryInfo.getId())
+				.and(qMenuEntity.order.gt(lastMenuOrder));
+			BooleanExpression inOtherCategory = qMenuEntity.menuCategory.order.gt(lastMenuCategoryInfo.getOrder());
+
+			where.and(inSameCategory.or(inOtherCategory));
+		} else {
+			where.and(qMenuEntity.menuCategory.store.id.eq(storeId));
+		}
+
 		List<MenuEntity> content = jpaQueryFactory
 			.selectFrom(qMenuEntity)
-			.where(qMenuEntity.menuCategory.id.eq(menuCategoryId)
-				.and(lastMenuOrder == null ? Expressions.TRUE : qMenuEntity.order.gt(lastMenuOrder))
-			)
-			.orderBy(qMenuEntity.order.asc())
+			.join(qMenuEntity.menuCategory).fetchJoin()
+			.where(where)
+			.orderBy(qMenuEntity.menuCategory.order.asc(), qMenuEntity.order.asc())
 			.limit(pageSize + 1)
 			.fetch();
 
@@ -60,6 +86,16 @@ public class MenuQueryDslRepositoryImpl implements MenuQueryDslRepository {
 		}
 
 		return new SliceImpl<>(content, Pageable.ofSize(pageSize), hasNext);
+	}
+
+	@Override
+	public List<MenuEntity> findAllByStoreIdAndMenuCategoryId(Long storeId, Long menuCategoryId) {
+		return jpaQueryFactory
+			.selectFrom(qMenuEntity)
+			.where(qMenuEntity.store.id.eq(storeId)
+				.and(qMenuEntity.menuCategory.id.eq(menuCategoryId)))
+			.orderBy(qMenuEntity.order.asc())
+			.fetch();
 	}
 
 	@Override
