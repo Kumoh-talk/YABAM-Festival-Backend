@@ -75,6 +75,7 @@ public class ReviewController implements ReviewApi {
 	 * @deprecated since 2025-05-15
 	 * 기획상 보류.
 	 */
+	@Deprecated(since = "2025-05-15")
 	@DeleteMapping("/api/v1/review")
 	@HasRole(userRole = ROLE_USER)
 	@AssignUserPassport
