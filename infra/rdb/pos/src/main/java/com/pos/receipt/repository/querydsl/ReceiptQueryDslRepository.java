@@ -1,5 +1,6 @@
 package com.pos.receipt.repository.querydsl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,6 +28,8 @@ public interface ReceiptQueryDslRepository {
 
 	ReceiptEntity findNonAdjustReceipt(Long tableId);
 
+	List<ReceiptEntity> findAllNonAdjustReceiptWithTableAndOrders(Long saleId);
+
 	Slice<ReceiptEntity> findCustomerReceiptSliceWithStore(int pageSize, UUID lastReceiptId, Long customerId);
 
 	Optional<ReceiptEntity> findByIdWithOrders(UUID receiptId);
@@ -35,6 +38,6 @@ public interface ReceiptQueryDslRepository {
 
 	void adjustReceipts(List<Receipt> receipts);
 
-	void startReceiptUsage(UUID receiptId);
+	LocalDateTime startReceiptUsage(UUID receiptId);
 
 }

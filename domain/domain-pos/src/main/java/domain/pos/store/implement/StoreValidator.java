@@ -32,6 +32,14 @@ public class StoreValidator {
 		return previousStore;
 	}
 
+	public void validateStoreOwner(UserPassport ownerPassport, Store store) {
+		if (!isEqualSavedStoreOwnerAndQueryOwner(ownerPassport.getUserId(), store)) {
+			log.warn("요청 유저는 Store 소유자와 다름: userId={}, queryStoreId={}", ownerPassport.getUserId(),
+				store.getStoreId());
+			throw new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER);
+		}
+	}
+
 	// 가게 소유자와 요청 점주가 같은지 확인
 	private boolean isEqualSavedStoreOwnerAndQueryOwner(Long ownerId, Store previousStore) {
 		return previousStore.getOwnerPassport().getUserId().equals(ownerId);

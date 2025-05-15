@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
+import com.pos.order.mapper.OrderMapper;
 import com.pos.receipt.entity.ReceiptEntity;
 import com.pos.receipt.mapper.ReceiptMapper;
 import com.pos.receipt.repository.jpa.ReceiptJpaRepository;
@@ -41,6 +42,12 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	public Optional<ReceiptInfo> getReceiptInfo(UUID receiptId) {
 		return receiptJpaRepository.findById(receiptId)
 			.map(ReceiptMapper::toReceiptInfo);
+	}
+
+	@Override
+	public Optional<Receipt> getReceiptAndOrdersAndMenus(UUID receiptId) {
+		return receiptJpaRepository.findByIdWithOrders(receiptId)
+			.map(ReceiptMapper::toReceiptWithMenus);
 	}
 
 	@Override
@@ -100,6 +107,23 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	}
 
 	@Override
+	public List<Receipt> getAllNonAdjustReceiptWithTableAndOrders(Long saleId) {
+		return receiptJpaRepository.findAllNonAdjustReceiptWithTableAndOrders(saleId)
+			.stream()
+			.map(receiptEntity -> {
+				Receipt receipt = ReceiptMapper.toReceipt(
+					receiptEntity,
+					TableMapper.toTable(receiptEntity.getTable(), (Store)null),
+					null);
+				receipt.getOrders().addAll(receiptEntity.getOrders().stream()
+					.map(orderEntity -> OrderMapper.toOrder(orderEntity, null, null))
+					.collect(Collectors.toList()));
+				return receipt;
+			})
+			.collect(Collectors.toList());
+	}
+
+	@Override
 	public Slice<Receipt> getCustomerReceiptSlice(int pageSize, UUID lastReceiptId, Long customerId) {
 		return receiptJpaRepository.findCustomerReceiptSliceWithStore(pageSize, lastReceiptId, customerId)
 			.map(receiptEntity -> ReceiptMapper.toReceipt(receiptEntity, null,
@@ -119,7 +143,9 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 				patchReceipt.getReceiptInfo().getReceiptId()).get();
 			receiptEntity.updateInfo(patchReceipt.getReceiptInfo());
 
-			responseReceipts.add(ReceiptMapper.toReceiptWithMenus(receiptEntity));
+			Receipt receipt = ReceiptMapper.toReceiptWithMenus(receiptEntity);
+			receipt.filterCompletedOrders();
+			responseReceipts.add(receipt);
 		}
 		return responseReceipts;
 	}

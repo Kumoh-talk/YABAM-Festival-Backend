@@ -28,13 +28,14 @@ import com.application.presentation.receipt.dto.response.ReceiptAndOrdersRespons
 import com.application.presentation.receipt.dto.response.ReceiptIdResponse;
 import com.application.presentation.receipt.dto.response.ReceiptInfoResponse;
 import com.application.presentation.receipt.dto.response.ReceiptResponse;
+import com.application.presentation.receipt.dto.response.TableWithReceiptResponse;
 import com.authorization.AssignUserPassport;
 import com.authorization.HasRole;
 import com.response.ResponseBody;
 import com.vo.UserPassport;
 
 import domain.pos.receipt.entity.Receipt;
-import domain.pos.receipt.entity.ReceiptInfo;
+import domain.pos.receipt.entity.TableWithNonAdjustReceipt;
 import domain.pos.receipt.service.ReceiptService;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
@@ -55,11 +56,24 @@ public class ReceiptController implements ReceiptApi {
 	}
 
 	@GetMapping("/api/v1/receipts/{receiptId}")
-	public ResponseEntity<ResponseBody<ReceiptInfoResponse>> getReceiptInfo(@PathVariable UUID receiptId) {
-		ReceiptInfo receiptInfo = receiptService.getReceiptInfo(receiptId);
-		return ResponseEntity.ok(createSuccessResponse(ReceiptInfoResponse.from(receiptInfo)));
+	public ResponseEntity<ResponseBody<ReceiptAndOrdersResponse>> getReceiptAndOrdersAndMenus(
+		@PathVariable UUID receiptId) {
+		Receipt receipt = receiptService.getReceiptAndOrdersAndMenus(receiptId);
+		return ResponseEntity.ok(createSuccessResponse(ReceiptAndOrdersResponse.from(receipt)));
 	}
 
+	@GetMapping("/api/v1/sales/{saleId}/non-adjust-receipts")
+	@HasRole(userRole = ROLE_OWNER)
+	@AssignUserPassport
+	public ResponseEntity<ResponseBody<TableWithReceiptResponse>> getAllTableNonAdjustReceipts(
+		UserPassport userPassport,
+		@PathVariable Long saleId) {
+		List<TableWithNonAdjustReceipt> tableWithNonAdjustReceipts = receiptService.getAllTableNonAdjustReceipts(
+			userPassport, saleId);
+		return ResponseEntity.ok(createSuccessResponse(TableWithReceiptResponse.from(tableWithNonAdjustReceipts)));
+	}
+
+	// TODO : store 별로 saleId 리스트 조회 로직이 필요해보임
 	@GetMapping("/api/v1/sales/{saleId}/receipts")
 	@HasRole(userRole = ROLE_OWNER)
 	@AssignUserPassport
@@ -121,6 +135,7 @@ public class ReceiptController implements ReceiptApi {
 		return ResponseEntity.ok(createSuccessResponse(ReceiptIdResponse.from(receiptId)));
 	}
 
+	// TODO : 리뷰 작성여부?
 	@GetMapping("/api/v1/customers/{customerId}/receipts")
 	@HasRole(userRole = ROLE_USER)
 	@AssignUserPassport

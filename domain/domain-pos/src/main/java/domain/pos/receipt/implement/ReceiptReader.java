@@ -27,6 +27,10 @@ public class ReceiptReader {
 		return receiptRepository.getReceiptInfo(receiptId);
 	}
 
+	public Optional<Receipt> getReceiptAndOrdersAndMenus(UUID receiptId) {
+		return receiptRepository.getReceiptAndOrdersAndMenus(receiptId);
+	}
+
 	public Optional<Receipt> getReceiptWithTableAndStore(UUID receiptId) {
 		return receiptRepository.getReceiptWithTableAndStore(receiptId);
 	}
@@ -53,6 +57,10 @@ public class ReceiptReader {
 
 	public ReceiptInfo getNonAdjustReceipt(Long tableId) {
 		return receiptRepository.getNonAdjustReceipt(tableId);
+	}
+
+	public List<Receipt> getAllNonAdjustReceiptWithTableAndOrders(Long saleId) {
+		return receiptRepository.getAllNonAdjustReceiptWithTableAndOrders(saleId);
 	}
 
 	public Slice<Receipt> getCustomerReceiptSlice(int pageSize, UUID lastReceiptId, Long customerId) {

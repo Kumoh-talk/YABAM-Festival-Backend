@@ -1,5 +1,7 @@
 package domain.pos.receipt.service;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,6 +18,7 @@ import com.vo.UserPassport;
 import domain.pos.member.implement.UserPassportValidator;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.entity.ReceiptInfo;
+import domain.pos.receipt.entity.TableWithNonAdjustReceipt;
 import domain.pos.receipt.implement.ReceiptReader;
 import domain.pos.receipt.implement.ReceiptValidator;
 import domain.pos.receipt.implement.ReceiptWriter;
@@ -66,12 +69,31 @@ public class ReceiptService {
 		return receiptWriter.createReceipt(changedActiveTable, savedSale);
 	}
 
-	public ReceiptInfo getReceiptInfo(UUID receiptId) {
-		return receiptReader.getReceiptInfo(receiptId)
+	@Transactional
+	public Receipt getReceiptAndOrdersAndMenus(UUID receiptId) {
+		return receiptReader.getReceiptAndOrdersAndMenus(receiptId)
 			.orElseThrow(() -> {
 				log.warn("Receipt 을 찾을 수 없습니다. receiptId: {}", receiptId);
 				return new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 			});
+	}
+
+	public List<TableWithNonAdjustReceipt> getAllTableNonAdjustReceipts(UserPassport ownerPassport, Long saleId) {
+		Sale sale = saleReader.readSingleSale(saleId)
+			.orElseThrow(() -> {
+				log.warn("Sale 을 찾을 수 없습니다. saleId: {}", saleId);
+				return new ServiceException(ErrorCode.NOT_FOUND_SALE);
+			});
+
+		storeValidator.validateStoreOwner(ownerPassport, sale.getStore());
+
+		List<Table> tables = new ArrayList<>(tableReader.findTables(sale.getStore().getStoreId()));
+		tables.sort(Comparator.comparingInt(Table::getTableNumber));
+		List<Receipt> receipts = receiptReader.getAllNonAdjustReceiptWithTableAndOrders(saleId);
+
+		return tables.stream()
+			.map(table -> TableWithNonAdjustReceipt.of(table, receipts))
+			.toList();
 	}
 
 	// Owner api
@@ -82,7 +104,7 @@ public class ReceiptService {
 				return new ServiceException(ErrorCode.NOT_FOUND_SALE);
 			});
 
-		storeValidator.validateStoreOwner(userPassport, sale.getStore().getStoreId());
+		storeValidator.validateStoreOwner(userPassport, sale.getStore());
 
 		return receiptReader.getAdjustedReceiptPageBySale(pageable, saleId);
 	}

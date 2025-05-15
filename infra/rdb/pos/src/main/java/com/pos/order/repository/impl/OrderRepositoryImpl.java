@@ -1,5 +1,6 @@
 package com.pos.order.repository.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,7 +40,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 	public Order postOrderWithCart(Receipt receipt, List<CartMenu> cartMenus) {
 		// 최초 주문 시 영수증 시작시간 기록
 		if (!orderJpaRepository.existsOrderByReceiptId(receipt.getReceiptInfo().getReceiptId())) {
-			receiptJpaRepository.startReceiptUsage(receipt.getReceiptInfo().getReceiptId());
+			LocalDateTime startTime = receiptJpaRepository.startReceiptUsage(receipt.getReceiptInfo().getReceiptId());
+			receipt.getReceiptInfo().setStartUsageTime(startTime);
 		}
 
 		// 주문 총 금액 계산
@@ -75,7 +77,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 	public Order postOrderWithoutCart(Receipt receipt, List<OrderMenu> orderMenus) {
 		// 최초 주문 시 영수증 시작시간 기록
 		if (!orderJpaRepository.existsOrderByReceiptId(receipt.getReceiptInfo().getReceiptId())) {
-			receiptJpaRepository.startReceiptUsage(receipt.getReceiptInfo().getReceiptId());
+			LocalDateTime startTime = receiptJpaRepository.startReceiptUsage(receipt.getReceiptInfo().getReceiptId());
+			receipt.getReceiptInfo().setStartUsageTime(startTime);
 		}
 
 		// 주문 총 금액 계산
