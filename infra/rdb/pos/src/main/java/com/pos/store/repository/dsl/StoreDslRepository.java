@@ -5,7 +5,7 @@ import org.springframework.data.domain.Slice;
 import domain.pos.store.entity.dto.StoreHeadDto;
 
 public interface StoreDslRepository {
-	Slice<StoreHeadDto> findStoreHeadsByReviewCountCursor(Long cursorReviewCount,
-		Long cursorStoreId,
+	Slice<StoreHeadDto> findStoreHeadsByStoreIdCursor(
+		Long lastStoreId,
 		int size);
 }

@@ -150,8 +150,6 @@ public interface StoreApi {
 		)
 	)
 	ResponseEntity<ResponseBody<StoreCursorResponse>> getStoreList(
-		@Schema(description = "마지막 리뷰 수 만약 첫 조회면 null", example = "131")
-		Long lastReviewCount,
 		@Schema(description = "마지막 가게 ID 만약 첫 조회면 null", example = "1")
 		Long lastStoreId,
 		@Schema(description = "가게 개수", example = "10")

@@ -11,25 +11,21 @@ public class StoreHeadDto {
 	private final Boolean isOpened;
 	private final String headImageUrl;
 	private final String description;
-	private final Integer ratingAverage;
-	private final Integer reviewCount;
 	private final List<String> storeDetailImageUrls;
 
 	private StoreHeadDto(Long storeId, String storeName, Boolean isOpened, String headImageUrl, String description,
-		Integer ratingAverage, Integer reviewCount, List<String> storeDetailImageUrls) {
+		List<String> storeDetailImageUrls) {
 		this.storeId = storeId;
 		this.storeName = storeName;
 		this.isOpened = isOpened;
 		this.headImageUrl = headImageUrl;
 		this.description = description;
-		this.ratingAverage = ratingAverage;
-		this.reviewCount = reviewCount;
 		this.storeDetailImageUrls = storeDetailImageUrls != null ? List.copyOf(storeDetailImageUrls) : List.of();
 	}
 
 	public static StoreHeadDto of(Long storeId, String storeName, Boolean isOpened, String headImageUrl,
-		String description, Integer ratingAverage, Integer reviewCount, List<String> storeDetailImageUrls) {
-		return new StoreHeadDto(storeId, storeName, isOpened, headImageUrl, description, ratingAverage, reviewCount,
+		String description, List<String> storeDetailImageUrls) {
+		return new StoreHeadDto(storeId, storeName, isOpened, headImageUrl, description,
 			storeDetailImageUrls);
 	}
 }
