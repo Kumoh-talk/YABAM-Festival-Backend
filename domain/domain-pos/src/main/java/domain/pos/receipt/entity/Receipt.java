@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import domain.pos.order.entity.Order;
+import domain.pos.order.entity.vo.OrderStatus;
 import domain.pos.store.entity.Sale;
 import domain.pos.table.entity.Table;
 import lombok.Getter;
@@ -30,5 +31,9 @@ public class Receipt {
 			sale,
 			table
 		);
+	}
+
+	public void filterCompletedOrders() {
+		this.orders.removeIf(order -> order.getOrderStatus() != OrderStatus.COMPLETED);
 	}
 }

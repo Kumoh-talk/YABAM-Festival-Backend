@@ -20,6 +20,7 @@ import com.application.presentation.receipt.dto.response.ReceiptAndOrdersRespons
 import com.application.presentation.receipt.dto.response.ReceiptIdResponse;
 import com.application.presentation.receipt.dto.response.ReceiptInfoResponse;
 import com.application.presentation.receipt.dto.response.ReceiptResponse;
+import com.application.presentation.receipt.dto.response.TableWithReceiptResponse;
 import com.exception.ErrorCode;
 import com.response.ResponseBody;
 import com.vo.UserPassport;
@@ -59,21 +60,42 @@ public interface ReceiptApi {
 
 	@Operation(
 		summary = "영수증 세부정보 조회 API",
-		description = "영수증의 세부정보르 조회합니다."
+		description = "영수증의 세부정보를 조회합니다."
 	)
 	@ApiResponse(content = @Content(
 		mediaType = "application/json",
-		schema = @Schema(implementation = ReceiptInfoResponse.class)))
+		schema = @Schema(implementation = ReceiptAndOrdersResponse.class)))
 	@ApiResponseExplanations(
 		success = @ApiSuccessResponseExplanation(
-			responseClass = ReceiptInfoResponse.class,
+			responseClass = ReceiptAndOrdersResponse.class,
 			description = "영수증 세부정보 조회 성공"
 		),
 		errors = {
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.RECEIPT_NOT_FOUND)
 		}
 	)
-	ResponseEntity<ResponseBody<ReceiptInfoResponse>> getReceiptInfo(@PathVariable UUID receiptId);
+	ResponseEntity<ResponseBody<ReceiptAndOrdersResponse>> getReceiptAndOrdersAndMenus(@PathVariable UUID receiptId);
+
+	@Operation(
+		summary = "매장 전체 테이블 및 미정산 영수증 조회 API",
+		description = "매장 전체 테이블 정보 및 미정산 영수증을 조회합니다."
+	)
+	@ApiResponse(content = @Content(
+		mediaType = "application/json",
+		schema = @Schema(implementation = TableWithReceiptResponse.class)))
+	@ApiResponseExplanations(
+		success = @ApiSuccessResponseExplanation(
+			responseClass = TableWithReceiptResponse.class,
+			description = "테이블 리스트 및 미정산 영수증 조회 성공"
+		),
+		errors = {
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.NOT_FOUND_SALE),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.NOT_EQUAL_STORE_OWNER)
+		}
+	)
+	ResponseEntity<ResponseBody<TableWithReceiptResponse>> getAllTableNonAdjustReceipts(
+		@Parameter(hidden = true) UserPassport userPassport,
+		@PathVariable Long saleId);
 
 	@Operation(
 		summary = "영업 별 정산 영수증 페이지 조회 API",

@@ -20,6 +20,8 @@ public interface ReceiptRepository {
 
 	Optional<ReceiptInfo> getReceiptInfo(UUID receiptId);
 
+	Optional<Receipt> getReceiptAndOrdersAndMenus(UUID receiptId);
+
 	Optional<Receipt> getReceiptWithTableAndStore(UUID receiptId);
 
 	List<Receipt> getStopReceiptsWithTableAndStore(List<UUID> receiptIds);
@@ -33,6 +35,8 @@ public interface ReceiptRepository {
 	Page<ReceiptInfo> getAdjustedReceiptPageBySale(Pageable pageable, Long saleId);
 
 	ReceiptInfo getNonAdjustReceipt(Long tableId);
+
+	List<Receipt> getAllNonAdjustReceiptWithTableAndOrders(Long saleId);
 
 	Slice<Receipt> getCustomerReceiptSlice(int pageSize, UUID lastReceiptId, Long customerId);
 

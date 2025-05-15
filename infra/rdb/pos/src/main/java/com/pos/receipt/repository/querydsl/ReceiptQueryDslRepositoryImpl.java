@@ -122,6 +122,18 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 	}
 
 	@Override
+	public List<ReceiptEntity> findAllNonAdjustReceiptWithTableAndOrders(Long saleId) {
+		return jpaQueryFactory
+			.selectFrom(qReceiptEntity)
+			.join(qReceiptEntity.table).fetchJoin()
+			.join(qReceiptEntity.orders).fetchJoin()
+			.where(qReceiptEntity.sale.id.eq(saleId)
+				.and(qReceiptEntity.isAdjustment.isFalse()))
+			.orderBy(qReceiptEntity.table.tableNumber.tableNumber.asc())
+			.fetch();
+	}
+
+	@Override
 	public Slice<ReceiptEntity> findCustomerReceiptSliceWithStore(int pageSize, UUID lastReceiptId,
 		Long customerId) {
 		QReceiptCustomerEntity qReceiptCustomerEntity = QReceiptCustomerEntity.receiptCustomerEntity;
@@ -150,7 +162,7 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 	public Optional<ReceiptEntity> findByIdWithOrders(UUID receiptId) {
 		ReceiptEntity receiptEntity = jpaQueryFactory
 			.selectFrom(qReceiptEntity).distinct()
-			.join(qReceiptEntity.orders).fetchJoin()
+			.leftJoin(qReceiptEntity.orders).fetchJoin()
 			.where(qReceiptEntity.id.eq(receiptId))
 			.fetchOne();
 
@@ -178,11 +190,13 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 	}
 
 	@Override
-	public void startReceiptUsage(UUID receiptId) {
+	public LocalDateTime startReceiptUsage(UUID receiptId) {
+		LocalDateTime now = LocalDateTime.now();
 		jpaQueryFactory.update(qReceiptEntity)
-			.set(qReceiptEntity.startUsageTime, LocalDateTime.now())
+			.set(qReceiptEntity.startUsageTime, now)
 			.where(qReceiptEntity.id.eq(receiptId)
 				.and(qReceiptEntity.startUsageTime.isNull()))
 			.execute();
+		return now;
 	}
 }
