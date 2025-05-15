@@ -16,6 +16,7 @@ dependencies {
 
     // discovery client module
     implementation(project(':common:discovery-client'))
+
     // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -38,4 +39,7 @@ dependencies {
 
     // runtimeOnly
     runtimeOnly(project(':infra:rdb:pos'))
+
+    // s3
+    runtimeOnly(project(':infra:aws:infra-s3'))
 }

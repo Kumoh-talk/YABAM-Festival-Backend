@@ -1,0 +1,19 @@
+bootJar {
+    enabled = false
+}
+jar {
+    enabled = true
+}
+dependencies {
+    // domain-pos
+    compileOnly project(":domain:domain-pos")
+
+    // Spring
+    compileOnly "org.springframework.boot:spring-boot-starter-web"
+
+    //AWS , S3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    // test
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+}

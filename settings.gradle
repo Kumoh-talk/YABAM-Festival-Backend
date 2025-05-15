@@ -23,6 +23,8 @@ include(":domain:domain-event:store-event")
 // infra
 include(":infra:rdb:pos")
 include(":infra:mq:kafka-pos")
+include(":infra:aws:infra-s3")
 
 // utils
 include(":utils:util-uuid")
+include(":utils:util-url")
