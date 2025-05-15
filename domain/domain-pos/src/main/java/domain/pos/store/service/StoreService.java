@@ -45,9 +45,9 @@ public class StoreService {
 			});
 	}
 
-	public Slice<StoreHeadDto> findStores(final Long cursorReviewCount, final Long cursorId, final int size) {
-		log.info("가게 목록 조회: cursorReviewCount={}, size={}", cursorReviewCount, size);
-		return storeReader.readStores(cursorReviewCount, cursorId, size);
+	public Slice<StoreHeadDto> findStores(final Long lastStoreId, final int size) {
+		log.info("가게 목록 조회: lastStoreId={}, size={}", lastStoreId, size);
+		return storeReader.readStores(lastStoreId, size);
 	}
 
 	public Store updateStoreInfo(

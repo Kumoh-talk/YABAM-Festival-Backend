@@ -22,8 +22,8 @@ public class StoreReader {
 		return storeRepository.findStoreByStoreId(storeId);
 	}
 
-	public Slice<StoreHeadDto> readStores(Long cursorReviewCount, Long cursorStoreId, int size) {
-		return storeRepository.findStoresCursorOrderByReviewCount(cursorReviewCount, cursorStoreId, size);
+	public Slice<StoreHeadDto> readStores(Long lastStoreId, int size) {
+		return storeRepository.findStoresCursorOrderByCreated(lastStoreId, size);
 	}
 
 	public List<Store> readMyStores(UserPassport ownerPassport) {
