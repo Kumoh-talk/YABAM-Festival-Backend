@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.constraints.Min;
 
 @Schema(description = "장바구니 API")
 public interface CartApi {
@@ -35,7 +36,7 @@ public interface CartApi {
 	ResponseEntity<ResponseBody<Void>> postCart(
 		@Schema(description = "영수증 ID", example = "1") @RequestParam final UUID receiptId,
 		@Schema(description = "메뉴 ID", example = "1") @RequestParam final Long menuId,
-		@Schema(description = "수량", example = "2") @RequestParam final Integer quantity);
+		@Schema(description = "수량", example = "2") @RequestParam @Min(value = 1, message = "수량은 최소 1개 이상입니다.") final Integer quantity);
 
 	@Operation(
 		summary = "장바구니 상품 삭제 API",
