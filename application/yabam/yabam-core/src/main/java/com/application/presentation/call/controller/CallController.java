@@ -33,8 +33,7 @@ public class CallController implements CallApi {
 	@PostMapping("/api/v1/call")
 	public ResponseEntity<ResponseBody<Void>> postCall(
 		@RequestBody @Valid CallCreateRequest callCreateRequest) {
-		callService.postCall(callCreateRequest.receiptId(), callCreateRequest.storeId(),
-			callCreateRequest.getCallMessage());
+		callService.postCall(callCreateRequest.receiptId(), callCreateRequest.getCallMessage());
 		return ResponseEntity.ok(createSuccessResponse());
 	}
 
@@ -54,7 +53,7 @@ public class CallController implements CallApi {
 	public ResponseEntity<ResponseBody<CallCursorResponse>> getNonCompleteCalls(
 		UserPassport userPassport,
 		@RequestParam Long saleId,
-		@RequestParam Long lastCallId,
+		@RequestParam(required = false) Long lastCallId,
 		@RequestParam Integer size) {
 		return ResponseEntity.ok(createSuccessResponse(
 			CallCursorResponse.from(callService.getNonCompleteCalls(userPassport, saleId, lastCallId, size))));
