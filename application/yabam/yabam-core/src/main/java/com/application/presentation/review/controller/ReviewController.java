@@ -32,6 +32,11 @@ import lombok.RequiredArgsConstructor;
 public class ReviewController implements ReviewApi {
 	private final ReviewService reviewService;
 
+	/**
+	 * @deprecated since 2025-05-15
+	 * 기획상 보류.
+	 */
+	@Deprecated(since = "2025-05-15")
 	@PostMapping("/api/v1/review")
 	@HasRole(userRole = ROLE_USER)
 	@AssignUserPassport
@@ -66,6 +71,10 @@ public class ReviewController implements ReviewApi {
 		));
 	}
 
+	/**
+	 * @deprecated since 2025-05-15
+	 * 기획상 보류.
+	 */
 	@DeleteMapping("/api/v1/review")
 	@HasRole(userRole = ROLE_USER)
 	@AssignUserPassport
@@ -77,6 +86,11 @@ public class ReviewController implements ReviewApi {
 		return ResponseEntity.ok(createSuccessResponse());
 	}
 
+	/**
+	 * @deprecated since 2025-05-15
+	 * 기획상 보류.
+	 */
+	@Deprecated(since = "2025-05-15")
 	@GetMapping("/api/v1/reviews")
 	public ResponseEntity<ResponseBody<ReviewsCusorResponse>> getReview(
 		@RequestParam Long storeId,
