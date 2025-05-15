@@ -62,6 +62,7 @@ public enum ErrorCode {
 	STORE_IS_OPEN_TABLE_WRITE(HttpStatus.CONFLICT, "TABLE_0004", "가게가 운영중입니다. 테이블 수 조정 불가"),
 	TABLE_NOT_FOUND(HttpStatus.NOT_FOUND, "TABLE_0005", "테이블이 존재하지 않습니다."),
 	TABLE_NOT_EQUAL_MODIFY(HttpStatus.CONFLICT, "TABLE_0006", "테이블 수가 같습니다."),
+	TABLE_NOT_ACTIVE(HttpStatus.BAD_REQUEST, "TABLE_0007", "비활성화된 테이블입니다."),
 	// Sale
 	NOT_FOUND_SALE(HttpStatus.NOT_FOUND, "SALE_0001", "영업이 존재하지 않습니다."),
 	CLOSE_SALE(HttpStatus.CONFLICT, "SALE_0002", "영업이 종료되었습니다."),
@@ -100,7 +101,12 @@ public enum ErrorCode {
 	REVIEW_NOT_ADJUSTMENT(HttpStatus.BAD_REQUEST, "REVIEW_0001", "정산되지 않았으면 리뷰 생성 불가합니다."),
 	REVIEW_ALREADY_EXISTS(HttpStatus.CONFLICT, "REVIEW_0002", "이미 리뷰가 존재합니다."),
 	REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW_0003", "존재하지 않는 리뷰입니다."),
-	REVIEW_NOT_USER(HttpStatus.BAD_REQUEST, "REVIEW_0004", "해당 사용자가 작성한 리뷰가 아닙니다.");
+	REVIEW_NOT_USER(HttpStatus.BAD_REQUEST, "REVIEW_0004", "해당 사용자가 작성한 리뷰가 아닙니다."),
+
+	// Call
+	STORE_NOT_MATCH(HttpStatus.BAD_REQUEST, "CALL_0001", "가게와 일치하지 않는 영수증에 대한 호출입니다."),
+	NOT_FOUND_CALL(HttpStatus.NOT_FOUND, "CALL_0002", "존재하지 않는 호출입니다."),
+	NOT_VALID_CALL_OWNER(HttpStatus.BAD_REQUEST, "CALL_0003", "해당 직원 호출 내역을 수정할 수 없는 점주입니다.");
 
 	private final HttpStatus status;
 	private final String code;

@@ -1,6 +1,6 @@
 package com.application.presentation.receipt.dto.response;
 
-import com.application.presentation.table.dto.TableInfoResponse;
+import com.application.presentation.table.dto.response.TableInfoResponse;
 
 import domain.pos.receipt.entity.Receipt;
 import io.swagger.v3.oas.annotations.media.Schema;

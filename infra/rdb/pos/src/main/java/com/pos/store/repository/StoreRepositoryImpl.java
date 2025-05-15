@@ -8,6 +8,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.exception.ErrorCode;
+import com.exception.ServiceException;
 import com.pos.store.entity.QStoreDetailImageEntity;
 import com.pos.store.entity.QStoreEntity;
 import com.pos.store.entity.StoreDetailImageEntity;
@@ -55,7 +57,8 @@ public class StoreRepositoryImpl implements StoreRepository {
 	@Override
 	@Transactional
 	public Store changeStoreInfo(Store previousStore, StoreInfo requestChangeStoreInfo) {
-		StoreEntity storeEntity = storeJpaRepository.findById(previousStore.getStoreId()).get();
+		StoreEntity storeEntity = storeJpaRepository.findById(previousStore.getStoreId())
+			.orElseThrow(() -> new ServiceException(ErrorCode.NOT_FOUND_STORE));
 		storeEntity.changeStoreInfo(requestChangeStoreInfo);
 		return StoreMapper.toStore(storeEntity);
 	}

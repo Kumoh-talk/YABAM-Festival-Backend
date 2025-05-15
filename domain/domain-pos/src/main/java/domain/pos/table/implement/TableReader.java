@@ -19,11 +19,15 @@ public class TableReader {
 		return tableRepository.findByIdWithLock(queryTableId, storeId);
 	}
 
-	public boolean isExistsTable(Store responStore) {
-		return tableRepository.existsTableByStoreWithLock(responStore);
-	}
-
 	public List<Table> findTables(Long storeId) {
 		return tableRepository.findTablesByStoreId(storeId);
+	}
+
+	public boolean isExistsTableByStoreAndTableNumWithLock(Store store, Integer tableNumber) {
+		return tableRepository.existsTableByStoreAndTableNumWithLock(store, tableNumber);
+	}
+
+	public Optional<Table> findTableWithStoreByTableId(Long qureyTableId) {
+		return tableRepository.findTableWithStoreByTableId(qureyTableId);
 	}
 }

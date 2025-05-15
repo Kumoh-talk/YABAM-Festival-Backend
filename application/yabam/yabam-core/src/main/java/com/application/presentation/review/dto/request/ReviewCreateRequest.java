@@ -11,7 +11,7 @@ import lombok.Builder;
 @Schema(description = "리뷰 생성 요청 DTO", name = "ReviewCreateRequest")
 @Builder
 public record ReviewCreateRequest(
-	@Schema(description = "영수증 ID", example = "1")
+	@Schema(description = "영수증 ID", example = "123e4567-e89b-12d3-a456-426614174000")
 	UUID receiptId,
 	@Schema(description = "가게 ID", example = "1")
 	Long storeId,
