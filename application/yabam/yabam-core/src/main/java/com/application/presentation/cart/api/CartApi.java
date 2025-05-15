@@ -36,7 +36,8 @@ public interface CartApi {
 	ResponseEntity<ResponseBody<Void>> postCart(
 		@Schema(description = "영수증 ID", example = "1") @RequestParam final UUID receiptId,
 		@Schema(description = "메뉴 ID", example = "1") @RequestParam final Long menuId,
-		@Schema(description = "수량", example = "2") @RequestParam @Min(value = 1, message = "수량은 최소 1개 이상입니다.") final Integer quantity);
+		@Schema(description = "수량", example = "2")
+		@RequestParam @Min(value = 1, message = "수량은 최소 1개 이상입니다.") final Integer quantity);
 
 	@Operation(
 		summary = "장바구니 상품 삭제 API",

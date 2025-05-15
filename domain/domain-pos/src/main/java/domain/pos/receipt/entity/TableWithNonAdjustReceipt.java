@@ -27,7 +27,6 @@ public class TableWithNonAdjustReceipt {
 			.filter(receipt -> receipt.getTable().getTableId().equals(table.getTableId()))
 			.findFirst()
 			.orElse(null);
-		
 		return TableWithNonAdjustReceipt.builder()
 			.tableId(table.getTableId())
 			.tableNumber(table.getTableNumber())
