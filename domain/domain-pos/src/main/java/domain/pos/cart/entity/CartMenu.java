@@ -16,4 +16,8 @@ public class CartMenu {
 	public static CartMenu of(Integer quantity, MenuInfo menuInfo) {
 		return new CartMenu(quantity, menuInfo);
 	}
+
+	public void addQuantity(Integer quantity) {
+		this.quantity += quantity;
+	}
 }

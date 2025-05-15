@@ -1,6 +1,9 @@
 package domain.pos.order.implement;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
@@ -24,7 +27,8 @@ public class OrderWriter {
 	private final OrderRepository orderRepository;
 
 	public Order postOrderWithCart(Receipt receipt, List<CartMenu> cartMenus) {
-		return orderRepository.postOrderWithCart(receipt, cartMenus);
+		List<CartMenu> mergedCartMenus = mergeCartMenus(cartMenus);
+		return orderRepository.postOrderWithCart(receipt, mergedCartMenus);
 	}
 
 	public Order postOrderWithoutCart(Receipt receipt, List<OrderMenu> orderMenus) {
@@ -47,5 +51,21 @@ public class OrderWriter {
 	public void completeOrder(Order order) {
 		order.setOrderStatus(OrderStatus.COMPLETED);
 		orderRepository.patchOrderStatus(order, OrderStatus.COMPLETED);
+	}
+
+	private List<CartMenu> mergeCartMenus(List<CartMenu> cartMenus) {
+		Map<Long, CartMenu> mergedMap = new HashMap<>();
+
+		for (CartMenu cartMenu : cartMenus) {
+			Long menuId = cartMenu.getMenuInfo().getId();
+			if (mergedMap.containsKey(menuId)) {
+				CartMenu existing = mergedMap.get(menuId);
+				existing.addQuantity(cartMenu.getQuantity());
+			} else {
+				mergedMap.put(menuId, cartMenu);
+			}
+		}
+
+		return new ArrayList<>(mergedMap.values());
 	}
 }

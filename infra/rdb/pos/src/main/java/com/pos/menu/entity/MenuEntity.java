@@ -66,9 +66,10 @@ public class MenuEntity extends BaseEntity {
 	private MenuCategoryEntity menuCategory;
 
 	@Builder
-	private MenuEntity(Integer order, String name, Integer price, String description, String imageUrl,
+	private MenuEntity(Long id, Integer order, String name, Integer price, String description, String imageUrl,
 		boolean isSoldOut,
 		boolean isRecommended, StoreEntity store, MenuCategoryEntity menuCategory) {
+		this.id = id;
 		this.order = order;
 		this.name = name;
 		this.price = price;
@@ -86,6 +87,7 @@ public class MenuEntity extends BaseEntity {
 
 	public static MenuEntity of(MenuInfo menuInfo, StoreEntity storeEntity, MenuCategoryEntity menuCategoryEntity) {
 		return MenuEntity.builder()
+			.id(menuInfo.getId())
 			.order(menuInfo.getOrder())
 			.name(menuInfo.getName())
 			.price(menuInfo.getPrice())
