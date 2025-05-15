@@ -30,17 +30,14 @@ public class ReceiptInfo {
 		this.stopUsageTime = LocalDateTime.now();
 
 		long minutesUsed = Duration.between(this.startUsageTime, this.stopUsageTime).toMinutes();
-		Integer costPerMinute = store.getStoreInfo().getTableCost();
+		Integer unitMinutes = store.getStoreInfo().getTableTime();
+		Integer unitCost = store.getStoreInfo().getTableCost();
 
-		this.occupancyFee = (int)(minutesUsed * costPerMinute);
+		int unitCount = (int)Math.ceil((double)minutesUsed / unitMinutes);
+		this.occupancyFee = unitCount * unitCost;
 	}
 
-	public void restart() {
-		this.stopUsageTime = null;
-		this.occupancyFee = null;
-	}
-
-	public void adjust() {
-		this.isAdjustment = true;
+	public void setStartUsageTime(LocalDateTime startUsageTime) {
+		this.startUsageTime = startUsageTime;
 	}
 }
