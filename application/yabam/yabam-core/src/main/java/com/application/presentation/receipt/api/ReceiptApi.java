@@ -124,6 +124,7 @@ public interface ReceiptApi {
 	@Operation(
 		summary = "영수증 사용종료 API",
 		description = "대상 영수증의 사용을 종료하고, 누적 주문 및 주문 메뉴를 응답합니다."
+			+ "누적 주문 중 completed 상태의 주문만 응답합니다."
 	)
 	@ApiResponse(content = @Content(
 		mediaType = "application/json",
@@ -135,7 +136,8 @@ public interface ReceiptApi {
 		),
 		errors = {
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.RECEIPT_NOT_FOUND),
-			@ApiErrorResponseExplanation(errorCode = ErrorCode.RECEIPT_ACCESS_DENIED)
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.RECEIPT_ACCESS_DENIED),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.ORDER_NOT_COMPLETED)
 		}
 	)
 	ResponseEntity<ResponseBody<List<ReceiptAndOrdersResponse>>> stopReceiptUsage(
@@ -231,7 +233,7 @@ public interface ReceiptApi {
 	ResponseEntity<ResponseBody<GlobalSliceResponse<ReceiptInfoResponse>>> getCustomerReceiptSlice(
 		@Parameter(hidden = true) UserPassport userPassport,
 		@PathVariable Long customerId,
-		@RequestParam @Min(1) int pageSize,
+		@RequestParam @Min(value = 1, message = "페이지 크기는 최소 1 이상입니다.") int pageSize,
 		@Schema(description = "이전 페이지 가장 마지막 ReceiptId(첫 페이지 조회 시 생략)")
 		@RequestParam(required = false) UUID lastReceiptId);
 }

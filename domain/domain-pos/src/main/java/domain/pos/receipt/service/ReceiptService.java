@@ -16,6 +16,8 @@ import com.exception.ServiceException;
 import com.vo.UserPassport;
 
 import domain.pos.member.implement.UserPassportValidator;
+import domain.pos.order.entity.Order;
+import domain.pos.order.entity.vo.OrderStatus;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.receipt.entity.TableWithNonAdjustReceipt;
@@ -111,13 +113,19 @@ public class ReceiptService {
 
 	@Transactional
 	public List<Receipt> stopReceiptUsage(List<UUID> receiptIds, UserPassport userPassport) {
-		List<Receipt> receipts = receiptReader.getNonStopReceiptsWithStoreAndLock(receiptIds);
+		List<Receipt> receipts = receiptReader.getNonStopReceiptsWithOrderAndStoreAndLock(receiptIds);
 		if (receipts.size() != receiptIds.size()) {
 			log.warn("Receipt 을 찾을 수 없습니다.");
 			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 		}
 		for (Receipt receipt : receipts) {
 			receiptValidator.validateIsOwner(receipt, userPassport);
+			for (Order order : receipt.getOrders()) {
+				if (order.getOrderStatus() != OrderStatus.COMPLETED) {
+					log.warn("모든 주문이 완료되지 않았습니다. orderId: {}", order.getOrderId());
+					throw new ServiceException(ErrorCode.ORDER_NOT_COMPLETED);
+				}
+			}
 			receipt.getReceiptInfo().stop(receipt.getSale().getStore());
 		}
 
@@ -139,7 +147,6 @@ public class ReceiptService {
 	}
 
 	// Owner api
-	// TODO : 정산이 끝나면 주문창 세션을 종료시켜야함
 	@Transactional
 	public void adjustReceipts(List<UUID> receiptIds, UserPassport userPassport) {
 		List<Receipt> receipts = receiptReader.getStopReceiptsWithTableAndStore(receiptIds);

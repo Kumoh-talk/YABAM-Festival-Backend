@@ -73,7 +73,6 @@ public class ReceiptController implements ReceiptApi {
 		return ResponseEntity.ok(createSuccessResponse(TableWithReceiptResponse.from(tableWithNonAdjustReceipts)));
 	}
 
-	// TODO : store 별로 saleId 리스트 조회 로직이 필요해보임
 	@GetMapping("/api/v1/sales/{saleId}/receipts")
 	@HasRole(userRole = ROLE_OWNER)
 	@AssignUserPassport
@@ -135,14 +134,14 @@ public class ReceiptController implements ReceiptApi {
 		return ResponseEntity.ok(createSuccessResponse(ReceiptIdResponse.from(receiptId)));
 	}
 
-	// TODO : 리뷰 작성여부?
 	@GetMapping("/api/v1/customers/{customerId}/receipts")
 	@HasRole(userRole = ROLE_USER)
 	@AssignUserPassport
 	public ResponseEntity<ResponseBody<GlobalSliceResponse<ReceiptInfoResponse>>> getCustomerReceiptSlice(
 		UserPassport userPassport,
 		@PathVariable Long customerId,
-		@RequestParam @Min(1) int pageSize, @RequestParam(required = false) UUID lastReceiptId) {
+		@RequestParam @Min(value = 1, message = "페이지 크기는 최소 1 이상입니다.") int pageSize,
+		@RequestParam(required = false) UUID lastReceiptId) {
 		Slice<ReceiptInfoResponse> receipts = receiptService.getCustomerReceiptSlice(pageSize, userPassport, customerId,
 			lastReceiptId).map(receipt -> ReceiptInfoResponse.from(receipt.getReceiptInfo()));
 		return ResponseEntity.ok(createSuccessResponse(GlobalSliceResponse.from(receipts)));
