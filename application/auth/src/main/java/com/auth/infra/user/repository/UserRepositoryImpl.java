@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.auth.domain.repository.UserRepository;
+import com.auth.domain.service.FakeUserService;
 import com.auth.domain.vo.OidcProvider;
 import com.auth.infra.user.entity.UserEntity;
 import com.vo.UserPassport;
@@ -34,7 +35,11 @@ public class UserRepositoryImpl implements UserRepository {
 			.build();
 
 		UserEntity savedUserEntity = userJpaRepository.save(userEntity);
-		savedUserEntity.setNickname("금붕이" + savedUserEntity.getId());
+		if (email.equals(FakeUserService.fakeUserEmail)) {
+			savedUserEntity.setNickname("fakeUser" + savedUserEntity.getId());
+		} else {
+			savedUserEntity.setNickname("금붕이" + savedUserEntity.getId());
+		}
 		return UserPassport.of(savedUserEntity.getId(), savedUserEntity.getNickname(), savedUserEntity.getRole());
 	}
 
@@ -49,7 +54,11 @@ public class UserRepositoryImpl implements UserRepository {
 			.build();
 
 		UserEntity savedUserEntity = userJpaRepository.save(userEntity);
-		savedUserEntity.setNickname("금붕이" + savedUserEntity.getId());
+		if (email.equals(FakeUserService.fakeOwnerEmail)) {
+			savedUserEntity.setNickname("fakeOwner" + savedUserEntity.getId());
+		} else {
+			savedUserEntity.setNickname("금붕이" + savedUserEntity.getId());
+		}
 		return UserPassport.of(savedUserEntity.getId(), savedUserEntity.getNickname(), savedUserEntity.getRole());
 	}
 

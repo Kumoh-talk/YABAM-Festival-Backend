@@ -43,12 +43,17 @@ public class JwtHandler {
 	public Mono<Token> createTokens(JwtUserClaim jwtUserClaim) {
 		Map<String, Object> tokenClaims = this.createClaims(jwtUserClaim);
 		Date now = new Date(System.currentTimeMillis());
-		long accessTokenExpireIn = jwtProperties.getAccessTokenExpireIn();
+
+		String nickname = jwtUserClaim.userNickname();
+		boolean isFakeUser = nickname != null && nickname.startsWith("fake");
+		long accessTokenExpireIn = isFakeUser
+			? Duration.ofDays(365).toMillis()
+			: jwtProperties.getAccessTokenExpireIn() * MILLI_SECOND;
 
 		String accessToken = Jwts.builder()
 			.claims(tokenClaims)
 			.issuedAt(now)
-			.expiration(new Date(now.getTime() + accessTokenExpireIn * MILLI_SECOND))
+			.expiration(new Date(now.getTime() + accessTokenExpireIn))
 			.signWith(secretKey)
 			.compact();
 

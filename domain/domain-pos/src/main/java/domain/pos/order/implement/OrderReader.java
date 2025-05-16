@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 
 import domain.pos.order.entity.Order;
@@ -24,8 +25,13 @@ public class OrderReader {
 		return orderRepository.getOrderWithStore(orderId);
 	}
 
-	public List<Order> getSaleOrdersWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses) {
-		return orderRepository.getSaleOrdersWithMenuAndTable(saleId, orderStatuses);
+	public Optional<Order> getOrderWithStoreAndMenusAndLock(Long orderId) {
+		return orderRepository.getOrderWithStoreAndMenusAndLock(orderId);
+	}
+
+	public Slice<Order> getSaleOrderSliceWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses,
+		int pageSize, Long lastOrderId) {
+		return orderRepository.getSaleOrderSliceWithMenuAndTable(saleId, orderStatuses, pageSize, lastOrderId);
 	}
 
 	public List<Order> getReceiptOrdersWithMenu(UUID receiptId) {

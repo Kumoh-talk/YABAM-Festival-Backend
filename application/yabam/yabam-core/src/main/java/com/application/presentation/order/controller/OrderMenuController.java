@@ -25,6 +25,7 @@ import domain.pos.order.entity.OrderMenu;
 import domain.pos.order.entity.vo.OrderMenuStatus;
 import domain.pos.order.service.OrderMenuService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
@@ -65,5 +66,16 @@ public class OrderMenuController implements OrderMenuApi {
 		@PathVariable Long orderMenuId) {
 		orderMenuService.deleteOrderMenu(orderMenuId, userPassport);
 		return ResponseEntity.ok(createSuccessResponse());
+	}
+
+	@PatchMapping("/api/v1/order-menus/{orderMenuId}/quantity")
+	@HasRole(userRole = ROLE_OWNER)
+	@AssignUserPassport
+	public ResponseEntity<ResponseBody<OrderMenuResponse>> patchOrderMenuQuantity(
+		UserPassport userPassport,
+		@PathVariable Long orderMenuId,
+		@RequestParam @NotNull @Min(value = 1, message = "수정 개수는 최소 1 이상입니다.") Integer patchQuantity) {
+		OrderMenu orderMenu = orderMenuService.patchOrderMenuQuantity(orderMenuId, userPassport, patchQuantity);
+		return ResponseEntity.ok(createSuccessResponse(OrderMenuResponse.from(orderMenu)));
 	}
 }

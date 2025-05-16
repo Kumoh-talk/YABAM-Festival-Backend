@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.application.global.config.swagger.ApiErrorResponseExplanation;
 import com.application.global.config.swagger.ApiResponseExplanations;
 import com.application.global.config.swagger.ApiSuccessResponseExplanation;
+import com.application.global.response.GlobalSliceResponse;
 import com.application.presentation.order.dto.request.PostOrderMenuRequest;
 import com.application.presentation.order.dto.response.OrderAndMenusResponse;
 import com.application.presentation.order.dto.response.OrderInfoResponse;
@@ -26,6 +27,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
@@ -133,7 +135,7 @@ public interface OrderApi {
 		schema = @Schema(implementation = OrderResponse.class)))
 	@ApiResponseExplanations(
 		success = @ApiSuccessResponseExplanation(
-			responseClass = OrderResponse.class,
+			responseClass = GlobalSliceResponse.class,
 			description = "주문 리스트 조회 성공"
 		),
 		errors = {
@@ -142,12 +144,14 @@ public interface OrderApi {
 
 		}
 	)
-	ResponseEntity<ResponseBody<List<OrderResponse>>> getSaleOrders(
+	ResponseEntity<ResponseBody<GlobalSliceResponse<OrderResponse>>> getSaleOrderSlice(
 		@Parameter(hidden = true) UserPassport userPassport,
 		@PathVariable Long saleId,
 		@Schema(description = "주문 상태(ORDERED(접수 전), RECEIVED(접수), CANCELED(취소), COMPLETED(완료))",
 			example = "ORDERED, RECEIVED")
-		@RequestParam @NotEmpty List<OrderStatus> orderStatuses);
+		@RequestParam @NotEmpty List<OrderStatus> orderStatuses,
+		@RequestParam @Min(value = 1, message = "페이지 크기는 최소 1 이상입니다.") int pageSize,
+		@RequestParam(required = false) Long lastOrderId);
 
 	@Operation(
 		summary = "주문 상세조회 API",

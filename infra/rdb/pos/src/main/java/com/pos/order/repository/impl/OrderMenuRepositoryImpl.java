@@ -38,8 +38,8 @@ public class OrderMenuRepositoryImpl implements OrderMenuRepository {
 	}
 
 	@Override
-	public Optional<OrderMenu> getOrderMenuWithOrderAndStore(Long orderMenuId) {
-		return orderMenuJpaRepository.findByIdWithOrderAndStore(orderMenuId)
+	public Optional<OrderMenu> getOrderMenuWithOrderAndStoreAndOrderLock(Long orderMenuId) {
+		return orderMenuJpaRepository.findByIdWithOrderAndStoreAndOrderLock(orderMenuId)
 			.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity,
 				OrderMapper.toOrder(orderMenuEntity.getOrder(), null, null),
 				MenuMapper.toMenu(orderMenuEntity.getMenu(),
@@ -52,6 +52,23 @@ public class OrderMenuRepositoryImpl implements OrderMenuRepository {
 		orderJpaRepository.subtractOrderPrice(orderMenu.getOrder().getOrderId(),
 			orderMenu.getMenu().getMenuInfo().getPrice() * orderMenu.getQuantity());
 		orderMenuJpaRepository.deleteById(orderMenu.getOrderMenuId());
+	}
+
+	@Override
+	public OrderMenu patchOrderMenuQuantity(OrderMenu orderMenu, Integer patchQuantity) {
+		if (orderMenu.getQuantity().equals(patchQuantity)) {
+			return orderMenu;
+		} else if (orderMenu.getQuantity() < patchQuantity) {
+			int menuPrice = orderMenu.getMenu().getMenuInfo().getPrice() * (patchQuantity - orderMenu.getQuantity());
+			orderJpaRepository.plusOrderPrice(orderMenu.getOrder().getOrderId(), menuPrice);
+		} else {
+			int menuPrice = orderMenu.getMenu().getMenuInfo().getPrice() * (orderMenu.getQuantity() - patchQuantity);
+			orderJpaRepository.subtractOrderPrice(orderMenu.getOrder().getOrderId(), menuPrice);
+		}
+
+		orderMenuJpaRepository.updateOrderMenuQuantity(orderMenu.getOrderMenuId(), patchQuantity);
+		orderMenu.setQuantity(patchQuantity);
+		return orderMenu;
 	}
 
 	@Override

@@ -117,7 +117,7 @@ public interface MenuCategoryApi {
 	ResponseEntity<ResponseBody<MenuCategoryInfoResponse>> patchMenuCategoryOrder(
 		@Parameter(hidden = true) UserPassport userPassport,
 		@PathVariable Long storeId, @PathVariable Long menuCategoryId,
-		@RequestParam @Min(1) @NotNull Integer patchOrder);
+		@RequestParam @Min(value = 1, message = "수정 순서는 최소 1 이상입니다.") @NotNull Integer patchOrder);
 
 	@Operation(
 		summary = "메뉴 카테고리 삭제 API",

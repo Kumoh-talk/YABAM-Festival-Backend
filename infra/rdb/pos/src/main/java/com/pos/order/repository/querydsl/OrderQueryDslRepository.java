@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Slice;
+
 import com.pos.order.entity.OrderEntity;
 
 import domain.pos.order.entity.vo.OrderStatus;
@@ -13,7 +15,10 @@ public interface OrderQueryDslRepository {
 
 	Optional<OrderEntity> findByIdWithStore(Long orderId);
 
-	List<OrderEntity> findSaleOrdersWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses);
+	Optional<OrderEntity> findByIdWithStoreAndMenusAndLock(Long orderId);
+
+	Slice<OrderEntity> findSaleOrdersWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses, int pageSize,
+		Long lastOrderId);
 
 	List<OrderEntity> findReceiptOrdersWithMenu(UUID receiptId);
 

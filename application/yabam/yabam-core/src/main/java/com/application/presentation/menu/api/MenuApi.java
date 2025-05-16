@@ -99,7 +99,7 @@ public interface MenuApi {
 	)
 	ResponseEntity<ResponseBody<GlobalSliceResponse<MenuSliceResponse>>> getMenuSlice(
 		@PathVariable Long storeId,
-		@RequestParam @Min(1) int pageSize,
+		@RequestParam @Min(value = 1, message = "페이지 크기는 최소 1 이상입니다.") int pageSize,
 		@Schema(description = "이전 페이지 가장 마지막 메뉴 Id(첫 페이지 조회 시 생략)") @RequestParam(required = false) Long lastMenuId,
 		@Schema(description = "이전 페이지 가장 마지막 메뉴의 카테고리 Id(첫 페이지 조회 시 생략)")
 		@RequestParam(required = false) Long lastMenuCategoryId);
@@ -172,7 +172,7 @@ public interface MenuApi {
 	ResponseEntity<ResponseBody<MenuInfoResponse>> patchMenuOrder(
 		@Parameter(hidden = true) UserPassport userPassport,
 		@PathVariable Long storeId, @PathVariable Long menuId,
-		@RequestParam @Min(1) @NotNull Integer patchOrder);
+		@RequestParam @Min(value = 1, message = "수정 순서는 최소 1 이상입니다.") @NotNull Integer patchOrder);
 
 	@Operation(
 		summary = "메뉴 매진정보 수정 API",
