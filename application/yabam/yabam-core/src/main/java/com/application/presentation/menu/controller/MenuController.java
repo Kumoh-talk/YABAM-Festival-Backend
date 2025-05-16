@@ -67,7 +67,7 @@ public class MenuController implements MenuApi {
 	@GetMapping("/api/v1/stores/{storeId}/menus")
 	public ResponseEntity<ResponseBody<GlobalSliceResponse<MenuSliceResponse>>> getMenuSlice(
 		@PathVariable Long storeId,
-		@RequestParam @Min(1) int pageSize,
+		@RequestParam @Min(value = 1, message = "페이지 크기는 최소 1 이상입니다.") int pageSize,
 		@RequestParam(required = false) Long lastMenuId,
 		@RequestParam(required = false) Long lastMenuCategoryId) {
 		Slice<MenuSliceResponse> menuSliceResponse = menuService.getMenuSlice(pageSize, lastMenuId, storeId,
@@ -101,7 +101,7 @@ public class MenuController implements MenuApi {
 	public ResponseEntity<ResponseBody<MenuInfoResponse>> patchMenuOrder(
 		UserPassport userPassport,
 		@PathVariable Long storeId, @PathVariable Long menuId,
-		@RequestParam @Min(1) @NotNull Integer patchOrder) {
+		@RequestParam @Min(value = 1, message = "수정 순서는 최소 1 이상입니다.") @NotNull Integer patchOrder) {
 		MenuInfo menuInfo = menuService.patchMenuOrder(storeId, userPassport, menuId, patchOrder);
 		return ResponseEntity.ok(createSuccessResponse(MenuInfoResponse.from(menuInfo)));
 	}
