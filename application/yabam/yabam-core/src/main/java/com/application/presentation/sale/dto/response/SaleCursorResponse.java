@@ -56,7 +56,7 @@ public record SaleCursorResponse(
 				.saleId(sale.getSaleId())
 				.openDateTime(sale.getOpenDateTime())
 				.closeDateTime(sale.getCloseDateTime().orElse(null))
-				.isOpen(sale.getCloseDateTime().get() == null ? true : false)
+				.isOpen(sale.getCloseDateTime().isEmpty())
 				.build();
 		}
 	}

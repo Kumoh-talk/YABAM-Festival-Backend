@@ -105,7 +105,7 @@ class SaleRepositoryImplTest extends RepositoryTest {
 	}
 
 	@Test
-	void SaleCusor_리스트_조회_테스트() {
+	void SaleCursor_리스트_조회_테스트() {
 		// given
 		SaleEntity saleEntity = testFixtureBuilder.buildSaleEntity(SaleFixture.GENERAL_SALE(savedStoreEntity));
 		SaleEntity saleEntity2 = testFixtureBuilder.buildSaleEntity(SaleFixture.GENERAL_SALE(savedStoreEntity));
@@ -114,9 +114,9 @@ class SaleRepositoryImplTest extends RepositoryTest {
 		testEntityManager.clear();
 
 		// when
-		System.out.println("===SaleRepositoryImplTest.SaleCusor_리스트_조회 쿼리===");
+		System.out.println("===SaleRepositoryImplTest.SaleCursor_리스트_조회 쿼리===");
 		Slice<Sale> resultSale = saleRepository.getSaleSliceByStoreId(savedStore.getStoreId(), null, 3);
-		System.out.println("===SaleRepositoryImplTest.SaleCusor_리스트_조회 쿼리===");
+		System.out.println("===SaleRepositoryImplTest.SaleCursor_리스트_조회 쿼리===");
 
 		// then
 		assertSoftly(softly -> {
