@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Slice;
 
 import com.pos.fixtures.sale.SaleFixture;
 import com.pos.global.config.RepositoryTest;
@@ -100,6 +101,30 @@ class SaleRepositoryImplTest extends RepositoryTest {
 				.isEqualTo(savedStore.getOwnerPassport().getUserId());
 			softly.assertThat(sale.getOpenDateTime()).isNotNull();
 			softly.assertThat(sale.getCloseDateTime()).isNotEmpty();
+		});
+	}
+
+	@Test
+	void SaleCusor_리스트_조회_테스트() {
+		// given
+		SaleEntity saleEntity = testFixtureBuilder.buildSaleEntity(SaleFixture.GENERAL_SALE(savedStoreEntity));
+		SaleEntity saleEntity2 = testFixtureBuilder.buildSaleEntity(SaleFixture.GENERAL_SALE(savedStoreEntity));
+		SaleEntity saleEntity3 = testFixtureBuilder.buildSaleEntity(SaleFixture.GENERAL_SALE(savedStoreEntity));
+		testEntityManager.flush();
+		testEntityManager.clear();
+
+		// when
+		System.out.println("===SaleRepositoryImplTest.SaleCusor_리스트_조회 쿼리===");
+		Slice<Sale> resultSale = saleRepository.getSaleSliceByStoreId(savedStore.getStoreId(), null, 3);
+		System.out.println("===SaleRepositoryImplTest.SaleCusor_리스트_조회 쿼리===");
+
+		// then
+		assertSoftly(softly -> {
+			softly.assertThat(resultSale.getContent().size()).isEqualTo(3);
+			softly.assertThat(resultSale.hasNext()).isFalse();
+			softly.assertThat(resultSale.getContent().get(0).getSaleId()).isEqualTo(saleEntity3.getId());
+			softly.assertThat(resultSale.getContent().get(1).getSaleId()).isEqualTo(saleEntity2.getId());
+			softly.assertThat(resultSale.getContent().get(2).getSaleId()).isEqualTo(saleEntity.getId());
 		});
 	}
 

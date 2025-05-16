@@ -1,5 +1,6 @@
 package domain.pos.store.service;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,6 +72,10 @@ public class SaleService {
 				savedSale.getStore().getStoreId());
 			throw new ServiceException(ErrorCode.CONFLICT_CLOSE_STORE);
 		}
+	}
+
+	public Slice<Sale> getSingleSalesByStore(final Long storeId, final Long lastSaleId, final int size) {
+		return saleReader.getSingleSalesByStore(storeId, lastSaleId, size);
 	}
 
 }
