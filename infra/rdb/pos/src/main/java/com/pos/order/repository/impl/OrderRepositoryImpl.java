@@ -130,6 +130,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 	}
 
 	@Override
+	@Transactional
 	public Optional<Order> getOrderWithStoreAndMenusAndLock(Long orderId) {
 		return orderJpaRepository.findByIdWithStoreAndMenusAndLock(orderId)
 			.map(orderEntity -> OrderMapper.toOrder(
