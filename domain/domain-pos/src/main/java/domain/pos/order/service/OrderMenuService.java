@@ -67,7 +67,6 @@ public class OrderMenuService {
 		validateOrderStatus(orderMenu.getOrder());
 		validateIsOwner(orderMenu, userPassport);
 		orderMenuWriter.deleteOrderMenu(orderMenu);
-		
 		eventPublisher.publishEvent(OrderMenuStatusChangedEvent.from(orderMenu.getOrder()));
 	}
 
