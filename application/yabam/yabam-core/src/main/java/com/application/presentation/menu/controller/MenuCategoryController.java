@@ -81,7 +81,7 @@ public class MenuCategoryController implements MenuCategoryApi {
 	public ResponseEntity<ResponseBody<MenuCategoryInfoResponse>> patchMenuCategoryOrder(
 		UserPassport userPassport,
 		@PathVariable Long storeId, @PathVariable Long menuCategoryId,
-		@RequestParam @Min(1) @NotNull Integer patchOrder) {
+		@RequestParam @Min(value = 1, message = "수정 순서는 최소 1 이상입니다.") @NotNull Integer patchOrder) {
 		MenuCategoryInfo patchMenuCategoryInfo = menuCategoryService.patchMenuCategoryOrder(
 			storeId, userPassport, menuCategoryId, patchOrder);
 		return ResponseEntity.ok(createSuccessResponse(MenuCategoryInfoResponse.from(patchMenuCategoryInfo)));

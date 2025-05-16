@@ -36,7 +36,7 @@ public class OrderMenuService {
 	@Transactional
 	public OrderMenu patchOrderMenuStatus(Long orderMenuId, UserPassport userPassport,
 		OrderMenuStatus orderMenuStatus) {
-		OrderMenu orderMenu = orderMenuReader.getOrderMenuWithOrderAndStore(orderMenuId)
+		OrderMenu orderMenu = orderMenuReader.getOrderMenuWithOrderAndStoreAndOrderLock(orderMenuId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_MENU_NOT_FOUND));
 		validateOrderStatus(orderMenu.getOrder());
 		validateIsOwner(orderMenu, userPassport);
@@ -51,8 +51,9 @@ public class OrderMenuService {
 
 	@Transactional
 	public OrderMenu postOrderMenu(Long orderId, UserPassport userPassport, Long menuId, Integer quantity) {
-		Order order = orderReader.getOrderWithStore(orderId)
+		Order order = orderReader.getOrderWithStoreAndMenusAndLock(orderId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_NOT_FOUND));
+		validateOrderStatus(order);
 		receiptValidator.validateIsOwner(order.getReceipt(), userPassport);
 		MenuInfo menuInfo = menuReader.getMenuInfo(order.getReceipt().getSale().getStore().getStoreId(), menuId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
@@ -61,10 +62,22 @@ public class OrderMenuService {
 
 	@Transactional
 	public void deleteOrderMenu(Long orderMenuId, UserPassport userPassport) {
-		OrderMenu orderMenu = orderMenuReader.getOrderMenuWithOrderAndStore(orderMenuId)
+		OrderMenu orderMenu = orderMenuReader.getOrderMenuWithOrderAndStoreAndOrderLock(orderMenuId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_MENU_NOT_FOUND));
+		validateOrderStatus(orderMenu.getOrder());
 		validateIsOwner(orderMenu, userPassport);
 		orderMenuWriter.deleteOrderMenu(orderMenu);
+		eventPublisher.publishEvent(OrderMenuStatusChangedEvent.from(orderMenu.getOrder()));
+	}
+
+	@Transactional
+	public OrderMenu patchOrderMenuQuantity(Long orderMenuId, UserPassport userPassport, Integer quantity) {
+		OrderMenu orderMenu = orderMenuReader.getOrderMenuWithOrderAndStoreAndOrderLock(orderMenuId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_MENU_NOT_FOUND));
+		validateOrderStatus(orderMenu.getOrder());
+		validateOrderMenuStatus(orderMenu);
+		validateIsOwner(orderMenu, userPassport);
+		return orderMenuWriter.patchOrderMenuQuantity(orderMenu, quantity);
 	}
 
 	private void validateIsOwner(OrderMenu orderMenu, UserPassport userPassport) {
@@ -77,6 +90,13 @@ public class OrderMenuService {
 	private void validateOrderStatus(Order order) {
 		if (order.getOrderStatus() != OrderStatus.RECEIVED) {
 			throw new ServiceException(ErrorCode.ORDER_STATUS_NOT_RECEIVED);
+		}
+	}
+
+	private void validateOrderMenuStatus(OrderMenu orderMenu) {
+		if (orderMenu.getOrderMenuStatus() == OrderMenuStatus.ORDERED
+			|| orderMenu.getOrderMenuStatus() == OrderMenuStatus.CANCELED) {
+			throw new ServiceException(ErrorCode.ORDER_MENU_STATUS_NOT_ALLOWED);
 		}
 	}
 }

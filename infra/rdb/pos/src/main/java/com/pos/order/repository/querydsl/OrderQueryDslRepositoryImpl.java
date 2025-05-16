@@ -4,13 +4,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
+
 import com.pos.order.entity.OrderEntity;
 import com.pos.order.entity.QOrderEntity;
 import com.pos.order.entity.QOrderMenuEntity;
+import com.pos.sale.entity.QSaleEntity;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 
 import domain.pos.order.entity.vo.OrderStatus;
+import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -34,11 +41,13 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 
 	@Override
 	public Optional<OrderEntity> findByIdWithStore(Long orderId) {
+		QSaleEntity qSaleEntity = QSaleEntity.saleEntity;
+
 		OrderEntity orderEntity = jpaQueryFactory
 			.selectFrom(qOrderEntity)
 			.join(qOrderEntity.receipt).fetchJoin()
-			.join(qOrderEntity.receipt.sale).fetchJoin()
-			.join(qOrderEntity.receipt.sale.store).fetchJoin()
+			.join(qOrderEntity.receipt.sale, qSaleEntity).fetchJoin()
+			.join(qSaleEntity.store).fetchJoin()
 			.where(qOrderEntity.id.eq(orderId))
 			.fetchOne();
 
@@ -46,19 +55,46 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 	}
 
 	@Override
-	public List<OrderEntity> findSaleOrdersWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses) {
+	public Optional<OrderEntity> findByIdWithStoreAndMenusAndLock(Long orderId) {
+		QSaleEntity qSaleEntity = QSaleEntity.saleEntity;
+
+		OrderEntity orderEntity = jpaQueryFactory
+			.selectFrom(qOrderEntity).distinct()
+			.join(qOrderEntity.receipt).fetchJoin()
+			.join(qOrderEntity.receipt.sale, qSaleEntity).fetchJoin()
+			.join(qSaleEntity.store).fetchJoin()
+			.join(qOrderEntity.orderMenus).fetchJoin()
+			.where(qOrderEntity.id.eq(orderId))
+			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
+			.fetchOne();
+
+		return Optional.ofNullable(orderEntity);
+	}
+
+	@Override
+	public Slice<OrderEntity> findSaleOrdersWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses, int pageSize,
+		Long lastOrderId) {
 		QOrderMenuEntity qOrderMenu = QOrderMenuEntity.orderMenuEntity;
 
-		return jpaQueryFactory
+		List<OrderEntity> orders = jpaQueryFactory
 			.selectFrom(qOrderEntity).distinct()
 			.join(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
 			.join(qOrderMenu.menu).fetchJoin()
 			.join(qOrderEntity.receipt).fetchJoin()
 			.join(qOrderEntity.receipt.table).fetchJoin()
 			.where(qOrderEntity.receipt.sale.id.eq(saleId)
-				.and(qOrderEntity.status.in(orderStatuses)))
-			.orderBy(qOrderEntity.createdAt.asc(), qOrderEntity.id.asc())
+				.and(qOrderEntity.status.in(orderStatuses))
+				.and(lastOrderId == null ? Expressions.TRUE : qOrderEntity.id.lt(lastOrderId)))
+			.orderBy(qOrderEntity.id.desc())
+			.limit(pageSize + 1)
 			.fetch();
+
+		boolean hasNext = orders.size() > pageSize;
+		if (hasNext) {
+			orders.remove(orders.size() - 1);
+		}
+
+		return new SliceImpl<>(orders, Pageable.ofSize(pageSize), hasNext);
 	}
 
 	@Override

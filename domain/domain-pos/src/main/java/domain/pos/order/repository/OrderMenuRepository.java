@@ -13,9 +13,11 @@ import domain.pos.order.entity.vo.OrderMenuStatus;
 public interface OrderMenuRepository {
 	OrderMenu postOrderMenu(MenuInfo menuInfo, Integer quantity, Order order);
 
-	Optional<OrderMenu> getOrderMenuWithOrderAndStore(Long orderMenuId);
+	Optional<OrderMenu> getOrderMenuWithOrderAndStoreAndOrderLock(Long orderMenuId);
 
 	void deleteOrderMenu(OrderMenu orderMenu);
+
+	OrderMenu patchOrderMenuQuantity(OrderMenu orderMenu, Integer patchQuantity);
 
 	OrderMenu patchOrderMenuStatus(OrderMenu orderMenu, OrderMenuStatus orderMenuStatus);
 

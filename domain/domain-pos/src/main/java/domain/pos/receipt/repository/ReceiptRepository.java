@@ -30,7 +30,7 @@ public interface ReceiptRepository {
 
 	Optional<Receipt> getNonStopReceiptsWithTableAndStoreAndLock(UUID receiptId);
 
-	List<Receipt> getNonStopReceiptsWithStoreAndLock(List<UUID> receiptIds);
+	List<Receipt> getNonStopReceiptsWithOrderAndStoreAndLock(List<UUID> receiptIds);
 
 	Page<ReceiptInfo> getAdjustedReceiptPageBySale(Pageable pageable, Long saleId);
 

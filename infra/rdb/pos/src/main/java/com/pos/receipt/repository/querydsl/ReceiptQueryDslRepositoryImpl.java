@@ -78,10 +78,11 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 	}
 
 	@Override
-	public List<ReceiptEntity> findNonStopReceiptsByIdWithStoreAndLock(List<UUID> receiptIds) {
+	public List<ReceiptEntity> getNonStopReceiptsWithOrderAndStoreAndLock(List<UUID> receiptIds) {
 		return jpaQueryFactory.selectFrom(qReceiptEntity)
 			.join(qReceiptEntity.sale).fetchJoin()
 			.join(qReceiptEntity.sale.store).fetchJoin()
+			.join(qReceiptEntity.orders).fetchJoin()
 			.where(qReceiptEntity.id.in(receiptIds)
 				.and(qReceiptEntity.stopUsageTime.isNull()))
 			.setLockMode(LockModeType.PESSIMISTIC_WRITE)

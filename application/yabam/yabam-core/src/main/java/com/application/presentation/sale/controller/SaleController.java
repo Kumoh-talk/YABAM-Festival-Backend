@@ -44,9 +44,9 @@ public class SaleController implements SaleApi {
 	@AssignUserPassport
 	public ResponseEntity<ResponseBody<Void>> closeStore(
 		UserPassport userPassport,
-		@RequestParam Long storeId
+		@RequestParam Long saleId
 	) {
-		saleService.closeStore(userPassport, storeId);
+		saleService.closeStore(userPassport, saleId);
 		return ResponseEntity.ok(createSuccessResponse());
 	}
 

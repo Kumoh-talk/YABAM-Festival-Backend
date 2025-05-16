@@ -31,6 +31,15 @@ public class OrderMenuMapper {
 			MenuEntity.from(menuInfo.getId()));
 	}
 
+	public static OrderMenuEntity toOrderMenuEntity(MenuInfo menuInfo, Integer quantity,
+		OrderMenuStatus orderMenuStatus, OrderEntity orderEntity) {
+		return OrderMenuEntity.of(
+			quantity,
+			orderMenuStatus,
+			orderEntity,
+			MenuEntity.of(menuInfo, null, null));
+	}
+
 	public static OrderMenuEntity toOrderMenuEntity(CartMenu cartMenu, OrderMenuStatus status, OrderEntity orderEntity,
 		MenuEntity menuEntity) {
 		return OrderMenuEntity.of(

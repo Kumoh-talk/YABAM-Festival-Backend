@@ -86,8 +86,8 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	}
 
 	@Override
-	public List<Receipt> getNonStopReceiptsWithStoreAndLock(List<UUID> receiptIds) {
-		return receiptJpaRepository.findNonStopReceiptsByIdWithStoreAndLock(receiptIds)
+	public List<Receipt> getNonStopReceiptsWithOrderAndStoreAndLock(List<UUID> receiptIds) {
+		return receiptJpaRepository.getNonStopReceiptsWithOrderAndStoreAndLock(receiptIds)
 			.stream()
 			.map(receiptEntity -> ReceiptMapper.toReceipt(receiptEntity, null,
 				SaleMapper.toSale(receiptEntity.getSale(), StoreMapper.toStore(receiptEntity.getSale().getStore()))))

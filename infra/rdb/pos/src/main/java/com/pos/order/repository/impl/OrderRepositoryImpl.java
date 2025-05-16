@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import com.pos.receipt.mapper.ReceiptMapper;
 import com.pos.receipt.repository.jpa.ReceiptJpaRepository;
 import com.pos.sale.mapper.SaleMapper;
 import com.pos.store.mapper.StoreMapper;
+import com.pos.table.mapper.TableMapper;
 
 import domain.pos.cart.entity.CartMenu;
 import domain.pos.order.entity.Order;
@@ -26,6 +28,7 @@ import domain.pos.order.entity.OrderMenu;
 import domain.pos.order.entity.vo.OrderStatus;
 import domain.pos.order.repository.OrderRepository;
 import domain.pos.receipt.entity.Receipt;
+import domain.pos.store.entity.Store;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -93,7 +96,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 				orderMenu.getMenu().getMenuInfo(),
 				orderMenu.getQuantity(),
 				orderEntity.getStatus().transferOrderMenuStatus(),
-				OrderMapper.toOrder(orderEntity, null, null)))
+				orderEntity))
 			.toList();
 		orderEntity.getOrderMenus().addAll(orderMenuEntities);
 
@@ -128,6 +131,21 @@ public class OrderRepositoryImpl implements OrderRepository {
 
 	@Override
 	@Transactional
+	public Optional<Order> getOrderWithStoreAndMenusAndLock(Long orderId) {
+		return orderJpaRepository.findByIdWithStoreAndMenusAndLock(orderId)
+			.map(orderEntity -> OrderMapper.toOrder(
+				orderEntity,
+				ReceiptMapper.toReceipt(orderEntity.getReceipt(), null,
+					SaleMapper.toSale(orderEntity.getReceipt().getSale(),
+						StoreMapper.toStore(orderEntity.getReceipt().getSale().getStore()))),
+				orderEntity.getOrderMenus().stream()
+					.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
+						MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
+					.toList()));
+	}
+
+	@Override
+	@Transactional
 	public Order patchOrderStatus(Order order, OrderStatus orderStatus) {
 		orderJpaRepository.updateOrderStatus(order.getOrderId(), orderStatus);
 		orderMenuJpaRepository.updateOrderMenuStatus(order.getOrderId(), orderStatus.transferOrderMenuStatus());
@@ -136,15 +154,19 @@ public class OrderRepositoryImpl implements OrderRepository {
 	}
 
 	@Override
-	public List<Order> getSaleOrdersWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses) {
-		return orderJpaRepository.findSaleOrdersWithMenuAndTable(saleId, orderStatuses)
-			.stream()
-			.map(orderEntity -> OrderMapper.toOrder(orderEntity, null,
+	public Slice<Order> getSaleOrderSliceWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses,
+		int pageSize, Long lastOrderId) {
+		return orderJpaRepository.findSaleOrdersWithMenuAndTable(saleId, orderStatuses, pageSize, lastOrderId)
+			.map(orderEntity -> OrderMapper.toOrder(
+				orderEntity,
+				ReceiptMapper.toReceipt(
+					orderEntity.getReceipt(),
+					TableMapper.toTable(orderEntity.getReceipt().getTable(), (Store)null),
+					null),
 				orderEntity.getOrderMenus().stream()
 					.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
 						MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
-					.toList()))
-			.toList();
+					.toList()));
 	}
 
 	@Override

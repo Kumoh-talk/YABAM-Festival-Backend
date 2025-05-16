@@ -47,8 +47,8 @@ public class ReceiptReader {
 		return receiptRepository.getNonStopReceiptsWithTableAndStoreAndLock(receiptId);
 	}
 
-	public List<Receipt> getNonStopReceiptsWithStoreAndLock(List<UUID> receiptIds) {
-		return receiptRepository.getNonStopReceiptsWithStoreAndLock(receiptIds);
+	public List<Receipt> getNonStopReceiptsWithOrderAndStoreAndLock(List<UUID> receiptIds) {
+		return receiptRepository.getNonStopReceiptsWithOrderAndStoreAndLock(receiptIds);
 	}
 
 	public Page<ReceiptInfo> getAdjustedReceiptPageBySale(Pageable pageable, Long saleId) {
