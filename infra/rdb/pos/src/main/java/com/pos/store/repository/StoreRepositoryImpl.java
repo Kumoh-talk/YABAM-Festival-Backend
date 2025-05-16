@@ -122,9 +122,10 @@ public class StoreRepositoryImpl implements StoreRepository {
 	}
 
 	@Override
-	public Slice<StoreHeadDto> findStoresCursorOrderByReviewCount(Long cursorReviewCount, Long cursorStoreId,
+	public Slice<StoreHeadDto> findStoresCursorOrderByCreated(
+		Long lastStoreId,
 		int size) {
-		return storeJpaRepository.findStoreHeadsByReviewCountCursor(cursorReviewCount, cursorStoreId, size);
+		return storeJpaRepository.findStoreHeadsByStoreIdCursor(lastStoreId, size);
 	}
 
 	@Override

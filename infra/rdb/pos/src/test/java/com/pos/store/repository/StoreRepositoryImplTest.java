@@ -15,12 +15,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Slice;
 
-import com.pos.fixtures.review.ReviewEntityFixture;
 import com.pos.fixtures.table.TableEntityFixture;
 import com.pos.global.config.RepositoryTest;
 import com.pos.receipt.ReceiptEntityFixture;
 import com.pos.receipt.entity.ReceiptEntity;
-import com.pos.review.entity.ReviewEntity;
 import com.pos.sale.entity.SaleEntity;
 import com.pos.store.entity.StoreDetailImageEntity;
 import com.pos.store.entity.StoreEntity;
@@ -213,7 +211,6 @@ class StoreRepositoryImplTest extends RepositoryTest {
 		private StoreEntity savedStoreEntity;
 		private TableEntity savedTableEntity;
 		private SaleEntity savedSaleEntity;
-		private ReviewEntity savedReviewEntity;
 		private ReceiptEntity savedReceiptEntity;
 		private List<StoreEntity> savedStoreEntityList;
 
@@ -225,11 +222,9 @@ class StoreRepositoryImplTest extends RepositoryTest {
 			savedSaleEntity = testFixtureBuilder.buildSaleEntity(GENERAL_SALE(savedStoreEntity));
 			savedReceiptEntity = testFixtureBuilder.buildReceiptEntity(
 				ReceiptEntityFixture.GENERAL_ADJUSTMENT_RECEIPT(savedSaleEntity, savedTableEntity));
-			savedReviewEntity = testFixtureBuilder.buildReviewEntity(
-				ReviewEntityFixture.CUSTOM_REVIEW(savedReceiptEntity, savedStoreEntity));
 			StoreEntity storeEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(GENERAL_CLOSE_STORE()));
 			savedStoreEntityList = List.of(
-				savedStoreEntity, storeEntity
+				storeEntity, savedStoreEntity
 			);
 			testEntityManager.flush();
 			testEntityManager.clear();
@@ -237,8 +232,10 @@ class StoreRepositoryImplTest extends RepositoryTest {
 
 		@Test
 		void 가게_리스트_조회_테스트() {
-			Slice<StoreHeadDto> storesCursorOrderByReviewCount = storeRepository.findStoresCursorOrderByReviewCount(
-				null, null, 10);
+			System.out.println("===StoreRepositoryImplTest.가게_리스트_조회_테스트 쿼리===");
+			Slice<StoreHeadDto> storesCursorOrderByReviewCount = storeRepository.findStoresCursorOrderByCreated(
+				null, 10);
+			System.out.println("===StoreRepositoryImplTest.가게_리스트_조회_테스트 쿼리===");
 
 			assertSoftly(softly -> {
 				softly.assertThat(storesCursorOrderByReviewCount.getContent().size()).isEqualTo(2);
@@ -250,7 +247,6 @@ class StoreRepositoryImplTest extends RepositoryTest {
 					softly.assertThat(storeHeadDto.getHeadImageUrl())
 						.isEqualTo(savedStoreEntityList.get(i).getHeadImageUrl());
 				}
-				softly.assertThat(storesCursorOrderByReviewCount.getContent().get(0).getReviewCount()).isEqualTo(1);
 			});
 		}
 	}

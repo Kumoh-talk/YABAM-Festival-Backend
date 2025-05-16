@@ -32,7 +32,7 @@ public interface StoreRepository {
 
 	void deleteDetailImage(Store previousStore, String imageUrl);
 
-	Slice<StoreHeadDto> findStoresCursorOrderByReviewCount(Long cursorReviewCount, Long cursorStoreId, int size);
+	Slice<StoreHeadDto> findStoresCursorOrderByCreated(Long lastStoreId, int size);
 
 	List<Store> findMyStores(Long userId);
 }

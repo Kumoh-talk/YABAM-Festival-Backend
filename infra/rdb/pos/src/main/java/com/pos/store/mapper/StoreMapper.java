@@ -10,6 +10,7 @@ import com.vo.UserPassport;
 
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
+import domain.pos.store.entity.dto.StoreHeadDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -86,5 +87,18 @@ public class StoreMapper {
 				.map(StoreDetailImageEntity::getImageUrl)
 				.toList()
 		));
+	}
+
+	public static StoreHeadDto toStoreHeadDto(StoreEntity store) {
+		return StoreHeadDto.of(
+			store.getId(),
+			store.getName(),
+			store.isOpen(),
+			store.getHeadImageUrl(),
+			store.getDescription(),
+			store.getStoreDetailImageEntity().stream()
+				.map(StoreDetailImageEntity::getImageUrl)
+				.toList()
+		);
 	}
 }

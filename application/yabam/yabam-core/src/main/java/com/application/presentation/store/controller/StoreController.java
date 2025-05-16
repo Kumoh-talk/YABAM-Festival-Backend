@@ -58,13 +58,12 @@ public class StoreController implements StoreApi {
 
 	@GetMapping("/api/v1/stores")
 	public ResponseEntity<ResponseBody<StoreCursorResponse>> getStoreList(
-		@RequestParam(required = false) Long lastReviewCount,
 		@RequestParam(required = false) Long lastStoreId,
 		@RequestParam Integer size
 	) {
 		return ResponseEntity
 			.ok(createSuccessResponse(StoreCursorResponse.from(
-				storeService.findStores(lastReviewCount, lastStoreId,
+				storeService.findStores(lastStoreId,
 					size))
 			));
 	}
