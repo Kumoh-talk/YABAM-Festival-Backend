@@ -35,6 +35,7 @@ public class OrderMenuWriter {
 	}
 
 	public OrderMenu postOrderMenu(MenuInfo menuInfo, Integer quantity, Order order) {
+
 		return orderMenuRepository.postOrderMenu(menuInfo, quantity, order);
 	}
 
@@ -42,4 +43,7 @@ public class OrderMenuWriter {
 		orderMenuRepository.deleteOrderMenu(orderMenu);
 	}
 
+	public OrderMenu patchOrderMenuQuantity(OrderMenu orderMenu, Integer patchQuantity) {
+		return orderMenuRepository.patchOrderMenuQuantity(orderMenu, patchQuantity);
+	}
 }

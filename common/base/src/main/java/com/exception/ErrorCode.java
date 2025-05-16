@@ -75,13 +75,14 @@ public enum ErrorCode {
 
 	// Order
 	ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER_0001", "존재하지 않는 주문입니다."),
-	ORDER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "ORDER_0002", "대상 주문에 접근 가능한 요청이 아닙니다."),
+	ORDER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "ORDER_0002", "점주만이 사용할 수 있는 요청입니다."),
 	INVALID_STATE_TRANSITION(HttpStatus.BAD_REQUEST, "ORDER_0003", "주문 상태 전환이 불가능합니다."),
 	ALREADY_RECEIVED_ORDER(HttpStatus.BAD_REQUEST, "ORDER_0004", "이미 접수된 주문입니다."),
 	ALREADY_CANCELED_ORDER(HttpStatus.BAD_REQUEST, "ORDER_0005", "이미 취소된 주문입니다."),
 	ALREADY_COMPLETED_ORDER(HttpStatus.BAD_REQUEST, "ORDER_0006", "이미 완료된 주문입니다."),
 	TRANSFER_INVALID_STATUS(HttpStatus.BAD_REQUEST, "ORDER_0007", "주문 상태 전환이 불가능합니다."),
 	ORDER_STATUS_NOT_RECEIVED(HttpStatus.BAD_REQUEST, "ORDER_0008", "주문 상태가 접수되지 않았습니다."),
+	ORDER_NOT_COMPLETED(HttpStatus.BAD_REQUEST, "ORDER_0009", "모든 주문이 완료되지 않았습니다."),
 
 	// VoException
 	NOT_VALID_VO(HttpStatus.BAD_REQUEST, "VO_0001", "Vo 객체가 유효하지 않습니다."),
@@ -92,6 +93,7 @@ public enum ErrorCode {
 	ALREADY_COOKING_ORDER_MENU(HttpStatus.BAD_REQUEST, "ORDER_MENU_0003", "이미 조리중인 메뉴입니다."),
 	ALREADY_CANCELED_ORDER_MENU(HttpStatus.BAD_REQUEST, "ORDER_MENU_0004", "이미 취소된 메뉴입니다."),
 	ALREADY_COMPLETED_ORDER_MENU(HttpStatus.BAD_REQUEST, "ORDER_MENU_0005", "이미 완료된 메뉴입니다."),
+	ORDER_MENU_STATUS_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "ORDER_MENU_0006", "주문 메뉴 수량 변경이 불가능한 상태입니다."),
 
 	// Cart
 	CART_NOT_FOUND(HttpStatus.NOT_FOUND, "CART_0001", "존재하지 않는 장바구니입니다."),
