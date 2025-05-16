@@ -98,9 +98,10 @@ class TableRepositoryImplTest extends RepositoryTest {
 		// given
 		Integer tableNum = 1;
 		TablePoint point = TablePoint.of(3, 4);
+		Integer tableCapacity = 4;
 		// when
 		System.out.println("===TableRepositoryImplTest.saveTable 쿼리===");
-		UUID id = tableRepository.saveTable(savedStore, tableNum, point);
+		UUID id = tableRepository.saveTable(savedStore, tableNum, point, tableCapacity);
 		System.out.println("===TableRepositoryImplTest.saveTable 쿼리===");
 		testEntityManager.flush();
 		testEntityManager.clear();
@@ -144,9 +145,10 @@ class TableRepositoryImplTest extends RepositoryTest {
 		Table table = TableMapper.toTable(tableEntity, savedStore);
 		Integer newNumber = table.getTableNumber() + 2;
 		TablePoint newPoint = TablePoint.of(7, 8);
+		Integer newCapacity = table.getTableCapacity() + 1;
 		// when
 		System.out.println("===TableRepositoryImplTest.updateTableInfo 쿼리===");
-		tableRepository.updateTableInfo(table, newNumber, newPoint);
+		tableRepository.updateTableInfo(table, newNumber, newPoint, newCapacity);
 		System.out.println("===TableRepositoryImplTest.updateTableInfo 쿼리===");
 		testEntityManager.flush();
 		testEntityManager.clear();

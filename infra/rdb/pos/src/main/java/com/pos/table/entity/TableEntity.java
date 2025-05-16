@@ -43,14 +43,19 @@ public class TableEntity extends BaseEntity {
 	@Column(name = "is_active", nullable = false)
 	private Boolean isActive;
 
+	@Column(nullable = false)
+	private Integer capacity;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "store_id", nullable = false)
 	private StoreEntity store;
 
-	private TableEntity(TableNumber tableNumber, TablePointVo tablePoint, Boolean isActive, StoreEntity store) {
+	private TableEntity(TableNumber tableNumber, TablePointVo tablePoint, Boolean isActive, Integer capacity,
+		StoreEntity store) {
 		this.tableNumber = tableNumber;
 		this.tablePoint = tablePoint;
 		this.isActive = isActive;
+		this.capacity = capacity;
 		this.store = store;
 	}
 
@@ -58,12 +63,13 @@ public class TableEntity extends BaseEntity {
 		this.id = id;
 	}
 
-	public static TableEntity of(TableNumber tableNumber, TablePointVo tablePoint, Boolean isActive,
+	public static TableEntity of(TableNumber tableNumber, TablePointVo tablePoint, Boolean isActive, Integer capacity,
 		StoreEntity store) {
 		return new TableEntity(
 			tableNumber,
 			tablePoint,
 			isActive,
+			capacity,
 			store
 		);
 	}

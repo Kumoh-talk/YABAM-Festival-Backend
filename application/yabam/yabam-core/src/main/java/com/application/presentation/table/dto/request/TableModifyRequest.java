@@ -18,7 +18,10 @@ public record TableModifyRequest(
 	@Schema(description = "테이블 X 좌표", example = "1")
 	Integer tableX,
 	@Schema(description = "테이블 Y 좌표", example = "1")
-	Integer tableY
+	Integer tableY,
+	@Schema(description = "테이블 최대 수용 인원", example = "4")
+	@Min(value = 1, message = "최대 수용 인원은 1 이상이어야 합니다.")
+	Integer tableCapacity
 ) {
 	public TablePoint getTablePoint() {
 		return TablePoint.of(this.tableX, this.tableY);

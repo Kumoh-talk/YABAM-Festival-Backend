@@ -20,12 +20,12 @@ public class TableWriter {
 		return changeActiveTable;
 	}
 
-	public UUID createTable(Store store, Integer tableNumber, TablePoint tablePoint) {
-		return tableRepository.saveTable(store, tableNumber, tablePoint);
+	public UUID createTable(Store store, Integer tableNumber, TablePoint tablePoint, Integer tableCapacity) {
+		return tableRepository.saveTable(store, tableNumber, tablePoint, tableCapacity);
 	}
 
-	public void updateTable(Table table, Integer updateTableNumber, TablePoint updateTablePoint) {
-		tableRepository.updateTableInfo(table, updateTableNumber, updateTablePoint);
+	public void updateTable(Table table, Integer updateTableNumber, TablePoint updateTablePoint, Integer capacity) {
+		tableRepository.updateTableInfo(table, updateTableNumber, updateTablePoint, capacity);
 	}
 
 	public void deleteTable(Table table) {

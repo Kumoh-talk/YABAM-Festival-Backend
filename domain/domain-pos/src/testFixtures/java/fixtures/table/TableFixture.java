@@ -20,12 +20,16 @@ public class TableFixture {
 	// 테이블 좌표
 	private static final TablePoint GENERAL_TABLE_POINT = TablePoint.of(0, 0);
 
+	// 테이블 정원
+	private static final Integer GENERAL_TABLE_CAPACITY = 4;
+
 	public static Table GENERAL_IN_ACTIVE_TABLE(Store store) {
 		return Table.of(
 			GENERAL_TABLE_ID,
 			GENERAL_TABLE_NUMBER,
 			IS_INACTIVE,
 			GENERAL_TABLE_POINT,
+			GENERAL_TABLE_CAPACITY,
 			store
 		);
 	}
@@ -36,6 +40,7 @@ public class TableFixture {
 			GENERAL_TABLE_NUMBER,
 			IS_ACTIVE,
 			GENERAL_TABLE_POINT,
+			GENERAL_TABLE_CAPACITY,
 			store
 		);
 	}

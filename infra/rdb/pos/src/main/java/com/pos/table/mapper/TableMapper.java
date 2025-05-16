@@ -17,27 +17,16 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TableMapper {
-	public static List<TableEntity> toTableEntities(StoreEntity storeEntity, Integer queryTableNumber) {
+	public static List<TableEntity> toTableEntities(StoreEntity storeEntity, Integer queryTableNumber,
+		Integer tableCapacity) {
 		List<TableEntity> tableEntities = new ArrayList<>();
 		for (int i = 1; i <= queryTableNumber; i++) {
 			tableEntities.add(TableEntity.of(
 				TableNumber.from(i),
 				TablePointVo.of(0, 0),
 				false,
+				tableCapacity,
 				storeEntity
-			));
-		}
-		return tableEntities;
-	}
-
-	public static List<TableEntity> toTableEntities(Store store, Integer previousTableCount, Integer queryTableNumber) {
-		List<TableEntity> tableEntities = new ArrayList<>();
-		for (int i = previousTableCount + 1; i <= queryTableNumber; i++) {
-			tableEntities.add(TableEntity.of(
-				TableNumber.from(i),
-				TablePointVo.of(0, 0),
-				false,
-				StoreEntity.from(store.getStoreId())
 			));
 		}
 		return tableEntities;
@@ -49,6 +38,7 @@ public class TableMapper {
 			tableEntity.getTableNumber().getTableNumber(),
 			tableEntity.getIsActive(),
 			tableEntity.getTablePoint().toDomain(),
+			tableEntity.getCapacity(),
 			responStore
 		);
 	}
@@ -59,15 +49,18 @@ public class TableMapper {
 			tableEntity.getTableNumber().getTableNumber(),
 			tableEntity.getIsActive(),
 			tableEntity.getTablePoint().toDomain(),
+			tableEntity.getCapacity(),
 			Store.of(storeId, null, null, null, null)
 		);
 	}
 
-	public static TableEntity toTableEntity(Integer tableNumber, TablePoint tablePoint, boolean isActive, Store store) {
+	public static TableEntity toTableEntity(Integer tableNumber, TablePoint tablePoint, boolean isActive,
+		Integer tableCapacity, Store store) {
 		return TableEntity.of(
 			TableNumber.from(tableNumber),
 			TablePointVo.of(tablePoint.getTableX(), tablePoint.getTableY()),
 			isActive,
+			tableCapacity,
 			StoreEntity.from(store.getStoreId())
 		);
 	}
@@ -78,6 +71,7 @@ public class TableMapper {
 			tableEntity.getTableNumber().getTableNumber(),
 			tableEntity.getIsActive(),
 			tableEntity.getTablePoint().toDomain(),
+			tableEntity.getCapacity(),
 			StoreMapper.toStore(tableEntity.getStore())
 		);
 	}

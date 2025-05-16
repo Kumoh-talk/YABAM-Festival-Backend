@@ -16,7 +16,10 @@ public record TableCreateRequest(
 	Integer tableY,
 	@Schema(description = "테이블 번호", example = "2")
 	@Min(value = 1, message = "테이블 번호는 1 이상이어야 합니다.")
-	Integer tableNumber
+	Integer tableNumber,
+	@Schema(description = "테이블 수용 인원", example = "4")
+	@Min(value = 1, message = "최대 수용 인원은 1 이상이어야 합니다.")
+	Integer tableCapacity
 ) {
 	public TablePoint getTablePoint() {
 		return TablePoint.of(this.tableX, this.tableY);

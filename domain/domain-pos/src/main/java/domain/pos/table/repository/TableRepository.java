@@ -21,11 +21,11 @@ public interface TableRepository {
 
 	boolean existsTableByStoreAndTableNumWithLock(Store store, Integer tableNumber);
 
-	UUID saveTable(Store store, Integer tableNumber, TablePoint tablePoint);
+	UUID saveTable(Store store, Integer tableNumber, TablePoint tablePoint, Integer tableCapacity);
 
 	Optional<Table> findTableWithStoreByTableId(UUID qureyTableId);
 
-	void updateTableInfo(Table table, Integer updateTableNumber, TablePoint updateTablePoint);
+	void updateTableInfo(Table table, Integer updateTableNumber, TablePoint updateTablePoint, Integer tableCapacity);
 
 	void deleteTable(Table table);
 }

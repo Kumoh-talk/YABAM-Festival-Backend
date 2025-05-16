@@ -44,7 +44,8 @@ public class TableController implements TableApi {
 				tableService.createTable(userPassport,
 					tableCreateRequest.storeId(),
 					tableCreateRequest.tableNumber(),
-					tableCreateRequest.getTablePoint())))
+					tableCreateRequest.getTablePoint(),
+					tableCreateRequest.tableCapacity())))
 		);
 	}
 
@@ -58,7 +59,8 @@ public class TableController implements TableApi {
 			userPassport,
 			tableModifyRequest.tableId(),
 			tableModifyRequest.tableNumber(),
-			tableModifyRequest.getTablePoint());
+			tableModifyRequest.getTablePoint(),
+			tableModifyRequest.tableCapacity());
 		return ResponseEntity
 			.ok(createSuccessResponse());
 	}

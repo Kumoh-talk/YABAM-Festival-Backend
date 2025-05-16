@@ -24,5 +24,5 @@ public interface TableDslRepository {
 
 	Optional<TableEntity> findTableJoinStoreByTableId(UUID qureyTableId);
 
-	void updateTableInfoById(UUID tableId, Integer updateTableNumber, TablePointVo of);
+	void updateTableInfoById(UUID tableId, Integer updateTableNumber, TablePointVo of, Integer tableCapacity);
 }

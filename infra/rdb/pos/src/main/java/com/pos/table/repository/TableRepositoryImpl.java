@@ -50,8 +50,8 @@ public class TableRepositoryImpl implements TableRepository {
 	}
 
 	@Override
-	public UUID saveTable(Store store, Integer tableNumber, TablePoint tablePoint) {
-		TableEntity tableEntity = TableMapper.toTableEntity(tableNumber, tablePoint, false, store);
+	public UUID saveTable(Store store, Integer tableNumber, TablePoint tablePoint, Integer tableCapacity) {
+		TableEntity tableEntity = TableMapper.toTableEntity(tableNumber, tablePoint, false, tableCapacity, store);
 		return tableJpaRepository.save(tableEntity).getId();
 	}
 
@@ -65,11 +65,13 @@ public class TableRepositoryImpl implements TableRepository {
 	}
 
 	@Override
-	public void updateTableInfo(Table table, Integer updateTableNumber, TablePoint updateTablePoint) {
+	public void updateTableInfo(Table table, Integer updateTableNumber, TablePoint updateTablePoint,
+		Integer tableCapacity) {
 		tableJpaRepository.updateTableInfoById(
 			table.getTableId(),
 			updateTableNumber,
-			TablePointVo.of(updateTablePoint.getTableX(), updateTablePoint.getTableY())
+			TablePointVo.of(updateTablePoint.getTableX(), updateTablePoint.getTableY()),
+			tableCapacity
 		);
 
 	}

@@ -32,7 +32,8 @@ public class TableService {
 		final UserPassport ownerPassport,
 		final Long queryStoreId,
 		final Integer tableNumber,
-		final TablePoint tablePoint) {
+		final TablePoint tablePoint,
+		final Integer tableCapacity) {
 		final Store store = storeValidator.validateStoreOwner(ownerPassport, queryStoreId);
 
 		if (store.getIsOpen()) {
@@ -44,7 +45,7 @@ public class TableService {
 			log.warn("존재하는 테이블 생성 에러 : storeId={}, tableNumber={}", queryStoreId, tableNumber);
 			throw new ServiceException(ErrorCode.EXIST_TABLE);
 		}
-		return tableWriter.createTable(store, tableNumber, tablePoint);
+		return tableWriter.createTable(store, tableNumber, tablePoint, tableCapacity);
 	}
 
 	@Transactional
@@ -52,7 +53,8 @@ public class TableService {
 		final UserPassport ownerPassport,
 		final UUID qureyTableId,
 		final Integer updateTableNumber,
-		final TablePoint updateTablePoint) {
+		final TablePoint updateTablePoint,
+		final Integer tableCapacity) {
 		final Table table = tableReader.findTableWithStoreByTableId(qureyTableId)
 			.orElseThrow(() -> {
 				log.warn("해당 테이블 존재하지 않음 : tableId={}", qureyTableId);
@@ -74,7 +76,7 @@ public class TableService {
 				throw new ServiceException(ErrorCode.EXIST_TABLE);
 			}
 		}
-		tableWriter.updateTable(table, updateTableNumber, updateTablePoint);
+		tableWriter.updateTable(table, updateTableNumber, updateTablePoint, tableCapacity);
 	}
 
 	private static boolean isDiffTableNumAndQueryNum(Integer updateTableNumber, Table table) {

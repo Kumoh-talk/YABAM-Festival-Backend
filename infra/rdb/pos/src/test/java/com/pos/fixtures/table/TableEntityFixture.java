@@ -14,9 +14,10 @@ public class TableEntityFixture {
 	private static final Integer TABLE_POINT_Y = 0;
 	private static final TablePointVo GENERAL_TABLEPOINT = TablePointVo.of(TABLE_POINT_X, TABLE_POINT_Y);
 	private static final Boolean IS_ACTIVE = false;
+	private static final Integer TABLE_CAPACITY = 4;
 
 	public static List<TableEntity> TABLEENTITY_LIST(Integer tableCount, StoreEntity storeEntity) {
-		return TableMapper.toTableEntities(storeEntity, tableCount);
+		return TableMapper.toTableEntities(storeEntity, tableCount, TABLE_CAPACITY);
 	}
 
 	public static TableEntity GENERAL_TABLE_ENTITY(StoreEntity storeEntity) {
@@ -24,6 +25,7 @@ public class TableEntityFixture {
 			TableNumber.from(TABLE_NUMBER),
 			GENERAL_TABLEPOINT,
 			IS_ACTIVE,
+			TABLE_CAPACITY,
 			storeEntity
 		);
 	}

@@ -75,12 +75,14 @@ public class TableDslRepositoryImpl implements TableDslRepository {
 
 	@Override
 	@Transactional
-	public void updateTableInfoById(UUID tableId, Integer updateTableNumber, TablePointVo tablePointVo) {
+	public void updateTableInfoById(UUID tableId, Integer updateTableNumber, TablePointVo tablePointVo,
+		Integer tableCapacity) {
 		long success = queryFactory
 			.update(qTableEntity)
 			.set(qTableEntity.tableNumber.tableNumber, updateTableNumber)
 			.set(qTableEntity.tablePoint.tableX, tablePointVo.getTableX())
 			.set(qTableEntity.tablePoint.tableY, tablePointVo.getTableY())
+			.set(qTableEntity.capacity, tableCapacity)
 			.where(qTableEntity.id.eq(tableId))
 			.execute();
 		if (success == 0) {

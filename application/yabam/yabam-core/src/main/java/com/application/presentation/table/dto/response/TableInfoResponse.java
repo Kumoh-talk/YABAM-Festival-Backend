@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import domain.pos.table.entity.Table;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Min;
 import lombok.Builder;
 
 @Schema
@@ -25,7 +26,10 @@ public record TableInfoResponse(
 		@Schema(description = "테이블 X 좌표", example = "100")
 		Integer tableX,
 		@Schema(description = "테이블 Y 좌표", example = "200")
-		Integer tableY
+		Integer tableY,
+		@Schema(description = "테이블 정원", example = "4")
+		@Min(value = 1, message = "최대 수용 인원은 1 이상이어야 합니다.")
+		Integer tableCapacity
 	) {
 		public static TableInfoDTO from(Table table) {
 			return TableInfoDTO.builder()
@@ -34,6 +38,7 @@ public record TableInfoResponse(
 				.isActive(table.getIsActive())
 				.tableX(table.getTablePoint().getTableX())
 				.tableY(table.getTablePoint().getTableY())
+				.tableCapacity(table.getTableCapacity())
 				.build();
 		}
 	}
