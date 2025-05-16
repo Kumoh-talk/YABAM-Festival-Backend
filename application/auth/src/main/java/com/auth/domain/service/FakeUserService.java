@@ -16,8 +16,8 @@ public class FakeUserService {
 	private volatile UserPassport fakeUserPassport = null;
 	private volatile UserPassport fakeOwnerPassport = null;
 
-	private final String fakeUserEmail = "fake-user-email";
-	private final String fakeOwnerEmail = "fake-owner-email";
+	public static final String fakeUserEmail = "fake-user-email";
+	public static final String fakeOwnerEmail = "fake-owner-email";
 
 	private final OidcProvider fakeProvider = OidcProvider.KAKAO;
 
