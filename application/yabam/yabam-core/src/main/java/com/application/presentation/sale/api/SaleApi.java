@@ -60,6 +60,6 @@ public interface SaleApi {
 	)
 	ResponseEntity<ResponseBody<Void>> closeStore(
 		@Parameter(hidden = true) UserPassport userPassport,
-		@Schema(description = "가게 고유 ID", example = "1") @RequestParam Long storeId
+		@Schema(description = "영업 고유 ID", example = "1") @RequestParam Long saleId
 	);
 }
