@@ -32,4 +32,8 @@ public class Store {
 		return new Store(this.storeId, true, this.storeInfo, this.ownerPassport, this.detailImageUrls);
 	}
 
+	public Store changeIsOpen() {
+		return new Store(this.storeId, !this.isOpen, this.storeInfo, this.ownerPassport, this.detailImageUrls);
+	}
+
 }

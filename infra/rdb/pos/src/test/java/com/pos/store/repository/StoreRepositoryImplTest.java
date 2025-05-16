@@ -109,7 +109,7 @@ class StoreRepositoryImplTest extends RepositoryTest {
 		// then
 		assertSoftly(softly -> {
 			StoreEntity findStoreEntity = testEntityManager.find(StoreEntity.class, savedStoreEntity.getId());
-			softly.assertThat(findStoreEntity.isOpen()).isTrue();
+			softly.assertThat(findStoreEntity.isOpen()).isFalse();
 		});
 	}
 

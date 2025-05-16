@@ -77,9 +77,9 @@ public class StoreRepositoryImpl implements StoreRepository {
 	public Store changeStoreOpenStatus(Store previousStore) {
 		queryFactory.update(qStoreEntity)
 			.where(qStoreEntity.id.eq(previousStore.getStoreId()))
-			.set(qStoreEntity.isOpen, previousStore.getIsOpen())
+			.set(qStoreEntity.isOpen, !previousStore.getIsOpen())
 			.execute();
-		return previousStore.open();
+		return previousStore.changeIsOpen();
 	}
 
 	@Override
