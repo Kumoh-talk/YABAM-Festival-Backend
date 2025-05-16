@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.application.global.config.swagger.ApiErrorResponseExplanation;
 import com.application.global.config.swagger.ApiResponseExplanations;
 import com.application.global.config.swagger.ApiSuccessResponseExplanation;
+import com.application.presentation.sale.dto.response.SaleCursorResponse;
 import com.application.presentation.sale.dto.response.SaleIdResponse;
 import com.exception.ErrorCode;
 import com.response.ResponseBody;
@@ -61,5 +62,27 @@ public interface SaleApi {
 	ResponseEntity<ResponseBody<Void>> closeStore(
 		@Parameter(hidden = true) UserPassport userPassport,
 		@Schema(description = "영업 고유 ID", example = "1") @RequestParam Long saleId
+	);
+
+	@Operation(
+		summary = "판매 내역 조회",
+		description = "판매 내역을 조회합니다."
+	)
+	@ApiResponse(content = @Content(
+		mediaType = "application/json",
+		schema = @Schema(implementation = SaleCursorResponse.class)))
+	@ApiResponseExplanations(
+		success = @ApiSuccessResponseExplanation(
+			responseClass = SaleCursorResponse.class,
+			description = "판매 내역 조회 성공"
+		)
+	)
+	ResponseEntity<ResponseBody<SaleCursorResponse>> getSales(
+		@Schema(description = "가게 고유 ID", example = "1")
+		@RequestParam Long storeId,
+		@Schema(description = "마지막 판매 ID", example = "1")
+		@RequestParam(required = false) Long lastSaleId,
+		@Schema(description = "가져올 데이터 수", example = "10")
+		@RequestParam Integer size
 	);
 }
