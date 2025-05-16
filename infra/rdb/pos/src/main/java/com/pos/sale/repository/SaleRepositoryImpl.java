@@ -1,14 +1,19 @@
 package com.pos.sale.repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import com.pos.sale.entity.QSaleEntity;
 import com.pos.sale.entity.SaleEntity;
 import com.pos.sale.mapper.SaleMapper;
 import com.pos.store.entity.QStoreEntity;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import domain.pos.store.entity.Sale;
@@ -64,5 +69,33 @@ public class SaleRepositoryImpl implements SaleRepository {
 			.set(qSaleEntity.closeDateTime, now)
 			.execute();
 		return SaleMapper.toClosedSale(savedSale, closeStore, now);
+	}
+
+	@Override
+	public Slice<Sale> getSaleSliceByStoreId(Long storeId, Long lastSaleId, int size) {
+		List<SaleEntity> fetch = queryFactory.select(qSaleEntity)
+			.from(qSaleEntity)
+			.where(saleSliceCursorCondition(storeId, lastSaleId))
+			.orderBy(qSaleEntity.id.desc())
+			.limit(size + 1)
+			.fetch();
+		boolean hasNext = false;
+		if (fetch.size() > size) {
+			hasNext = true;
+			fetch.remove(size);
+		}
+		List<Sale> list = fetch.stream()
+			.map(SaleMapper::toSale)
+			.toList();
+
+		return new SliceImpl<>(list, PageRequest.of(0, size), hasNext);
+	}
+
+	private BooleanExpression saleSliceCursorCondition(Long storeId, Long lastSaleId) {
+		if (lastSaleId == null) {
+			return qSaleEntity.store.id.eq(storeId);
+		}
+		return qSaleEntity.store.id.eq(storeId)
+			.and(qSaleEntity.id.lt(lastSaleId));
 	}
 }

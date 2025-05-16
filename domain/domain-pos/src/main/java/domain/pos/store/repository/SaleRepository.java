@@ -2,6 +2,7 @@ package domain.pos.store.repository;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 import domain.pos.store.entity.Sale;
@@ -16,4 +17,6 @@ public interface SaleRepository {
 	Optional<Sale> getOpenSaleByStoreId(Long storeId);
 
 	Sale closeSale(Sale savedSale, Store closeStore);
+
+	Slice<Sale> getSaleSliceByStoreId(Long storeId, Long lastSaleId, int size);
 }

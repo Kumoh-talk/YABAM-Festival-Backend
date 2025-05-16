@@ -2,6 +2,7 @@ package domain.pos.store.implement;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 
 import domain.pos.store.entity.Sale;
@@ -21,4 +22,7 @@ public class SaleReader {
 		return saleRepository.getOpenSaleByStoreId(storeId);
 	}
 
+	public Slice<Sale> getSingleSalesByStore(Long storeId, Long lastSaleId, int size) {
+		return saleRepository.getSaleSliceByStoreId(storeId, lastSaleId, size);
+	}
 }

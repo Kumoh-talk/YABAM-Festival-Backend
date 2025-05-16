@@ -26,6 +26,15 @@ public class SaleMapper {
 			previousStore);
 	}
 
+	public static Sale toSale(SaleEntity saleEntity) {
+		return Sale.of(
+			saleEntity.getId(),
+			saleEntity.getOpenDateTime(),
+			saleEntity.getCloseDateTime(),
+			null
+		);
+	}
+
 	public static Sale toSaleWithStore(SaleEntity saleEntity) {
 		if (saleEntity == null) {
 			return null;
