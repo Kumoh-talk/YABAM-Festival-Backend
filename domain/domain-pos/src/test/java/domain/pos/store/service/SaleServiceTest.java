@@ -55,7 +55,7 @@ class SaleServiceTest extends ServiceTest {
 			Sale createdSale = GENERAL_OPEN_SALE(opendStore);
 
 			doReturn(savedStore)
-				.when(storeValidator).validateStoreOwner(queryUserPassport, queryStoreId);
+				.when(storeValidator).validateStoreOwnerWithLock(queryUserPassport, queryStoreId);
 			doReturn(opendStore)
 				.when(storeWriter).modifyStoreOpenStatus(savedStore);
 			doReturn(createdSale)
@@ -69,7 +69,7 @@ class SaleServiceTest extends ServiceTest {
 				softly.assertThat(result.getStore().getIsOpen()).isTrue();
 
 				verify(storeValidator)
-					.validateStoreOwner(any(UserPassport.class), anyLong());
+					.validateStoreOwnerWithLock(any(UserPassport.class), anyLong());
 				verify(storeWriter)
 					.modifyStoreOpenStatus(any(Store.class));
 				verify(saleWriter)
@@ -84,7 +84,7 @@ class SaleServiceTest extends ServiceTest {
 			Long queryStoreId = GENERAL_USER_PASSPORT().getUserId();
 
 			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE))
-				.when(storeValidator).validateStoreOwner(queryUserPassport, queryStoreId);
+				.when(storeValidator).validateStoreOwnerWithLock(queryUserPassport, queryStoreId);
 
 			// when->then
 			assertSoftly(softly -> {
@@ -92,7 +92,7 @@ class SaleServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasMessage(ErrorCode.NOT_FOUND_STORE.getMessage());
 				verify(storeValidator)
-					.validateStoreOwner(any(UserPassport.class), anyLong());
+					.validateStoreOwnerWithLock(any(UserPassport.class), anyLong());
 				verify(storeWriter, never())
 					.modifyStoreOpenStatus(any(Store.class));
 				verify(saleWriter, never())
@@ -107,7 +107,7 @@ class SaleServiceTest extends ServiceTest {
 			Long queryStoreId = GENERAL_USER_PASSPORT().getUserId();
 
 			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
-				.when(storeValidator).validateStoreOwner(queryUserPassport, queryStoreId);
+				.when(storeValidator).validateStoreOwnerWithLock(queryUserPassport, queryStoreId);
 
 			// when->then
 			assertSoftly(softly -> {
@@ -115,7 +115,7 @@ class SaleServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasMessage(ErrorCode.NOT_EQUAL_STORE_OWNER.getMessage());
 				verify(storeValidator)
-					.validateStoreOwner(any(UserPassport.class), anyLong());
+					.validateStoreOwnerWithLock(any(UserPassport.class), anyLong());
 				verify(storeWriter, never())
 					.modifyStoreOpenStatus(any(Store.class));
 				verify(saleWriter, never())
@@ -131,7 +131,7 @@ class SaleServiceTest extends ServiceTest {
 			Long queryStoreId = savedStore.getStoreId();
 
 			doReturn(savedStore)
-				.when(storeValidator).validateStoreOwner(queryUserPassport, queryStoreId);
+				.when(storeValidator).validateStoreOwnerWithLock(queryUserPassport, queryStoreId);
 
 			// when->then
 			assertSoftly(softly -> {
@@ -139,7 +139,7 @@ class SaleServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasMessage(ErrorCode.CONFLICT_OPEN_STORE.getMessage());
 				verify(storeValidator)
-					.validateStoreOwner(any(UserPassport.class), anyLong());
+					.validateStoreOwnerWithLock(any(UserPassport.class), anyLong());
 				verify(storeWriter, never())
 					.modifyStoreOpenStatus(any(Store.class));
 				verify(saleWriter, never())

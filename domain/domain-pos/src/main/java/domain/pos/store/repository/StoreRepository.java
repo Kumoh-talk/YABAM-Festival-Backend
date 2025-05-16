@@ -35,4 +35,6 @@ public interface StoreRepository {
 	Slice<StoreHeadDto> findStoresCursorOrderByCreated(Long lastStoreId, int size);
 
 	List<Store> findMyStores(Long userId);
+
+	Optional<Store> findStoreByStoreIdWithLock(Long queryStoreId);
 }

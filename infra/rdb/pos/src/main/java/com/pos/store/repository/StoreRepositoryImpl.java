@@ -22,6 +22,7 @@ import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
 import domain.pos.store.entity.dto.StoreHeadDto;
 import domain.pos.store.repository.StoreRepository;
+import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -138,5 +139,18 @@ public class StoreRepositoryImpl implements StoreRepository {
 		return storeEntities.stream()
 			.map(StoreMapper::toStore)
 			.toList();
+	}
+
+	@Override
+	public Optional<Store> findStoreByStoreIdWithLock(Long queryStoreId) {
+		StoreEntity storeEntity = queryFactory
+			.selectFrom(qStoreEntity)
+			.where(qStoreEntity.id.eq(queryStoreId))
+			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
+			.fetchOne();
+
+		return Optional.ofNullable(
+			StoreMapper.toStore(storeEntity)
+		);
 	}
 }

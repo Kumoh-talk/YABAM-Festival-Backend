@@ -1,5 +1,7 @@
 package domain.pos.store.implement;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 
 import com.exception.ErrorCode;
@@ -19,17 +21,25 @@ public class StoreValidator {
 	private final StoreRepository storeRepository;
 
 	public Store validateStoreOwner(UserPassport ownerPassport, Long queryStoreId) {
-		final Store previousStore = storeReader.readSingleStore(queryStoreId)
+		return validateStoreAndOwner(ownerPassport, storeReader.readSingleStore(queryStoreId), queryStoreId);
+	}
+
+	private Store validateStoreAndOwner(UserPassport ownerPassport, Optional<Store> optionalStore, Long queryStoreId) {
+		Store store = optionalStore
 			.orElseThrow(() -> {
 				log.warn("해당 Store 존재하지 않음: storeId={}", queryStoreId);
 				throw new ServiceException(ErrorCode.NOT_FOUND_STORE);
 			});
 
-		if (!isEqualSavedStoreOwnerAndQueryOwner(ownerPassport.getUserId(), previousStore)) {
+		if (!isEqualSavedStoreOwnerAndQueryOwner(ownerPassport.getUserId(), store)) {
 			log.warn("요청 유저는 Store 소유자와 다름: userId={}, queryStoreId={}", ownerPassport.getUserId(), queryStoreId);
 			throw new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER);
 		}
-		return previousStore;
+		return store;
+	}
+
+	public Store validateStoreOwnerWithLock(UserPassport ownerPassport, Long queryStoreId) {
+		return validateStoreAndOwner(ownerPassport, storeReader.readSingleStoreWithLock(queryStoreId), queryStoreId);
 	}
 
 	public void validateStoreOwner(UserPassport ownerPassport, Store store) {

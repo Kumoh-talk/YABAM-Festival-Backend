@@ -29,4 +29,8 @@ public class StoreReader {
 	public List<Store> readMyStores(UserPassport ownerPassport) {
 		return storeRepository.findMyStores(ownerPassport.getUserId());
 	}
+
+	public Optional<Store> readSingleStoreWithLock(Long queryStoreId) {
+		return storeRepository.findStoreByStoreIdWithLock(queryStoreId);
+	}
 }

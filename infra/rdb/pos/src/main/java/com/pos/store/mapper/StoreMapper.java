@@ -48,6 +48,9 @@ public class StoreMapper {
 	}
 
 	public static Store toStore(StoreEntity storeEntity) {
+		if (storeEntity == null) {
+			return null;
+		}
 		return Store.of(
 			storeEntity.getId(),
 			storeEntity.isOpen(),
