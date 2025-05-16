@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -125,7 +126,8 @@ public class OrderService {
 		return orderReader.getReceiptOrdersWithMenu(receiptId);
 	}
 
-	public List<Order> getSaleOrders(Long saleId, List<OrderStatus> orderStatuses, UserPassport userPassport) {
+	public Slice<Order> getSaleOrderSlice(UserPassport userPassport, Long saleId, List<OrderStatus> orderStatuses,
+		int pageSize, Long lastOrderId) {
 		Sale sale = saleReader.readSingleSale(saleId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.NOT_FOUND_SALE));
 		if (!sale.getStore().getOwnerPassport().getUserId().equals(userPassport.getUserId())
@@ -133,7 +135,7 @@ public class OrderService {
 			throw new ServiceException(ErrorCode.SALE_ACCESS_DENIED);
 		}
 
-		return orderReader.getSaleOrdersWithMenuAndTable(saleId, orderStatuses);
+		return orderReader.getSaleOrderSliceWithMenuAndTable(saleId, orderStatuses, pageSize, lastOrderId);
 	}
 
 	public Order getOrder(Long orderId) {

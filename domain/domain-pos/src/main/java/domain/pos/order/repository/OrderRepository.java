@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 import domain.pos.cart.entity.CartMenu;
@@ -22,9 +23,12 @@ public interface OrderRepository {
 
 	Optional<Order> getOrderWithStore(Long orderId);
 
+	Optional<Order> getOrderWithStoreAndMenusAndLock(Long orderId);
+
 	Order patchOrderStatus(Order order, OrderStatus orderStatus);
 
-	List<Order> getSaleOrdersWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses);
+	Slice<Order> getSaleOrderSliceWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses, int pageSize,
+		Long lastOrderId);
 
 	List<Order> getReceiptOrdersWithMenu(UUID receiptId);
 }

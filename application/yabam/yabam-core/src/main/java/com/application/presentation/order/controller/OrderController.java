@@ -6,6 +6,7 @@ import static com.vo.UserRole.*;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.application.global.response.GlobalSliceResponse;
 import com.application.presentation.order.api.OrderApi;
 import com.application.presentation.order.dto.request.PostOrderMenuRequest;
 import com.application.presentation.order.dto.response.OrderAndMenusResponse;
@@ -30,6 +32,7 @@ import domain.pos.order.entity.Order;
 import domain.pos.order.entity.vo.OrderStatus;
 import domain.pos.order.service.OrderService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -81,14 +84,15 @@ public class OrderController implements OrderApi {
 	@GetMapping("/api/v1/sales/{saleId}/orders")
 	@HasRole(userRole = ROLE_OWNER)
 	@AssignUserPassport
-	public ResponseEntity<ResponseBody<List<OrderResponse>>> getSaleOrders(
+	public ResponseEntity<ResponseBody<GlobalSliceResponse<OrderResponse>>> getSaleOrderSlice(
 		UserPassport userPassport,
 		@PathVariable Long saleId,
-		@RequestParam @NotEmpty List<OrderStatus> orderStatuses) {
-		List<OrderResponse> orderResponses = orderService.getSaleOrders(saleId, orderStatuses, userPassport).stream()
-			.map(OrderResponse::from)
-			.toList();
-		return ResponseEntity.ok(createSuccessResponse(orderResponses));
+		@RequestParam @NotEmpty List<OrderStatus> orderStatuses,
+		@RequestParam @Min(value = 1, message = "페이지 크기는 최소 1 이상입니다.") int pageSize,
+		@RequestParam(required = false) Long lastOrderId) {
+		Slice<OrderResponse> orderResponses = orderService.getSaleOrderSlice(userPassport, saleId, orderStatuses,
+			pageSize, lastOrderId).map(OrderResponse::from);
+		return ResponseEntity.ok(createSuccessResponse(GlobalSliceResponse.from(orderResponses)));
 	}
 
 	@GetMapping("/api/v1/orders/{orderId}")
