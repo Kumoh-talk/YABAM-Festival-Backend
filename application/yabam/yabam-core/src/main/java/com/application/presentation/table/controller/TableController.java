@@ -3,6 +3,8 @@ package com.application.presentation.table.controller;
 import static com.response.ResponseUtil.*;
 import static com.vo.UserRole.*;
 
+import java.util.UUID;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -66,7 +68,7 @@ public class TableController implements TableApi {
 	@AssignUserPassport
 	public ResponseEntity<ResponseBody<Void>> deleteTable(
 		final UserPassport userPassport,
-		@RequestParam Long tableId) {
+		@RequestParam UUID tableId) {
 		tableService.deleteTable(userPassport, tableId);
 		return ResponseEntity
 			.ok(createSuccessResponse());

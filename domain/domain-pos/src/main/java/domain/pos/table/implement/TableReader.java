@@ -2,6 +2,7 @@ package domain.pos.table.implement;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class TableReader {
 	private final TableRepository tableRepository;
 
-	public Optional<Table> findLockTableById(Long queryTableId, Long storeId) {
+	public Optional<Table> findLockTableById(UUID queryTableId, Long storeId) {
 		return tableRepository.findByIdWithLock(queryTableId, storeId);
 	}
 
@@ -27,7 +28,7 @@ public class TableReader {
 		return tableRepository.existsTableByStoreAndTableNumWithLock(store, tableNumber);
 	}
 
-	public Optional<Table> findTableWithStoreByTableId(Long qureyTableId) {
+	public Optional<Table> findTableWithStoreByTableId(UUID qureyTableId) {
 		return tableRepository.findTableWithStoreByTableId(qureyTableId);
 	}
 }

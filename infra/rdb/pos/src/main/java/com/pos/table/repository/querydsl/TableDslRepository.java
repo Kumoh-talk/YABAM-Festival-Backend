@@ -2,6 +2,7 @@ package com.pos.table.repository.querydsl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 
@@ -15,13 +16,13 @@ public interface TableDslRepository {
 
 	void updateTableActiveStatusById(boolean isActive, Table savedInActiveTable);
 
-	TableEntity findByIdAndStoreIdForUpdate(Long queryTableId, Long storeId);
+	TableEntity findByIdAndStoreIdForUpdate(UUID queryTableId, Long storeId);
 
 	List<TableEntity> findByStoreId(Long storeId);
 
 	boolean existsTableByStoreIdAndTableNumberForUpdate(Long storeId, Integer tableNumberForUpdate);
 
-	Optional<TableEntity> findTableJoinStoreByTableId(Long qureyTableId);
+	Optional<TableEntity> findTableJoinStoreByTableId(UUID qureyTableId);
 
-	void updateTableInfoById(Long tableId, Integer updateTableNumber, TablePointVo of);
+	void updateTableInfoById(UUID tableId, Integer updateTableNumber, TablePointVo of);
 }

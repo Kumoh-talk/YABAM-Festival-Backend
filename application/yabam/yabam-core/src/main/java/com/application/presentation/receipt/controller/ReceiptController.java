@@ -50,7 +50,7 @@ public class ReceiptController implements ReceiptApi {
 
 	@PostMapping("/api/v1/receipts")
 	public ResponseEntity<ResponseBody<ReceiptResponse>> registerReceipt(
-		@RequestParam @NotNull Long storeId, @RequestParam @NotNull Long tableId) {
+		@RequestParam @NotNull Long storeId, @RequestParam @NotNull UUID tableId) {
 		Receipt receipt = receiptService.registerReceipt(storeId, tableId);
 		return ResponseEntity.ok(createSuccessResponse(ReceiptResponse.from(receipt)));
 	}
@@ -129,7 +129,7 @@ public class ReceiptController implements ReceiptApi {
 	}
 
 	@GetMapping("/api/v1/table/{tableId}/receipts/non-adjust")
-	public ResponseEntity<ResponseBody<ReceiptIdResponse>> getNonAdjustReceiptId(@PathVariable Long tableId) {
+	public ResponseEntity<ResponseBody<ReceiptIdResponse>> getNonAdjustReceiptId(@PathVariable UUID tableId) {
 		UUID receiptId = receiptService.getNonAdjustReceiptId(tableId);
 		return ResponseEntity.ok(createSuccessResponse(ReceiptIdResponse.from(receiptId)));
 	}

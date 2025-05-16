@@ -1,5 +1,7 @@
 package domain.pos.table.implement;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
 
 import domain.pos.store.entity.Store;
@@ -18,7 +20,7 @@ public class TableWriter {
 		return changeActiveTable;
 	}
 
-	public Long createTable(Store store, Integer tableNumber, TablePoint tablePoint) {
+	public UUID createTable(Store store, Integer tableNumber, TablePoint tablePoint) {
 		return tableRepository.saveTable(store, tableNumber, tablePoint);
 	}
 

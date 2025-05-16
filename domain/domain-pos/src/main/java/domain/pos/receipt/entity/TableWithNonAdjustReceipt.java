@@ -1,6 +1,7 @@
 package domain.pos.receipt.entity;
 
 import java.util.List;
+import java.util.UUID;
 
 import domain.pos.table.entity.Table;
 import lombok.Builder;
@@ -8,13 +9,13 @@ import lombok.Getter;
 
 @Getter
 public class TableWithNonAdjustReceipt {
-	private final Long tableId;
+	private final UUID tableId;
 	private final Integer tableNumber;
 	private final Boolean isActive;
 	private final Receipt nonAdjustReceipt;
 
 	@Builder
-	public TableWithNonAdjustReceipt(Long tableId, Integer tableNumber, Boolean isActive,
+	public TableWithNonAdjustReceipt(UUID tableId, Integer tableNumber, Boolean isActive,
 		Receipt nonAdjustReceipt) {
 		this.tableId = tableId;
 		this.tableNumber = tableNumber;

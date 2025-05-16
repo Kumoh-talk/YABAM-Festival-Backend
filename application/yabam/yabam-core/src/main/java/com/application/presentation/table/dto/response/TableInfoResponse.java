@@ -1,6 +1,7 @@
 package com.application.presentation.table.dto.response;
 
 import java.util.List;
+import java.util.UUID;
 
 import domain.pos.table.entity.Table;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,8 +16,8 @@ public record TableInfoResponse(
 	@Schema(description = "테이블 정보 DTO")
 	@Builder
 	public record TableInfoDTO(
-		@Schema(description = "테이블 ID", example = "1")
-		Long tableId,
+		@Schema(description = "테이블 ID", example = "123e4567-e89b-12d3-a456-426614174000")
+		UUID tableId,
 		@Schema(description = "테이블 번호", example = "1")
 		Integer tableNumber,
 		@Schema(description = "테이블 활성화 여부", example = "true")

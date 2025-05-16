@@ -2,6 +2,7 @@ package com.application.presentation.call.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.data.domain.Slice;
 
@@ -32,8 +33,8 @@ public record CallCursorResponse(
 		String callMessage,
 		@Schema(description = "직원 호출 완료 여부", example = "false")
 		Boolean isCompleted,
-		@Schema(description = "테이블 고유 ID", example = "1")
-		Long tableId,
+		@Schema(description = "테이블 고유 ID", example = "123e4567-e89b-12d3-a456-426614174000")
+		UUID tableId,
 		@Schema(description = "테이블 번호", example = "1")
 		Integer tableNumber,
 		@JsonSerialize(using = LocalDateTimeSerializer.class)

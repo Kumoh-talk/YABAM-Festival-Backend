@@ -2,12 +2,13 @@ package com.pos.event;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import lombok.Builder;
 
 @Builder
 public record StoreOrderEvent(
-	Long tableId,
+	UUID tableId,
 	Integer tableNumber,
 	OrderDto orderDto
 ) {

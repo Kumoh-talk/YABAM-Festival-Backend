@@ -1,5 +1,7 @@
 package com.application.presentation.table.api;
 
+import java.util.UUID;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -84,7 +86,8 @@ public interface TableApi {
 	)
 	ResponseEntity<ResponseBody<Void>> deleteTable(
 		final UserPassport userPassport,
-		@RequestParam Long tableId);
+		@Schema(description = "테이블 고유 ID", example = "123e4567-e89b-12d3-a456-426614174000")
+		@RequestParam UUID tableId);
 
 	@Operation(
 		summary = "테이블 현황 조회 API",

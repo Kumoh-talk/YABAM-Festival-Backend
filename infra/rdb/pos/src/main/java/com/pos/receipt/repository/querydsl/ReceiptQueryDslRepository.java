@@ -26,7 +26,7 @@ public interface ReceiptQueryDslRepository {
 
 	Page<ReceiptEntity> findAdjustedReceiptPageBySaleId(Pageable pageable, Long saleId);
 
-	ReceiptEntity findNonAdjustReceipt(Long tableId);
+	ReceiptEntity findNonAdjustReceipt(UUID tableId);
 
 	List<ReceiptEntity> findAllNonAdjustReceiptWithTableAndOrders(Long saleId);
 

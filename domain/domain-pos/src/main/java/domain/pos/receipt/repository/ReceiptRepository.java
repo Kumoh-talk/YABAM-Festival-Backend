@@ -34,7 +34,7 @@ public interface ReceiptRepository {
 
 	Page<ReceiptInfo> getAdjustedReceiptPageBySale(Pageable pageable, Long saleId);
 
-	ReceiptInfo getNonAdjustReceipt(Long tableId);
+	ReceiptInfo getNonAdjustReceipt(UUID tableId);
 
 	List<Receipt> getAllNonAdjustReceiptWithTableAndOrders(Long saleId);
 

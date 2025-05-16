@@ -2,6 +2,7 @@ package com.pos.table.repository.querydsl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +34,7 @@ public class TableDslRepositoryImpl implements TableDslRepository {
 	}
 
 	@Override
-	public TableEntity findByIdAndStoreIdForUpdate(Long queryTableId, Long storeId) {
+	public TableEntity findByIdAndStoreIdForUpdate(UUID queryTableId, Long storeId) {
 		return queryFactory
 			.selectFrom(qTableEntity)
 			.where(qTableEntity.id.eq(queryTableId)
@@ -63,7 +64,7 @@ public class TableDslRepositoryImpl implements TableDslRepository {
 	}
 
 	@Override
-	public Optional<TableEntity> findTableJoinStoreByTableId(Long qureyTableId) {
+	public Optional<TableEntity> findTableJoinStoreByTableId(UUID qureyTableId) {
 		TableEntity tableEntity = queryFactory
 			.selectFrom(qTableEntity)
 			.join(qTableEntity.store, qStoreEntity).fetchJoin()
@@ -74,7 +75,7 @@ public class TableDslRepositoryImpl implements TableDslRepository {
 
 	@Override
 	@Transactional
-	public void updateTableInfoById(Long tableId, Integer updateTableNumber, TablePointVo tablePointVo) {
+	public void updateTableInfoById(UUID tableId, Integer updateTableNumber, TablePointVo tablePointVo) {
 		long success = queryFactory
 			.update(qTableEntity)
 			.set(qTableEntity.tableNumber.tableNumber, updateTableNumber)

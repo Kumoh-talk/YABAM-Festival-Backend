@@ -112,7 +112,7 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 	}
 
 	@Override
-	public ReceiptEntity findNonAdjustReceipt(Long tableId) {
+	public ReceiptEntity findNonAdjustReceipt(UUID tableId) {
 		return jpaQueryFactory
 			.selectFrom(qReceiptEntity)
 			.where(

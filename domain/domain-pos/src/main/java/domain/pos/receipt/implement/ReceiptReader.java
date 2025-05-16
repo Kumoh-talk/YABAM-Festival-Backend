@@ -55,7 +55,7 @@ public class ReceiptReader {
 		return receiptRepository.getAdjustedReceiptPageBySale(pageable, saleId);
 	}
 
-	public ReceiptInfo getNonAdjustReceipt(Long tableId) {
+	public ReceiptInfo getNonAdjustReceipt(UUID tableId) {
 		return receiptRepository.getNonAdjustReceipt(tableId);
 	}
 

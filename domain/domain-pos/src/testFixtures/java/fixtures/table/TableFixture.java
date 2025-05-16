@@ -1,12 +1,14 @@
 package fixtures.table;
 
+import java.util.UUID;
+
 import domain.pos.store.entity.Store;
 import domain.pos.table.entity.Table;
 import domain.pos.table.entity.TablePoint;
 
 public class TableFixture {
 	// 테이블 고유 ID
-	private static final Long GENERAL_TABLE_ID = 1L;
+	private static final UUID GENERAL_TABLE_ID = UUID.randomUUID();
 
 	// 테이블 번호
 	private static final Integer GENERAL_TABLE_NUMBER = 1;

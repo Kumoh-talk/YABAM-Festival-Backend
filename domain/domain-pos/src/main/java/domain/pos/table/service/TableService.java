@@ -1,6 +1,7 @@
 package domain.pos.table.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +28,7 @@ public class TableService {
 	private final TableWriter tableWriter;
 
 	@Transactional
-	public Long createTable(
+	public UUID createTable(
 		final UserPassport ownerPassport,
 		final Long queryStoreId,
 		final Integer tableNumber,
@@ -49,7 +50,7 @@ public class TableService {
 	@Transactional
 	public void updateTable(
 		final UserPassport ownerPassport,
-		final Long qureyTableId,
+		final UUID qureyTableId,
 		final Integer updateTableNumber,
 		final TablePoint updateTablePoint) {
 		final Table table = tableReader.findTableWithStoreByTableId(qureyTableId)
@@ -87,7 +88,7 @@ public class TableService {
 	@Transactional
 	public void deleteTable(
 		final UserPassport ownerPassport,
-		final Long queryTableId) {
+		final UUID queryTableId) {
 		final Table table = tableReader.findTableWithStoreByTableId(queryTableId)
 			.orElseThrow(() -> {
 				log.warn("해당 테이블 존재하지 않음 : tableId={}", queryTableId);

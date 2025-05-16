@@ -49,7 +49,7 @@ public class ReceiptService {
 
 	// TODO : 이것도 SSE로 전송해야하지 않을까..?
 	@Transactional
-	public Receipt registerReceipt(final Long storeId, final Long tableId) {
+	public Receipt registerReceipt(final Long storeId, final UUID tableId) {
 		final Sale savedSale = saleReader.getOpenSaleByStoreId(storeId)
 			.orElseThrow(() -> {
 				log.warn("Open된 Sale 을 찾을 수 없습니다. tableId: {}", tableId);
@@ -182,7 +182,7 @@ public class ReceiptService {
 		receiptWriter.deleteReceipt(receiptId);
 	}
 
-	public UUID getNonAdjustReceiptId(Long tableId) {
+	public UUID getNonAdjustReceiptId(UUID tableId) {
 		ReceiptInfo receiptInfo = receiptReader.getNonAdjustReceipt(tableId);
 		return receiptInfo != null ? receiptInfo.getReceiptId() : null;
 	}

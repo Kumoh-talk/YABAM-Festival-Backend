@@ -101,7 +101,7 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	}
 
 	@Override
-	public ReceiptInfo getNonAdjustReceipt(Long tableId) {
+	public ReceiptInfo getNonAdjustReceipt(UUID tableId) {
 		ReceiptEntity receiptEntity = receiptJpaRepository.findNonAdjustReceipt(tableId);
 		return receiptEntity == null ? null : ReceiptMapper.toReceiptInfo(receiptEntity);
 	}

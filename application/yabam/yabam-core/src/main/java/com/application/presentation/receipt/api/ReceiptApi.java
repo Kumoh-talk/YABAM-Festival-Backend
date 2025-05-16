@@ -56,7 +56,7 @@ public interface ReceiptApi {
 		}
 	)
 	ResponseEntity<ResponseBody<ReceiptResponse>> registerReceipt(
-		@RequestParam @NotNull Long storeId, @RequestParam @NotNull Long tableId);
+		@RequestParam @NotNull Long storeId, @RequestParam @NotNull UUID tableId);
 
 	@Operation(
 		summary = "영수증 세부정보 조회 API",
@@ -211,7 +211,7 @@ public interface ReceiptApi {
 			description = "영수증 id 조회 성공"
 		)
 	)
-	ResponseEntity<ResponseBody<ReceiptIdResponse>> getNonAdjustReceiptId(@PathVariable Long tableId);
+	ResponseEntity<ResponseBody<ReceiptIdResponse>> getNonAdjustReceiptId(@PathVariable UUID tableId);
 
 	@Operation(
 		summary = "고객 별 영수증 내역 무한스크롤 조회 API",

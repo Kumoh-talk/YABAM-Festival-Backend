@@ -2,6 +2,7 @@ package com.pos.table.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 
@@ -21,7 +22,7 @@ public class TableRepositoryImpl implements TableRepository {
 	private final TableJpaRepository tableJpaRepository;
 
 	@Override
-	public Optional<Table> findByIdWithLock(Long queryTableId, Long storeId) {
+	public Optional<Table> findByIdWithLock(UUID queryTableId, Long storeId) {
 		TableEntity tableEntity = tableJpaRepository.findByIdAndStoreIdForUpdate(queryTableId, storeId);
 		if (tableEntity == null) {
 			return Optional.empty();
@@ -49,13 +50,13 @@ public class TableRepositoryImpl implements TableRepository {
 	}
 
 	@Override
-	public Long saveTable(Store store, Integer tableNumber, TablePoint tablePoint) {
+	public UUID saveTable(Store store, Integer tableNumber, TablePoint tablePoint) {
 		TableEntity tableEntity = TableMapper.toTableEntity(tableNumber, tablePoint, false, store);
 		return tableJpaRepository.save(tableEntity).getId();
 	}
 
 	@Override
-	public Optional<Table> findTableWithStoreByTableId(Long qureyTableId) {
+	public Optional<Table> findTableWithStoreByTableId(UUID qureyTableId) {
 		return Optional.ofNullable(
 			tableJpaRepository.findTableJoinStoreByTableId(qureyTableId)
 				.map(tableEntity -> TableMapper.toTable(tableEntity))

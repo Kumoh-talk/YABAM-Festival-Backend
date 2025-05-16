@@ -1,6 +1,7 @@
 package com.application.presentation.receipt.dto.response;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.application.presentation.order.dto.response.OrderInfoResponse;
 
@@ -24,7 +25,7 @@ public record TableWithReceiptResponse(
 
 	public record TableWithReceipt(
 		@Schema(description = "테이블 id", example = "1")
-		Long tableId,
+		UUID tableId,
 
 		@Schema(description = "테이블 번호", example = "1")
 		Integer tableNumber,

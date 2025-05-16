@@ -14,7 +14,7 @@ public class CallFixture {
 
 	private static final Long CALL_ID = 1L;
 	private static final Long SALE_ID = 100L;
-	private static final Long TABLE_ID = 10L;
+	private static final UUID TABLE_ID = UUID.randomUUID();
 	private static final Integer TABLE_NUMBER = 5;
 	private static final UUID RECEIPT_ID = UUID.randomUUID();
 	private static final String MESSAGE = "직원 호출 요청입니다.";
