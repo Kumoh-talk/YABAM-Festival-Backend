@@ -78,10 +78,10 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 	}
 
 	@Override
-	public List<ReceiptEntity> getNonStopReceiptsWithOrderAndStoreAndLock(List<UUID> receiptIds) {
-		return jpaQueryFactory.selectFrom(qReceiptEntity)
-			.join(qReceiptEntity.sale).fetchJoin()
-			.join(qReceiptEntity.sale.store).fetchJoin()
+	public List<ReceiptEntity> findNonStopReceiptsWithTableStoreAndOrdersAndLock(List<UUID> receiptIds) {
+		return jpaQueryFactory.selectFrom(qReceiptEntity).distinct()
+			.join(qReceiptEntity.table).fetchJoin()
+			.join(qReceiptEntity.table.store).fetchJoin()
 			.join(qReceiptEntity.orders).fetchJoin()
 			.where(qReceiptEntity.id.in(receiptIds)
 				.and(qReceiptEntity.stopUsageTime.isNull()))
@@ -125,7 +125,7 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 	@Override
 	public List<ReceiptEntity> findAllNonAdjustReceiptWithTableAndOrders(Long saleId) {
 		return jpaQueryFactory
-			.selectFrom(qReceiptEntity)
+			.selectFrom(qReceiptEntity).distinct()
 			.join(qReceiptEntity.table).fetchJoin()
 			.join(qReceiptEntity.orders).fetchJoin()
 			.where(qReceiptEntity.sale.id.eq(saleId)

@@ -113,20 +113,20 @@ public class ReceiptService {
 
 	@Transactional
 	public List<Receipt> stopReceiptUsage(List<UUID> receiptIds, UserPassport userPassport) {
-		List<Receipt> receipts = receiptReader.getNonStopReceiptsWithOrderAndStoreAndLock(receiptIds);
+		List<Receipt> receipts = receiptReader.getNonStopReceiptsWithTableStoreAndOrdersAndLock(receiptIds);
 		if (receipts.size() != receiptIds.size()) {
 			log.warn("Receipt 을 찾을 수 없습니다.");
 			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 		}
 		for (Receipt receipt : receipts) {
-			receiptValidator.validateIsOwner(receipt, userPassport);
+			storeValidator.validateStoreOwner(userPassport, receipt.getTable().getStore());
 			for (Order order : receipt.getOrders()) {
 				if (order.getOrderStatus() != OrderStatus.COMPLETED) {
 					log.warn("모든 주문이 완료되지 않았습니다. orderId: {}", order.getOrderId());
 					throw new ServiceException(ErrorCode.ORDER_NOT_COMPLETED);
 				}
 			}
-			receipt.getReceiptInfo().stop(receipt.getSale().getStore());
+			receipt.getReceiptInfo().stop(receipt.getTable());
 		}
 
 		return receiptWriter.stopReceiptsWithMenu(receipts);

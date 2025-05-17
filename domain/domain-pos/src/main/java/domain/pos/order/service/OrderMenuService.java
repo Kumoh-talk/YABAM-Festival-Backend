@@ -39,7 +39,6 @@ public class OrderMenuService {
 		OrderMenuStatus orderMenuStatus) {
 		OrderMenu orderMenu = orderMenuReader.getOrderMenuWithOrderAndStoreAndOrderLock(orderMenuId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_MENU_NOT_FOUND));
-		
 		UserRole userRole = validateRole(orderMenu.getMenu().getStore(), userPassport);
 		OrderMenu patchOrderMenu = orderMenuWriter.patchOrderMenuStatus(orderMenu, orderMenuStatus, userRole);
 
