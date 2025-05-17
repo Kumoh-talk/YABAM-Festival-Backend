@@ -77,7 +77,8 @@ public class OrderMenuRepositoryImpl implements OrderMenuRepository {
 		if (orderMenuStatus == OrderMenuStatus.CANCELED) {
 			int menuPrice = orderMenu.getMenu().getMenuInfo().getPrice() * orderMenu.getQuantity();
 			orderJpaRepository.subtractOrderPrice(orderMenu.getOrder().getOrderId(), menuPrice);
-		} else if (orderMenuStatus == OrderMenuStatus.COOKING) {
+		} else if (orderMenu.getOrderMenuStatus() == OrderMenuStatus.CANCELED
+			&& orderMenuStatus == OrderMenuStatus.COOKING) {
 			int menuPrice = orderMenu.getMenu().getMenuInfo().getPrice() * orderMenu.getQuantity();
 			orderJpaRepository.plusOrderPrice(orderMenu.getOrder().getOrderId(), menuPrice);
 		}
