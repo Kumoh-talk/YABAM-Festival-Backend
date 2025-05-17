@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.application.presentation.store.api.StoreApi;
-import com.application.presentation.store.dto.request.StorePresignedUrlRequest;
 import com.application.presentation.store.dto.request.StoreWriteRequest;
 import com.application.presentation.store.dto.response.MyStoreResopnse;
 import com.application.presentation.store.dto.response.StoreCursorResponse;
@@ -127,17 +126,5 @@ public class StoreController implements StoreApi {
 			MyStoreResopnse
 				.from(storeService.getMyStores(userPassport))
 		));
-	}
-
-	@PostMapping("/api/v1/store/presigned-url")
-	@HasRole(userRole = ROLE_OWNER)
-	@AssignUserPassport
-	public ResponseEntity<ResponseBody<String>> getPresignedUrl(
-		UserPassport userPassport,
-		@RequestBody @Valid StorePresignedUrlRequest storePresignedUrlRequest) {
-		return ResponseEntity
-			.ok(createSuccessResponse(
-				storeService.getPresignedUrl(userPassport, storePresignedUrlRequest.storeId(),
-					storePresignedUrlRequest.storeImageProperty())));
 	}
 }
