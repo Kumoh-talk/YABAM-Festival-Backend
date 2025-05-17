@@ -1,12 +1,16 @@
-bootJar{
+bootJar {
     enabled = true
 }
-jar{
+jar {
     enabled = false
 }
 
 dependencies {
     // eureka server
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-server'
+
+    // actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 

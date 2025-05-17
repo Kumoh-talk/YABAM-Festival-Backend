@@ -18,7 +18,7 @@ dependencies {
 
     // Validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    
+
     // swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.4.0'
 
@@ -34,4 +34,8 @@ dependencies {
 
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+
+    // actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 }
