@@ -1,12 +1,16 @@
-bootJar{
+bootJar {
     enabled = true
 }
-jar{
+jar {
     enabled = false
 }
 
 dependencies {
     // config server
     implementation 'org.springframework.cloud:spring-cloud-config-server'
+
+    // actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 
