@@ -10,3 +10,14 @@ eureka:
     fetch-registry: false
     service-url:
       defaultZone: http://localhost:8070/eureka/
+
+
+# actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health, info, metrics, prometheus"
+        exclude: "env, beans, mappings, configprops, scheduledtasks, threaddump, shutdown"
+  server:
+    port: 9292
