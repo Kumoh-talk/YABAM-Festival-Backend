@@ -29,7 +29,6 @@ public interface OrderMenuApi {
 	@Operation(
 		summary = "주문 메뉴 상태 변경 API",
 		description = "개별 주문 메뉴의 상태를 변경합니다." + " 재조리, 취소, 완료 상태로 변경 가능합니다."
-			+ " \n 주문 상태가 RECEIVED 상태여야 합니다."
 	)
 	@ApiResponse(content = @Content(
 		mediaType = "application/json",
@@ -43,8 +42,11 @@ public interface OrderMenuApi {
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.ORDER_MENU_NOT_FOUND),
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.ORDER_STATUS_NOT_RECEIVED),
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.ORDER_MENU_ACCESS_DENIED),
-			@ApiErrorResponseExplanation(errorCode = ErrorCode.INVALID_STATE_TRANSITION)
-
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.INVALID_STATE_TRANSITION),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.TRANSFER_INVALID_ROLE),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.ALREADY_COOKING_ORDER_MENU),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.ALREADY_CANCELED_ORDER_MENU),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.ALREADY_COMPLETED_ORDER_MENU),
 		}
 	)
 	ResponseEntity<ResponseBody<OrderMenuResponse>> patchOrderMenuStatus(

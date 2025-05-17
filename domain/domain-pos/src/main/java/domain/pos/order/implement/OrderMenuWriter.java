@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
+import com.vo.UserRole;
 
 import domain.pos.menu.entity.MenuInfo;
 import domain.pos.order.entity.Order;
@@ -19,13 +20,14 @@ import lombok.extern.slf4j.Slf4j;
 public class OrderMenuWriter {
 	private final OrderMenuRepository orderMenuRepository;
 
-	public OrderMenu patchOrderMenuStatus(OrderMenu orderMenu, OrderMenuStatus orderMenuStatus) {
+	public OrderMenu patchOrderMenuStatus(OrderMenu orderMenu, OrderMenuStatus orderMenuStatus,
+		UserRole requesterRole) {
 		if (orderMenuStatus == OrderMenuStatus.COOKING) {
-			orderMenu.getOrderMenuStatus().reCookingOrderMenu(orderMenu.getOrderMenuId());
+			orderMenu.getOrderMenuStatus().reCookingOrderMenu(orderMenu.getOrderMenuId(), requesterRole);
 		} else if (orderMenuStatus == OrderMenuStatus.CANCELED) {
-			orderMenu.getOrderMenuStatus().cancelOrderMenu(orderMenu.getOrderMenuId());
+			orderMenu.getOrderMenuStatus().cancelOrderMenu(orderMenu.getOrderMenuId(), requesterRole);
 		} else if (orderMenuStatus == OrderMenuStatus.COMPLETED) {
-			orderMenu.getOrderMenuStatus().completeOrderMenu(orderMenu.getOrderMenuId());
+			orderMenu.getOrderMenuStatus().completeOrderMenu(orderMenu.getOrderMenuId(), requesterRole);
 		} else {
 			log.warn("올바른 변경 요청이 아닙니다 : orderMenuStatus={}", orderMenuStatus);
 			throw new ServiceException(ErrorCode.INVALID_STATE_TRANSITION);

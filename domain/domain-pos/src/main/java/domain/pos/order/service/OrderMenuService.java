@@ -20,6 +20,7 @@ import domain.pos.order.implement.OrderMenuReader;
 import domain.pos.order.implement.OrderMenuWriter;
 import domain.pos.order.implement.OrderReader;
 import domain.pos.receipt.implement.ReceiptValidator;
+import domain.pos.store.entity.Store;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -38,10 +39,9 @@ public class OrderMenuService {
 		OrderMenuStatus orderMenuStatus) {
 		OrderMenu orderMenu = orderMenuReader.getOrderMenuWithOrderAndStoreAndOrderLock(orderMenuId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_MENU_NOT_FOUND));
-		validateOrderStatus(orderMenu.getOrder());
-		validateIsOwner(orderMenu, userPassport);
-
-		OrderMenu patchOrderMenu = orderMenuWriter.patchOrderMenuStatus(orderMenu, orderMenuStatus);
+		
+		UserRole userRole = validateRole(orderMenu.getMenu().getStore(), userPassport);
+		OrderMenu patchOrderMenu = orderMenuWriter.patchOrderMenuStatus(orderMenu, orderMenuStatus, userRole);
 
 		if (orderMenuStatus == OrderMenuStatus.CANCELED || orderMenuStatus == OrderMenuStatus.COMPLETED) {
 			eventPublisher.publishEvent(OrderMenuStatusChangedEvent.from(orderMenu.getOrder()));
@@ -98,5 +98,18 @@ public class OrderMenuService {
 			|| orderMenu.getOrderMenuStatus() == OrderMenuStatus.CANCELED) {
 			throw new ServiceException(ErrorCode.ORDER_MENU_STATUS_NOT_ALLOWED);
 		}
+	}
+
+	private UserRole validateRole(Store store, UserPassport userPassport) {
+		if (isStoreOwner(store, userPassport)) {
+			return UserRole.ROLE_OWNER;
+		} else {
+			return UserRole.ROLE_ANONYMOUS;
+		}
+	}
+
+	private boolean isStoreOwner(Store store, UserPassport userPassport) {
+		Long storeOwnerId = store.getOwnerPassport().getUserId();
+		return storeOwnerId.equals(userPassport.getUserId()) && userPassport.getUserRole() == UserRole.ROLE_OWNER;
 	}
 }

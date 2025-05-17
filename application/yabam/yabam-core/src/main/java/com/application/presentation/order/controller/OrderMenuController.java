@@ -36,7 +36,6 @@ public class OrderMenuController implements OrderMenuApi {
 	private final OrderMenuService orderMenuService;
 
 	@PatchMapping("/api/v1/order-menus/{orderMenuId}/status")
-	@HasRole(userRole = ROLE_OWNER)
 	@AssignUserPassport
 	public ResponseEntity<ResponseBody<OrderMenuResponse>> patchOrderMenuStatus(
 		UserPassport userPassport,
