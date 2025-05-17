@@ -7,6 +7,7 @@ public class UrlHandleUtil {
 	private static final String STORE_DETAIL_IMAGE_PATH_FORMAT = "/%s/%s/%s";
 	private static final String STORE_HEAD_DOMAIN_NAME = "store_head_image";
 	private static final String STORE_DETAIL_DOMAIN_NAME = "store_detail_image";
+	private static final String STORE_MENU_DOMAIN_NAME = "store_menu_image";
 
 	private UrlHandleUtil() {
 
@@ -37,6 +38,14 @@ public class UrlHandleUtil {
 	public static String generatreDetailUrl(Long storeId) {
 		return String.format(STORE_DETAIL_IMAGE_PATH_FORMAT,
 			STORE_DETAIL_DOMAIN_NAME,
+			storeId,
+			creaeteUUID()
+		);
+	}
+
+	public static String generateStoreMenuUrl(Long storeId) {
+		return String.format(STORE_HEAD_IMAGE_PATH_FORMAT,
+			STORE_MENU_DOMAIN_NAME,
 			storeId,
 			creaeteUUID()
 		);
