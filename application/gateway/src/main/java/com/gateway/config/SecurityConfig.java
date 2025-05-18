@@ -14,6 +14,7 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;
+import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 import org.springframework.security.web.server.context.ServerSecurityContextRepository;
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
@@ -56,6 +57,7 @@ public class SecurityConfig {
 		return http
 			.securityMatcher(ServerWebExchangeMatchers.pathMatchers(SWAGGER_WHITELIST))
 			.csrf(csrf -> csrf.disable())
+			.securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
 			.authorizeExchange(ex -> ex.anyExchange().permitAll())
 			.build();
 	}
@@ -74,6 +76,7 @@ public class SecurityConfig {
 			.csrf(ServerHttpSecurity.CsrfSpec::disable)
 			.httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
 			.formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+			.securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
 			.addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION) // JWT 인증 필터 추가
 			// .addFilterBefore(new ExceptionHandlerFilter(), SecurityWebFiltersOrder.AUTHENTICATION) // 예외 처리 필터 추가
 			.addFilterAfter(
@@ -100,7 +103,6 @@ public class SecurityConfig {
 		return new WebSessionServerSecurityContextRepository();
 	}
 
-	// TODO : Nginx 도입 후 삭제해도 되는 필터
 	@Bean
 	public CorsWebFilter corsWebFilter() {
 		CorsConfiguration config = new CorsConfiguration();
