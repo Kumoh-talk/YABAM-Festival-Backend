@@ -88,6 +88,10 @@ public class JwtHandler {
 		return this.convert(claims);
 	}
 
+	public JwtUserClaim createAnonymous() {
+		return new JwtUserClaim(null, "Anonymous", Role.ROLE_ANONYMOUS);
+	}
+
 	public Optional<JwtUserClaim> getClaims(String token) {
 		try {
 			Claims claims = Jwts.parser()

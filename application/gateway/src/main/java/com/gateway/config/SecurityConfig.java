@@ -16,7 +16,6 @@ import org.springframework.security.web.server.authentication.AuthenticationWebF
 import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;
 import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 import org.springframework.security.web.server.context.ServerSecurityContextRepository;
-import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
@@ -27,6 +26,7 @@ import com.gateway.exception.handler.CustomAccessDeniedHandler;
 import com.gateway.exception.handler.CustomAuthenticationEntryPoint;
 import com.gateway.exception.handler.CustomAuthenticationFailureHandler;
 import com.gateway.filter.pre.AuthenticationToHeaderFilter;
+import com.gateway.jwt.JwtHandler;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,6 +39,7 @@ public class SecurityConfig {
 	private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 	private final CustomAccessDeniedHandler accessDeniedHandler;
 	private final CustomAuthenticationFailureHandler authenticationFailureHandler;
+	private final JwtHandler jwtHandler;
 	private static final String[] SWAGGER_WHITELIST = {
 		// springdoc-webflux 기본
 		"/swagger-ui.html",
@@ -80,7 +81,7 @@ public class SecurityConfig {
 			.addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION) // JWT 인증 필터 추가
 			// .addFilterBefore(new ExceptionHandlerFilter(), SecurityWebFiltersOrder.AUTHENTICATION) // 예외 처리 필터 추가
 			.addFilterAfter(
-				new AuthenticationToHeaderFilter(serverSecurityContextRepository, authenticationFailureHandler),
+				new AuthenticationToHeaderFilter(authenticationFailureHandler, jwtHandler),
 				SecurityWebFiltersOrder.AUTHENTICATION) // 사용자 정보 헤더 추가 필터 추가
 			.authorizeExchange(exchange -> exchange
 				.anyExchange().authenticated())
@@ -100,7 +101,7 @@ public class SecurityConfig {
 
 	@Bean
 	public ServerSecurityContextRepository securityContextRepository() {
-		return new WebSessionServerSecurityContextRepository();
+		return NoOpServerSecurityContextRepository.getInstance();
 	}
 
 	@Bean
