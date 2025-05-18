@@ -200,4 +200,15 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 			.execute();
 		return now;
 	}
+
+	@Override
+	public boolean existsNonAdjustReceiptBySaleId(Long saleId) {
+		return jpaQueryFactory
+			.selectOne()
+			.from(qReceiptEntity)
+			.where(qReceiptEntity.sale.id.eq(saleId)
+				.and(qReceiptEntity.isAdjustment.isFalse()))
+			.fetchFirst() != null;
+	}
+
 }

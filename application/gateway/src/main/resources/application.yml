@@ -24,3 +24,12 @@ spring:
     import:
       configserver:http://kang-kumoh.iptime.org:8888
 
+---
+
+# ----- prod 전용 설정 -----
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import:
+      configserver:http://kang-kumoh.iptime.org:8888

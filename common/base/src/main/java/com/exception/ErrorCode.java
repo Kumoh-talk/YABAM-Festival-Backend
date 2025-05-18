@@ -67,6 +67,7 @@ public enum ErrorCode {
 	NOT_FOUND_SALE(HttpStatus.NOT_FOUND, "SALE_0001", "영업이 존재하지 않습니다."),
 	CLOSE_SALE(HttpStatus.CONFLICT, "SALE_0002", "영업이 종료되었습니다."),
 	SALE_ACCESS_DENIED(HttpStatus.FORBIDDEN, "SALE_0003", "대상 영업에 접근 가능한 요청이 아닙니다."),
+	NON_ADJUST_RECEIPT_DONT_CLOSE(HttpStatus.CONFLICT, "SALE_0004", "정산되지 않은 영수증이 존재합니다 마감을 할 수 없습니다."),
 
 	// Receipt
 	RECEIPT_NOT_FOUND(HttpStatus.NOT_FOUND, "RECEIPT_0001", "존재하지 않는 영수증입니다."),
@@ -109,7 +110,8 @@ public enum ErrorCode {
 	// Call
 	STORE_NOT_MATCH(HttpStatus.BAD_REQUEST, "CALL_0001", "가게와 일치하지 않는 영수증에 대한 호출입니다."),
 	NOT_FOUND_CALL(HttpStatus.NOT_FOUND, "CALL_0002", "존재하지 않는 호출입니다."),
-	NOT_VALID_CALL_OWNER(HttpStatus.BAD_REQUEST, "CALL_0003", "해당 직원 호출 내역을 수정할 수 없는 점주입니다.");
+	NOT_VALID_CALL_OWNER(HttpStatus.BAD_REQUEST, "CALL_0003",
+		"해당 직원 호출 내역을 수정할 수 없는 점주입니다.");
 
 	private final HttpStatus status;
 	private final String code;
