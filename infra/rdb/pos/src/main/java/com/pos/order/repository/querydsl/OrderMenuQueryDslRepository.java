@@ -9,7 +9,9 @@ import domain.pos.order.entity.vo.OrderMenuStatus;
 public interface OrderMenuQueryDslRepository {
 	Optional<OrderMenuEntity> findByIdWithOrderAndStoreAndOrderLock(Long orderMenuId);
 
-	void updateOrderMenuStatus(Long orderId, OrderMenuStatus orderStatus);
+	void updateOrderMenuStatusByOrderId(Long orderId, OrderMenuStatus orderStatus);
+
+	void updateOrderMenuStatus(Long orderMenuId, OrderMenuStatus orderStatus);
 
 	void updateOrderMenuQuantity(Long orderMenuId, Integer patchQuantity);
 

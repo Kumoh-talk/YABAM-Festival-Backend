@@ -148,7 +148,8 @@ public class OrderRepositoryImpl implements OrderRepository {
 	@Transactional
 	public Order patchOrderStatus(Order order, OrderStatus orderStatus) {
 		orderJpaRepository.updateOrderStatus(order.getOrderId(), orderStatus);
-		orderMenuJpaRepository.updateOrderMenuStatus(order.getOrderId(), orderStatus.transferOrderMenuStatus());
+		orderMenuJpaRepository.updateOrderMenuStatusByOrderId(order.getOrderId(),
+			orderStatus.transferOrderMenuStatus());
 		order.setOrderStatus(orderStatus);
 		return order;
 	}

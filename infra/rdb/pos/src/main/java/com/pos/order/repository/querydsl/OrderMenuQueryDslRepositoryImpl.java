@@ -37,10 +37,18 @@ public class OrderMenuQueryDslRepositoryImpl implements OrderMenuQueryDslReposit
 	}
 
 	@Override
-	public void updateOrderMenuStatus(Long orderId, OrderMenuStatus orderStatus) {
+	public void updateOrderMenuStatusByOrderId(Long orderId, OrderMenuStatus orderStatus) {
 		jpaQueryFactory.update(qOrderMenuEntity)
 			.set(qOrderMenuEntity.status, orderStatus)
 			.where(qOrderMenuEntity.order.id.eq(orderId))
+			.execute();
+	}
+
+	@Override
+	public void updateOrderMenuStatus(Long orderMenuId, OrderMenuStatus orderStatus) {
+		jpaQueryFactory.update(qOrderMenuEntity)
+			.set(qOrderMenuEntity.status, orderStatus)
+			.where(qOrderMenuEntity.id.eq(orderMenuId))
 			.execute();
 	}
 

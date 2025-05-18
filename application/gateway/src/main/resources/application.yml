@@ -22,5 +22,5 @@ spring:
     activate:
       on-profile: dev
     import:
-      configserver:http://192.168.0.171:8888
+      configserver:http://kang-kumoh.iptime.org:8888
 
