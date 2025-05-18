@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.application.presentation.image.api.ImageApi;
 import com.application.presentation.image.dto.request.PresignedUrlRequest;
+import com.application.presentation.image.dto.response.PresignedUrlResponse;
 import com.authorization.AssignUserPassport;
 import com.authorization.HasRole;
 import com.response.ResponseBody;
@@ -27,12 +28,12 @@ public class ImageController implements ImageApi {
 	@PostMapping("/api/v1/presigned-url")
 	@HasRole(userRole = ROLE_OWNER)
 	@AssignUserPassport
-	public ResponseEntity<ResponseBody<String>> getPresignedUrl(
+	public ResponseEntity<ResponseBody<PresignedUrlResponse>> getPresignedUrl(
 		UserPassport userPassport,
 		@RequestBody @Valid PresignedUrlRequest presignedUrlRequest) {
 		return ResponseEntity
-			.ok(createSuccessResponse(
+			.ok(createSuccessResponse(PresignedUrlResponse.from(
 				imageService.getPresignedUrl(userPassport, presignedUrlRequest.storeId(),
-					presignedUrlRequest.imageProperty())));
+					presignedUrlRequest.imageProperty()))));
 	}
 }
