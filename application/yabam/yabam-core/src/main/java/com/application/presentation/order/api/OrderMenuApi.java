@@ -103,7 +103,6 @@ public interface OrderMenuApi {
 	@Operation(
 		summary = "주문 메뉴 수량 변경 API",
 		description = "주문 메뉴 수량을 변경합니다."
-			+ " \n 주문 상태가 RECEIVED 상태여야 합니다."
 			+ " \n 주문 메뉴 상태가 COOKING, COMPLETED 상태여야 합니다."
 	)
 	@ApiResponse(content = @Content(
@@ -122,7 +121,7 @@ public interface OrderMenuApi {
 		}
 	)
 	ResponseEntity<ResponseBody<OrderMenuResponse>> patchOrderMenuQuantity(
-		UserPassport userPassport,
+		@Parameter(hidden = true) UserPassport userPassport,
 		@PathVariable Long orderMenuId,
 		@RequestParam @NotNull @Min(value = 1, message = "수정 개수는 최소 1 이상입니다.") Integer patchQuantity);
 }

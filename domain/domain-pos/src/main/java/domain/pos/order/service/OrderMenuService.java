@@ -19,6 +19,7 @@ import domain.pos.order.event.OrderMenuStatusChangedEvent;
 import domain.pos.order.implement.OrderMenuReader;
 import domain.pos.order.implement.OrderMenuWriter;
 import domain.pos.order.implement.OrderReader;
+import domain.pos.order.implement.OrderWriter;
 import domain.pos.receipt.implement.ReceiptValidator;
 import domain.pos.store.entity.Store;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class OrderMenuService {
 	private final ReceiptValidator receiptValidator;
 	private final OrderReader orderReader;
+	private final OrderWriter orderWriter;
 	private final MenuReader menuReader;
 	private final OrderMenuReader orderMenuReader;
 	private final OrderMenuWriter orderMenuWriter;
@@ -44,6 +46,12 @@ public class OrderMenuService {
 
 		if (orderMenuStatus == OrderMenuStatus.CANCELED || orderMenuStatus == OrderMenuStatus.COMPLETED) {
 			eventPublisher.publishEvent(OrderMenuStatusChangedEvent.from(orderMenu.getOrder()));
+		}
+
+		if (orderMenuStatus == OrderMenuStatus.COOKING
+			&& (orderMenu.getOrder().getOrderStatus() == OrderStatus.COMPLETED
+			|| orderMenu.getOrder().getOrderStatus() == OrderStatus.CANCELED)) {
+			orderWriter.patchOrderStatus(orderMenu.getOrder(), OrderStatus.RECEIVED, userRole);
 		}
 		return patchOrderMenu;
 	}
@@ -73,7 +81,6 @@ public class OrderMenuService {
 	public OrderMenu patchOrderMenuQuantity(Long orderMenuId, UserPassport userPassport, Integer quantity) {
 		OrderMenu orderMenu = orderMenuReader.getOrderMenuWithOrderAndStoreAndOrderLock(orderMenuId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_MENU_NOT_FOUND));
-		validateOrderStatus(orderMenu.getOrder());
 		validateOrderMenuStatus(orderMenu);
 		validateIsOwner(orderMenu, userPassport);
 		return orderMenuWriter.patchOrderMenuQuantity(orderMenu, quantity);
