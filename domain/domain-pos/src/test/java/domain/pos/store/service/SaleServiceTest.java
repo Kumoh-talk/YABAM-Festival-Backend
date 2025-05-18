@@ -19,6 +19,7 @@ import com.exception.ServiceException;
 import com.vo.UserPassport;
 
 import base.ServiceTest;
+import domain.pos.receipt.implement.ReceiptReader;
 import domain.pos.store.entity.Sale;
 import domain.pos.store.entity.Store;
 import domain.pos.store.implement.SaleReader;
@@ -35,6 +36,9 @@ class SaleServiceTest extends ServiceTest {
 
 	@Mock
 	private StoreWriter storeWriter;
+
+	@Mock
+	private ReceiptReader receiptReader;
 
 	@Mock
 	private StoreValidator storeValidator;
