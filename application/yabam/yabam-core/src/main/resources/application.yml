@@ -17,7 +17,7 @@ spring:
   config:
     activate:
       on-profile: dev
-    import: configserver:http://192.168.0.171:8888,optional:jwt.yml
+    import: configserver:http://192.168.0.191:8888,optional:jwt.yml
   data:
     web:
       pageable:
