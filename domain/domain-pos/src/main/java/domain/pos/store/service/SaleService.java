@@ -8,6 +8,7 @@ import com.exception.ErrorCode;
 import com.exception.ServiceException;
 import com.vo.UserPassport;
 
+import domain.pos.receipt.implement.ReceiptReader;
 import domain.pos.store.entity.Sale;
 import domain.pos.store.entity.Store;
 import domain.pos.store.implement.SaleReader;
@@ -25,6 +26,7 @@ public class SaleService {
 	private final SaleReader saleReader;
 	private final StoreWriter storeWriter;
 	private final StoreValidator storeValidator;
+	private final ReceiptReader receiptReader;
 
 	@Transactional
 	public Sale openStore(final UserPassport ownerPassport, final Long storeId) {
@@ -52,6 +54,11 @@ public class SaleService {
 			});
 
 		validateOpendSaleOrStore(ownerPassport, saleId, savedSale);
+
+		if (receiptReader.isExistsNonAdjustReceiptBySaleId(savedSale.getSaleId())) {
+			log.warn("판매 종료 실패: userId={}, saleId={}", ownerPassport.getUserId(), saleId);
+			throw new ServiceException(ErrorCode.NON_ADJUST_RECEIPT_DONT_CLOSE);
+		}
 
 		final Store closedStore = storeWriter.modifyStoreOpenStatus(savedSale.getStore());
 		final Sale closedSale = saleWriter.closeSale(savedSale, closedStore);

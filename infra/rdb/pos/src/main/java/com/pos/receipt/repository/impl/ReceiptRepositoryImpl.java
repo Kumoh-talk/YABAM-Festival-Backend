@@ -166,4 +166,9 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 		ReceiptEntity receiptEntity = receiptJpaRepository.findById(receiptId).get();
 		receiptJpaRepository.delete(receiptEntity);
 	}
+
+	@Override
+	public boolean isExistsNonAdjustReceiptBySaleId(Long saleId) {
+		return receiptJpaRepository.existsNonAdjustReceiptBySaleId(saleId);
+	}
 }

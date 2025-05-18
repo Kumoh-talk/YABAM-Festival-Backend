@@ -56,7 +56,8 @@ public interface SaleApi {
 		),
 		errors = {
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.NOT_FOUND_STORE),
-			@ApiErrorResponseExplanation(errorCode = ErrorCode.CONFLICT_CLOSE_STORE)
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.CONFLICT_CLOSE_STORE),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.NON_ADJUST_RECEIPT_DONT_CLOSE),
 		}
 	)
 	ResponseEntity<ResponseBody<Void>> closeStore(

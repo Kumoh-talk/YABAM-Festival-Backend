@@ -49,4 +49,6 @@ public interface ReceiptRepository {
 	void adjustReceipts(List<Receipt> receipts);
 
 	void deleteReceipt(UUID receiptId);
+
+	boolean isExistsNonAdjustReceiptBySaleId(Long saleId);
 }

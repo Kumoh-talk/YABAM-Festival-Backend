@@ -66,4 +66,8 @@ public class ReceiptReader {
 	public Slice<Receipt> getCustomerReceiptSlice(int pageSize, UUID lastReceiptId, Long customerId) {
 		return receiptRepository.getCustomerReceiptSlice(pageSize, lastReceiptId, customerId);
 	}
+
+	public boolean isExistsNonAdjustReceiptBySaleId(Long saleId) {
+		return receiptRepository.isExistsNonAdjustReceiptBySaleId(saleId);
+	}
 }
