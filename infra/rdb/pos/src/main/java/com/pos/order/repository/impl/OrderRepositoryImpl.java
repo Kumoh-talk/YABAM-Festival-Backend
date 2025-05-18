@@ -21,6 +21,7 @@ import com.pos.receipt.repository.jpa.ReceiptJpaRepository;
 import com.pos.sale.mapper.SaleMapper;
 import com.pos.store.mapper.StoreMapper;
 import com.pos.table.mapper.TableMapper;
+import com.vo.UserRole;
 
 import domain.pos.cart.entity.CartMenu;
 import domain.pos.order.entity.Order;
@@ -180,5 +181,10 @@ public class OrderRepositoryImpl implements OrderRepository {
 						MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
 					.toList()))
 			.toList();
+	}
+
+	@Override
+	public void retryReceiveOrderStatus(Order order, UserRole userRole) {
+		orderJpaRepository.updateOrderStatus(order.getOrderId(), OrderStatus.RECEIVED);
 	}
 }

@@ -53,6 +53,11 @@ public class OrderWriter {
 		orderRepository.patchOrderStatus(order, OrderStatus.COMPLETED);
 	}
 
+	public void retryReceiveOrderStatus(Order order, UserRole userRole) {
+		order.getOrderStatus().receiveOrder(order.getOrderId(), userRole);
+		orderRepository.retryReceiveOrderStatus(order, userRole);
+	}
+
 	private List<CartMenu> mergeCartMenus(List<CartMenu> cartMenus) {
 		Map<Long, CartMenu> mergedMap = new HashMap<>();
 

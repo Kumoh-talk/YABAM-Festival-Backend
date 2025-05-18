@@ -51,7 +51,7 @@ public class OrderMenuService {
 		if (orderMenuStatus == OrderMenuStatus.COOKING
 			&& (orderMenu.getOrder().getOrderStatus() == OrderStatus.COMPLETED
 			|| orderMenu.getOrder().getOrderStatus() == OrderStatus.CANCELED)) {
-			orderWriter.patchOrderStatus(orderMenu.getOrder(), OrderStatus.RECEIVED, userRole);
+			orderWriter.retryReceiveOrderStatus(orderMenu.getOrder(), userRole);
 		}
 		return patchOrderMenu;
 	}

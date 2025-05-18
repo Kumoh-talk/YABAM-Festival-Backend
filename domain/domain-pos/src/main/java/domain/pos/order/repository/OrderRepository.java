@@ -7,6 +7,8 @@ import java.util.UUID;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
+import com.vo.UserRole;
+
 import domain.pos.cart.entity.CartMenu;
 import domain.pos.order.entity.Order;
 import domain.pos.order.entity.OrderMenu;
@@ -31,4 +33,6 @@ public interface OrderRepository {
 		Long lastOrderId);
 
 	List<Order> getReceiptOrdersWithMenu(UUID receiptId);
+
+	void retryReceiveOrderStatus(Order order, UserRole userRole);
 }
