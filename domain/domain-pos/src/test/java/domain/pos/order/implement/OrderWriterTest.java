@@ -105,37 +105,29 @@ public class OrderWriterTest {
 		}
 
 		@Test
-		void CANCELLED_TO_RECEIVED_실패() {
+		void CANCELLED_TO_RECEIVED_성공() {
 			// given
 			Order order = OrderFixture.CANCELLED_ORDER();
 			UserPassport userPassport = UserFixture.OWNER_USER_PASSPORT();
 
-			// when, then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole()))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_CANCELED_ORDER);
+			// when
+			orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole());
 
-				verify(orderRepository, never()).patchOrderStatus(order, orderStatus);
-			});
+			// then
+			verify(orderRepository).patchOrderStatus(order, orderStatus);
 		}
 
 		@Test
-		void COMPLETED_TO_RECEIVED_실패() {
+		void COMPLETED_TO_RECEIVED_성공() {
 			// given
 			Order order = OrderFixture.COMPLETED_ORDER();
 			UserPassport userPassport = UserFixture.OWNER_USER_PASSPORT();
 
-			// when, then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole()))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_COMPLETED_ORDER);
+			// when
+			orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole());
 
-				verify(orderRepository, never()).patchOrderStatus(order, orderStatus);
-			});
+			// then
+			verify(orderRepository).patchOrderStatus(order, orderStatus);
 		}
 	}
 
