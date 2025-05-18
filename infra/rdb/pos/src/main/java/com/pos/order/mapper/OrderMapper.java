@@ -24,6 +24,7 @@ public class OrderMapper {
 			.orderId(orderEntity.getId())
 			.orderStatus(orderEntity.getStatus())
 			.totalPrice(orderEntity.getTotalPrice())
+			.createdAt(orderEntity.getCreatedAt())
 			.receipt(receipt)
 			.orderMenus(orderMenus)
 			.build();

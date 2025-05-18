@@ -58,8 +58,12 @@ public enum OrderStatus {
 	CANCELED {
 		@Override
 		public void receiveOrder(Long orderId, UserRole requesterRole) {
-			log.warn("이미 취소된 주문입니다 : orderId={}", orderId);
-			throw new ServiceException(ErrorCode.ALREADY_CANCELED_ORDER);
+			if (requesterRole.equals(UserRole.ROLE_OWNER)) {
+				log.info("점주에 의해 주문이 재수령 되었습니다 : orderId={}", orderId);
+			} else {
+				log.warn("이미 취소된 주문입니다 : orderId={}", orderId);
+				throw new ServiceException(ErrorCode.ALREADY_CANCELED_ORDER);
+			}
 		}
 
 		@Override
@@ -77,8 +81,12 @@ public enum OrderStatus {
 	COMPLETED {
 		@Override
 		public void receiveOrder(Long orderId, UserRole requesterRole) {
-			log.warn("이미 완료된 주문입니다 : orderId={}", orderId);
-			throw new ServiceException(ErrorCode.ALREADY_COMPLETED_ORDER);
+			if (requesterRole.equals(UserRole.ROLE_OWNER)) {
+				log.info("점주에 의해 주문이 재수령 되었습니다 : orderId={}", orderId);
+			} else {
+				log.warn("이미 완료된 주문입니다 : orderId={}", orderId);
+				throw new ServiceException(ErrorCode.ALREADY_COMPLETED_ORDER);
+			}
 		}
 
 		@Override

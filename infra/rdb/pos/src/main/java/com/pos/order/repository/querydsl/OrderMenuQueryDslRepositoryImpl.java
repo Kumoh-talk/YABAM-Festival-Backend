@@ -40,7 +40,8 @@ public class OrderMenuQueryDslRepositoryImpl implements OrderMenuQueryDslReposit
 	public void updateOrderMenuStatusByOrderId(Long orderId, OrderMenuStatus orderStatus) {
 		jpaQueryFactory.update(qOrderMenuEntity)
 			.set(qOrderMenuEntity.status, orderStatus)
-			.where(qOrderMenuEntity.order.id.eq(orderId))
+			.where(qOrderMenuEntity.order.id.eq(orderId)
+				.and(qOrderMenuEntity.status.ne(OrderMenuStatus.CANCELED)))
 			.execute();
 	}
 

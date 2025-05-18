@@ -1,5 +1,6 @@
 package domain.pos.order.entity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import domain.pos.order.entity.vo.OrderStatus;
@@ -13,15 +14,17 @@ public class Order {
 	private OrderStatus orderStatus;
 	private Integer totalPrice;
 	private Receipt receipt;
+	private LocalDateTime createdAt;
 	private List<OrderMenu> orderMenus;
 
 	@Builder
-	public Order(Long orderId, OrderStatus orderStatus, Integer totalPrice, Receipt receipt,
+	public Order(Long orderId, OrderStatus orderStatus, Integer totalPrice, Receipt receipt, LocalDateTime createdAt,
 		List<OrderMenu> orderMenus) {
 		this.orderId = orderId;
 		this.orderStatus = orderStatus;
 		this.totalPrice = totalPrice;
 		this.receipt = receipt;
+		this.createdAt = createdAt;
 		this.orderMenus = orderMenus;
 	}
 
