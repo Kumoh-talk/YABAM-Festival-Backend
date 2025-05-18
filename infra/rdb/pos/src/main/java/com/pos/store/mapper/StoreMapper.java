@@ -60,6 +60,21 @@ public class StoreMapper {
 		);
 	}
 
+	public static Store toStoreWithDetailImages(StoreEntity storeEntity) {
+		if (storeEntity == null) {
+			return null;
+		}
+		return Store.of(
+			storeEntity.getId(),
+			storeEntity.isOpen(),
+			toStoreInfo(storeEntity),
+			UserPassport.of(storeEntity.getOwnerId(), null, null),
+			storeEntity.getStoreDetailImageEntity().stream()
+				.map(storeDetailImageEntity -> storeDetailImageEntity.getImageUrl())
+				.toList()
+		);
+	}
+
 	public static Optional<Store> toStore(List<StoreDetailImageEntity> storeDetailImageEntities) {
 		if (storeDetailImageEntities.isEmpty()) {
 			return Optional.empty();

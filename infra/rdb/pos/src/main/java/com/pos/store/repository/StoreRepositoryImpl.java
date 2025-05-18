@@ -137,7 +137,7 @@ public class StoreRepositoryImpl implements StoreRepository {
 			.where(qStoreEntity.ownerId.eq(userId))
 			.fetch();
 		return storeEntities.stream()
-			.map(StoreMapper::toStore)
+			.map(StoreMapper::toStoreWithDetailImages)
 			.toList();
 	}
 
