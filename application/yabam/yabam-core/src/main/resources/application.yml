@@ -36,3 +36,17 @@ spring:
     web:
       pageable:
         one-indexed-parameters: true
+
+---
+
+spring:
+  application:
+    name: yabam
+  config:
+    activate:
+      on-profile: prod2
+    import: configserver:http://192.168.0.191:8888,optional:jwt.yml
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
