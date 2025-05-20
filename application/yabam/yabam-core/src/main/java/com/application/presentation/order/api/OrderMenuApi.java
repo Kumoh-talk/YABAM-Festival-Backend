@@ -147,5 +147,5 @@ public interface OrderMenuApi {
 	ResponseEntity<ResponseBody<OrderMenuResponse>> patchOrderMenuCompletedCount(
 		@Parameter(hidden = true) UserPassport userPassport,
 		@PathVariable Long orderMenuId,
-		@RequestParam @NotNull @Min(value = 1, message = "완료 개수는 최소 1 이상입니다.") Integer patchCompletedCount);
+		@RequestParam @NotNull @Min(value = 0, message = "완료 개수는 최소 0 이상입니다.") Integer patchCompletedCount);
 }
