@@ -220,7 +220,7 @@ public class ReceiptService {
 				return new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 			});
 		Table table = receipt.getTable();
-		Store store = table.getStore();
+		Store store = receipt.getSale().getStore();
 		if (!store.getOwnerPassport().getUserId().equals(ownerPassport.getUserId())) {
 			log.warn("Store 의 Owner 가 아닙니다. storeId: {}, userId: {}", store.getStoreId(), ownerPassport.getUserId());
 			throw new ServiceException(ErrorCode.NOT_VALID_OWNER);
