@@ -5,6 +5,9 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
+import com.exception.ErrorCode;
+import com.exception.ServiceException;
+
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.repository.ReceiptRepository;
 import domain.pos.store.entity.Sale;
@@ -34,5 +37,11 @@ public class ReceiptWriter {
 
 	public void deleteReceipt(UUID receiptId) {
 		receiptRepository.deleteReceipt(receiptId);
+	}
+
+	public void moveReceiptTable(Receipt receipt, Table moveTable) {
+		if (receiptRepository.updateReceiptTable(receipt, moveTable) == 0) {
+			throw new ServiceException(ErrorCode.FAILED_TO_UPDATE_RECEIPT_TABLE);
+		}
 	}
 }

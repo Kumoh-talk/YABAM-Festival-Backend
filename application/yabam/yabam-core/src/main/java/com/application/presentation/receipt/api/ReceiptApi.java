@@ -236,4 +236,24 @@ public interface ReceiptApi {
 		@RequestParam @Min(value = 1, message = "페이지 크기는 최소 1 이상입니다.") int pageSize,
 		@Schema(description = "이전 페이지 가장 마지막 ReceiptId(첫 페이지 조회 시 생략)")
 		@RequestParam(required = false) UUID lastReceiptId);
+
+	@Operation(
+		summary = "영수증 테이블 이동 API",
+		description = "대상 영수증의 테이블을 이동합니다."
+	)
+	@ApiResponseExplanations(
+		success = @ApiSuccessResponseExplanation(
+			description = "영수증 테이블 이동 성공"
+		),
+		errors = {
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.RECEIPT_NOT_FOUND),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.NOT_VALID_OWNER),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.NOT_FOUND_TABLE),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.ALREADY_ACTIVE_TABLE),
+		}
+	)
+	ResponseEntity<ResponseBody<Void>> moveReceiptTable(
+		@Parameter(hidden = true) UserPassport userPassport,
+		@RequestParam @NotNull UUID receiptId,
+		@RequestParam @NotNull UUID tableId);
 }

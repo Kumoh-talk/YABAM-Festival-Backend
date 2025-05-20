@@ -51,4 +51,6 @@ public interface ReceiptRepository {
 	void deleteReceipt(UUID receiptId);
 
 	boolean isExistsNonAdjustReceiptBySaleId(Long saleId);
+
+	Long updateReceiptTable(Receipt receipt, Table moveTable);
 }

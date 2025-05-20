@@ -171,4 +171,10 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	public boolean isExistsNonAdjustReceiptBySaleId(Long saleId) {
 		return receiptJpaRepository.existsNonAdjustReceiptBySaleId(saleId);
 	}
+
+	@Override
+	public Long updateReceiptTable(Receipt receipt, Table moveTable) {
+		return receiptJpaRepository.updateReceiptTable(receipt.getReceiptInfo().getReceiptId(),
+			moveTable.getTableId());
+	}
 }

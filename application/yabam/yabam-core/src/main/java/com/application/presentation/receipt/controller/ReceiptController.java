@@ -146,4 +146,15 @@ public class ReceiptController implements ReceiptApi {
 			lastReceiptId).map(receipt -> ReceiptInfoResponse.from(receipt.getReceiptInfo()));
 		return ResponseEntity.ok(createSuccessResponse(GlobalSliceResponse.from(receipts)));
 	}
+
+	@PatchMapping("/api/v1/receipt/table")
+	@HasRole(userRole = ROLE_OWNER)
+	@AssignUserPassport
+	public ResponseEntity<ResponseBody<Void>> moveReceiptTable(
+		UserPassport userPassport,
+		@RequestParam @NotNull UUID receiptId,
+		@RequestParam @NotNull UUID tableId) {
+		receiptService.moveReceiptTable(userPassport, receiptId, tableId);
+		return ResponseEntity.ok(createSuccessResponse());
+	}
 }

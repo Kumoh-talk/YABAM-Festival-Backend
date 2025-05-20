@@ -211,4 +211,13 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 			.fetchFirst() != null;
 	}
 
+	@Override
+	public Long updateReceiptTable(UUID receiptId, UUID tableId) {
+		return jpaQueryFactory.update(qReceiptEntity)
+			.set(qReceiptEntity.table.id, tableId)
+			.where(qReceiptEntity.id.eq(receiptId))
+			.execute();
+
+	}
+
 }
