@@ -43,4 +43,6 @@ public interface ReceiptQueryDslRepository {
 	LocalDateTime startReceiptUsage(UUID receiptId);
 
 	boolean existsNonAdjustReceiptBySaleId(Long saleId);
+
+	Long updateReceiptTable(UUID receiptId, UUID tableId);
 }

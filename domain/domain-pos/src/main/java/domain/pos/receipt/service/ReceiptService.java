@@ -26,6 +26,7 @@ import domain.pos.receipt.implement.ReceiptReader;
 import domain.pos.receipt.implement.ReceiptValidator;
 import domain.pos.receipt.implement.ReceiptWriter;
 import domain.pos.store.entity.Sale;
+import domain.pos.store.entity.Store;
 import domain.pos.store.implement.SaleReader;
 import domain.pos.store.implement.StoreValidator;
 import domain.pos.table.entity.Table;
@@ -204,6 +205,36 @@ public class ReceiptService {
 			}
 		}
 		return receiptReader.getCustomerReceiptSlice(pageSize, lastReceiptId, customerId);
+	}
+
+	//TODO : 코드 리팩터링 필요 너무 대충 짬
+	@Transactional
+	public void moveReceiptTable(
+		final UserPassport ownerPassport,
+		final UUID receiptId,
+		final UUID moveTableId
+	) {
+		final Receipt receipt = receiptReader.getReceiptWithTableAndStore(receiptId)
+			.orElseThrow(() -> {
+				log.warn("Receipt 을 찾을 수 없습니다. receiptId: {}", receiptId);
+				return new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
+			});
+		Table table = receipt.getTable();
+		Store store = table.getStore();
+		if (!store.getOwnerPassport().getUserId().equals(ownerPassport.getUserId())) {
+			log.warn("Store 의 Owner 가 아닙니다. storeId: {}, userId: {}", store.getStoreId(), ownerPassport.getUserId());
+			throw new ServiceException(ErrorCode.NOT_VALID_OWNER);
+		}
+		Table moveTable = tableReader.findLockTableById(moveTableId, store.getStoreId())
+			.orElseThrow(() -> {
+				log.warn("Table 을 찾을 수 없습니다. tableId: {}", moveTableId);
+				throw new ServiceException(ErrorCode.NOT_FOUND_TABLE);
+			});
+		if (moveTable.getIsActive()) {
+			log.warn("Table 이 이미 활성화 되어 있습니다. tableId: {}", moveTableId);
+			throw new ServiceException(ErrorCode.ALREADY_ACTIVE_TABLE);
+		}
+		receiptWriter.moveReceiptTable(receipt, moveTable);
 	}
 
 }
