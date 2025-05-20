@@ -111,6 +111,16 @@ public class OrderService {
 		return orderWriter.postOrderWithoutCart(receipt, orderMenus);
 	}
 
+	@Transactional
+	public Order postCustomOrder(UUID receiptId, UserPassport userPassport, Order order) {
+		Receipt receipt = receiptReader.getReceiptsWithStoreAndLock(receiptId).orElseThrow(
+			() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
+
+		receiptValidator.validateIsOwner(receipt, userPassport);
+
+		return orderWriter.postCustomOrder(receipt, order);
+	}
+
 	// 주문 취소, 주문 접수만 가능
 	public Order patchOrderStatus(Long orderId, UserPassport userPassport, OrderStatus orderStatus) {
 		Order order = orderReader.getOrderWithStore(orderId)

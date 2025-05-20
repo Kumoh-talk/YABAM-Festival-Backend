@@ -21,6 +21,8 @@ public interface OrderRepository {
 
 	Order postOrderWithoutCart(Receipt receipt, List<OrderMenu> orderMenus);
 
+	Order postCustomOrder(Receipt receipt, Order order);
+
 	Optional<Order> getOrderWithMenu(Long orderId);
 
 	Optional<Order> getOrderWithStore(Long orderId);

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.application.global.response.GlobalSliceResponse;
 import com.application.presentation.order.api.OrderApi;
+import com.application.presentation.order.dto.request.PostCustomOrderRequest;
 import com.application.presentation.order.dto.request.PostOrderMenuRequest;
 import com.application.presentation.order.dto.response.OrderAndMenusResponse;
 import com.application.presentation.order.dto.response.OrderInfoResponse;
@@ -61,6 +62,16 @@ public class OrderController implements OrderApi {
 		Order order = orderService.postOrderWithoutCart(receiptId, userPassport, postOrderMenuRequests.stream()
 			.map(PostOrderMenuRequest::toOrderMenu).toList());
 		return ResponseEntity.ok(createSuccessResponse(OrderResponse.from(order)));
+	}
+
+	@PostMapping("/api/v1/receipts/{receiptId}/orders/custom")
+	@HasRole(userRole = ROLE_OWNER)
+	@AssignUserPassport
+	public ResponseEntity<ResponseBody<OrderAndMenusResponse>> postCustomOrder(
+		UserPassport userPassport,
+		@PathVariable UUID receiptId, @RequestBody @Valid PostCustomOrderRequest postCustomOrderRequest) {
+		Order order = orderService.postCustomOrder(receiptId, userPassport, postCustomOrderRequest.toOrder());
+		return ResponseEntity.ok(createSuccessResponse(OrderAndMenusResponse.from(order)));
 	}
 
 	@PatchMapping("/api/v1/orders/{orderId}/status")

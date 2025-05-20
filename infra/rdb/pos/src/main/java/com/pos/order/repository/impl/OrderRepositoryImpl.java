@@ -1,6 +1,7 @@
 package com.pos.order.repository.impl;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -111,6 +112,21 @@ public class OrderRepositoryImpl implements OrderRepository {
 			savedOrderEntity,
 			receipt,
 			savedOrderMenus);
+	}
+
+	@Override
+	public Order postCustomOrder(Receipt receipt, Order order) {
+		if (!orderJpaRepository.existsOrderByReceiptId(receipt.getReceiptInfo().getReceiptId())) {
+			LocalDateTime startTime = receiptJpaRepository.startReceiptUsage(receipt.getReceiptInfo().getReceiptId());
+			receipt.getReceiptInfo().setStartUsageTime(startTime);
+		}
+
+		OrderEntity orderEntity = OrderMapper.toOrderEntity(order, receipt);
+		OrderEntity savedOrderEntity = orderJpaRepository.save(orderEntity);
+		return OrderMapper.toOrder(
+			savedOrderEntity,
+			receipt,
+			new ArrayList<>());
 	}
 
 	@Override

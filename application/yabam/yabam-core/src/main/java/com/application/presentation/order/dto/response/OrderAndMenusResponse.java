@@ -17,6 +17,8 @@ public record OrderAndMenusResponse(
 	OrderStatus orderStatus,
 	@Schema(description = "주문 총 가격", example = "20000")
 	Integer totalPrice,
+	@Schema(description = "주문 설명", example = "서비스")
+	String description,
 	@Schema(description = "주문 시간", example = "2023-10-01T10:00:00")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Seoul")
 	LocalDateTime createdAt,
@@ -28,6 +30,7 @@ public record OrderAndMenusResponse(
 			order.getOrderId(),
 			order.getOrderStatus(),
 			order.getTotalPrice(),
+			order.getDescription(),
 			order.getCreatedAt(),
 			order.getOrderMenus().stream()
 				.map(OrderMenuResponse::from)

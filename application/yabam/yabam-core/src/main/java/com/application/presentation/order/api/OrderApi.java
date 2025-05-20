@@ -12,6 +12,7 @@ import com.application.global.config.swagger.ApiErrorResponseExplanation;
 import com.application.global.config.swagger.ApiResponseExplanations;
 import com.application.global.config.swagger.ApiSuccessResponseExplanation;
 import com.application.global.response.GlobalSliceResponse;
+import com.application.presentation.order.dto.request.PostCustomOrderRequest;
 import com.application.presentation.order.dto.request.PostOrderMenuRequest;
 import com.application.presentation.order.dto.response.OrderAndMenusResponse;
 import com.application.presentation.order.dto.response.OrderInfoResponse;
@@ -83,6 +84,27 @@ public interface OrderApi {
 	ResponseEntity<ResponseBody<OrderResponse>> postOrderWithoutCart(
 		@Parameter(hidden = true) UserPassport userPassport,
 		@PathVariable UUID receiptId, @RequestBody @Valid @NotEmpty List<PostOrderMenuRequest> postOrderMenuRequests);
+
+	@Operation(
+		summary = "커스텀 주문 생성 API",
+		description = "설명, 가격을 기반으로 커스텀 주문을 생성합니다."
+	)
+	@ApiResponse(content = @Content(
+		mediaType = "application/json",
+		schema = @Schema(implementation = OrderAndMenusResponse.class)))
+	@ApiResponseExplanations(
+		success = @ApiSuccessResponseExplanation(
+			responseClass = OrderAndMenusResponse.class,
+			description = "커스텀 주문 생성 성공"
+		),
+		errors = {
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.RECEIPT_NOT_FOUND),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.RECEIPT_ACCESS_DENIED)
+		}
+	)
+	ResponseEntity<ResponseBody<OrderAndMenusResponse>> postCustomOrder(
+		@Parameter(hidden = true) UserPassport userPassport,
+		@PathVariable UUID receiptId, @RequestBody @Valid PostCustomOrderRequest postCustomOrderRequest);
 
 	@Operation(
 		summary = "주문 상태 변경 API",

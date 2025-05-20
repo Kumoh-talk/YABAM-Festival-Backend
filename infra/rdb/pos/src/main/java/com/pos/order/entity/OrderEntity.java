@@ -44,6 +44,9 @@ public class OrderEntity extends BaseEntity {
 	@Column(name = "table_price")
 	private Integer totalPrice;
 
+	@Column(name = "description")
+	private String description;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "receipt_id", nullable = false)
 	private ReceiptEntity receipt;
@@ -52,9 +55,10 @@ public class OrderEntity extends BaseEntity {
 	private List<OrderMenuEntity> orderMenus = new ArrayList<>();
 
 	@Builder
-	public OrderEntity(OrderStatus status, Integer totalPrice, ReceiptEntity receipt) {
+	public OrderEntity(OrderStatus status, Integer totalPrice, String description, ReceiptEntity receipt) {
 		this.status = status;
 		this.totalPrice = totalPrice;
+		this.description = description;
 		this.receipt = receipt;
 	}
 

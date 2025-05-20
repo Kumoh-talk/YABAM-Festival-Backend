@@ -19,11 +19,21 @@ public class OrderMapper {
 			.build();
 	}
 
+	public static OrderEntity toOrderEntity(Order order, Receipt receipt) {
+		return OrderEntity.builder()
+			.status(order.getOrderStatus())
+			.totalPrice(order.getTotalPrice())
+			.description(order.getDescription())
+			.receipt(ReceiptEntity.from(receipt.getReceiptInfo().getReceiptId()))
+			.build();
+	}
+
 	public static Order toOrder(OrderEntity orderEntity, Receipt receipt, List<OrderMenu> orderMenus) {
 		return Order.builder()
 			.orderId(orderEntity.getId())
 			.orderStatus(orderEntity.getStatus())
 			.totalPrice(orderEntity.getTotalPrice())
+			.description(orderEntity.getDescription())
 			.createdAt(orderEntity.getCreatedAt())
 			.receipt(receipt)
 			.orderMenus(orderMenus)

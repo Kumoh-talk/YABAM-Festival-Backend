@@ -35,6 +35,10 @@ public class OrderWriter {
 		return orderRepository.postOrderWithoutCart(receipt, orderMenus);
 	}
 
+	public Order postCustomOrder(Receipt receipt, Order order) {
+		return orderRepository.postCustomOrder(receipt, order);
+	}
+
 	public Order patchOrderStatus(Order order, OrderStatus orderStatus, UserRole userRole) {
 		if (orderStatus == OrderStatus.RECEIVED) {
 			order.getOrderStatus().receiveOrder(order.getOrderId(), userRole);

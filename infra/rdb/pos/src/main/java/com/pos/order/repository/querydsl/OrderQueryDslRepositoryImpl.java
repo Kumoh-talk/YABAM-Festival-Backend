@@ -31,8 +31,8 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 
 		OrderEntity orderEntity = jpaQueryFactory
 			.selectFrom(qOrderEntity).distinct()
-			.join(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
-			.join(qOrderMenu.menu).fetchJoin()
+			.leftJoin(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
+			.leftJoin(qOrderMenu.menu).fetchJoin()
 			.where(qOrderEntity.id.eq(orderId))
 			.fetchOne();
 
@@ -63,7 +63,7 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 			.join(qOrderEntity.receipt).fetchJoin()
 			.join(qOrderEntity.receipt.sale, qSaleEntity).fetchJoin()
 			.join(qSaleEntity.store).fetchJoin()
-			.join(qOrderEntity.orderMenus).fetchJoin()
+			.leftJoin(qOrderEntity.orderMenus).fetchJoin()
 			.where(qOrderEntity.id.eq(orderId))
 			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
 			.fetchOne();
@@ -103,8 +103,8 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 
 		return jpaQueryFactory
 			.selectFrom(qOrderEntity).distinct()
-			.join(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
-			.join(qOrderMenu.menu).fetchJoin()
+			.leftJoin(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
+			.leftJoin(qOrderMenu.menu).fetchJoin()
 			.where(qOrderEntity.receipt.id.eq(receiptId))
 			.orderBy(qOrderEntity.createdAt.asc(), qOrderEntity.id.asc())
 			.fetch();
