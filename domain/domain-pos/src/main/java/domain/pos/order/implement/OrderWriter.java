@@ -39,6 +39,14 @@ public class OrderWriter {
 		return orderRepository.postCustomOrder(receipt, order);
 	}
 
+	public Order patchCustomOrder(Order previousOrder, Order patchOrder) {
+		return orderRepository.patchCustomOrder(previousOrder, patchOrder);
+	}
+
+	public void deleteOrder(Order order) {
+		orderRepository.deleteOrder(order);
+	}
+
 	public Order patchOrderStatus(Order order, OrderStatus orderStatus, UserRole userRole) {
 		if (orderStatus == OrderStatus.RECEIVED) {
 			order.getOrderStatus().receiveOrder(order.getOrderId(), userRole);

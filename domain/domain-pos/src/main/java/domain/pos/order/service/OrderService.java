@@ -121,6 +121,26 @@ public class OrderService {
 		return orderWriter.postCustomOrder(receipt, order);
 	}
 
+	@Transactional
+	public Order patchCustomOrder(Long orderId, UserPassport userPassport, Order patchOrder) {
+		Order previousOrder = orderReader.getOrderWithStore(orderId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_NOT_FOUND));
+
+		receiptValidator.validateIsOwner(previousOrder.getReceipt(), userPassport);
+
+		return orderWriter.patchCustomOrder(previousOrder, patchOrder);
+	}
+
+	@Transactional
+	public void deleteOrder(Long orderId, UserPassport userPassport) {
+		Order order = orderReader.getOrderWithStore(orderId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_NOT_FOUND));
+
+		receiptValidator.validateIsOwner(order.getReceipt(), userPassport);
+
+		orderWriter.deleteOrder(order);
+	}
+
 	// 주문 취소, 주문 접수만 가능
 	public Order patchOrderStatus(Long orderId, UserPassport userPassport, OrderStatus orderStatus) {
 		Order order = orderReader.getOrderWithStore(orderId)

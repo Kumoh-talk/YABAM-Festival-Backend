@@ -41,4 +41,9 @@ public class Order {
 	public void setOrderStatus(OrderStatus orderStatus) {
 		this.orderStatus = orderStatus;
 	}
+
+	public void setCustomOrder(Order patchOrder) {
+		this.totalPrice = patchOrder.getTotalPrice();
+		this.description = patchOrder.getDescription();
+	}
 }

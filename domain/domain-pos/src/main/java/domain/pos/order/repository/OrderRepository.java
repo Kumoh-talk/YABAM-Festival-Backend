@@ -31,6 +31,10 @@ public interface OrderRepository {
 
 	Order patchOrderStatus(Order order, OrderStatus orderStatus);
 
+	Order patchCustomOrder(Order previousOrder, Order patchOrder);
+
+	void deleteOrder(Order order);
+
 	Slice<Order> getSaleOrderSliceWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses, int pageSize,
 		Long lastOrderId);
 

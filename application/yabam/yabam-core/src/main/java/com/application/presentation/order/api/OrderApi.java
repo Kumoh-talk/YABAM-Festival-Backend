@@ -108,6 +108,44 @@ public interface OrderApi {
 		@PathVariable UUID receiptId, @RequestBody @Valid PostCustomOrderRequest postCustomOrderRequest);
 
 	@Operation(
+		summary = "커스텀 주문 수정 API",
+		description = "설명, 가격을 기반으로 커스텀 주문을 수정합니다."
+	)
+	@ApiResponse(content = @Content(
+		mediaType = "application/json",
+		schema = @Schema(implementation = OrderAndMenusResponse.class)))
+	@ApiResponseExplanations(
+		success = @ApiSuccessResponseExplanation(
+			responseClass = OrderAndMenusResponse.class,
+			description = "커스텀 주문 수정 성공"
+		),
+		errors = {
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.ORDER_NOT_FOUND),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.RECEIPT_ACCESS_DENIED)
+		}
+	)
+	ResponseEntity<ResponseBody<OrderAndMenusResponse>> patchCustomOrder(
+		@Parameter(hidden = true) UserPassport userPassport,
+		@PathVariable Long orderId, @RequestBody @Valid PostCustomOrderRequest patchCustomOrderRequest);
+
+	@Operation(
+		summary = "주문 삭제 API",
+		description = "주문을 삭제합니다"
+	)
+	@ApiResponseExplanations(
+		success = @ApiSuccessResponseExplanation(
+			responseClass = OrderAndMenusResponse.class,
+			description = "주문 삭제 성공"
+		),
+		errors = {
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.ORDER_NOT_FOUND),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.RECEIPT_ACCESS_DENIED)
+		}
+	)
+	public ResponseEntity<ResponseBody<Void>> deleteOrder(
+		@Parameter(hidden = true) UserPassport userPassport, @PathVariable Long orderId);
+
+	@Operation(
 		summary = "주문 상태 변경 API",
 		description = "전달된 상태로 주문 상태를 변경합니다." + " 주문 취소, 접수가 가능합니다."
 	)

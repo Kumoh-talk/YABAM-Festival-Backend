@@ -8,6 +8,7 @@ import org.springframework.data.domain.Slice;
 
 import com.pos.order.entity.OrderEntity;
 
+import domain.pos.order.entity.Order;
 import domain.pos.order.entity.vo.OrderStatus;
 
 public interface OrderQueryDslRepository {
@@ -25,6 +26,8 @@ public interface OrderQueryDslRepository {
 	boolean existsOrderByReceiptId(UUID receiptId);
 
 	void updateOrderStatus(Long orderId, OrderStatus orderStatus);
+
+	void updateCustomOrder(Long orderId, Order patchOrder);
 
 	void subtractOrderPrice(Long orderId, Integer menuPrice);
 

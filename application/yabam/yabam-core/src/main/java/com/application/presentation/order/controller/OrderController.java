@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,6 +73,25 @@ public class OrderController implements OrderApi {
 		@PathVariable UUID receiptId, @RequestBody @Valid PostCustomOrderRequest postCustomOrderRequest) {
 		Order order = orderService.postCustomOrder(receiptId, userPassport, postCustomOrderRequest.toOrder());
 		return ResponseEntity.ok(createSuccessResponse(OrderAndMenusResponse.from(order)));
+	}
+
+	@PatchMapping("/api/v1/orders/custom/{orderId}")
+	@HasRole(userRole = ROLE_OWNER)
+	@AssignUserPassport
+	public ResponseEntity<ResponseBody<OrderAndMenusResponse>> patchCustomOrder(
+		UserPassport userPassport,
+		@PathVariable Long orderId, @RequestBody @Valid PostCustomOrderRequest patchCustomOrderRequest) {
+		Order order = orderService.patchCustomOrder(orderId, userPassport, patchCustomOrderRequest.toOrder());
+		return ResponseEntity.ok(createSuccessResponse(OrderAndMenusResponse.from(order)));
+	}
+
+	@DeleteMapping("/api/v1/orders/{orderId}")
+	@HasRole(userRole = ROLE_OWNER)
+	@AssignUserPassport
+	public ResponseEntity<ResponseBody<Void>> deleteOrder(
+		UserPassport userPassport, @PathVariable Long orderId) {
+		orderService.deleteOrder(orderId, userPassport);
+		return ResponseEntity.ok(createSuccessResponse());
 	}
 
 	@PatchMapping("/api/v1/orders/{orderId}/status")

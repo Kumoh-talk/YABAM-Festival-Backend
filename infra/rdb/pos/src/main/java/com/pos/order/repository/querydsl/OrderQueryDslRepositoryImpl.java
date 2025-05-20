@@ -16,6 +16,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 
+import domain.pos.order.entity.Order;
 import domain.pos.order.entity.vo.OrderStatus;
 import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
@@ -78,8 +79,8 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 
 		List<OrderEntity> orders = jpaQueryFactory
 			.selectFrom(qOrderEntity).distinct()
-			.join(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
-			.join(qOrderMenu.menu).fetchJoin()
+			.leftJoin(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
+			.leftJoin(qOrderMenu.menu).fetchJoin()
 			.join(qOrderEntity.receipt).fetchJoin()
 			.join(qOrderEntity.receipt.table).fetchJoin()
 			.where(qOrderEntity.receipt.sale.id.eq(saleId)
@@ -133,6 +134,15 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 		}
 
 		updateClause.execute();
+	}
+
+	@Override
+	public void updateCustomOrder(Long orderId, Order patchOrder) {
+		jpaQueryFactory.update(qOrderEntity)
+			.set(qOrderEntity.totalPrice, patchOrder.getTotalPrice())
+			.set(qOrderEntity.description, patchOrder.getDescription())
+			.where(qOrderEntity.id.eq(orderId))
+			.execute();
 	}
 
 	@Override

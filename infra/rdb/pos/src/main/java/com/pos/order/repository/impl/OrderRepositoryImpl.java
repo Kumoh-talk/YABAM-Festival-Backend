@@ -172,6 +172,18 @@ public class OrderRepositoryImpl implements OrderRepository {
 	}
 
 	@Override
+	public Order patchCustomOrder(Order previousOrder, Order patchOrder) {
+		orderJpaRepository.updateCustomOrder(previousOrder.getOrderId(), patchOrder);
+		previousOrder.setCustomOrder(patchOrder);
+		return previousOrder;
+	}
+
+	@Override
+	public void deleteOrder(Order order) {
+		orderJpaRepository.deleteById(order.getOrderId());
+	}
+
+	@Override
 	public Slice<Order> getSaleOrderSliceWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses,
 		int pageSize, Long lastOrderId) {
 		return orderJpaRepository.findSaleOrdersWithMenuAndTable(saleId, orderStatuses, pageSize, lastOrderId)
