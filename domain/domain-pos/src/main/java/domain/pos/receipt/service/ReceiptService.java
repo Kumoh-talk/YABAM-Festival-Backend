@@ -1,5 +1,6 @@
 package domain.pos.receipt.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -118,6 +119,9 @@ public class ReceiptService {
 			log.warn("Receipt 을 찾을 수 없습니다.");
 			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 		}
+
+		LocalDateTime stopUsageTime = LocalDateTime.now();
+		int maxUnitCount = 0;
 		for (Receipt receipt : receipts) {
 			storeValidator.validateStoreOwner(userPassport, receipt.getTable().getStore());
 			for (Order order : receipt.getOrders()) {
@@ -126,7 +130,10 @@ public class ReceiptService {
 					throw new ServiceException(ErrorCode.ORDER_NOT_COMPLETED);
 				}
 			}
-			receipt.getReceiptInfo().stop(receipt.getTable());
+			maxUnitCount = Math.max(receipt.getReceiptInfo().calculateUnitCount(stopUsageTime), maxUnitCount);
+		}
+		for (Receipt receipt : receipts) {
+			receipt.getReceiptInfo().stopUsage(receipt.getTable(), stopUsageTime, maxUnitCount);
 		}
 
 		return receiptWriter.stopReceiptsWithMenu(receipts);

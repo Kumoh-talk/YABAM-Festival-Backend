@@ -47,6 +47,10 @@ public class ReceiptReader {
 		return receiptRepository.getNonStopReceiptsWithTableAndStoreAndLock(receiptId);
 	}
 
+	public Optional<Receipt> getReceiptsWithStoreAndLock(UUID receiptId) {
+		return receiptRepository.getReceiptsWithStoreAndLock(receiptId);
+	}
+
 	public List<Receipt> getNonStopReceiptsWithTableStoreAndOrdersAndLock(List<UUID> receiptIds) {
 		return receiptRepository.getNonStopReceiptsWithTableStoreAndOrdersAndLock(receiptIds);
 	}

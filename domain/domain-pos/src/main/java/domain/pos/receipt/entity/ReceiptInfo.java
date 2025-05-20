@@ -30,19 +30,26 @@ public class ReceiptInfo {
 		this.occupancyFee = occupancyFee;
 	}
 
-	public void stop(Table table) {
-		this.stopUsageTime = LocalDateTime.now();
+	public void stopUsage(Table table, LocalDateTime stopUsageTime, int maxUnitCount) {
+		this.stopUsageTime = stopUsageTime;
 
-		long minutesUsed = Duration.between(this.startUsageTime, this.stopUsageTime).toMinutes();
-		int unitCount = (int)Math.ceil((double)minutesUsed / UNIT_MINUTES);
 		if (table.getTableCapacity() == 4) {
-			this.occupancyFee = unitCount * FOUR_TABLE_COST;
+			this.occupancyFee = maxUnitCount * FOUR_TABLE_COST;
 		} else if (table.getTableCapacity() == 6) {
-			this.occupancyFee = unitCount * SIX_TABLE_COST;
+			this.occupancyFee = maxUnitCount * SIX_TABLE_COST;
 		}
 	}
 
 	public void setStartUsageTime(LocalDateTime startUsageTime) {
 		this.startUsageTime = startUsageTime;
+	}
+
+	public int calculateUnitCount(LocalDateTime stopUsageTime) {
+		if (this.startUsageTime == null || stopUsageTime == null) {
+			return 0;
+		}
+		
+		long minutesUsed = Duration.between(this.startUsageTime, stopUsageTime).toMinutes();
+		return (int)Math.ceil((double)minutesUsed / UNIT_MINUTES);
 	}
 }

@@ -22,6 +22,8 @@ public interface ReceiptQueryDslRepository {
 
 	Optional<ReceiptEntity> findNonStopReceiptsByIdWithTableAndStoreAndLock(UUID receiptId);
 
+	Optional<ReceiptEntity> findReceiptsByIdWithStoreAndLock(UUID receiptId);
+
 	List<ReceiptEntity> findNonStopReceiptsWithTableStoreAndOrdersAndLock(List<UUID> receiptIds);
 
 	Page<ReceiptEntity> findAdjustedReceiptPageBySaleId(Pageable pageable, Long saleId);

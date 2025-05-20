@@ -1,6 +1,7 @@
 package com.pos.receipt.repository.impl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -86,6 +87,13 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	}
 
 	@Override
+	public Optional<Receipt> getReceiptsWithStoreAndLock(UUID receiptId) {
+		return receiptJpaRepository.findReceiptsByIdWithStoreAndLock(receiptId)
+			.map(receiptEntity -> ReceiptMapper.toReceipt(receiptEntity, null,
+				SaleMapper.toSale(receiptEntity.getSale(), StoreMapper.toStore(receiptEntity.getSale().getStore()))));
+	}
+
+	@Override
 	public List<Receipt> getNonStopReceiptsWithTableStoreAndOrdersAndLock(List<UUID> receiptIds) {
 		return receiptJpaRepository.findNonStopReceiptsWithTableStoreAndOrdersAndLock(receiptIds)
 			.stream()
@@ -111,6 +119,9 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	public List<Receipt> getAllNonAdjustReceiptWithTableAndOrders(Long saleId) {
 		return receiptJpaRepository.findAllNonAdjustReceiptWithTableAndOrders(saleId)
 			.stream()
+			.sorted(Comparator.comparing(
+				r -> r.getTable().getTableNumber().getTableNumber()
+			))
 			.map(receiptEntity -> {
 				Receipt receipt = ReceiptMapper.toReceipt(
 					receiptEntity,
