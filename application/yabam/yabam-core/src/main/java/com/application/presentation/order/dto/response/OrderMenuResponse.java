@@ -14,6 +14,8 @@ public record OrderMenuResponse(
 	OrderMenuStatus orderMenuStatus,
 	@Schema(description = "주문 메뉴 수량", example = "2")
 	Integer quantity,
+	@Schema(description = "주문 메뉴 완료 수", example = "1")
+	Integer completedCount,
 	@Schema(description = "메뉴 세부정보")
 	MenuInfoResponse menuInfo
 ) {
@@ -22,6 +24,7 @@ public record OrderMenuResponse(
 			orderMenu.getOrderMenuId(),
 			orderMenu.getOrderMenuStatus(),
 			orderMenu.getQuantity(),
+			orderMenu.getCompletedCount(),
 			MenuInfoResponse.from(orderMenu.getMenu().getMenuInfo())
 		);
 	}

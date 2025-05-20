@@ -84,7 +84,7 @@ public interface OrderMenuApi {
 	@Operation(
 		summary = "주문 메뉴 삭제 API",
 		description = "주문 메뉴를 삭제합니다."
-			+ " \n 주문 상태가 RECEIVED 상태여야 합니다."
+			+ " \n 주문 상태가 RECEIVED, COMPLETED 상태여야 합니다."
 	)
 	@ApiResponseExplanations(
 		success = @ApiSuccessResponseExplanation(
@@ -115,7 +115,6 @@ public interface OrderMenuApi {
 		),
 		errors = {
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.ORDER_MENU_NOT_FOUND),
-			@ApiErrorResponseExplanation(errorCode = ErrorCode.ORDER_STATUS_NOT_RECEIVED),
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.ORDER_MENU_STATUS_NOT_ALLOWED),
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.ORDER_MENU_ACCESS_DENIED),
 		}
@@ -124,4 +123,29 @@ public interface OrderMenuApi {
 		@Parameter(hidden = true) UserPassport userPassport,
 		@PathVariable Long orderMenuId,
 		@RequestParam @NotNull @Min(value = 1, message = "수정 개수는 최소 1 이상입니다.") Integer patchQuantity);
+
+	@Operation(
+		summary = "조리 완료 수량 변경 API",
+		description = "조리 완료 수량을 변경합니다."
+			+ " \n 주문 메뉴 상태가 COOKING, COMPLETED 상태여야 합니다."
+	)
+	@ApiResponse(content = @Content(
+		mediaType = "application/json",
+		schema = @Schema(implementation = OrderMenuResponse.class)))
+	@ApiResponseExplanations(
+		success = @ApiSuccessResponseExplanation(
+			responseClass = OrderMenuResponse.class,
+			description = "조리 완료 수량 변경 성공"
+		),
+		errors = {
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.ORDER_MENU_NOT_FOUND),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.ORDER_MENU_STATUS_NOT_ALLOWED),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.ORDER_MENU_ACCESS_DENIED),
+			@ApiErrorResponseExplanation(errorCode = ErrorCode.COMPLETED_COUNT_OVERFLOW),
+		}
+	)
+	ResponseEntity<ResponseBody<OrderMenuResponse>> patchOrderMenuCompletedCount(
+		@Parameter(hidden = true) UserPassport userPassport,
+		@PathVariable Long orderMenuId,
+		@RequestParam @NotNull @Min(value = 1, message = "완료 개수는 최소 1 이상입니다.") Integer patchCompletedCount);
 }

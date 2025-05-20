@@ -72,6 +72,13 @@ public class OrderMenuRepositoryImpl implements OrderMenuRepository {
 	}
 
 	@Override
+	public OrderMenu patchOrderMenuCompletedCount(OrderMenu orderMenu, Integer patchCompletedCount) {
+		orderMenuJpaRepository.updateOrderMenuCompletedCount(orderMenu.getOrderMenuId(), patchCompletedCount);
+		orderMenu.setCompletedCount(patchCompletedCount);
+		return orderMenu;
+	}
+
+	@Override
 	@Transactional
 	public OrderMenu patchOrderMenuStatus(OrderMenu orderMenu, OrderMenuStatus orderMenuStatus) {
 		if (orderMenuStatus == OrderMenuStatus.CANCELED) {

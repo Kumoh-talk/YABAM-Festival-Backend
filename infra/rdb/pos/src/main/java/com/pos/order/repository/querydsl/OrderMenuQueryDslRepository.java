@@ -15,5 +15,7 @@ public interface OrderMenuQueryDslRepository {
 
 	void updateOrderMenuQuantity(Long orderMenuId, Integer patchQuantity);
 
+	void updateOrderMenuCompletedCount(Long orderMenuId, Integer patchCompletedCount);
+
 	boolean existsCookingMenu(Long orderId);
 }

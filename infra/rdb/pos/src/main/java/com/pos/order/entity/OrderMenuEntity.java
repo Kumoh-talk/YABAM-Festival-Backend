@@ -35,6 +35,9 @@ public class OrderMenuEntity extends BaseEntity {
 	@Column(name = "quntity", nullable = false)
 	private Integer quantity;
 
+	@Column(name = "completed_count", nullable = false)
+	private Integer completedCount = 0;
+
 	@Enumerated(value = EnumType.STRING)
 	private OrderMenuStatus status;
 

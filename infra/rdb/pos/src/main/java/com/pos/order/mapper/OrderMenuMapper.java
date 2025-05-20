@@ -17,6 +17,7 @@ public class OrderMenuMapper {
 			.orderMenuId(orderMenuEntity.getId())
 			.orderMenuStatus(orderMenuEntity.getStatus())
 			.quantity(orderMenuEntity.getQuantity())
+			.completedCount(orderMenuEntity.getCompletedCount())
 			.order(order)
 			.menu(menu)
 			.build();

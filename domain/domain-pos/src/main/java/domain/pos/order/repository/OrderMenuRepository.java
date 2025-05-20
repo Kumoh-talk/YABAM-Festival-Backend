@@ -19,6 +19,8 @@ public interface OrderMenuRepository {
 
 	OrderMenu patchOrderMenuQuantity(OrderMenu orderMenu, Integer patchQuantity);
 
+	OrderMenu patchOrderMenuCompletedCount(OrderMenu orderMenu, Integer patchCompletedCount);
+
 	OrderMenu patchOrderMenuStatus(OrderMenu orderMenu, OrderMenuStatus orderMenuStatus);
 
 	boolean existsCookingMenu(Long orderId);

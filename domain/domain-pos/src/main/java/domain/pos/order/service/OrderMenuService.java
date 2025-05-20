@@ -86,6 +86,18 @@ public class OrderMenuService {
 		return orderMenuWriter.patchOrderMenuQuantity(orderMenu, quantity);
 	}
 
+	@Transactional
+	public OrderMenu patchOrderMenuCompletedCount(Long orderMenuId, UserPassport userPassport, Integer completedCount) {
+		OrderMenu orderMenu = orderMenuReader.getOrderMenuWithOrderAndStoreAndOrderLock(orderMenuId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_MENU_NOT_FOUND));
+		validateOrderMenuStatus(orderMenu);
+		validateIsOwner(orderMenu, userPassport);
+		if (completedCount > orderMenu.getQuantity()) {
+			throw new ServiceException(ErrorCode.COMPLETED_COUNT_OVERFLOW);
+		}
+		return orderMenuWriter.patchOrderMenuCompletedCount(orderMenu, completedCount);
+	}
+
 	private void validateIsOwner(OrderMenu orderMenu, UserPassport userPassport) {
 		if (!orderMenu.getMenu().getStore().getOwnerPassport().getUserId().equals(userPassport.getUserId())
 			|| userPassport.getUserRole() != UserRole.ROLE_OWNER) {

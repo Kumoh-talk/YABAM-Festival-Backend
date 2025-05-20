@@ -48,4 +48,8 @@ public class OrderMenuWriter {
 	public OrderMenu patchOrderMenuQuantity(OrderMenu orderMenu, Integer patchQuantity) {
 		return orderMenuRepository.patchOrderMenuQuantity(orderMenu, patchQuantity);
 	}
+
+	public OrderMenu patchOrderMenuCompletedCount(OrderMenu orderMenu, Integer patchCompletedCount) {
+		return orderMenuRepository.patchOrderMenuCompletedCount(orderMenu, patchCompletedCount);
+	}
 }

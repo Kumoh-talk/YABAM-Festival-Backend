@@ -77,4 +77,16 @@ public class OrderMenuController implements OrderMenuApi {
 		OrderMenu orderMenu = orderMenuService.patchOrderMenuQuantity(orderMenuId, userPassport, patchQuantity);
 		return ResponseEntity.ok(createSuccessResponse(OrderMenuResponse.from(orderMenu)));
 	}
+
+	@PatchMapping("/api/v1/order-menus/{orderMenuId}/completed-count")
+	@HasRole(userRole = ROLE_OWNER)
+	@AssignUserPassport
+	public ResponseEntity<ResponseBody<OrderMenuResponse>> patchOrderMenuCompletedCount(
+		UserPassport userPassport,
+		@PathVariable Long orderMenuId,
+		@RequestParam @NotNull @Min(value = 1, message = "완료 개수는 최소 1 이상입니다.") Integer patchCompletedCount) {
+		OrderMenu orderMenu = orderMenuService.patchOrderMenuCompletedCount(orderMenuId, userPassport,
+			patchCompletedCount);
+		return ResponseEntity.ok(createSuccessResponse(OrderMenuResponse.from(orderMenu)));
+	}
 }

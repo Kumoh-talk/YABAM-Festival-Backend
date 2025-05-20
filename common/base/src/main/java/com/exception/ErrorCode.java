@@ -96,6 +96,7 @@ public enum ErrorCode {
 	ALREADY_COMPLETED_ORDER_MENU(HttpStatus.BAD_REQUEST, "ORDER_MENU_0005", "이미 완료된 메뉴입니다."),
 	ORDER_MENU_STATUS_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "ORDER_MENU_0006", "주문 메뉴 수량 변경이 불가능한 상태입니다."),
 	TRANSFER_INVALID_ROLE(HttpStatus.BAD_REQUEST, "ORDER_MENU_0007", "주문 메뉴 상태를 변경할 권한이 없습니다."),
+	COMPLETED_COUNT_OVERFLOW(HttpStatus.BAD_REQUEST, "ORDER_MENU_0008", "완료된 수량이 주문 수량을 초과했습니다."),
 
 	// Cart
 	CART_NOT_FOUND(HttpStatus.NOT_FOUND, "CART_0001", "존재하지 않는 장바구니입니다."),

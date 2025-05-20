@@ -62,6 +62,14 @@ public class OrderMenuQueryDslRepositoryImpl implements OrderMenuQueryDslReposit
 	}
 
 	@Override
+	public void updateOrderMenuCompletedCount(Long orderMenuId, Integer patchCompletedCount) {
+		jpaQueryFactory.update(qOrderMenuEntity)
+			.set(qOrderMenuEntity.completedCount, patchCompletedCount)
+			.where(qOrderMenuEntity.id.eq(orderMenuId))
+			.execute();
+	}
+
+	@Override
 	public boolean existsCookingMenu(Long orderId) {
 		return jpaQueryFactory
 			.selectOne()
