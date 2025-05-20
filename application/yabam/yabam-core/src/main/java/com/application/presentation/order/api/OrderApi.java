@@ -88,6 +88,7 @@ public interface OrderApi {
 	@Operation(
 		summary = "커스텀 주문 생성 API",
 		description = "설명, 가격을 기반으로 커스텀 주문을 생성합니다."
+			+ " \n커스텀 주문은 COMPLETED 상태로 생성됩니다."
 	)
 	@ApiResponse(content = @Content(
 		mediaType = "application/json",
