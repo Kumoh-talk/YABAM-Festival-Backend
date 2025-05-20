@@ -235,6 +235,7 @@ public class ReceiptService {
 			throw new ServiceException(ErrorCode.ALREADY_ACTIVE_TABLE);
 		}
 		receiptWriter.moveReceiptTable(receipt, moveTable);
+		tableWriter.changeTableActiveStatus(false, table);
 	}
 
 }
