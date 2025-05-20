@@ -48,7 +48,6 @@ public class ReceiptInfo {
 		if (this.startUsageTime == null || stopUsageTime == null) {
 			return 0;
 		}
-		
 		long minutesUsed = Duration.between(this.startUsageTime, stopUsageTime).toMinutes();
 		return (int)Math.ceil((double)minutesUsed / UNIT_MINUTES);
 	}
