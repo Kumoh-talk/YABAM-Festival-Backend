@@ -139,7 +139,7 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 		return jpaQueryFactory
 			.selectFrom(qReceiptEntity).distinct()
 			.join(qReceiptEntity.table).fetchJoin()
-			.join(qReceiptEntity.orders).fetchJoin()
+			.leftJoin(qReceiptEntity.orders).fetchJoin()
 			.where(qReceiptEntity.sale.id.eq(saleId)
 				.and(qReceiptEntity.isAdjustment.isFalse()))
 			.fetch();
