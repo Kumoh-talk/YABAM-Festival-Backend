@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.pos.event.SseChannelProvider;
 import com.pos.event.StoreOrderEvent;
+import com.pos.util.ChannelPrefixUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,8 @@ public class RedisStoreOrderListener implements MessageListener {
 
 	@Override
 	public void onMessage(Message message, byte[] pattern) {
-		String key = new String(message.getChannel());
+		String channelName = new String(message.getChannel());
+		String key = ChannelPrefixUtil.removeStoreOrderPrefix(channelName);
 		StoreOrderEvent storeOrderEvent;
 		storeOrderEvent = serializer.deserialize(message.getBody(), StoreOrderEvent.class);
 		sseEventHandler.handleEventWithSSE(SseChannelProvider.OWNER_STORE, EVENT_NAME, key, storeOrderEvent);

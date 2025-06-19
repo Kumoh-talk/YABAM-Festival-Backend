@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import com.pos.event.StoreOrderEvent;
 import com.pos.producer.mapper.StoreOrderEventMapper;
+import com.pos.util.ChannelPrefixUtil;
 
 import domain.pos.order.entity.Order;
 import domain.pos.order.implement.StoreOrderProducer;
@@ -18,12 +19,11 @@ import reactor.core.scheduler.Schedulers;
 @Slf4j
 @RequiredArgsConstructor
 public class RedisOrderProducer implements StoreOrderProducer {
-	private static final String STORE_ORDER_EVENT_PREFIX = "storeId:";
 	private final ReactiveRedisTemplate<String, Object> reactiveRedisTemplate;
 
 	@Override
 	public void produceStoreOrder(Store store, Table table, Order order) {
-		String topic = STORE_ORDER_EVENT_PREFIX + store.getStoreId();
+		String topic = ChannelPrefixUtil.STORE_ORDER_PREFIX + store.getStoreId();
 		StoreOrderEvent storeOrderEvent = StoreOrderEventMapper.toStoreOrderEvent(table, order);
 		reactiveRedisTemplate.convertAndSend(topic, storeOrderEvent)
 			.subscribeOn(Schedulers.boundedElastic())

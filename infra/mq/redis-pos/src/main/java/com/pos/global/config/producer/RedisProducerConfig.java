@@ -1,4 +1,4 @@
-package com.pos.global.config;
+package com.pos.global.config.producer;
 
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +10,7 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
+import com.pos.global.config.RedisSerializerConfig;
 import com.pos.producer.RedisOrderProducer;
 
 import lombok.RequiredArgsConstructor;

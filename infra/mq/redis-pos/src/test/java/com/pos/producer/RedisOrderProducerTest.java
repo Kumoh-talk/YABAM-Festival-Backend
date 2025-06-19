@@ -10,8 +10,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.pos.consumer.RedisConsumerHandler;
 import com.pos.consumer.SseEventHandler;
-import com.pos.global.config.RedisConsumerConfig;
-import com.pos.global.config.RedisProducerConfig;
+import com.pos.global.config.consumer.RedisConsumerConfig;
+import com.pos.global.config.producer.RedisProducerConfig;
 import com.pos.producer.config.RedisConfig;
 
 import domain.pos.order.entity.Order;
@@ -40,7 +40,7 @@ class RedisOrderProducerTest {
 		Order order = OrderFixture.GENERAL_ORDER();
 		Store store = order.getReceipt().getSale().getStore();
 		Table table = order.getReceipt().getTable();
-		redisConsumerHandler.subscribe(CHANNEL_PREFIX + store.getStoreId());
+		redisConsumerHandler.subscribe(store.getStoreId());
 
 		// when
 		redisOrderProducer.produceStoreOrder(store, table, order);

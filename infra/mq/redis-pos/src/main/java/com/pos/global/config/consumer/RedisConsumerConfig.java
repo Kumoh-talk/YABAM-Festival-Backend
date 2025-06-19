@@ -1,4 +1,4 @@
-package com.pos.global.config;
+package com.pos.global.config.consumer;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,6 +8,7 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 
 import com.pos.consumer.RedisConsumerHandler;
 import com.pos.consumer.RedisStoreOrderListener;
+import com.pos.global.config.RedisSerializerConfig;
 
 import lombok.RequiredArgsConstructor;
 
