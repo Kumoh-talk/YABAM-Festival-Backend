@@ -10,6 +10,7 @@ import com.event.channel.SseChannel;
 import com.event.implement.EmitterGenerator;
 import com.event.implement.OwnerStoreValidator;
 import com.event.service.SsePosService;
+import com.pos.channel.MqChannelHandler;
 import com.pos.event.SseChannelProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -19,10 +20,11 @@ import lombok.RequiredArgsConstructor;
 public class SseChannelConfig {
 	private final EmitterGenerator emitterGenerator;
 	private final OwnerStoreValidator ownerStoreValidator;
+	private final MqChannelHandler mqChannelHandler;
 
 	@Bean
 	public SseChannel ownerStoreChannel() {
-		return new OwnerStoreChannel(emitterGenerator);
+		return new OwnerStoreChannel(emitterGenerator, mqChannelHandler);
 	}
 
 	@Bean

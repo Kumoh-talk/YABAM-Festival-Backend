@@ -9,8 +9,7 @@
 
 ## 2. SSE 아키텍처
 
-![image](https://github.com/user-attachments/assets/865d5243-d28f-4229-81d7-3da7db858e81)
-
+![img.png](img.png)
 
 ## 3. Real-Time 지원과 시스템 안정성
 
@@ -94,7 +93,7 @@ graph TD
 - **백그라운드 복구**: 사용자 인지 없이 자동으로 SSE 연결 복구 시도
 - **네트워크 조건 적응**: 불안정한 네트워크 환경에서도 안정적인 서비스 제공
 
-## 5. 설계 원칙 요약
+## 5. 설계 요약
 
 ``` mermaid
 flowchart TD
@@ -120,10 +119,10 @@ graph LR
     end
 
 %% 인프라 계층을 위쪽에 배치
-    subgraph "인프라 계층 (infra:mq:kafka-pos)"
-        F[KafkaStoreOrderEventListener]
-        G[Kafka]
-        D[StoreOrderProducer]
+    subgraph "인프라 계층 (infra:mq:redis-pos)"
+        F[RedisStoreOrderEventListener]
+        G[Redis Pub/Sub]
+        D[RedisStoreOrderProducer]
     end
 
 %% 애플리케이션 계층을 아래쪽에 배치
@@ -140,17 +139,11 @@ graph LR
     subgraph "pos 도메인  계층 (domain:domain-pos)"
         C[OrderEventProducer]
         L[OrderService]
-        order[Order]
-        table[Table]
-        store[Store]
         RDB[RDB]
     end
 
     L -->|persistence| RDB
     L -->|Log Produce| C
-    C --> order
-    C --> table
-    C --> store
 %% 연결 관계 설정
     D -->|Log Produce| G
     G -->|Log Consume| F
@@ -163,15 +156,3 @@ graph LR
     D -->|concrete| C
 ```
 
-### 핵심 모듈 구조
-
-- **도메인 계층(domain-event:store-event)**: 주문 이벤트(StoreOrderEvent)의 핵심 도메인 모델과 이벤트 처리기(SseEventHandler)를 포함합니다.
-- **인프라 계층(infra:mq:kafka-pos)**: Kafka 메시징 시스템과 이벤트 발행자(StoreOrderProducer), 구독자(KafkaStoreOrderEventListener)를 포함합니다.
-- **애플리케이션 계층(yabam-event)**: SSE 컨트롤러, 서비스, 채널 관리 등 클라이언트와의 실시간 통신을 담당합니다.
-- **도메인-POS 계층(domain:domain-pos)**: 주문 서비스와 이벤트 생성기(OrderEventProducer)를 포함합니다.
-
-### 핵심 데이터 흐름
-
-1. **이벤트 생성과 발행**: OrderService → OrderEventProducer → StoreOrderProducer → Kafka
-2. **이벤트 소비와 처리**: Kafka → KafkaStoreOrderEventListener → SseEventHandler
-3. **클라이언트 데이터 전송**: SsePosController → SsePosService → SseChannel → 클라이언트

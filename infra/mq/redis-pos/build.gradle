@@ -1,0 +1,28 @@
+bootJar {
+    enabled = false
+}
+jar {
+    enabled = true
+}
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    compileOnly 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+
+    // domain-event
+    implementation project(':domain:domain-event:store-event')
+    implementation project(':domain:domain-pos')
+
+    // test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation project(':domain:domain-event:store-event')
+    testImplementation project(':domain:domain-pos')
+    testImplementation testFixtures(project(':domain:domain-pos'))
+
+    /* test-containers */
+    testImplementation "org.testcontainers:testcontainers:1.19.0"
+    testImplementation "org.testcontainers:junit-jupiter:1.19.0"
+
+
+}

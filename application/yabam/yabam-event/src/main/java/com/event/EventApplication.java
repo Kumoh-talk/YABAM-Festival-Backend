@@ -6,7 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {
-	"com.pos.consumer.store.order",
+	"com.pos.global.config.consumer",
 	"com.pos.consumer",
 	"com.event"
 })
