@@ -5,12 +5,17 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import com.pos.channel.MqChannelHandler;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class EmitterGenerator {
 	private static final long TIMEOUT = 60 * 1000 * 3;
+	private final MqChannelHandler mqChannelHandler;
 
 	public SseEmitter setUpSseEmitter(String channelName, Map<Long, SseEmitter> emitterMap, Long storeId) {
 		SseEmitter emitter = createEmitter();
@@ -28,6 +33,7 @@ public class EmitterGenerator {
 				log.info("[{}] server sent event removed in emitter cache: key={}", channelName, storeId);
 			}
 			log.info("[{}] disconnected by completed server sent event: key={}", channelName, storeId);
+			mqChannelHandler.unsubscribe(storeId);
 		});
 		return emitter;
 	}
