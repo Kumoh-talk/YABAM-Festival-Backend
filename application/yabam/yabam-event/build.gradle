@@ -19,8 +19,9 @@ dependencies {
     // domain-event
     implementation project(':domain:domain-event:store-event')
 
-    // kafka
-    runtimeOnly project(':infra:mq:kafka-pos')
+    // redis
+//    runtimeOnly project(':infra:mq:kafka-pos')
+    runtimeOnly project(':infra:mq:redis-pos')
 
     // common mvc(auth) module
     implementation project(':common:mvc')
