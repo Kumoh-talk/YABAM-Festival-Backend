@@ -149,7 +149,7 @@ class StoreRepositoryImplTest extends RepositoryTest {
 
 		// then
 		assertSoftly(softly -> {
-			softly.assertThat(store.getStoreId()).isEqualTo(savedStoreEntity.getId());
+			softly.assertThat(store.getId()).isEqualTo(savedStoreEntity.getId());
 			softly.assertThat(store.getStoreInfo().getStoreName()).isEqualTo(savedStoreEntity.getName());
 			softly.assertThat(store.getStoreInfo().getLocation().x)
 				.isEqualTo(savedStoreEntity.getLocation().getLatitude());
@@ -188,7 +188,7 @@ class StoreRepositoryImplTest extends RepositoryTest {
 
 		// then
 		assertSoftly(softly -> {
-			softly.assertThat(store.getStoreId()).isEqualTo(savedStoreEntity.getId());
+			softly.assertThat(store.getId()).isEqualTo(savedStoreEntity.getId());
 			softly.assertThat(store.getStoreInfo().getStoreName()).isEqualTo(savedStoreEntity.getName());
 			softly.assertThat(store.getStoreInfo().getLocation().x)
 				.isEqualTo(savedStoreEntity.getLocation().getLatitude());

@@ -34,7 +34,7 @@ public record StoreInfoResponse(
 ) {
 	public static StoreInfoResponse of(Store store) {
 		return StoreInfoResponse.builder()
-			.storeId(store.getStoreId())
+			.storeId(store.getId())
 			.isOpen(store.getIsOpen())
 			.storeName(store.getStoreInfo().getStoreName())
 			.latitude(store.getStoreInfo().getLocation().getX())

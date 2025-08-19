@@ -63,7 +63,7 @@ public class SaleService {
 		final Store closedStore = storeWriter.modifyStoreOpenStatus(savedSale.getStore());
 		final Sale closedSale = saleWriter.closeSale(savedSale, closedStore);
 		log.info("가게 종료 성공 : userId={}, storeId={}, saleId={}", ownerPassport.getUserId(),
-			savedSale.getStore().getStoreId(), closedSale.getSaleId());
+			savedSale.getStore().getId(), closedSale.getSaleId());
 		return closedSale;
 	}
 
@@ -76,7 +76,7 @@ public class SaleService {
 			});
 		if (!savedSale.getStore().getIsOpen()) {
 			log.warn("이미 종료된 가게 상태: userId={}, storeId={}", ownerPassport.getUserId(),
-				savedSale.getStore().getStoreId());
+				savedSale.getStore().getId());
 			throw new ServiceException(ErrorCode.CONFLICT_CLOSE_STORE);
 		}
 	}

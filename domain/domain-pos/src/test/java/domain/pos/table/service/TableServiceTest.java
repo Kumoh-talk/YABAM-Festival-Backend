@@ -52,7 +52,7 @@ class TableServiceTest extends ServiceTest {
 		void 성공() {
 			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
-			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 
 			Store responStore = GENERAL_CLOSE_STORE();
 			Table createdTable = GENERAL_IN_ACTIVE_TABLE(responStore);
@@ -85,7 +85,7 @@ class TableServiceTest extends ServiceTest {
 			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store responStore = GENERAL_OPEN_STORE();
-			Long queryStoreId = responStore.getStoreId();
+			Long queryStoreId = responStore.getId();
 			Integer queryTableNum = GENERAL_ACTIVE_TABLE(responStore).getTableNumber();
 			TablePoint queryTablePoint = GENERAL_ACTIVE_TABLE(responStore).getTablePoint();
 			Integer queryTableCapacity = GENERAL_ACTIVE_TABLE(responStore).getTableCapacity();
@@ -117,7 +117,7 @@ class TableServiceTest extends ServiceTest {
 			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store responStore = GENERAL_CLOSE_STORE();  // isOpen = false
-			Long queryStoreId = responStore.getStoreId();
+			Long queryStoreId = responStore.getId();
 			Integer queryTableNum = GENERAL_ACTIVE_TABLE(responStore).getTableNumber();
 			TablePoint queryTablePoint = GENERAL_ACTIVE_TABLE(responStore).getTablePoint();
 			Integer queryTableCapacity = GENERAL_ACTIVE_TABLE(responStore).getTableCapacity();
@@ -151,7 +151,7 @@ class TableServiceTest extends ServiceTest {
 			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store responStore = GENERAL_CLOSE_STORE();  // isOpen = false
-			Long queryStoreId = responStore.getStoreId();
+			Long queryStoreId = responStore.getId();
 			Integer queryTableNum = GENERAL_ACTIVE_TABLE(responStore).getTableNumber();
 			TablePoint queryTablePoint = GENERAL_ACTIVE_TABLE(responStore).getTablePoint();
 			Integer queryTableCapacity = GENERAL_ACTIVE_TABLE(responStore).getTableCapacity();
@@ -182,7 +182,7 @@ class TableServiceTest extends ServiceTest {
 		void 실패_점주_ID_불일치() {
 			// given
 			UserPassport diffOwnerPassport = DIFF_OWNER_PASSPORT();
-			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 
 			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
 				.when(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
@@ -452,7 +452,7 @@ class TableServiceTest extends ServiceTest {
 		@Test
 		void 성공() {
 			// given
-			Long queryStoreId = GENERAL_OPEN_STORE().getStoreId();
+			Long queryStoreId = GENERAL_OPEN_STORE().getId();
 
 			Store responStore = GENERAL_OPEN_STORE();
 			Table savedTable1 = GENERAL_IN_ACTIVE_TABLE(responStore);

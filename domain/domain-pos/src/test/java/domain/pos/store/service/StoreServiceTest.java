@@ -72,7 +72,7 @@ class StoreServiceTest extends ServiceTest {
 		@Test
 		void 성공() {
 			// given
-			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			Store responseStore = GENERAL_CLOSE_STORE();
 
 			doReturn(Optional.of(responseStore))
@@ -93,7 +93,7 @@ class StoreServiceTest extends ServiceTest {
 		@Test
 		void 실패_유효하지_않은_가게_ID() {
 			// given
-			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 
 			doReturn(Optional.empty())
 				.when(storeReader).readSingleStore(queryStoreId);
@@ -117,7 +117,7 @@ class StoreServiceTest extends ServiceTest {
 		void 성공() {
 			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
-			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			Store nonChangedStore = GENERAL_CLOSE_STORE();
 			StoreInfo requestChangeStoreInfo = CHANGED_GENERAL_STORE().getStoreInfo();
 			Store changedStore = CHANGED_GENERAL_STORE();
@@ -135,7 +135,7 @@ class StoreServiceTest extends ServiceTest {
 
 			// then
 			assertSoftly(softly -> {
-				softly.assertThat(result.getStoreId()).isEqualTo(changedStore.getStoreId());
+				softly.assertThat(result.getId()).isEqualTo(changedStore.getId());
 
 				verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
 				verify(storeWriter).updateStoreInfo(any(Store.class), any(StoreInfo.class));
@@ -147,7 +147,7 @@ class StoreServiceTest extends ServiceTest {
 			// given
 			UserPassport diffOwnerUserPassport = DIFF_OWNER_PASSPORT();
 			Store previousStore = GENERAL_CLOSE_STORE();
-			Long queryStoreId = previousStore.getStoreId();
+			Long queryStoreId = previousStore.getId();
 			StoreInfo requestChangeStoreInfo = CHANGED_GENERAL_STORE().getStoreInfo();
 
 			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
@@ -173,7 +173,7 @@ class StoreServiceTest extends ServiceTest {
 		void 실패_유효하지_않는_가게_ID() {
 			// given
 			UserPassport queryOwnerPassport = OWNER_USER_PASSPORT();
-			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			StoreInfo requestChangeStoreInfo = CHANGED_GENERAL_STORE().getStoreInfo();
 
 			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE))
@@ -204,7 +204,7 @@ class StoreServiceTest extends ServiceTest {
 		void 성공() {
 			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
-			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			Store savedStore = GENERAL_CLOSE_STORE();
 
 			doReturn(savedStore)
@@ -226,7 +226,7 @@ class StoreServiceTest extends ServiceTest {
 		void 실패_유효하지_않는_가게_ID() {
 			// given
 			UserPassport queryOwnerPassport = OWNER_USER_PASSPORT();
-			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 
 			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE))
 				.when(storeValidator).validateStoreOwner(queryOwnerPassport, queryStoreId);
@@ -248,7 +248,7 @@ class StoreServiceTest extends ServiceTest {
 		void 실패_가게ID와_점주ID가_다를시() {
 			// given
 			UserPassport queryDiffOwnerPassport = DIFF_OWNER_PASSPORT();
-			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 
 			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
 				.when(storeValidator).validateStoreOwner(queryDiffOwnerPassport, queryStoreId);
@@ -274,7 +274,7 @@ class StoreServiceTest extends ServiceTest {
 		void 성공() {
 			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
-			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			Store savedStore = GENERAL_CLOSE_STORE();
 			String imageUrl = "https://example.com/image.jpg";
 
@@ -297,7 +297,7 @@ class StoreServiceTest extends ServiceTest {
 		void 실패_유효하지_않는_가게_ID() {
 			// given
 			UserPassport queryOwnerPassport = OWNER_USER_PASSPORT();
-			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			String imageUrl = "https://example.com/image.jpg";
 
 			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE))
@@ -321,7 +321,7 @@ class StoreServiceTest extends ServiceTest {
 		void 실패_가게ID와_점주ID가_다를시() {
 			// given
 			UserPassport queryDiffOwnerPassport = DIFF_OWNER_PASSPORT();
-			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			String imageUrl = "https://example.com/image.jpg";
 
 			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
@@ -349,7 +349,7 @@ class StoreServiceTest extends ServiceTest {
 		void 성공() {
 			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
-			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			Store savedStore = GENERAL_CLOSE_STORE();
 			String imageUrl = "https://example.com/image.jpg";
 
@@ -374,7 +374,7 @@ class StoreServiceTest extends ServiceTest {
 		void 실패_유효하지_않는_가게_ID() {
 			// given
 			UserPassport queryOwnerPassport = OWNER_USER_PASSPORT();
-			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			String imageUrl = "https://example.com/image.jpg";
 
 			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE))
@@ -397,7 +397,7 @@ class StoreServiceTest extends ServiceTest {
 		void 실패_가게ID와_점주ID가_다를시() {
 			// given
 			UserPassport queryDiffOwnerPassport = DIFF_OWNER_PASSPORT();
-			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			String imageUrl = "https://example.com/image.jpg";
 
 			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
@@ -420,7 +420,7 @@ class StoreServiceTest extends ServiceTest {
 		void 실패_존재하지_않는_이미지_URL() {
 			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
-			Long queryStoreId = GENERAL_CLOSE_STORE().getStoreId();
+			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			Store savedStore = GENERAL_CLOSE_STORE();
 			String imageUrl = "https://example.com/non-existent-image.jpg";
 
