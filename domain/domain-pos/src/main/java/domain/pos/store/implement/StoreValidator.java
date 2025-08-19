@@ -9,7 +9,7 @@ import com.exception.ServiceException;
 import com.vo.UserPassport;
 
 import domain.pos.store.entity.Store;
-import domain.pos.store.repository.StoreRepository;
+import domain.pos.store.port.required.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

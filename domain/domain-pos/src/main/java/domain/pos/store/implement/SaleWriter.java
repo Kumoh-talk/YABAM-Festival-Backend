@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import domain.pos.store.entity.Sale;
 import domain.pos.store.entity.Store;
-import domain.pos.store.repository.SaleRepository;
+import domain.pos.store.port.required.SaleRepository;
 import lombok.RequiredArgsConstructor;
 
 @Component

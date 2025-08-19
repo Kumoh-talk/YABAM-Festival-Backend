@@ -20,7 +20,7 @@ import com.pos.store.mapper.StoreMapper;
 
 import domain.pos.store.entity.Sale;
 import domain.pos.store.entity.Store;
-import domain.pos.store.repository.SaleRepository;
+import domain.pos.store.port.required.SaleRepository;
 
 class SaleRepositoryImplTest extends RepositoryTest {
 
