@@ -1,10 +1,14 @@
 package domain.pos.store.entity;
 
+import static java.util.Objects.*;
+
 import java.awt.geom.Point2D;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @Getter
+@EqualsAndHashCode
 public class StoreInfo {
 	private final String storeName;
 	private final Point2D.Double location;
@@ -16,13 +20,13 @@ public class StoreInfo {
 
 	private StoreInfo(String storeName, Point2D.Double location, String description, String headImageUrl,
 		String university, Integer tableTime, Integer tableCost) {
-		this.storeName = storeName;
-		this.location = location;
+		this.storeName = requireNonNull(storeName);
+		this.location = requireNonNull(location);
 		this.description = description;
-		this.headImageUrl = headImageUrl;
-		this.university = university;
+		this.headImageUrl = requireNonNull(headImageUrl);
+		this.university = requireNonNull(university);
 		this.tableTime = tableTime;
-		this.tableCost = tableCost;
+		this.tableCost = requireNonNull(tableCost);
 	}
 
 	public static StoreInfo of(String storeName, Point2D.Double location, String desciption, String headImageUrl,
