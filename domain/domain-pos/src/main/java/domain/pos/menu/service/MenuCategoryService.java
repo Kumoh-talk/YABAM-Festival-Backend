@@ -76,7 +76,7 @@ public class MenuCategoryService {
 
 	private void validateStoreOpen(Store store) {
 		if (store.getIsOpen()) {
-			log.warn("가게가 운영중입니다. 카테고리 생성 및 수정 불가 : storeId={}", store.getStoreId());
+			log.warn("가게가 운영중입니다. 카테고리 생성 및 수정 불가 : storeId={}", store.getId());
 			throw new ServiceException(ErrorCode.STORE_IS_OPEN_MENU_WRITE);
 		}
 	}

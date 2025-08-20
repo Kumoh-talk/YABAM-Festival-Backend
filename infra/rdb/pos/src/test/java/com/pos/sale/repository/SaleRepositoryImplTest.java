@@ -20,7 +20,7 @@ import com.pos.store.mapper.StoreMapper;
 
 import domain.pos.store.entity.Sale;
 import domain.pos.store.entity.Store;
-import domain.pos.store.repository.SaleRepository;
+import domain.pos.store.port.required.SaleRepository;
 
 class SaleRepositoryImplTest extends RepositoryTest {
 
@@ -52,7 +52,7 @@ class SaleRepositoryImplTest extends RepositoryTest {
 		// then
 		assertSoftly(softly -> {
 			softly.assertThat(resultSale.getSaleId()).isEqualTo(saleEntity.getId());
-			softly.assertThat(resultSale.getStore().getStoreId()).isEqualTo(savedStore.getStoreId());
+			softly.assertThat(resultSale.getStore().getId()).isEqualTo(savedStore.getId());
 			softly.assertThat(resultSale.getStore().getOwnerPassport().getUserId())
 				.isEqualTo(savedStore.getOwnerPassport().getUserId());
 		});
@@ -70,7 +70,7 @@ class SaleRepositoryImplTest extends RepositoryTest {
 		Sale sale = saleRepository.findSaleWithStoreBySaleId(resultSale.getSaleId()).get();
 		assertSoftly(softly -> {
 			softly.assertThat(sale.getSaleId()).isEqualTo(resultSale.getSaleId());
-			softly.assertThat(sale.getStore().getStoreId()).isEqualTo(savedStore.getStoreId());
+			softly.assertThat(sale.getStore().getId()).isEqualTo(savedStore.getId());
 			softly.assertThat(sale.getStore().getOwnerPassport().getUserId())
 				.isEqualTo(savedStore.getOwnerPassport().getUserId());
 			softly.assertThat(sale.getOpenDateTime()).isNotNull();
@@ -96,7 +96,7 @@ class SaleRepositoryImplTest extends RepositoryTest {
 		Sale sale = saleRepository.findSaleWithStoreBySaleId(resultSale.getSaleId()).get();
 		assertSoftly(softly -> {
 			softly.assertThat(sale.getSaleId()).isEqualTo(savedSale.getSaleId());
-			softly.assertThat(sale.getStore().getStoreId()).isEqualTo(savedStore.getStoreId());
+			softly.assertThat(sale.getStore().getId()).isEqualTo(savedStore.getId());
 			softly.assertThat(sale.getStore().getOwnerPassport().getUserId())
 				.isEqualTo(savedStore.getOwnerPassport().getUserId());
 			softly.assertThat(sale.getOpenDateTime()).isNotNull();
@@ -115,7 +115,7 @@ class SaleRepositoryImplTest extends RepositoryTest {
 
 		// when
 		System.out.println("===SaleRepositoryImplTest.SaleCursor_리스트_조회 쿼리===");
-		Slice<Sale> resultSale = saleRepository.getSaleSliceByStoreId(savedStore.getStoreId(), null, 3);
+		Slice<Sale> resultSale = saleRepository.getSaleSliceByStoreId(savedStore.getId(), null, 3);
 		System.out.println("===SaleRepositoryImplTest.SaleCursor_리스트_조회 쿼리===");
 
 		// then

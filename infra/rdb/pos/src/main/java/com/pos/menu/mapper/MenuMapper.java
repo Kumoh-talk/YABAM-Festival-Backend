@@ -13,7 +13,7 @@ import domain.pos.store.entity.Store;
 public class MenuMapper {
 	public static MenuEntity toMenuEntity(MenuInfo menuInfo, Store store, MenuCategoryInfo menuCategoryInfo) {
 		return MenuEntity.of(menuInfo,
-			store == null ? null : StoreMapper.toStoreEntity(store.getStoreId()),
+			store == null ? null : StoreMapper.toStoreEntity(store.getId()),
 			menuCategoryInfo == null ? null : MenuCategoryEntity.from(menuCategoryInfo.getId()));
 	}
 

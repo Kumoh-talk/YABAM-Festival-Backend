@@ -18,7 +18,7 @@ public record StoreIdResponse(
 
 	public static StoreIdResponse from(Store store) {
 		return StoreIdResponse.builder()
-			.storeId(store.getStoreId())
+			.storeId(store.getId())
 			.build();
 	}
 }

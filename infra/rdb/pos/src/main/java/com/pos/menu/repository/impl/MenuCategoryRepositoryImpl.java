@@ -32,7 +32,7 @@ public class MenuCategoryRepositoryImpl implements MenuCategoryRepository {
 	@Override
 	public MenuCategory postMenuCategory(Store store, MenuCategoryInfo menuCategoryInfo) {
 		MenuCategoryEntity menuCategoryEntity = MenuCategoryMapper.toMenuCategoryEntity(menuCategoryInfo, store);
-		menuCategoryJpaRepository.findMaxOrderByStoreId(store.getStoreId())
+		menuCategoryJpaRepository.findMaxOrderByStoreId(store.getId())
 			.ifPresentOrElse(
 				order -> {
 					if (order > 99) {

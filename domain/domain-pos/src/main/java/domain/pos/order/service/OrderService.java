@@ -63,7 +63,7 @@ public class OrderService {
 		}
 
 		// 모든 장바구니 메뉴가 store에 해당하는 메뉴인지 검증
-		Long storeId = receipt.getSale().getStore().getStoreId();
+		Long storeId = receipt.getSale().getStore().getId();
 		Set<Long> menuIds = cart.getCartMenus().stream()
 			.map(cartMenu -> cartMenu.getMenuInfo().getId())
 			.collect(Collectors.toSet());
@@ -97,7 +97,7 @@ public class OrderService {
 		saleValidator.validateSaleOpen(receipt.getSale());
 		receiptValidator.validateIsOwner(receipt, userPassport);
 
-		Long storeId = receipt.getSale().getStore().getStoreId();
+		Long storeId = receipt.getSale().getStore().getId();
 		for (OrderMenu orderMenu : orderMenus) {
 			MenuInfo menuInfo = menuReader.getMenuInfo(storeId, orderMenu.getMenu().getMenuInfo().getId())
 				.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));

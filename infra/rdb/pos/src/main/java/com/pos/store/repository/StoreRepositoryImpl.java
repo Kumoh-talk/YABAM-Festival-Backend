@@ -21,7 +21,7 @@ import com.vo.UserPassport;
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
 import domain.pos.store.entity.dto.StoreHeadDto;
-import domain.pos.store.repository.StoreRepository;
+import domain.pos.store.port.required.StoreRepository;
 import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
 
@@ -58,7 +58,7 @@ public class StoreRepositoryImpl implements StoreRepository {
 	@Override
 	@Transactional
 	public Store changeStoreInfo(Store previousStore, StoreInfo requestChangeStoreInfo) {
-		StoreEntity storeEntity = storeJpaRepository.findById(previousStore.getStoreId())
+		StoreEntity storeEntity = storeJpaRepository.findById(previousStore.getId())
 			.orElseThrow(() -> new ServiceException(ErrorCode.NOT_FOUND_STORE));
 		storeEntity.changeStoreInfo(requestChangeStoreInfo);
 		return StoreMapper.toStore(storeEntity);
@@ -68,7 +68,7 @@ public class StoreRepositoryImpl implements StoreRepository {
 	@Transactional
 	public void deleteStore(Store previousStore) {
 		queryFactory.update(qStoreEntity)
-			.where(qStoreEntity.id.eq(previousStore.getStoreId()))
+			.where(qStoreEntity.id.eq(previousStore.getId()))
 			.set(qStoreEntity.deletedAt, LocalDateTime.now())
 			.execute();
 	}
@@ -77,7 +77,7 @@ public class StoreRepositoryImpl implements StoreRepository {
 	@Transactional
 	public Store changeStoreOpenStatus(Store previousStore) {
 		queryFactory.update(qStoreEntity)
-			.where(qStoreEntity.id.eq(previousStore.getStoreId()))
+			.where(qStoreEntity.id.eq(previousStore.getId()))
 			.set(qStoreEntity.isOpen, !previousStore.getIsOpen())
 			.execute();
 		return previousStore.changeIsOpen();
@@ -97,7 +97,7 @@ public class StoreRepositoryImpl implements StoreRepository {
 		storeDetailImageJpaRepository.save(
 			StoreDetailImageEntity.of(
 				imageUrl,
-				StoreEntity.from(previousStore.getStoreId())
+				StoreEntity.from(previousStore.getId())
 			)
 		);
 	}
@@ -118,7 +118,7 @@ public class StoreRepositoryImpl implements StoreRepository {
 		queryFactory
 			.delete(qStoreDetailImageEntity)
 			.where(qStoreDetailImageEntity.imageUrl.eq(imageUrl)
-				.and(qStoreDetailImageEntity.store.id.eq(previousStore.getStoreId())))
+				.and(qStoreDetailImageEntity.store.id.eq(previousStore.getId())))
 			.execute();
 	}
 
@@ -152,5 +152,20 @@ public class StoreRepositoryImpl implements StoreRepository {
 		return Optional.ofNullable(
 			StoreMapper.toStore(storeEntity)
 		);
+	}
+
+	@Override
+	public Store saveStore(Store store) {
+		return null;
+	}
+
+	@Override
+	public Store updateStore(Store store) {
+		return null;
+	}
+
+	@Override
+	public Optional<Store> findStore(Long queryStoreId) {
+		return Optional.empty();
 	}
 }

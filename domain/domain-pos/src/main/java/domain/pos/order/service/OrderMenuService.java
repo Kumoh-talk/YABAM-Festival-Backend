@@ -62,7 +62,7 @@ public class OrderMenuService {
 			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_NOT_FOUND));
 		validateOrderStatusForPost(order);
 		receiptValidator.validateIsOwner(order.getReceipt(), userPassport);
-		MenuInfo menuInfo = menuReader.getMenuInfo(order.getReceipt().getSale().getStore().getStoreId(), menuId)
+		MenuInfo menuInfo = menuReader.getMenuInfo(order.getReceipt().getSale().getStore().getId(), menuId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
 		return orderMenuWriter.postOrderMenu(menuInfo, quantity, order);
 	}

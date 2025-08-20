@@ -9,7 +9,7 @@ import com.exception.ServiceException;
 import com.vo.UserPassport;
 
 import domain.pos.store.entity.Store;
-import domain.pos.store.repository.StoreRepository;
+import domain.pos.store.port.required.StoreRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,7 +45,7 @@ public class StoreValidator {
 	public void validateStoreOwner(UserPassport ownerPassport, Store store) {
 		if (!isEqualSavedStoreOwnerAndQueryOwner(ownerPassport.getUserId(), store)) {
 			log.warn("요청 유저는 Store 소유자와 다름: userId={}, queryStoreId={}", ownerPassport.getUserId(),
-				store.getStoreId());
+				store.getId());
 			throw new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER);
 		}
 	}
@@ -63,8 +63,8 @@ public class StoreValidator {
 	}
 
 	public void validateExistDetailImage(Store previousStore, String imageUrl) {
-		if (!storeRepository.isExistsImageUrl(previousStore.getStoreId(), imageUrl)) {
-			log.warn("해당 Store에 존재하지 않는 이미지 URL: storeId={}, imageUrl={}", previousStore.getStoreId(), imageUrl);
+		if (!storeRepository.isExistsImageUrl(previousStore.getId(), imageUrl)) {
+			log.warn("해당 Store에 존재하지 않는 이미지 URL: storeId={}, imageUrl={}", previousStore.getId(), imageUrl);
 			throw new ServiceException(ErrorCode.NOT_FOUND_STORE_IMAGE);
 		}
 	}

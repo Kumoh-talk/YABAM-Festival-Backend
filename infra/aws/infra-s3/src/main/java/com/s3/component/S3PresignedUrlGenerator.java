@@ -12,7 +12,7 @@ import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 
-import domain.pos.store.repository.PresignedUrlGenerator;
+import domain.pos.store.port.required.PresignedUrlGenerator;
 import lombok.RequiredArgsConstructor;
 
 @Component

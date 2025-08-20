@@ -27,7 +27,7 @@ public class KafkaStoreOrderProducer implements StoreOrderProducer {
 	@Override
 	public void produceStoreOrder(Store store, Table table, Order order) {
 		StoreOrderEvent storeOrderEvent = StoreOrderEventMapper.toStoreOrderEvent(table, order);
-		String key = String.valueOf(store.getStoreId());
+		String key = String.valueOf(store.getId());
 		String message;
 		try {
 			message = objectMapper.writeValueAsString(storeOrderEvent);

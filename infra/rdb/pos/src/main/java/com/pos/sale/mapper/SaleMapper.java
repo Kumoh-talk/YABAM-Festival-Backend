@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class SaleMapper {
 	// SaleEntity -> Sale
 	public static SaleEntity toSaleEntity(Store store) {
-		StoreEntity storeEntity = StoreEntity.from(store.getStoreId());
+		StoreEntity storeEntity = StoreEntity.from(store.getId());
 		return SaleEntity.from(storeEntity);
 	}
 

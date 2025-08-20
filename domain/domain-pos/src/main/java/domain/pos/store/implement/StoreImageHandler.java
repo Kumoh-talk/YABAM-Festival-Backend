@@ -2,7 +2,7 @@ package domain.pos.store.implement;
 
 import org.springframework.stereotype.Component;
 
-import domain.pos.store.repository.PresignedUrlGenerator;
+import domain.pos.store.port.required.PresignedUrlGenerator;
 import lombok.RequiredArgsConstructor;
 
 @Component

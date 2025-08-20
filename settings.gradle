@@ -15,6 +15,7 @@ include((':application:yabam:yabam-event'))
 include(":common:discovery-client")
 include(":common:base")
 include(":common:mvc")
+include(":common:domain-entity")
 
 // domain
 include(":domain:domain-pos")

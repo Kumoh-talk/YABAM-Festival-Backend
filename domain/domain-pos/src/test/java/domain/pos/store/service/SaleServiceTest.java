@@ -55,7 +55,7 @@ class SaleServiceTest extends ServiceTest {
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store savedStore = GENERAL_CLOSE_STORE();
 			Store opendStore = GENERAL_OPEN_STORE();
-			Long queryStoreId = savedStore.getStoreId();
+			Long queryStoreId = savedStore.getId();
 			Sale createdSale = GENERAL_OPEN_SALE(opendStore);
 
 			doReturn(savedStore)
@@ -132,7 +132,7 @@ class SaleServiceTest extends ServiceTest {
 			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store savedStore = GENERAL_OPEN_STORE();
-			Long queryStoreId = savedStore.getStoreId();
+			Long queryStoreId = savedStore.getId();
 
 			doReturn(savedStore)
 				.when(storeValidator).validateStoreOwnerWithLock(queryUserPassport, queryStoreId);

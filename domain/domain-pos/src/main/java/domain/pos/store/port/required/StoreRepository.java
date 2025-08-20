@@ -1,4 +1,4 @@
-package domain.pos.store.repository;
+package domain.pos.store.port.required;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,4 +37,10 @@ public interface StoreRepository {
 	List<Store> findMyStores(Long userId);
 
 	Optional<Store> findStoreByStoreIdWithLock(Long queryStoreId);
+
+	Store saveStore(Store store);
+
+	Store updateStore(Store store);
+
+	Optional<Store> findStore(Long queryStoreId);
 }

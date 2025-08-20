@@ -40,7 +40,7 @@ class RedisOrderProducerTest {
 		Order order = OrderFixture.GENERAL_ORDER();
 		Store store = order.getReceipt().getSale().getStore();
 		Table table = order.getReceipt().getTable();
-		redisConsumerHandler.subscribe(store.getStoreId());
+		redisConsumerHandler.subscribe(store.getId());
 
 		// when
 		redisOrderProducer.produceStoreOrder(store, table, order);

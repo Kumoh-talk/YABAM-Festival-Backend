@@ -46,7 +46,7 @@ public class TableRepositoryImpl implements TableRepository {
 
 	@Override
 	public boolean existsTableByStoreAndTableNumWithLock(Store store, Integer tableNumber) {
-		return tableJpaRepository.existsTableByStoreIdAndTableNumberForUpdate(store.getStoreId(), tableNumber);
+		return tableJpaRepository.existsTableByStoreIdAndTableNumberForUpdate(store.getId(), tableNumber);
 	}
 
 	@Override

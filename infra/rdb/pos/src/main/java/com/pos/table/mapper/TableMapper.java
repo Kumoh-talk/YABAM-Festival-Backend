@@ -61,7 +61,7 @@ public class TableMapper {
 			TablePointVo.of(tablePoint.getTableX(), tablePoint.getTableY()),
 			isActive,
 			tableCapacity,
-			StoreEntity.from(store.getStoreId())
+			StoreEntity.from(store.getId())
 		);
 	}
 

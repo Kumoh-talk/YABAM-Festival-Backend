@@ -1,4 +1,4 @@
-package domain.pos.store.repository;
+package domain.pos.store.port.required;
 
 import java.util.Optional;
 

@@ -1,0 +1,25 @@
+plugins {
+    id 'java-library'
+}
+
+bootJar { enabled = false }
+jar { enabled = true }
+
+
+dependencies {
+    // Spring Data JPA
+    compileOnly 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // utils 모듈 uuid
+    compileOnly project(':utils:util-uuid')
+
+    // Test
+    testImplementation project(':domain:domain-pos')
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation testFixtures(project(':domain:domain-pos'))
+    testImplementation project(':common:base')
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+}
+
+

@@ -91,7 +91,7 @@ public class ReceiptService {
 
 		storeValidator.validateStoreOwner(ownerPassport, sale.getStore());
 
-		List<Table> tables = new ArrayList<>(tableReader.findTables(sale.getStore().getStoreId()));
+		List<Table> tables = new ArrayList<>(tableReader.findTables(sale.getStore().getId()));
 		tables.sort(Comparator.comparingInt(Table::getTableNumber));
 		List<Receipt> receipts = receiptReader.getAllNonAdjustReceiptWithTableAndOrders(saleId);
 
@@ -222,10 +222,10 @@ public class ReceiptService {
 		Table table = receipt.getTable();
 		Store store = receipt.getSale().getStore();
 		if (!store.getOwnerPassport().getUserId().equals(ownerPassport.getUserId())) {
-			log.warn("Store 의 Owner 가 아닙니다. storeId: {}, userId: {}", store.getStoreId(), ownerPassport.getUserId());
+			log.warn("Store 의 Owner 가 아닙니다. storeId: {}, userId: {}", store.getId(), ownerPassport.getUserId());
 			throw new ServiceException(ErrorCode.NOT_VALID_OWNER);
 		}
-		Table moveTable = tableReader.findLockTableById(moveTableId, store.getStoreId())
+		Table moveTable = tableReader.findLockTableById(moveTableId, store.getId())
 			.orElseThrow(() -> {
 				log.warn("Table 을 찾을 수 없습니다. tableId: {}", moveTableId);
 				throw new ServiceException(ErrorCode.NOT_FOUND_TABLE);

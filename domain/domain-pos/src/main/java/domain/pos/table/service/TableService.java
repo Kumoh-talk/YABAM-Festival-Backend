@@ -65,13 +65,13 @@ public class TableService {
 			throw new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER);
 		}
 		if (table.getStore().getIsOpen()) {
-			log.warn("가게가 운영중입니다. 테이블 생성 불가 : storeId={}", table.getStore().getStoreId());
+			log.warn("가게가 운영중입니다. 테이블 생성 불가 : storeId={}", table.getStore().getId());
 			throw new ServiceException(ErrorCode.STORE_IS_OPEN_TABLE_WRITE);
 		}
 		if (isDiffTableNumAndQueryNum(updateTableNumber, table)) {
 			if (tableReader.isExistsTableByStoreAndTableNumWithLock(table.getStore(), updateTableNumber)) {
 				log.warn("존재하는 테이블 수정 에러 : storeId={}, tableNumber={}",
-					table.getStore().getStoreId(),
+					table.getStore().getId(),
 					updateTableNumber);
 				throw new ServiceException(ErrorCode.EXIST_TABLE);
 			}
@@ -101,7 +101,7 @@ public class TableService {
 			throw new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER);
 		}
 		if (table.getStore().getIsOpen()) {
-			log.warn("가게가 운영중입니다. 테이블 삭제 불가 : storeId={}", table.getStore().getStoreId());
+			log.warn("가게가 운영중입니다. 테이블 삭제 불가 : storeId={}", table.getStore().getId());
 			throw new ServiceException(ErrorCode.STORE_IS_OPEN_TABLE_WRITE);
 		}
 		tableWriter.deleteTable(table);

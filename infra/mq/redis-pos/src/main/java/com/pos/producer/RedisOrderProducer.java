@@ -23,7 +23,7 @@ public class RedisOrderProducer implements StoreOrderProducer {
 
 	@Override
 	public void produceStoreOrder(Store store, Table table, Order order) {
-		String topic = ChannelPrefixUtil.STORE_ORDER_PREFIX + store.getStoreId();
+		String topic = ChannelPrefixUtil.STORE_ORDER_PREFIX + store.getId();
 		StoreOrderEvent storeOrderEvent = StoreOrderEventMapper.toStoreOrderEvent(table, order);
 		reactiveRedisTemplate.convertAndSend(topic, storeOrderEvent)
 			.subscribeOn(Schedulers.boundedElastic())

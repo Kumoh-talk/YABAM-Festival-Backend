@@ -54,7 +54,7 @@ class ReviewServiceTest extends ServiceTest {
 			// given
 			ReceiptInfo savedReceiptInfo = GENERAL_ADJUSTMENT_RECEIPT().getReceiptInfo();
 			Review responReview = GENERAL_REVIEW(GENERAL_ADJUSTMENT_RECEIPT());
-			Long queryStoreId = responReview.getStore().getStoreId();
+			Long queryStoreId = responReview.getStore().getId();
 			UUID queryReceiptId = GENERAL_ADJUSTMENT_RECEIPT().getReceiptInfo().getReceiptId();
 			UserPassport queryUserPassport = responReview.getUserPassport();
 			ReviewInfo queryReviewInfo = responReview.getReviewInfo();
@@ -89,7 +89,7 @@ class ReviewServiceTest extends ServiceTest {
 			// given
 			Receipt responReceipt = GENERAL_ADJUSTMENT_RECEIPT();
 			Review responReview = GENERAL_REVIEW(responReceipt);
-			Long queryStoreId = responReview.getStore().getStoreId();
+			Long queryStoreId = responReview.getStore().getId();
 			UUID queryReceiptId = responReceipt.getReceiptInfo().getReceiptId();
 			UserPassport queryUserPassport = responReview.getUserPassport();
 			ReviewInfo queryReviewInfo = responReview.getReviewInfo();
@@ -118,7 +118,7 @@ class ReviewServiceTest extends ServiceTest {
 		void 실패_유효하지않은_영수증() {
 			// given
 			Review responReview = GENERAL_REVIEW(GENERAL_ADJUSTMENT_RECEIPT());
-			Long queryStoreId = responReview.getStore().getStoreId();
+			Long queryStoreId = responReview.getStore().getId();
 			UUID queryReceiptId = GENERAL_ADJUSTMENT_RECEIPT().getReceiptInfo().getReceiptId();
 			UserPassport queryUserPassport = responReview.getUserPassport();
 			ReviewInfo queryReviewInfo = responReview.getReviewInfo();
@@ -148,7 +148,7 @@ class ReviewServiceTest extends ServiceTest {
 			Receipt savedReceipt = GENERAL_ADJUSTMENT_RECEIPT();
 			ReceiptInfo savedReceiptInfo = savedReceipt.getReceiptInfo();
 			Review responReview = GENERAL_REVIEW(savedReceipt);
-			Long queryStoreId = responReview.getStore().getStoreId();
+			Long queryStoreId = responReview.getStore().getId();
 			UUID queryReceiptId = savedReceipt.getReceiptInfo().getReceiptId();
 			UserPassport queryUserPassport = responReview.getUserPassport();
 			ReviewInfo queryReviewInfo = responReview.getReviewInfo();

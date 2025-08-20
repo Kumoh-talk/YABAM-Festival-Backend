@@ -60,7 +60,7 @@ public class MenuCategoryEntity extends BaseEntity {
 		return new MenuCategoryEntity(
 			menuCategoryInfo.getName(),
 			menuCategoryInfo.getOrder(),
-			StoreEntity.from(store.getStoreId())
+			StoreEntity.from(store.getId())
 		);
 	}
 
