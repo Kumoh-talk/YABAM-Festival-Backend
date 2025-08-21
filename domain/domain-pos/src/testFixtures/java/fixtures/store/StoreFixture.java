@@ -3,9 +3,9 @@ package fixtures.store;
 import static fixtures.member.UserFixture.*;
 import static fixtures.store.StoreInfoFixture.*;
 
-import com.vo.UserPassport;
-
 import java.util.List;
+
+import com.vo.UserPassport;
 
 import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
@@ -74,5 +74,12 @@ public class StoreFixture {
 			ownerPassport,
 			STORE_DETAIL_IMAGE_URL_LIST
 		);
+	}
+
+	public static Store STORE_FIXTURE() {
+		var passport = OWNER_USER_PASSPORT();
+		var storeInfo = GENERAL_STORE_INFO();
+
+		return Store.create(passport, storeInfo);
 	}
 }

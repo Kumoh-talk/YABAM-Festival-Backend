@@ -21,6 +21,8 @@ public enum ErrorCode {
 	CONFLICT_CLOSE_STORE(HttpStatus.CONFLICT, "STORE_0004", "가게가 이미 종료되었습니다."),
 	NOT_FOUND_STORE_IMAGE(HttpStatus.NOT_FOUND, "STORE_0005", "존재하지 않는 가게 이미지입니다."),
 	NOT_OWNER_STORE_CREATE(HttpStatus.BAD_REQUEST, "STORE_0006", "가게 생성 권한이 없는 사용자입니다."),
+	NOT_FOUND_STORE_DETAIL_IMAGE(HttpStatus.NOT_FOUND, "STORE_0007", "존재하지 않는 가게 상세 이미지입니다."),
+
 	// Auth
 	INVALID_ID_TOKEN(HttpStatus.BAD_REQUEST, "AUTH_0001", "해당 ID 토큰은 유효하지 않습니다."),
 	ABNORMAL_ID_TOKEN(HttpStatus.BAD_REQUEST, "AUTH_0002", "해당 ID 토큰은 정상적이지 않습니다"),

@@ -1,5 +1,7 @@
 package domain.pos.store.port.provided;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.vo.UserPassport;
 
 import domain.pos.store.entity.Store;
@@ -16,5 +18,18 @@ public interface StoreCommand {
 	void deleteStore(
 		UserPassport ownerPassport,
 		Long queryStoreId
+	);
+
+	void registerStoreDetailImage(
+		UserPassport ownerPassport,
+		Long queryStoreId,
+		String imageUrl
+	);
+
+	@Transactional
+	void deleteStoreDetailImage(
+		UserPassport ownerPassport,
+		Long queryStoreId,
+		String imageUrl
 	);
 }

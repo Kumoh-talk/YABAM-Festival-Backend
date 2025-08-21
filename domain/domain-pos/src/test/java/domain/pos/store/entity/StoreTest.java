@@ -2,6 +2,7 @@ package domain.pos.store.entity;
 
 import static com.exception.ErrorCode.*;
 import static fixtures.member.UserFixture.*;
+import static fixtures.store.StoreFixture.*;
 import static fixtures.store.StoreInfoFixture.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -35,11 +36,9 @@ class StoreTest {
 
 	@Test
 	void updateStoreTest() {
-		var passport = OWNER_USER_PASSPORT();
-		var storeInfo = GENERAL_STORE_INFO();
+		var store = STORE_FIXTURE();
+		var passport = store.getOwnerPassport();
 		var newStoreInfo = CHANGED_GENERAL_STORE_INFO();
-
-		var store = Store.create(passport, storeInfo);
 
 		store.update(passport, newStoreInfo);
 
@@ -48,11 +47,9 @@ class StoreTest {
 
 	@Test
 	void updateFailTest() {
-		var passport = OWNER_USER_PASSPORT();
-		var storeInfo = GENERAL_STORE_INFO();
-		var newStoreInfo = CHANGED_GENERAL_STORE_INFO();
+		var store = STORE_FIXTURE();
 
-		var store = Store.create(passport, storeInfo);
+		var newStoreInfo = CHANGED_GENERAL_STORE_INFO();
 
 		assertThatThrownBy(() ->
 			store.update(DIFF_OWNER_PASSPORT(), newStoreInfo)
