@@ -60,3 +60,23 @@ _Aggregate Root_
 - remove 연산에는 String 값에 해당하는 URL 값이 들어간다
     - URL 연산에 대한 정규식 검산이 필요하다.
     - 포함되지 않은 이미지 url 을 삭제하려 한다면 에러를 반환한다.
+
+---
+
+# View Model (행동 X , 제약 X)
+
+## StoreView (상세 조회 DTO)
+
+// TODO : 해당 도메인 View 모델 재 설계 필요 이유는 Store 와 DetailImages 를 같이 집계 해야할듯 함 Store가 DetailImage와 분리됨
+
+## StoreHeadDto (가게 목록 View DTO)
+
+- 'storeId': 가게 ID
+- 'storeName': 가게 이름
+- 'isOpen': 가게 영업 상태 (오픈/마감)
+- 'headImageUrl': 가게 대표 이미지 URL
+- 'description': 가게 소개 설명
+- 'storeDetailImageUrls': 가게 상세 이미지 URL 목록
+
+
+
