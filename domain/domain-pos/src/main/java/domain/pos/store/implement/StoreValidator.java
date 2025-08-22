@@ -24,6 +24,12 @@ public class StoreValidator {
 		return validateStoreAndOwner(ownerPassport, storeReader.readSingleStore(queryStoreId), queryStoreId);
 	}
 
+	public void existsStoreOwner(UserPassport ownerPassport, Long queryStoreId) {
+		if (!storeRepository.isExistsByStoreIdAndUserId(queryStoreId, ownerPassport.getUserId())) {
+			throw new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER);
+		}
+	}
+
 	private Store validateStoreAndOwner(UserPassport ownerPassport, Optional<Store> optionalStore, Long queryStoreId) {
 		Store store = optionalStore
 			.orElseThrow(() -> {

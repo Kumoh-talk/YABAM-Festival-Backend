@@ -60,6 +60,8 @@ public class StoreCommandImpl implements StoreCommand {
 		final Long queryStoreId,
 		final String imageUrl
 	) {
+		storeValidator.existsStoreOwner(ownerPassport, queryStoreId);
+
 		var detailImages = detailImageRepository.findByStoreId(queryStoreId);
 
 		detailImages.register(imageUrl);
@@ -74,6 +76,8 @@ public class StoreCommandImpl implements StoreCommand {
 		final Long queryStoreId,
 		final String imageUrl
 	) {
+		storeValidator.existsStoreOwner(ownerPassport, queryStoreId);
+
 		var detailImages = detailImageRepository.findByStoreId(queryStoreId);
 
 		detailImages.remove(imageUrl);
