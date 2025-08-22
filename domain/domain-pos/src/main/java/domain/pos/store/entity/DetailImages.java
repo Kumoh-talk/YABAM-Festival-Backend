@@ -43,7 +43,7 @@ public class DetailImages {
 	}
 
 	private static void validatePattern(String imageUrl) {
-		if (!IMAGE_URL_PATTERN.matcher(imageUrl).matches()) {
+		if (!IMAGE_URL_PATTERN.matcher(requireNonNull(imageUrl)).matches()) {
 			throw new ServiceException(NOT_VALID_VO);
 		}
 	}
