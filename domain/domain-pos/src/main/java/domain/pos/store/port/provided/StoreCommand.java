@@ -10,15 +10,26 @@ import domain.pos.store.entity.StoreInfo;
 public interface StoreCommand {
 	Store createStore(final UserPassport ownerPassport, final StoreInfo createRequestStoreInfo);
 
-	@Transactional
 	Store updateStoreInfo(
 		UserPassport ownerPassport,
 		Long queryStoreId,
 		StoreInfo modifyStoreInfo);
 
-	@Transactional
 	void deleteStore(
 		UserPassport ownerPassport,
 		Long queryStoreId
+	);
+
+	void registerStoreDetailImage(
+		UserPassport ownerPassport,
+		Long queryStoreId,
+		String imageUrl
+	);
+
+	@Transactional
+	void deleteStoreDetailImage(
+		UserPassport ownerPassport,
+		Long queryStoreId,
+		String imageUrl
 	);
 }

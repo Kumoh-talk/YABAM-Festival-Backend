@@ -168,4 +168,9 @@ public class StoreRepositoryImpl implements StoreRepository {
 	public Optional<Store> findStore(Long queryStoreId) {
 		return Optional.empty();
 	}
+
+	@Override
+	public boolean isExistsByStoreIdAndUserId(Long queryStoreId, Long userId) {
+		return false;
+	}
 }
