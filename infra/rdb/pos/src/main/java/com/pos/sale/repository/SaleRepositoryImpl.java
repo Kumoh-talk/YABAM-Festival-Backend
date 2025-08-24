@@ -65,7 +65,7 @@ public class SaleRepositoryImpl implements SaleRepository {
 		LocalDateTime now = LocalDateTime.now();
 		queryFactory
 			.update(qSaleEntity)
-			.where(qSaleEntity.id.eq(savedSale.getSaleId()))
+			.where(qSaleEntity.id.eq(savedSale.getId()))
 			.set(qSaleEntity.closeDateTime, now)
 			.execute();
 		return SaleMapper.toClosedSale(savedSale, closeStore, now);

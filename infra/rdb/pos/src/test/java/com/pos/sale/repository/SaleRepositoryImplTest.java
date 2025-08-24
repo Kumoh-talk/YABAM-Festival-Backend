@@ -51,7 +51,7 @@ class SaleRepositoryImplTest extends RepositoryTest {
 
 		// then
 		assertSoftly(softly -> {
-			softly.assertThat(resultSale.getSaleId()).isEqualTo(saleEntity.getId());
+			softly.assertThat(resultSale.getId()).isEqualTo(saleEntity.getId());
 			softly.assertThat(resultSale.getStore().getId()).isEqualTo(savedStore.getId());
 			softly.assertThat(resultSale.getStore().getOwnerPassport().getUserId())
 				.isEqualTo(savedStore.getOwnerPassport().getUserId());
@@ -67,9 +67,9 @@ class SaleRepositoryImplTest extends RepositoryTest {
 		testEntityManager.clear();
 		System.out.println("===SaleRepositoryImplTest.Sale생성 쿼리===");
 		// then
-		Sale sale = saleRepository.findSaleWithStoreBySaleId(resultSale.getSaleId()).get();
+		Sale sale = saleRepository.findSaleWithStoreBySaleId(resultSale.getId()).get();
 		assertSoftly(softly -> {
-			softly.assertThat(sale.getSaleId()).isEqualTo(resultSale.getSaleId());
+			softly.assertThat(sale.getId()).isEqualTo(resultSale.getId());
 			softly.assertThat(sale.getStore().getId()).isEqualTo(savedStore.getId());
 			softly.assertThat(sale.getStore().getOwnerPassport().getUserId())
 				.isEqualTo(savedStore.getOwnerPassport().getUserId());
@@ -93,9 +93,9 @@ class SaleRepositoryImplTest extends RepositoryTest {
 		testEntityManager.clear();
 		System.out.println("===SaleRepositoryImplTest.Sale_마감 쿼리===");
 		// then
-		Sale sale = saleRepository.findSaleWithStoreBySaleId(resultSale.getSaleId()).get();
+		Sale sale = saleRepository.findSaleWithStoreBySaleId(resultSale.getId()).get();
 		assertSoftly(softly -> {
-			softly.assertThat(sale.getSaleId()).isEqualTo(savedSale.getSaleId());
+			softly.assertThat(sale.getId()).isEqualTo(savedSale.getId());
 			softly.assertThat(sale.getStore().getId()).isEqualTo(savedStore.getId());
 			softly.assertThat(sale.getStore().getOwnerPassport().getUserId())
 				.isEqualTo(savedStore.getOwnerPassport().getUserId());
@@ -122,9 +122,9 @@ class SaleRepositoryImplTest extends RepositoryTest {
 		assertSoftly(softly -> {
 			softly.assertThat(resultSale.getContent().size()).isEqualTo(3);
 			softly.assertThat(resultSale.hasNext()).isFalse();
-			softly.assertThat(resultSale.getContent().get(0).getSaleId()).isEqualTo(saleEntity3.getId());
-			softly.assertThat(resultSale.getContent().get(1).getSaleId()).isEqualTo(saleEntity2.getId());
-			softly.assertThat(resultSale.getContent().get(2).getSaleId()).isEqualTo(saleEntity.getId());
+			softly.assertThat(resultSale.getContent().get(0).getId()).isEqualTo(saleEntity3.getId());
+			softly.assertThat(resultSale.getContent().get(1).getId()).isEqualTo(saleEntity2.getId());
+			softly.assertThat(resultSale.getContent().get(2).getId()).isEqualTo(saleEntity.getId());
 		});
 	}
 

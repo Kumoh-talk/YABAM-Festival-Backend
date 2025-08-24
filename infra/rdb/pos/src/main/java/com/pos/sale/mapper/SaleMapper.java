@@ -49,7 +49,7 @@ public class SaleMapper {
 
 	public static Sale toClosedSale(Sale savedSale, Store closeStore, LocalDateTime now) {
 		return Sale.of(
-			savedSale.getSaleId(),
+			savedSale.getId(),
 			savedSale.getOpenDateTime(),
 			now,
 			closeStore

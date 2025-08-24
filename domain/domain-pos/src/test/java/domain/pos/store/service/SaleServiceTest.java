@@ -161,7 +161,7 @@ class SaleServiceTest extends ServiceTest {
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store savedStore = GENERAL_OPEN_STORE();
 			Sale savedOpenedSale = GENERAL_OPEN_SALE(savedStore);
-			Long querySaleId = savedOpenedSale.getSaleId();
+			Long querySaleId = savedOpenedSale.getId();
 
 			Store closedStore = GENERAL_CLOSE_STORE();
 			Sale closedSale = GENERAL_CLOSE_SALE(closedStore);
@@ -221,11 +221,11 @@ class SaleServiceTest extends ServiceTest {
 			Sale savedClosedSale = GENERAL_CLOSE_SALE(GENERAL_CLOSE_STORE());
 
 			doReturn(Optional.of(savedClosedSale))
-				.when(saleReader).readSingleSale(savedClosedSale.getSaleId());
+				.when(saleReader).readSingleSale(savedClosedSale.getId());
 
 			// when->then
 			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> saleService.closeStore(queryUserPassport, savedClosedSale.getSaleId()))
+				softly.assertThatThrownBy(() -> saleService.closeStore(queryUserPassport, savedClosedSale.getId()))
 					.isInstanceOf(ServiceException.class)
 					.hasMessage(ErrorCode.CONFLICT_CLOSE_STORE.getMessage());
 				verify(saleReader)
@@ -243,7 +243,7 @@ class SaleServiceTest extends ServiceTest {
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store savedStore = GENERAL_CLOSE_SALE(GENERAL_CLOSE_STORE()).getStore();
 			Sale savedOpenedSale = GENERAL_OPEN_SALE(savedStore);
-			Long querySaleId = savedOpenedSale.getSaleId();
+			Long querySaleId = savedOpenedSale.getId();
 			doReturn(Optional.of(savedOpenedSale))
 				.when(saleReader).readSingleSale(querySaleId);
 

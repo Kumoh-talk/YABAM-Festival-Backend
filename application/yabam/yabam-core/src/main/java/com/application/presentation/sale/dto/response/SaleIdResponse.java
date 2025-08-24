@@ -11,7 +11,7 @@ public record SaleIdResponse(
 ) {
 	public static SaleIdResponse from(final Sale sale) {
 		return SaleIdResponse.builder()
-			.saleId(sale.getSaleId())
+			.saleId(sale.getId())
 			.build();
 	}
 }

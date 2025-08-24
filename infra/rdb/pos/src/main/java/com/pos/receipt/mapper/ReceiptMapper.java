@@ -18,7 +18,7 @@ import domain.pos.table.entity.Table;
 public class ReceiptMapper {
 
 	public static ReceiptEntity toReceiptEntity(Sale sale, Table table) {
-		return ReceiptEntity.of(SaleEntity.from(sale.getSaleId()), TableEntity.from(table.getTableId()));
+		return ReceiptEntity.of(SaleEntity.from(sale.getId()), TableEntity.from(table.getTableId()));
 	}
 
 	public static Receipt toReceipt(ReceiptEntity receiptEntity, Table table, Sale sale) {

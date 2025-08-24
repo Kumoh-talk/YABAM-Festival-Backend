@@ -33,7 +33,7 @@ public class CallFixture {
 
 	public static Call CUSTOM_GENERAL_CALL(Sale sale, Table table, Receipt receipt) {
 		return Call.of(
-			sale.getSaleId(),
+			sale.getId(),
 			CALL_ID,
 			TableCallInfo.of(
 				table.getTableId(),
