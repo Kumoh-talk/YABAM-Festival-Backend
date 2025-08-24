@@ -91,6 +91,26 @@ public class SaleRepositoryImpl implements SaleRepository {
 		return new SliceImpl<>(list, PageRequest.of(0, size), hasNext);
 	}
 
+	@Override
+	public Sale save(Sale sale) {
+		return null;
+	}
+
+	@Override
+	public Optional<Sale> findOpenSaleByStoreId(Long storeId) {
+		return Optional.empty();
+	}
+
+	@Override
+	public Sale updateSale(Sale sale) {
+		return null;
+	}
+
+	@Override
+	public boolean isExistsNonAdjustReceiptBySaleId(Long saleId) {
+		return false;
+	}
+
 	private BooleanExpression saleSliceCursorCondition(Long storeId, Long lastSaleId) {
 		if (lastSaleId == null) {
 			return qSaleEntity.store.id.eq(storeId);

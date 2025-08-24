@@ -18,6 +18,8 @@ _Aggregate Root_
 - create() : 가게 생성
 - update() : 가게 수정
 - delete() : 가게 삭제
+- open() : 가게 영업 시작
+- close() : 가게 영업 마감
 
 #### 제약
 
@@ -25,6 +27,9 @@ _Aggregate Root_
 - update 연산에는 StoreInfo 만 변경 가능하다.
     - update 연산은 가게 소유자만 변경 가능하다.
 - delete 연산은 가게 소유자만 가능하다.
+- open 연산은 가게 소유자만 가능하다.
+    - open 연산은 가게가 마감 상태이어야 영업을 시작할 수 있다.
+    - Sale이라는 도메인 엔티티를 생성한다.
 
 ### StoreInfo
 
@@ -41,7 +46,7 @@ _Value Object_
 
 ## DetailImages
 
-_Aggregate Root_
+_Aggregate_
 
 ### 속성
 
