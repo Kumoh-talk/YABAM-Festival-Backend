@@ -18,9 +18,9 @@ import com.pos.sale.mapper.SaleMapper;
 import com.pos.store.entity.StoreEntity;
 import com.pos.store.mapper.StoreMapper;
 
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
+import domain.pos.sale.port.required.SaleRepository;
 import domain.pos.store.entity.Store;
-import domain.pos.store.port.required.SaleRepository;
 
 class SaleRepositoryImplTest extends RepositoryTest {
 

@@ -34,7 +34,7 @@
 // import domain.pos.receipt.implement.ReceiptReader;
 // import domain.pos.receipt.implement.ReceiptValidator;
 // import domain.pos.receipt.implement.ReceiptWriter;
-// import domain.pos.store.entity.Sale;
+// import domain.pos.sale.entity.Sale;
 // import domain.pos.store.entity.Store;
 // import domain.pos.store.implement.SaleReader;
 // import domain.pos.store.implement.StoreValidator;

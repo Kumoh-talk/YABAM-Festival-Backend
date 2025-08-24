@@ -6,7 +6,7 @@ import com.pos.sale.entity.SaleEntity;
 import com.pos.store.entity.StoreEntity;
 import com.pos.store.mapper.StoreMapper;
 
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
 import domain.pos.store.entity.Store;
 import lombok.NoArgsConstructor;
 

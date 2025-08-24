@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
 
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
 import lombok.extern.slf4j.Slf4j;
 
 @Component

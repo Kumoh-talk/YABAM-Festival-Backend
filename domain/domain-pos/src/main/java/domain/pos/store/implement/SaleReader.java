@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
 
-import domain.pos.store.entity.Sale;
-import domain.pos.store.port.required.SaleRepository;
+import domain.pos.sale.entity.Sale;
+import domain.pos.sale.port.required.SaleRepository;
 import lombok.RequiredArgsConstructor;
 
 @Component

@@ -20,7 +20,7 @@ import com.vo.UserPassport;
 
 import base.ServiceTest;
 import domain.pos.receipt.implement.ReceiptReader;
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
 import domain.pos.store.entity.Store;
 import domain.pos.store.implement.SaleReader;
 import domain.pos.store.implement.SaleWriter;

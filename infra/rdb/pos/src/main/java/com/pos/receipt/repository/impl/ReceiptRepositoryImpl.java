@@ -23,7 +23,7 @@ import com.pos.table.mapper.TableMapper;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.receipt.repository.ReceiptRepository;
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
 import domain.pos.store.entity.Store;
 import domain.pos.table.entity.Table;
 import lombok.RequiredArgsConstructor;

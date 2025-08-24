@@ -16,9 +16,9 @@ import com.pos.store.entity.QStoreEntity;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
+import domain.pos.sale.port.required.SaleRepository;
 import domain.pos.store.entity.Store;
-import domain.pos.store.port.required.SaleRepository;
 import lombok.RequiredArgsConstructor;
 
 @Repository

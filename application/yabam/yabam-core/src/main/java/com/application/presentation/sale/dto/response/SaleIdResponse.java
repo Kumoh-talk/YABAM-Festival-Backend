@@ -1,6 +1,6 @@
 package com.application.presentation.sale.dto.response;
 
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 

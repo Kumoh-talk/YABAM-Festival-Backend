@@ -8,7 +8,7 @@ import org.springframework.data.domain.Slice;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
