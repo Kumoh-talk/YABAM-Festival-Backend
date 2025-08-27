@@ -9,7 +9,7 @@ import com.exception.ServiceException;
 import com.vo.UserPassport;
 
 import domain.pos.receipt.implement.ReceiptReader;
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
 import domain.pos.store.entity.Store;
 import domain.pos.store.implement.SaleReader;
 import domain.pos.store.implement.SaleWriter;
@@ -41,7 +41,7 @@ public class SaleService {
 		final Sale createdSale = saleWriter.createSale(opendStore);
 
 		log.info("가게 활성화 성공 : userId={}, storeId={}, saleId={}", ownerPassport.getUserId(), storeId,
-			createdSale.getSaleId());
+			createdSale.getId());
 		return createdSale;
 	}
 
@@ -55,7 +55,7 @@ public class SaleService {
 
 		validateOpendSaleOrStore(ownerPassport, saleId, savedSale);
 
-		if (receiptReader.isExistsNonAdjustReceiptBySaleId(savedSale.getSaleId())) {
+		if (receiptReader.isExistsNonAdjustReceiptBySaleId(savedSale.getId())) {
 			log.warn("판매 종료 실패: userId={}, saleId={}", ownerPassport.getUserId(), saleId);
 			throw new ServiceException(ErrorCode.NON_ADJUST_RECEIPT_DONT_CLOSE);
 		}
@@ -63,7 +63,7 @@ public class SaleService {
 		final Store closedStore = storeWriter.modifyStoreOpenStatus(savedSale.getStore());
 		final Sale closedSale = saleWriter.closeSale(savedSale, closedStore);
 		log.info("가게 종료 성공 : userId={}, storeId={}, saleId={}", ownerPassport.getUserId(),
-			savedSale.getStore().getId(), closedSale.getSaleId());
+			savedSale.getStore().getId(), closedSale.getId());
 		return closedSale;
 	}
 

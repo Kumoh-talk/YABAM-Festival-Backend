@@ -38,7 +38,7 @@ public class CallService {
 			throw new ServiceException(ErrorCode.TABLE_NOT_ACTIVE);
 		}
 
-		callWriter.createCall(receiptId, receipt.getSale().getSaleId(), callMessage);
+		callWriter.createCall(receiptId, receipt.getSale().getId(), callMessage);
 
 	}
 

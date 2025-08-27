@@ -8,7 +8,7 @@ import org.springframework.data.domain.Slice;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
@@ -32,7 +32,7 @@ public record SaleCursorResponse(
 			.totalCount(saleSlice.getNumberOfElements())
 			.hasNextPage(saleSlice.hasNext())
 			.lastSaleId(saleSlice.getContent().isEmpty() ? null :
-				saleSlice.getContent().get(saleSlice.getNumberOfElements() - 1).getSaleId())
+				saleSlice.getContent().get(saleSlice.getNumberOfElements() - 1).getId())
 			.saleInfoDtos(saleInfoDtos)
 			.build();
 	}
@@ -53,7 +53,7 @@ public record SaleCursorResponse(
 	) {
 		public static SaleInfoDto from(Sale sale) {
 			return SaleInfoDto.builder()
-				.saleId(sale.getSaleId())
+				.saleId(sale.getId())
 				.openDateTime(sale.getOpenDateTime())
 				.closeDateTime(sale.getCloseDateTime().orElse(null))
 				.isOpen(sale.getCloseDateTime().isEmpty())

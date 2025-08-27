@@ -1,6 +1,6 @@
 package com.application.presentation.sale.dto.response;
 
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
@@ -11,7 +11,7 @@ public record SaleIdResponse(
 ) {
 	public static SaleIdResponse from(final Sale sale) {
 		return SaleIdResponse.builder()
-			.saleId(sale.getSaleId())
+			.saleId(sale.getId())
 			.build();
 	}
 }

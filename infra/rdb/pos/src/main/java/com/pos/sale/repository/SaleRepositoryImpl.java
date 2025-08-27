@@ -16,9 +16,9 @@ import com.pos.store.entity.QStoreEntity;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
+import domain.pos.sale.port.required.SaleRepository;
 import domain.pos.store.entity.Store;
-import domain.pos.store.port.required.SaleRepository;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -65,7 +65,7 @@ public class SaleRepositoryImpl implements SaleRepository {
 		LocalDateTime now = LocalDateTime.now();
 		queryFactory
 			.update(qSaleEntity)
-			.where(qSaleEntity.id.eq(savedSale.getSaleId()))
+			.where(qSaleEntity.id.eq(savedSale.getId()))
 			.set(qSaleEntity.closeDateTime, now)
 			.execute();
 		return SaleMapper.toClosedSale(savedSale, closeStore, now);
@@ -89,6 +89,26 @@ public class SaleRepositoryImpl implements SaleRepository {
 			.toList();
 
 		return new SliceImpl<>(list, PageRequest.of(0, size), hasNext);
+	}
+
+	@Override
+	public Sale save(Sale sale) {
+		return null;
+	}
+
+	@Override
+	public Optional<Sale> findOpenSaleByStoreId(Long storeId) {
+		return Optional.empty();
+	}
+
+	@Override
+	public Sale updateSale(Sale sale) {
+		return null;
+	}
+
+	@Override
+	public boolean isExistsNonAdjustReceiptBySaleId(Long saleId) {
+		return false;
 	}
 
 	private BooleanExpression saleSliceCursorCondition(Long storeId, Long lastSaleId) {

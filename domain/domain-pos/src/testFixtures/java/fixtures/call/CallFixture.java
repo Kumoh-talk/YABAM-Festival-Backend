@@ -7,7 +7,7 @@ import domain.pos.call.entity.Call;
 import domain.pos.call.entity.CallMessage;
 import domain.pos.call.entity.TableCallInfo;
 import domain.pos.receipt.entity.Receipt;
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
 import domain.pos.table.entity.Table;
 
 public class CallFixture {
@@ -33,7 +33,7 @@ public class CallFixture {
 
 	public static Call CUSTOM_GENERAL_CALL(Sale sale, Table table, Receipt receipt) {
 		return Call.of(
-			sale.getSaleId(),
+			sale.getId(),
 			CALL_ID,
 			TableCallInfo.of(
 				table.getTableId(),

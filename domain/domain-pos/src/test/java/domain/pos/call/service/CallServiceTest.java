@@ -27,7 +27,7 @@ import domain.pos.call.implement.CallReader;
 import domain.pos.call.implement.CallWriter;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.implement.ReceiptReader;
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
 import domain.pos.store.entity.Store;
 import domain.pos.table.entity.Table;
 import fixtures.store.SaleFixture;
