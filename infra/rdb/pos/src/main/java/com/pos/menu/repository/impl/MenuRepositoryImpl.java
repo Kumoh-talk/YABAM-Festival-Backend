@@ -20,7 +20,8 @@ import domain.pos.menu.entity.Menu;
 import domain.pos.menu.entity.MenuCategory;
 import domain.pos.menu.entity.MenuCategoryInfo;
 import domain.pos.menu.entity.MenuInfo;
-import domain.pos.menu.repository.MenuRepository;
+import domain.pos.menu.entity.v2.state.CreateMenuInfoState;
+import domain.pos.menu.port.required.MenuRepository;
 import domain.pos.store.entity.Store;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -136,6 +137,7 @@ public class MenuRepositoryImpl implements MenuRepository {
 		return MenuMapper.toMenuInfo(menuEntity);
 	}
 
+	// TODO : 재정렬을 위한 카테고리 전 메뉴 잠금
 	@Override
 	public void deleteMenu(Menu menu) {
 		MenuEntity menuEntity = menuJpaRepository.findById(menu.getMenuInfo().getId()).get();
@@ -157,5 +159,39 @@ public class MenuRepositoryImpl implements MenuRepository {
 	public Optional<MenuInfo> getMenuInfoById(Long menuId) {
 		return menuJpaRepository.findById(menuId)
 			.map(MenuMapper::toMenuInfo);
+	}
+
+	// v2
+	// TODO : menuCategory 조회 락 및 Max Order 조회 후 order 삽입 로직 추가 -> 동시성 오류 시 @Retryable를 통한 재시도 로직 필요
+	@Override
+	public domain.pos.menu.entity.v2.Menu createMenuAtEnd(CreateMenuInfoState createMenuInfoState, Long storeId,
+		Long menuCategoryId) {
+		return null;
+	}
+
+	@Override
+	public Optional<domain.pos.menu.entity.v2.Menu> readMenu(Long storeId, Long menuId) {
+		return Optional.empty();
+	}
+
+	@Override
+	public domain.pos.menu.entity.v2.Menu updateMenuInfo(domain.pos.menu.entity.v2.Menu menu) {
+		return null;
+	}
+
+	// TODO : menuCategory 조회 락 후 order 재정렬 로직 추가
+	@Override
+	public domain.pos.menu.entity.v2.Menu updateOrder(Long storeId, Long menuId, Integer updateOrder) {
+		return null;
+	}
+
+	@Override
+	public domain.pos.menu.entity.v2.Menu updateState(domain.pos.menu.entity.v2.Menu menu) {
+		return null;
+	}
+
+	@Override
+	public void deleteMenu(Long menuId, Long storeId) {
+
 	}
 }

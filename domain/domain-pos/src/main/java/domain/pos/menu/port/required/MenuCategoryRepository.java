@@ -1,4 +1,4 @@
-package domain.pos.menu.repository;
+package domain.pos.menu.port.required;
 
 import java.util.List;
 import java.util.Optional;

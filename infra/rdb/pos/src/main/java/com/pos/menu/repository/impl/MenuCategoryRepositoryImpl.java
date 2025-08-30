@@ -13,7 +13,7 @@ import com.pos.menu.repository.jpa.MenuCategoryJpaRepository;
 
 import domain.pos.menu.entity.MenuCategory;
 import domain.pos.menu.entity.MenuCategoryInfo;
-import domain.pos.menu.repository.MenuCategoryRepository;
+import domain.pos.menu.port.required.MenuCategoryRepository;
 import domain.pos.store.entity.Store;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
