@@ -30,4 +30,6 @@ public interface TableRepository {
 	void deleteTable(Table table);
 
 	Table save(Table table);
+
+	Optional<Table> findById(UUID tableId);
 }

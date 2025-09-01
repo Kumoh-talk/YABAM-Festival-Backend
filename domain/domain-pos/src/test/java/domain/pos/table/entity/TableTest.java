@@ -9,7 +9,7 @@ class TableTest {
 	@Test
 	void createTableTest() {
 		var storeId = 1L;
-		TableInfoRequest request = create();
+		TableInfoRequest request = INFO_REQ_INIT();
 
 		Table table = Table.create(storeId, request);
 
@@ -18,6 +18,20 @@ class TableTest {
 		assertThat(table.getTablePoint()).isEqualTo(request.tablePoint());
 		assertThat(table.getTableCapacity()).isEqualTo(request.tableCapacity());
 		assertThat(table.getIsActive()).isFalse();
+	}
+
+	@Test
+	void modifyTableTest() {
+		TableInfoRequest createRequest = INFO_REQ_INIT();
+		TableInfoRequest updateRequest = INFO_REQ_DIFF();
+		Table table = Table.create(1L, createRequest);
+
+		table.modify(updateRequest);
+
+		assertThat(table.getTableNumber()).isEqualTo(updateRequest.tableNumber());
+		assertThat(table.getTablePoint()).isEqualTo(updateRequest.tablePoint());
+		assertThat(table.getTableCapacity()).isEqualTo(updateRequest.tableCapacity());
+
 	}
 
 }

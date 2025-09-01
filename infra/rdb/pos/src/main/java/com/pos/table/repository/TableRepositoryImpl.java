@@ -85,4 +85,9 @@ public class TableRepositoryImpl implements TableRepository {
 	public Table save(Table table) {
 		return null;
 	}
+
+	@Override
+	public Optional<Table> findById(UUID tableId) {
+		return Optional.empty();
+	}
 }

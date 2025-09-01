@@ -55,6 +55,12 @@ public class Table {
 		return table;
 	}
 
+	public void modify(TableInfoRequest request) {
+		this.tableNumber = request.tableNumber();
+		this.tablePoint = request.tablePoint();
+		this.tableCapacity = request.tableCapacity();
+	}
+
 	public Table changeActiveStatus(boolean isActive) {
 		return Table.of(this.id, this.tableNumber, isActive, this.tablePoint, tableCapacity, this.store);
 	}

@@ -3,10 +3,14 @@ package domain.pos.table.adapter.service;
 import static com.exception.ErrorCode.*;
 import static com.exception.State.*;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import com.exception.ErrorCode;
+import com.exception.ServiceException;
 import com.vo.UserPassport;
 
 import domain.pos.store.entity.Store;
@@ -40,5 +44,34 @@ public class TableCommandImpl implements TableCommand {
 
 	private boolean isExistsTableNum(TableInfoRequest request, Store store) {
 		return tableRepository.existsTableByStoreAndTableNumWithLock(store, request.tableNumber());
+	}
+
+	@Transactional
+	@Override
+	public Table updateTable(UserPassport passport, final Long storeId, final UUID tableId, TableInfoRequest request) {
+		var store = storeValidator.validateStoreOwner(passport, storeId);
+
+		ifState(store.getIsOpen(), STORE_IS_OPEN_TABLE_WRITE);
+
+		Table table = validateTable(tableId);
+
+		if (isDiffTableNumAndQueryNum(request.tableNumber(), table)) {
+			ifState(isExistsTableNum(request, store), EXIST_TABLE);
+		}
+
+		table.modify(request);
+
+		return tableRepository.save(table);
+	}
+
+	private Table validateTable(UUID tableId) {
+		return tableRepository.findById(tableId)
+			.orElseThrow(() -> {
+				return new ServiceException(ErrorCode.NOT_FOUND_TABLE);
+			});
+	}
+
+	private static boolean isDiffTableNumAndQueryNum(Integer updateTableNumber, Table table) {
+		return !table.getTableNumber().equals(updateTableNumber);
 	}
 }
