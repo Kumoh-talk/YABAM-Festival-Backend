@@ -28,4 +28,6 @@ public interface TableRepository {
 	void updateTableInfo(Table table, Integer updateTableNumber, TablePoint updateTablePoint, Integer tableCapacity);
 
 	void deleteTable(Table table);
+
+	Table save(Table table);
 }

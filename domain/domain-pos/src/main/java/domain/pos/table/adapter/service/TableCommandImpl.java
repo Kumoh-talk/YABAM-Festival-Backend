@@ -1,0 +1,44 @@
+package domain.pos.table.adapter.service;
+
+import static com.exception.ErrorCode.*;
+import static com.exception.State.*;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
+
+import com.vo.UserPassport;
+
+import domain.pos.store.entity.Store;
+import domain.pos.store.implement.StoreValidator;
+import domain.pos.table.entity.Table;
+import domain.pos.table.entity.TableInfoRequest;
+import domain.pos.table.port.provided.TableCommand;
+import domain.pos.table.port.required.repository.TableRepository;
+import lombok.RequiredArgsConstructor;
+
+@Service
+@Validated
+@RequiredArgsConstructor
+public class TableCommandImpl implements TableCommand {
+	private final TableRepository tableRepository;
+	private final StoreValidator storeValidator;
+
+	@Transactional
+	@Override
+	public Table createTable(UserPassport passport, final Long storeId, TableInfoRequest request) {
+		Store store = storeValidator.validateStoreOwner(passport, storeId);
+
+		ifState(store.getIsOpen(), STORE_IS_OPEN_TABLE_WRITE);
+
+		ifState(isExistsTableNum(request, store), EXIST_TABLE);
+
+		var table = Table.create(storeId, request);
+
+		return tableRepository.save(table);
+	}
+
+	private boolean isExistsTableNum(TableInfoRequest request, Store store) {
+		return tableRepository.existsTableByStoreAndTableNumWithLock(store, request.tableNumber());
+	}
+}

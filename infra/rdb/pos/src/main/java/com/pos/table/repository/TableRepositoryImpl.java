@@ -80,4 +80,9 @@ public class TableRepositoryImpl implements TableRepository {
 	public void deleteTable(Table table) {
 		tableJpaRepository.deleteById(table.getId());
 	}
+
+	@Override
+	public Table save(Table table) {
+		return null;
+	}
 }

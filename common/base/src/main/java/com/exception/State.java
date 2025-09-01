@@ -12,4 +12,9 @@ public class State {
 		}
 	}
 
+	public static void ifState(boolean expression, ErrorCode errorCode) {
+		if (expression) {
+			throw new ServiceException(errorCode);
+		}
+	}
 }
