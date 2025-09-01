@@ -13,7 +13,7 @@ import com.pos.table.vo.TablePointVo;
 import domain.pos.store.entity.Store;
 import domain.pos.table.entity.Table;
 import domain.pos.table.entity.TablePoint;
-import domain.pos.table.repository.TableRepository;
+import domain.pos.table.port.required.repository.TableRepository;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -68,7 +68,7 @@ public class TableRepositoryImpl implements TableRepository {
 	public void updateTableInfo(Table table, Integer updateTableNumber, TablePoint updateTablePoint,
 		Integer tableCapacity) {
 		tableJpaRepository.updateTableInfoById(
-			table.getTableId(),
+			table.getId(),
 			updateTableNumber,
 			TablePointVo.of(updateTablePoint.getTableX(), updateTablePoint.getTableY()),
 			tableCapacity
@@ -78,6 +78,6 @@ public class TableRepositoryImpl implements TableRepository {
 
 	@Override
 	public void deleteTable(Table table) {
-		tableJpaRepository.deleteById(table.getTableId());
+		tableJpaRepository.deleteById(table.getId());
 	}
 }

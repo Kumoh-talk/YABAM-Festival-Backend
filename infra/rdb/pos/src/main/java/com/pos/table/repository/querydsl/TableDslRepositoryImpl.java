@@ -28,7 +28,7 @@ public class TableDslRepositoryImpl implements TableDslRepository {
 	public void updateTableActiveStatusById(boolean isActive, Table savedInActiveTable) {
 		queryFactory
 			.update(qTableEntity)
-			.where(qTableEntity.id.eq(savedInActiveTable.getTableId()))
+			.where(qTableEntity.id.eq(savedInActiveTable.getId()))
 			.set(qTableEntity.isActive, isActive)
 			.execute();
 	}

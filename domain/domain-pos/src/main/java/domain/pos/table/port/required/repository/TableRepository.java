@@ -1,4 +1,4 @@
-package domain.pos.table.repository;
+package domain.pos.table.port.required.repository;
 
 import java.util.List;
 import java.util.Optional;

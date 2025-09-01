@@ -36,7 +36,7 @@ public class CallFixture {
 			sale.getId(),
 			CALL_ID,
 			TableCallInfo.of(
-				table.getTableId(),
+				table.getId(),
 				table.getTableNumber(),
 				receipt.getReceiptInfo().getReceiptId()
 			),

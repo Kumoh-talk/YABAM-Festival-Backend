@@ -61,7 +61,7 @@ class TableServiceTest extends ServiceTest {
 				.when(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
 			doReturn(IS_NOT_EXISTS_TABLE)
 				.when(tableReader).isExistsTableByStoreAndTableNumWithLock(any(Store.class), anyInt());
-			doReturn(createdTable.getTableId())
+			doReturn(createdTable.getId())
 				.when(tableWriter).createTable(any(Store.class), anyInt(), any(TablePoint.class), anyInt());
 			// when
 			UUID createdTableId = tableService.createTable(queryUserPassport, queryStoreId,
@@ -220,7 +220,7 @@ class TableServiceTest extends ServiceTest {
 			UserPassport ownerPassport = OWNER_USER_PASSPORT();
 			Store responStore = GENERAL_CLOSE_STORE();
 			Table savedTable = GENERAL_IN_ACTIVE_TABLE(responStore);
-			UUID queryTableId = savedTable.getTableId();
+			UUID queryTableId = savedTable.getId();
 			Integer updateTableNumber = savedTable.getTableNumber() + 1;
 			TablePoint updateTablePoint = savedTable.getTablePoint();
 			Integer updateTableCapacity = savedTable.getTableCapacity() + 1;
@@ -278,7 +278,7 @@ class TableServiceTest extends ServiceTest {
 			UserPassport diffOwnerPassport = DIFF_OWNER_PASSPORT();
 			Store responStore = GENERAL_CLOSE_STORE();
 			Table savedTable = GENERAL_IN_ACTIVE_TABLE(responStore);
-			UUID queryTableId = savedTable.getTableId();
+			UUID queryTableId = savedTable.getId();
 			doReturn(Optional.of(savedTable))
 				.when(tableReader).findTableWithStoreByTableId(queryTableId);
 
@@ -305,7 +305,7 @@ class TableServiceTest extends ServiceTest {
 			UserPassport ownerPassport = OWNER_USER_PASSPORT();
 			Store openStore = GENERAL_OPEN_STORE();
 			Table savedTable = GENERAL_IN_ACTIVE_TABLE(openStore);
-			UUID queryTableId = savedTable.getTableId();
+			UUID queryTableId = savedTable.getId();
 			doReturn(Optional.of(savedTable))
 				.when(tableReader).findTableWithStoreByTableId(queryTableId);
 
@@ -332,7 +332,7 @@ class TableServiceTest extends ServiceTest {
 			UserPassport ownerPassport = OWNER_USER_PASSPORT();
 			Store responStore = GENERAL_CLOSE_STORE();
 			Table savedTable = GENERAL_IN_ACTIVE_TABLE(responStore);
-			UUID queryTableId = savedTable.getTableId();
+			UUID queryTableId = savedTable.getId();
 			Integer updateTableNumber = savedTable.getTableNumber() + 1;
 			TablePoint updatePoint = savedTable.getTablePoint();
 			Integer updateTableCapacity = savedTable.getTableCapacity() + 1;
@@ -370,7 +370,7 @@ class TableServiceTest extends ServiceTest {
 			UserPassport ownerPassport = OWNER_USER_PASSPORT();
 			Store responStore = GENERAL_CLOSE_STORE();
 			Table savedTable = GENERAL_IN_ACTIVE_TABLE(responStore);
-			UUID queryTableId = savedTable.getTableId();
+			UUID queryTableId = savedTable.getId();
 			doReturn(Optional.of(savedTable))
 				.when(tableReader).findTableWithStoreByTableId(queryTableId);
 
@@ -410,7 +410,7 @@ class TableServiceTest extends ServiceTest {
 			UserPassport diffOwnerPassport = DIFF_OWNER_PASSPORT();
 			Store responStore = GENERAL_CLOSE_STORE();
 			Table savedTable = GENERAL_IN_ACTIVE_TABLE(responStore);
-			UUID queryTableId = savedTable.getTableId();
+			UUID queryTableId = savedTable.getId();
 			doReturn(Optional.of(savedTable))
 				.when(tableReader).findTableWithStoreByTableId(queryTableId);
 
@@ -431,7 +431,7 @@ class TableServiceTest extends ServiceTest {
 			UserPassport ownerPassport = OWNER_USER_PASSPORT();
 			Store openStore = GENERAL_OPEN_STORE();
 			Table savedTable = GENERAL_IN_ACTIVE_TABLE(openStore);
-			UUID queryTableId = savedTable.getTableId();
+			UUID queryTableId = savedTable.getId();
 			doReturn(Optional.of(savedTable))
 				.when(tableReader).findTableWithStoreByTableId(queryTableId);
 

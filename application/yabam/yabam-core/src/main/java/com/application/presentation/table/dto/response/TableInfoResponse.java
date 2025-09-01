@@ -33,7 +33,7 @@ public record TableInfoResponse(
 	) {
 		public static TableInfoDTO from(Table table) {
 			return TableInfoDTO.builder()
-				.tableId(table.getTableId())
+				.tableId(table.getId())
 				.tableNumber(table.getTableNumber())
 				.isActive(table.getIsActive())
 				.tableX(table.getTablePoint().getTableX())
