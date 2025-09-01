@@ -48,14 +48,14 @@ public class TableCommandImpl implements TableCommand {
 
 	@Transactional
 	@Override
-	public Table updateTable(UserPassport passport, final Long storeId, final UUID tableId, TableInfoRequest request) {
-		var store = storeValidator.validateStoreOwner(passport, storeId);
+	public Table updateTable(UserPassport passport, final UUID tableId, TableInfoRequest request) {
+		Table table = validateTable(tableId);
+
+		var store = storeValidator.validateStoreOwner(passport, table.getStoreId());
 
 		ifState(store.getIsOpen(), STORE_IS_OPEN_TABLE_WRITE);
 
-		Table table = validateTable(tableId);
-
-		if (isDiffTableNumAndQueryNum(request.tableNumber(), table)) {
+		if (isDiffTableNumAndReqNum(request.tableNumber(), table)) {
 			ifState(isExistsTableNum(request, store), EXIST_TABLE);
 		}
 
@@ -66,12 +66,22 @@ public class TableCommandImpl implements TableCommand {
 
 	private Table validateTable(UUID tableId) {
 		return tableRepository.findById(tableId)
-			.orElseThrow(() -> {
-				return new ServiceException(ErrorCode.NOT_FOUND_TABLE);
-			});
+			.orElseThrow(() -> new ServiceException(ErrorCode.NOT_FOUND_TABLE));
 	}
 
-	private static boolean isDiffTableNumAndQueryNum(Integer updateTableNumber, Table table) {
+	private static boolean isDiffTableNumAndReqNum(Integer updateTableNumber, Table table) {
 		return !table.getTableNumber().equals(updateTableNumber);
+	}
+
+	@Transactional
+	@Override
+	public void deleteTable(UserPassport passport, final UUID tableId) {
+		Table table = validateTable(tableId);
+
+		var store = storeValidator.validateStoreOwner(passport, table.getStoreId());
+
+		ifState(store.getIsOpen(), STORE_IS_OPEN_TABLE_WRITE);
+
+		tableRepository.deleteTable(table);
 	}
 }

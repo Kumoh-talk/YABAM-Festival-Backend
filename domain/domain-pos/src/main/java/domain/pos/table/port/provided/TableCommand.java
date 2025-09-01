@@ -12,5 +12,7 @@ import domain.pos.table.entity.TableInfoRequest;
 public interface TableCommand {
 	Table createTable(UserPassport passport, Long storeId, @Validated TableInfoRequest request);
 
-	Table updateTable(UserPassport passport, Long storeId, UUID tableId, @Validated TableInfoRequest request);
+	Table updateTable(UserPassport passport, UUID tableId, @Validated TableInfoRequest request);
+
+	void deleteTable(UserPassport passport, UUID tableId);
 }
