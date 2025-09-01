@@ -3,6 +3,7 @@ package domain.pos.table.adapter.service;
 import static com.exception.ErrorCode.*;
 import static com.exception.State.*;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -18,13 +19,14 @@ import domain.pos.store.implement.StoreValidator;
 import domain.pos.table.entity.Table;
 import domain.pos.table.entity.TableInfoRequest;
 import domain.pos.table.port.provided.TableCommand;
+import domain.pos.table.port.provided.TableRead;
 import domain.pos.table.port.required.repository.TableRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @Validated
 @RequiredArgsConstructor
-public class TableCommandImpl implements TableCommand {
+public class TableCommandImpl implements TableCommand, TableRead {
 	private final TableRepository tableRepository;
 	private final StoreValidator storeValidator;
 
@@ -83,5 +85,10 @@ public class TableCommandImpl implements TableCommand {
 		ifState(store.getIsOpen(), STORE_IS_OPEN_TABLE_WRITE);
 
 		tableRepository.deleteTable(table);
+	}
+
+	@Override
+	public List<Table> findTables(Long storeId) {
+		return tableRepository.findTablesByStoreId(storeId);
 	}
 }
