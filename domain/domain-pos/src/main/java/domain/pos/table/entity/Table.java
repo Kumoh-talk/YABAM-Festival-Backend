@@ -13,7 +13,7 @@ import lombok.Getter;
 public class Table {
 	private UUID id;
 	private Boolean isActive;
-	private Integer tableNumber;
+	private TableNumber tableNumber;
 	private TablePoint tablePoint;
 	private Integer tableCapacity;
 	private Store store;
@@ -22,7 +22,7 @@ public class Table {
 	private Table(UUID id, Integer tableNumber, Boolean isActive, TablePoint tablePoint, Integer tableCapacity,
 		Store store) {
 		this.id = id;
-		this.tableNumber = tableNumber;
+		this.tableNumber = TableNumber.of(tableNumber);
 		this.isActive = isActive;
 		this.tablePoint = tablePoint;
 		this.tableCapacity = tableCapacity;
@@ -48,7 +48,7 @@ public class Table {
 		var table = new Table();
 		table.storeId = requireNonNull(storeId);
 		table.isActive = false;
-		table.tableNumber = request.tableNumber();
+		table.tableNumber = TableNumber.of(request.tableNumber());
 		table.tablePoint = request.tablePoint();
 		table.tableCapacity = request.tableCapacity();
 
@@ -56,12 +56,12 @@ public class Table {
 	}
 
 	public void modify(TableInfoRequest request) {
-		this.tableNumber = request.tableNumber();
+		this.tableNumber = TableNumber.of(request.tableNumber());
 		this.tablePoint = request.tablePoint();
 		this.tableCapacity = request.tableCapacity();
 	}
 
 	public Table changeActiveStatus(boolean isActive) {
-		return Table.of(this.id, this.tableNumber, isActive, this.tablePoint, tableCapacity, this.store);
+		return Table.of(this.id, this.tableNumber.value(), isActive, this.tablePoint, tableCapacity, this.store);
 	}
 }

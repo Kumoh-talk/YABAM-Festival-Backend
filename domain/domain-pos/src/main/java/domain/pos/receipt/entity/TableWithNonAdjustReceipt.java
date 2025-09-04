@@ -30,7 +30,7 @@ public class TableWithNonAdjustReceipt {
 			.orElse(null);
 		return TableWithNonAdjustReceipt.builder()
 			.tableId(table.getId())
-			.tableNumber(table.getTableNumber())
+			.tableNumber(table.getTableNumber().value())
 			.isActive(table.getIsActive())
 			.nonAdjustReceipt(tableReceipt)
 			.build();

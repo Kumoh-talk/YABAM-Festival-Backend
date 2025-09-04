@@ -24,7 +24,7 @@ public class StoreOrderEventMapper {
 			.toList();
 		return StoreOrderEvent.builder()
 			.tableId(table.getId())
-			.tableNumber(table.getTableNumber())
+			.tableNumber(table.getTableNumber().value())
 			.orderDto(
 				StoreOrderEvent.OrderDto.builder()
 					.orderId(order.getOrderId())

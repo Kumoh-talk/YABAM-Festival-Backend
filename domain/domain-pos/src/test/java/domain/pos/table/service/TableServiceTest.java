@@ -65,7 +65,7 @@ class TableServiceTest extends ServiceTest {
 				.when(tableWriter).createTable(any(Store.class), anyInt(), any(TablePoint.class), anyInt());
 			// when
 			UUID createdTableId = tableService.createTable(queryUserPassport, queryStoreId,
-				createdTable.getTableNumber(), createdTable.getTablePoint(), createdTable.getTableCapacity());
+				createdTable.getTableNumber().value(), createdTable.getTablePoint(), createdTable.getTableCapacity());
 
 			// then
 			assertSoftly(softly -> {
@@ -86,7 +86,7 @@ class TableServiceTest extends ServiceTest {
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store responStore = GENERAL_OPEN_STORE();
 			Long queryStoreId = responStore.getId();
-			Integer queryTableNum = GENERAL_ACTIVE_TABLE(responStore).getTableNumber();
+			Integer queryTableNum = GENERAL_ACTIVE_TABLE(responStore).getTableNumber().value();
 			TablePoint queryTablePoint = GENERAL_ACTIVE_TABLE(responStore).getTablePoint();
 			Integer queryTableCapacity = GENERAL_ACTIVE_TABLE(responStore).getTableCapacity();
 
@@ -118,7 +118,7 @@ class TableServiceTest extends ServiceTest {
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store responStore = GENERAL_CLOSE_STORE();  // isOpen = false
 			Long queryStoreId = responStore.getId();
-			Integer queryTableNum = GENERAL_ACTIVE_TABLE(responStore).getTableNumber();
+			Integer queryTableNum = GENERAL_ACTIVE_TABLE(responStore).getTableNumber().value();
 			TablePoint queryTablePoint = GENERAL_ACTIVE_TABLE(responStore).getTablePoint();
 			Integer queryTableCapacity = GENERAL_ACTIVE_TABLE(responStore).getTableCapacity();
 
@@ -152,7 +152,7 @@ class TableServiceTest extends ServiceTest {
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store responStore = GENERAL_CLOSE_STORE();  // isOpen = false
 			Long queryStoreId = responStore.getId();
-			Integer queryTableNum = GENERAL_ACTIVE_TABLE(responStore).getTableNumber();
+			Integer queryTableNum = GENERAL_ACTIVE_TABLE(responStore).getTableNumber().value();
 			TablePoint queryTablePoint = GENERAL_ACTIVE_TABLE(responStore).getTablePoint();
 			Integer queryTableCapacity = GENERAL_ACTIVE_TABLE(responStore).getTableCapacity();
 
@@ -193,7 +193,7 @@ class TableServiceTest extends ServiceTest {
 						() -> tableService.createTable(
 							diffOwnerPassport,
 							queryStoreId,
-							GENERAL_ACTIVE_TABLE(GENERAL_CLOSE_STORE()).getTableNumber(),
+							GENERAL_ACTIVE_TABLE(GENERAL_CLOSE_STORE()).getTableNumber().value(),
 							GENERAL_ACTIVE_TABLE(GENERAL_CLOSE_STORE()).getTablePoint(),
 							GENERAL_ACTIVE_TABLE(GENERAL_CLOSE_STORE()).getTableCapacity()))
 					.isInstanceOf(ServiceException.class)
@@ -221,7 +221,7 @@ class TableServiceTest extends ServiceTest {
 			Store responStore = GENERAL_CLOSE_STORE();
 			Table savedTable = GENERAL_IN_ACTIVE_TABLE(responStore);
 			UUID queryTableId = savedTable.getId();
-			Integer updateTableNumber = savedTable.getTableNumber() + 1;
+			Integer updateTableNumber = savedTable.getTableNumber().value() + 1;
 			TablePoint updateTablePoint = savedTable.getTablePoint();
 			Integer updateTableCapacity = savedTable.getTableCapacity() + 1;
 
@@ -287,7 +287,7 @@ class TableServiceTest extends ServiceTest {
 				softly.assertThatThrownBy(() -> tableService.updateTable(
 						diffOwnerPassport,
 						queryTableId,
-						savedTable.getTableNumber(),
+						savedTable.getTableNumber().value(),
 						savedTable.getTablePoint(),
 						savedTable.getTableCapacity()))
 					.isInstanceOf(ServiceException.class)
@@ -314,7 +314,7 @@ class TableServiceTest extends ServiceTest {
 				softly.assertThatThrownBy(() -> tableService.updateTable(
 						ownerPassport,
 						queryTableId,
-						savedTable.getTableNumber(),
+						savedTable.getTableNumber().value(),
 						savedTable.getTablePoint(),
 						savedTable.getTableCapacity()))
 					.isInstanceOf(ServiceException.class)
@@ -333,7 +333,7 @@ class TableServiceTest extends ServiceTest {
 			Store responStore = GENERAL_CLOSE_STORE();
 			Table savedTable = GENERAL_IN_ACTIVE_TABLE(responStore);
 			UUID queryTableId = savedTable.getId();
-			Integer updateTableNumber = savedTable.getTableNumber() + 1;
+			Integer updateTableNumber = savedTable.getTableNumber().value() + 1;
 			TablePoint updatePoint = savedTable.getTablePoint();
 			Integer updateTableCapacity = savedTable.getTableCapacity() + 1;
 

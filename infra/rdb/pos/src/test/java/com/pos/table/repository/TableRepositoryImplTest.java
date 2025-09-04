@@ -143,7 +143,7 @@ class TableRepositoryImplTest extends RepositoryTest {
 		testEntityManager.flush();
 		testEntityManager.clear();
 		Table table = TableMapper.toTable(tableEntity, savedStore);
-		Integer newNumber = table.getTableNumber() + 2;
+		Integer newNumber = table.getTableNumber().value() + 2;
 		TablePoint newPoint = TablePoint.of(7, 8);
 		Integer newCapacity = table.getTableCapacity() + 1;
 		// when

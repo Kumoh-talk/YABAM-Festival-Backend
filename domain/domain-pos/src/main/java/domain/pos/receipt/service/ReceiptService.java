@@ -92,7 +92,7 @@ public class ReceiptService {
 		storeValidator.validateStoreOwner(ownerPassport, sale.getStore());
 
 		List<Table> tables = new ArrayList<>(tableReader.findTables(sale.getStore().getId()));
-		tables.sort(Comparator.comparingInt(Table::getTableNumber));
+		tables.sort(Comparator.comparingInt((table) -> table.getTableNumber().value()));
 		List<Receipt> receipts = receiptReader.getAllNonAdjustReceiptWithTableAndOrders(saleId);
 
 		return tables.stream()
