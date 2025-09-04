@@ -25,12 +25,12 @@ public class TableWithNonAdjustReceipt {
 
 	public static TableWithNonAdjustReceipt of(Table table, List<Receipt> receipts) {
 		Receipt tableReceipt = receipts.stream()
-			.filter(receipt -> receipt.getTable().getTableId().equals(table.getTableId()))
+			.filter(receipt -> receipt.getTable().getId().equals(table.getId()))
 			.findFirst()
 			.orElse(null);
 		return TableWithNonAdjustReceipt.builder()
-			.tableId(table.getTableId())
-			.tableNumber(table.getTableNumber())
+			.tableId(table.getId())
+			.tableNumber(table.getTableNumber().value())
 			.isActive(table.getIsActive())
 			.nonAdjustReceipt(tableReceipt)
 			.build();

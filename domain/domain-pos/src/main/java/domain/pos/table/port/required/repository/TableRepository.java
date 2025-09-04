@@ -1,4 +1,4 @@
-package domain.pos.table.repository;
+package domain.pos.table.port.required.repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,4 +28,8 @@ public interface TableRepository {
 	void updateTableInfo(Table table, Integer updateTableNumber, TablePoint updateTablePoint, Integer tableCapacity);
 
 	void deleteTable(Table table);
+
+	Table save(Table table);
+
+	Optional<Table> findById(UUID tableId);
 }

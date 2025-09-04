@@ -186,6 +186,6 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	@Override
 	public Long updateReceiptTable(Receipt receipt, Table moveTable) {
 		return receiptJpaRepository.updateReceiptTable(receipt.getReceiptInfo().getReceiptId(),
-			moveTable.getTableId());
+			moveTable.getId());
 	}
 }
