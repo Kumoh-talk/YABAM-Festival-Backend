@@ -58,7 +58,8 @@ class TableRepositoryImplTest extends RepositoryTest {
 		// then
 		assertSoftly(softly -> {
 			softly.assertThat(table.getId()).isEqualTo(tableEntities.get(0).getId());
-			softly.assertThat(table.getTableNumber()).isEqualTo(tableEntities.get(0).getTableNumber().getTableNumber());
+			softly.assertThat(table.getTableNumber().value())
+				.isEqualTo(tableEntities.get(0).getTableNumber().getTableNumber());
 			softly.assertThat(table.getIsActive()).isFalse();
 		});
 	}
