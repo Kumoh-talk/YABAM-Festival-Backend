@@ -14,9 +14,9 @@ class TableTest {
 		Table table = Table.create(storeId, request);
 
 		assertThat(table.getStoreId()).isEqualTo(storeId);
-		assertThat(table.getTableNumber()).isEqualTo(request.tableNumber());
+		assertThat(table.getTableNumber().value()).isEqualTo(request.tableNumber());
 		assertThat(table.getTablePoint()).isEqualTo(request.tablePoint());
-		assertThat(table.getTableCapacity()).isEqualTo(request.tableCapacity());
+		assertThat(table.getTableCapacity().value()).isEqualTo(request.tableCapacity());
 		assertThat(table.getIsActive()).isFalse();
 	}
 
@@ -28,9 +28,9 @@ class TableTest {
 
 		table.modify(updateRequest);
 
-		assertThat(table.getTableNumber()).isEqualTo(updateRequest.tableNumber());
+		assertThat(table.getTableNumber().value()).isEqualTo(updateRequest.tableNumber());
 		assertThat(table.getTablePoint()).isEqualTo(updateRequest.tablePoint());
-		assertThat(table.getTableCapacity()).isEqualTo(updateRequest.tableCapacity());
+		assertThat(table.getTableCapacity().value()).isEqualTo(updateRequest.tableCapacity());
 
 	}
 
