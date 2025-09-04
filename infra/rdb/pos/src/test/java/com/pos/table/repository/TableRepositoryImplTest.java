@@ -145,7 +145,7 @@ class TableRepositoryImplTest extends RepositoryTest {
 		Table table = TableMapper.toTable(tableEntity, savedStore);
 		Integer newNumber = table.getTableNumber().value() + 2;
 		TablePoint newPoint = TablePoint.of(7, 8);
-		Integer newCapacity = table.getTableCapacity() + 1;
+		Integer newCapacity = table.getTableCapacity().value() + 1;
 		// when
 		System.out.println("===TableRepositoryImplTest.updateTableInfo 쿼리===");
 		tableRepository.updateTableInfo(table, newNumber, newPoint, newCapacity);
