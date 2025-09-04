@@ -15,7 +15,7 @@ public class Table {
 	private Boolean isActive;
 	private TableNumber tableNumber;
 	private TablePoint tablePoint;
-	private Integer tableCapacity;
+	private TableCapacity tableCapacity;
 	private Store store;
 	private Long storeId;
 
@@ -25,7 +25,7 @@ public class Table {
 		this.tableNumber = TableNumber.of(tableNumber);
 		this.isActive = isActive;
 		this.tablePoint = tablePoint;
-		this.tableCapacity = tableCapacity;
+		this.tableCapacity = TableCapacity.of(tableCapacity);
 		this.store = store;
 	}
 
@@ -50,7 +50,7 @@ public class Table {
 		table.isActive = false;
 		table.tableNumber = TableNumber.of(request.tableNumber());
 		table.tablePoint = request.tablePoint();
-		table.tableCapacity = request.tableCapacity();
+		table.tableCapacity = TableCapacity.of(request.tableCapacity());
 
 		return table;
 	}
@@ -58,10 +58,11 @@ public class Table {
 	public void modify(TableInfoRequest request) {
 		this.tableNumber = TableNumber.of(request.tableNumber());
 		this.tablePoint = request.tablePoint();
-		this.tableCapacity = request.tableCapacity();
+		this.tableCapacity = TableCapacity.of(request.tableCapacity());
 	}
 
 	public Table changeActiveStatus(boolean isActive) {
-		return Table.of(this.id, this.tableNumber.value(), isActive, this.tablePoint, tableCapacity, this.store);
+		return Table.of(this.id, this.tableNumber.value(), isActive, this.tablePoint, tableCapacity.value(),
+			this.store);
 	}
 }

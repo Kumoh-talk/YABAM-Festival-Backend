@@ -38,7 +38,7 @@ public record TableInfoResponse(
 				.isActive(table.getIsActive())
 				.tableX(table.getTablePoint().getTableX())
 				.tableY(table.getTablePoint().getTableY())
-				.tableCapacity(table.getTableCapacity())
+				.tableCapacity(table.getTableCapacity().value())
 				.build();
 		}
 	}
