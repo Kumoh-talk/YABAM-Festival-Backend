@@ -21,6 +21,14 @@ public class CallFixture {
 	private static final Boolean IS_COMPLETE = false;
 	private static final LocalDateTime CREATED_AT = LocalDateTime.of(2025, 5, 1, 12, 0);
 
+	public static Call CREATE_CALL() {
+		var saleId = 1L;
+		var receiptId = UUID.randomUUID();
+		var message = "call message";
+
+		return Call.create(saleId, receiptId, message);
+	}
+
 	public static Call GENERAL_CALL() {
 		return Call.of(
 			SALE_ID,

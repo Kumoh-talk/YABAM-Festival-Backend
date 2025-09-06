@@ -55,4 +55,7 @@ public interface ReceiptRepository {
 	boolean isExistsNonAdjustReceiptBySaleId(Long saleId);
 
 	Long updateReceiptTable(Receipt receipt, Table moveTable);
+
+	Optional<Receipt> getReceiptById(UUID receiptId);
+
 }

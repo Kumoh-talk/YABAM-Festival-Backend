@@ -114,7 +114,8 @@ public enum ErrorCode {
 	STORE_NOT_MATCH(HttpStatus.BAD_REQUEST, "CALL_0001", "가게와 일치하지 않는 영수증에 대한 호출입니다."),
 	NOT_FOUND_CALL(HttpStatus.NOT_FOUND, "CALL_0002", "존재하지 않는 호출입니다."),
 	NOT_VALID_CALL_OWNER(HttpStatus.BAD_REQUEST, "CALL_0003",
-		"해당 직원 호출 내역을 수정할 수 없는 점주입니다.");
+		"해당 직원 호출 내역을 수정할 수 없는 점주입니다."),
+	ALREADY_COMPLETED_CALL(HttpStatus.CONFLICT, "CALL_0004", "이미 완료된 호출입니다.");
 
 	private final HttpStatus status;
 	private final String code;

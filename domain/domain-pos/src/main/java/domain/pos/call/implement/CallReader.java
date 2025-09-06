@@ -8,7 +8,7 @@ import com.exception.ServiceException;
 import com.vo.UserPassport;
 
 import domain.pos.call.entity.Call;
-import domain.pos.call.repository.CallRepository;
+import domain.pos.call.port.required.repository.CallRepository;
 import lombok.RequiredArgsConstructor;
 
 @Component

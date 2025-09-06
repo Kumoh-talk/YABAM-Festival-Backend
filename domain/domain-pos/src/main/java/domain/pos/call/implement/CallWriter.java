@@ -5,7 +5,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Component;
 
 import domain.pos.call.entity.CallMessage;
-import domain.pos.call.repository.CallRepository;
+import domain.pos.call.port.required.repository.CallRepository;
 import lombok.RequiredArgsConstructor;
 
 @Component
