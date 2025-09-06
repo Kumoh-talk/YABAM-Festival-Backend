@@ -4,6 +4,7 @@ import static java.time.LocalDateTime.*;
 import static java.util.Objects.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import lombok.Getter;
 public class Call {
 	private Long id;
 	private Long saleId;
-	private Long receiptId;
+	private UUID receiptId;
 	private TableCallInfo tableCallInfo;
 	private CallMessage callMessage;
 	private LocalDateTime createdAt;
@@ -35,7 +36,7 @@ public class Call {
 		return new Call(saleId, callId, tableCallInfo, callMessage, createdAt);
 	}
 
-	public static Call create(final Long saleId, final Long receiptId, final String message) {
+	public static Call create(final Long saleId, final UUID receiptId, final String message) {
 		var call = new Call();
 		call.saleId = requireNonNull(saleId);
 		call.receiptId = requireNonNull(receiptId);

@@ -45,3 +45,17 @@ __Domain Object__
 
 - create(message) : 호출 메시지 생성
 - complete() : 호출 메시지 완료 처리
+
+### CallInfoDto
+
+__Read Model__
+
+#### 속성
+
+- callId : 직원 호출 ID
+- callMessage : 호출 메시지
+- isCompleted : 완료 여부
+- tableId : 테이블 ID
+- tableNumber : 테이블 번호
+- createdAt : 생성 일시
+
