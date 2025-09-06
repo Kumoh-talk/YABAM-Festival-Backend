@@ -23,7 +23,7 @@ public class CallFixture {
 
 	public static Call CREATE_CALL() {
 		var saleId = 1L;
-		var receiptId = 1L;
+		var receiptId = UUID.randomUUID();
 		var message = "call message";
 
 		return Call.create(saleId, receiptId, message);

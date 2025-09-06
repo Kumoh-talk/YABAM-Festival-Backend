@@ -3,6 +3,8 @@ package domain.pos.call.entity;
 import static fixtures.call.CallFixture.*;
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
 
 class CallTest {
@@ -10,7 +12,7 @@ class CallTest {
 	@Test
 	void createTest() {
 		var saleId = 1L;
-		var receiptId = 1L;
+		var receiptId = UUID.randomUUID();
 		var message = "call message";
 
 		var call = Call.create(saleId, receiptId, message);
