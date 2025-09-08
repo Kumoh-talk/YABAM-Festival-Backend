@@ -48,7 +48,7 @@ public record CallCursorResponse(
 		List<CallInfoDto> callInfoDtos = calls.getContent().stream()
 			.map(call -> {
 				return CallInfoDto.builder()
-					.callId(call.getCallId())
+					.callId(call.getId())
 					.callMessage(call.getCallMessage().getMessage())
 					.tableId(call.getTableCallInfo().getTableId())
 					.tableNumber(call.getTableCallInfo().getTableNumber())

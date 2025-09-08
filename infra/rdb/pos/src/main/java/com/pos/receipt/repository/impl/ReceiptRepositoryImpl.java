@@ -188,4 +188,9 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 		return receiptJpaRepository.updateReceiptTable(receipt.getReceiptInfo().getReceiptId(),
 			moveTable.getId());
 	}
+
+	@Override
+	public Optional<Receipt> getReceiptById(UUID receiptId) {
+		return Optional.empty();
+	}
 }
