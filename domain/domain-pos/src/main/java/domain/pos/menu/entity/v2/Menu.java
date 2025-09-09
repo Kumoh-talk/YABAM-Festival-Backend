@@ -3,6 +3,7 @@ package domain.pos.menu.entity.v2;
 import static java.util.Objects.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
@@ -65,7 +66,7 @@ public class Menu {
 
 	public boolean updateOrder(Integer updateOrder) {
 		checkOrder(updateOrder);
-		if (this.order.equals(updateOrder)) {
+		if (Objects.equals(this.order, updateOrder)) {
 			return false;
 		} else {
 			this.order = updateOrder;
@@ -73,7 +74,8 @@ public class Menu {
 		}
 	}
 
-	public boolean updateIsSoldOut(boolean isSoldOut) {
+	public boolean updateIsSoldOut(Boolean isSoldOut) {
+		requireNonNull(isSoldOut);
 		if (this.isSoldOut == isSoldOut) {
 			return false;
 		} else {
@@ -82,7 +84,8 @@ public class Menu {
 		}
 	}
 
-	public boolean updateIsRecommended(boolean isRecommended) {
+	public boolean updateIsRecommended(Boolean isRecommended) {
+		requireNonNull(isRecommended);
 		if (this.isRecommended == isRecommended) {
 			return false;
 		} else {

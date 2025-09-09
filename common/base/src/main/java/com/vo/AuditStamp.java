@@ -11,10 +11,7 @@ public record AuditStamp(
 	LocalDateTime deletedAt
 ) {
 	public AuditStamp {
-	}
-
-	public static AuditStamp create(LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
-		return new AuditStamp(requireNonNull(createdAt), updatedAt, deletedAt);
+		requireNonNull(createdAt);
 	}
 
 	public AuditStamp update(LocalDateTime updatedAt) {
