@@ -51,32 +51,32 @@ class MenuOrderAllocatorTest {
 	@DisplayName("relocationOrders 테스트")
 	class RelocationOrdersTest {
 		@Test
-		@DisplayName("updateOrder가 currentOrder보다 클 때")
-		void updateOrder_is_bigger_than_currentOrder() {
+		@DisplayName("updatedOrder가 previousOrder보다 클 때")
+		void updatedOrder_is_bigger_than_previousOrder() {
 			// given
 			Long menuId = 1L;
 			Long categoryId = 1L;
-			Integer currentOrder = 2;
-			Integer updateOrder = 5;
+			Integer previousOrder = 2;
+			Integer updatedOrder = 5;
 
 			Menu menu = mock(Menu.class);
 			given(menu.getId()).willReturn(menuId);
 			given(menu.getMenuCategoryId()).willReturn(categoryId);
-			given(menu.getOrder()).willReturn(currentOrder);
+			given(menu.getOrder()).willReturn(updatedOrder);
 
 			Menu updateMenu = mock(Menu.class);
 
 			given(menuRepository.readMaxMenuOrder(menu.getMenuCategoryId())).willReturn(Integer.MAX_VALUE);
-			given(menuRepository.updateOrder(menu.getId(), updateOrder)).willReturn(updateMenu);
+			given(menuRepository.updateOrder(menu.getId(), updatedOrder)).willReturn(updateMenu);
 
 			// when
-			Menu result = menuOrderAllocator.relocationOrders(menu, updateOrder);
+			Menu result = menuOrderAllocator.relocationOrders(menu, previousOrder);
 
 			// then
 			verify(menuCategoryRepository).lockMenuCategory(categoryId);
 			verify(menuRepository).updateTemporaryOrder(menuId, TEMPORARY_ORDER);
-			verify(menuRepository).decrementMenuOrdersInRange(categoryId, currentOrder + 1, updateOrder);
-			verify(menuRepository).updateOrder(menuId, updateOrder);
+			verify(menuRepository).decrementMenuOrdersInRange(categoryId, previousOrder + 1, updatedOrder);
+			verify(menuRepository).updateOrder(menuId, updatedOrder);
 			assertThat(result).isSameAs(updateMenu);
 		}
 
@@ -86,27 +86,27 @@ class MenuOrderAllocatorTest {
 			// given
 			Long menuId = 1L;
 			Long categoryId = 1L;
-			Integer currentOrder = 5;
-			Integer updateOrder = 2;
+			Integer previousOrder = 5;
+			Integer updatedOrder = 2;
 
 			Menu menu = mock(Menu.class);
 			given(menu.getId()).willReturn(menuId);
 			given(menu.getMenuCategoryId()).willReturn(categoryId);
-			given(menu.getOrder()).willReturn(currentOrder);
+			given(menu.getOrder()).willReturn(updatedOrder);
 
 			Menu updateMenu = mock(Menu.class);
 
 			given(menuRepository.readMaxMenuOrder(menu.getMenuCategoryId())).willReturn(Integer.MAX_VALUE);
-			given(menuRepository.updateOrder(menu.getId(), updateOrder)).willReturn(updateMenu);
+			given(menuRepository.updateOrder(menu.getId(), updatedOrder)).willReturn(updateMenu);
 
 			// when
-			Menu result = menuOrderAllocator.relocationOrders(menu, updateOrder);
+			Menu result = menuOrderAllocator.relocationOrders(menu, previousOrder);
 
 			// then
 			verify(menuCategoryRepository).lockMenuCategory(categoryId);
 			verify(menuRepository).updateTemporaryOrder(menuId, TEMPORARY_ORDER);
-			verify(menuRepository).incrementMenuOrdersInRange(categoryId, updateOrder, currentOrder - 1);
-			verify(menuRepository).updateOrder(menuId, updateOrder);
+			verify(menuRepository).incrementMenuOrdersInRange(categoryId, updatedOrder, previousOrder - 1);
+			verify(menuRepository).updateOrder(menuId, updatedOrder);
 			assertThat(result).isSameAs(updateMenu);
 		}
 
@@ -115,15 +115,17 @@ class MenuOrderAllocatorTest {
 		void updateOrder_is_bigger_than_max() {
 			// given
 			Long categoryId = 1L;
-			Integer updateOrder = 10;
+			Integer previousOrder = 5;
+			Integer updatedOrder = 10;
 
 			Menu menu = mock(Menu.class);
 			given(menu.getMenuCategoryId()).willReturn(categoryId);
+			given(menu.getOrder()).willReturn(updatedOrder);
 
-			given(menuRepository.readMaxMenuOrder(menu.getMenuCategoryId())).willReturn(5);
+			given(menuRepository.readMaxMenuOrder(menu.getMenuCategoryId())).willReturn(previousOrder);
 
 			// when -> then
-			assertThatThrownBy(() -> menuOrderAllocator.relocationOrders(menu, updateOrder))
+			assertThatThrownBy(() -> menuOrderAllocator.relocationOrders(menu, previousOrder))
 				.isInstanceOf(ServiceException.class)
 				.extracting(ex -> ((ServiceException)ex).getErrorCode())
 				.isEqualTo(ErrorCode.DOMAIN_INVALID_MENU_ORDER);

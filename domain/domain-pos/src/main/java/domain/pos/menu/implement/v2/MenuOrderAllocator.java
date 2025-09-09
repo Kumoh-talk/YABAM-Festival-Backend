@@ -23,25 +23,26 @@ public class MenuOrderAllocator {
 		return menuRepository.readMaxMenuOrder(menuCategoryId) + 1;
 	}
 
-	public Menu relocationOrders(Menu menu, Integer updateOrder) {
-		Long menuCategoryId = menu.getMenuCategoryId();
+	public Menu relocationOrders(Menu updatedMenu, Integer previousOrder) {
+		Long menuCategoryId = updatedMenu.getMenuCategoryId();
+		Integer updatedOrder = updatedMenu.getOrder();
+
+		menuCategoryRepository.lockMenuCategory(menuCategoryId);
 		Integer maxOrder = menuRepository.readMaxMenuOrder(menuCategoryId);
-		if (updateOrder > maxOrder) {
+		if (updatedOrder > maxOrder) {
 			throw new ServiceException(ErrorCode.DOMAIN_INVALID_MENU_ORDER);
 		}
 
-		menuCategoryRepository.lockMenuCategory(menuCategoryId);
-		menuRepository.updateTemporaryOrder(menu.getId(), TEMPORARY_ORDER);
+		menuRepository.updateTemporaryOrder(updatedMenu.getId(), TEMPORARY_ORDER);
 		// TODO : dirty checking이면 update 순서 신경써야함
 
-		Integer currentOrder = menu.getOrder();
-		if (currentOrder < updateOrder) {
-			menuRepository.decrementMenuOrdersInRange(menuCategoryId, currentOrder + 1, updateOrder);
+		if (previousOrder < updatedOrder) {
+			menuRepository.decrementMenuOrdersInRange(menuCategoryId, previousOrder + 1, updatedOrder);
 		} else {
-			menuRepository.incrementMenuOrdersInRange(menuCategoryId, updateOrder, currentOrder - 1);
+			menuRepository.incrementMenuOrdersInRange(menuCategoryId, updatedOrder, previousOrder - 1);
 		}
 
-		return menuRepository.updateOrder(menu.getId(), updateOrder);
+		return menuRepository.updateOrder(updatedMenu.getId(), updatedOrder);
 	}
 
 	public void delete(Menu menu) {

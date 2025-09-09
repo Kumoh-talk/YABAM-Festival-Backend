@@ -60,14 +60,15 @@ public class MenuCommandImpl implements MenuCommand {
 		Long menuId, Integer updateOrder) {
 		Store store = storeValidator.validateStoreOwner(userPassport, storeId);
 		validateStoreOpen(store);
-		Menu currentMenu = menuRepository.readMenu(storeId, menuId)
+		Menu menu = menuRepository.readMenu(storeId, menuId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
+		Integer previousOrder = menu.getOrder();
 
-		if (currentMenu.updateOrder(updateOrder)) {
-			return menuOrderAllocator.relocationOrders(currentMenu, updateOrder);
+		if (menu.updateOrder(updateOrder)) {
+			return menuOrderAllocator.relocationOrders(menu, previousOrder);
 		}
 
-		return currentMenu;
+		return menu;
 	}
 
 	@Transactional
