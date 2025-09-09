@@ -201,6 +201,12 @@ public class MenuRepositoryImpl implements MenuRepository {
 
 	}
 
+	// TODO : entityManager.refresh 호출
+	@Override
+	public domain.pos.menu.entity.v2.Menu refrsh(domain.pos.menu.entity.v2.Menu menu) {
+		return null;
+	}
+
 	@Override
 	public void decrementMenuOrdersInRange(Long menuCategoryId, Integer startOrder, Integer finishOrder) {
 

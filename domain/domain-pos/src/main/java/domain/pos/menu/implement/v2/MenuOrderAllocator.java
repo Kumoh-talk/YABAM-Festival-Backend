@@ -47,12 +47,14 @@ public class MenuOrderAllocator {
 
 	public void delete(Menu menu) {
 		Long menuCategoryId = menu.getMenuCategoryId();
-		Integer currentOrder = menu.getOrder();
 
 		menuCategoryRepository.lockMenuCategory(menuCategoryId);
 
+		Menu refreshMenu = menuRepository.refrsh(menu);
+		Integer deleteOrder = refreshMenu.getOrder();
+
 		menuRepository.updateOrder(menu.getId(), null);
 		menuRepository.deleteMenu(menu.getId());
-		menuRepository.decrementMenuOrdersInRange(menuCategoryId, currentOrder + 1, Integer.MAX_VALUE);
+		menuRepository.decrementMenuOrdersInRange(menuCategoryId, deleteOrder + 1, Integer.MAX_VALUE);
 	}
 }

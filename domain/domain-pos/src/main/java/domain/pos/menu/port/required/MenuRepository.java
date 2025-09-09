@@ -58,6 +58,8 @@ public interface MenuRepository {
 
 	void deleteMenu(Long menuId);
 
+	domain.pos.menu.entity.v2.Menu refrsh(domain.pos.menu.entity.v2.Menu menu);
+
 	void decrementMenuOrdersInRange(Long menuCategoryId, Integer startOrder, Integer finishOrder);
 
 	void incrementMenuOrdersInRange(Long menuCategoryId, Integer startOrder, Integer finishOrder);

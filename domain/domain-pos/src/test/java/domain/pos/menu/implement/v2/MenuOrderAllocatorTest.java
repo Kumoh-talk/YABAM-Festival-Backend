@@ -140,7 +140,9 @@ class MenuOrderAllocatorTest {
 		Menu menu = VALID_MENU();
 		Long menuId = menu.getId();
 		Long categoryId = menu.getMenuCategoryId();
-		Integer currentOrder = menu.getOrder();
+		Integer deletedOrder = menu.getOrder();
+		
+		given(menuRepository.refrsh(menu)).willReturn(menu);
 
 		// when
 		menuOrderAllocator.delete(menu);
@@ -149,7 +151,7 @@ class MenuOrderAllocatorTest {
 		verify(menuCategoryRepository).lockMenuCategory(categoryId);
 		verify(menuRepository).updateOrder(menuId, null);
 		verify(menuRepository).deleteMenu(menuId);
-		verify(menuRepository).decrementMenuOrdersInRange(categoryId, currentOrder + 1, Integer.MAX_VALUE);
+		verify(menuRepository).decrementMenuOrdersInRange(categoryId, deletedOrder + 1, Integer.MAX_VALUE);
 	}
 
 }
