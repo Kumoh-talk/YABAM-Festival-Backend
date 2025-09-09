@@ -1,0 +1,27 @@
+package domain.pos.menu.port.provided;
+
+import com.vo.UserPassport;
+
+import domain.pos.menu.entity.v2.Menu;
+import domain.pos.menu.entity.v2.state.MenuInfoState;
+
+public interface MenuCommand {
+	Menu createMenu(UserPassport userPassport, Long storeId,
+		Long menuCategoryId, MenuInfoState createMenuInfoState);
+
+	Menu updateMenuInfo(UserPassport userPassport, Long storeId,
+		Long menuId, MenuInfoState updateMenuInfoState);
+
+	Menu updateMenuOrder(UserPassport userPassport, Long storeId,
+		Long menuId, Integer updateOrder);
+
+	Menu updateIsSoldOut(UserPassport userPassport, Long storeId,
+		Long menuId, Boolean updateIsSoldOut);
+
+	Menu updateIsRecommended(UserPassport userPassport, Long storeId,
+		Long menuId, Boolean updateIsRecommended);
+
+	void deleteMenu(UserPassport userPassport, Long storeId,
+		Long menuId);
+
+}

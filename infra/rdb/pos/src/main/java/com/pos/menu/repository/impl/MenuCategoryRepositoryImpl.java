@@ -116,4 +116,9 @@ public class MenuCategoryRepositoryImpl implements MenuCategoryRepository {
 		menuCategoryJpaRepository.delete(menuCategoryEntity);
 		menuCategoryJpaRepository.decreaseOrderWhereGT(storeId, periodOrder);
 	}
+
+	@Override
+	public void lockMenuCategory(Long menuCategoryId) {
+
+	}
 }

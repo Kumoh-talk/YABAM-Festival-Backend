@@ -20,7 +20,6 @@ import domain.pos.menu.entity.Menu;
 import domain.pos.menu.entity.MenuCategory;
 import domain.pos.menu.entity.MenuCategoryInfo;
 import domain.pos.menu.entity.MenuInfo;
-import domain.pos.menu.entity.v2.state.CreateMenuInfoState;
 import domain.pos.menu.port.required.MenuRepository;
 import domain.pos.store.entity.Store;
 import jakarta.persistence.EntityManager;
@@ -162,10 +161,8 @@ public class MenuRepositoryImpl implements MenuRepository {
 	}
 
 	// v2
-	// TODO : menuCategory 조회 락 및 Max Order 조회 후 order 삽입 로직 추가 -> 동시성 오류 시 @Retryable를 통한 재시도 로직 필요
 	@Override
-	public domain.pos.menu.entity.v2.Menu createMenuAtEnd(CreateMenuInfoState createMenuInfoState, Long storeId,
-		Long menuCategoryId) {
+	public domain.pos.menu.entity.v2.Menu createMenu(domain.pos.menu.entity.v2.Menu menu) {
 		return null;
 	}
 
@@ -175,14 +172,23 @@ public class MenuRepositoryImpl implements MenuRepository {
 	}
 
 	@Override
+	public Integer readMaxMenuOrder(Long menuCategoryId) {
+		return null;
+	}
+
+	@Override
 	public domain.pos.menu.entity.v2.Menu updateMenuInfo(domain.pos.menu.entity.v2.Menu menu) {
 		return null;
 	}
 
-	// TODO : menuCategory 조회 락 후 order 재정렬 로직 추가
 	@Override
-	public domain.pos.menu.entity.v2.Menu updateOrder(Long storeId, Long menuId, Integer updateOrder) {
+	public domain.pos.menu.entity.v2.Menu updateOrder(Long menuId, Integer updateOrder) {
 		return null;
+	}
+
+	@Override
+	public void updateTemporaryOrder(Long menuId, Integer temporaryOrder) {
+
 	}
 
 	@Override
@@ -191,7 +197,17 @@ public class MenuRepositoryImpl implements MenuRepository {
 	}
 
 	@Override
-	public void deleteMenu(Long menuId, Long storeId) {
+	public void deleteMenu(Long menuId) {
+
+	}
+
+	@Override
+	public void decrementMenuOrdersInRange(Long menuCategoryId, Integer startOrder, Integer finishOrder) {
+
+	}
+
+	@Override
+	public void incrementMenuOrdersInRange(Long menuCategoryId, Integer startOrder, Integer finishOrder) {
 
 	}
 }

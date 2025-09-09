@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import domain.pos.menu.entity.Menu;
 import domain.pos.menu.entity.MenuCategoryInfo;
 import domain.pos.menu.entity.MenuInfo;
-import domain.pos.menu.entity.v2.state.CreateMenuInfoState;
 import domain.pos.store.entity.Store;
 
 @Repository
@@ -43,16 +42,23 @@ public interface MenuRepository {
 	Optional<MenuInfo> getMenuInfoById(Long menuId);
 
 	// v2
-	domain.pos.menu.entity.v2.Menu createMenuAtEnd(CreateMenuInfoState createMenuInfoState, Long storeId,
-		Long menuCategoryId);
+	domain.pos.menu.entity.v2.Menu createMenu(domain.pos.menu.entity.v2.Menu menu);
 
 	Optional<domain.pos.menu.entity.v2.Menu> readMenu(Long storeId, Long menuId);
 
+	Integer readMaxMenuOrder(Long menuCategoryId);
+
 	domain.pos.menu.entity.v2.Menu updateMenuInfo(domain.pos.menu.entity.v2.Menu menu);
 
-	domain.pos.menu.entity.v2.Menu updateOrder(Long storeId, Long menuId, Integer updateOrder);
+	domain.pos.menu.entity.v2.Menu updateOrder(Long menuId, Integer updateOrder);
+
+	void updateTemporaryOrder(Long menuId, Integer temporaryOrder);
 
 	domain.pos.menu.entity.v2.Menu updateState(domain.pos.menu.entity.v2.Menu menu);
 
-	void deleteMenu(Long menuId, Long storeId);
+	void deleteMenu(Long menuId);
+
+	void decrementMenuOrdersInRange(Long menuCategoryId, Integer startOrder, Integer finishOrder);
+
+	void incrementMenuOrdersInRange(Long menuCategoryId, Integer startOrder, Integer finishOrder);
 }
