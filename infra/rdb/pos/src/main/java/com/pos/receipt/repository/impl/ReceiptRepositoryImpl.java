@@ -23,7 +23,7 @@ import com.pos.table.mapper.TableMapper;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.receipt.repository.ReceiptRepository;
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
 import domain.pos.store.entity.Store;
 import domain.pos.table.entity.Table;
 import lombok.RequiredArgsConstructor;
@@ -186,6 +186,11 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	@Override
 	public Long updateReceiptTable(Receipt receipt, Table moveTable) {
 		return receiptJpaRepository.updateReceiptTable(receipt.getReceiptInfo().getReceiptId(),
-			moveTable.getTableId());
+			moveTable.getId());
+	}
+
+	@Override
+	public Optional<Receipt> getReceiptById(UUID receiptId) {
+		return Optional.empty();
 	}
 }

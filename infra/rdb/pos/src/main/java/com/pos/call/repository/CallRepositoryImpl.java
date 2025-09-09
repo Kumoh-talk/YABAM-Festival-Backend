@@ -1,5 +1,6 @@
 package com.pos.call.repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Slice;
@@ -15,7 +16,8 @@ import com.vo.UserPassport;
 
 import domain.pos.call.entity.Call;
 import domain.pos.call.entity.CallMessage;
-import domain.pos.call.repository.CallRepository;
+import domain.pos.call.entity.dto.CallInfoDto;
+import domain.pos.call.port.required.repository.CallRepository;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -45,5 +47,20 @@ public class CallRepositoryImpl implements CallRepository {
 	@Override
 	public boolean isExistsCallOwner(Long callId, UserPassport ownerPassport) {
 		return callJpaRepository.isExistsCallOwner(callId, ownerPassport.getUserId());
+	}
+
+	@Override
+	public Call save(Call call) {
+		return null;
+	}
+
+	@Override
+	public Optional<Call> findById(Long callId) {
+		return Optional.empty();
+	}
+
+	@Override
+	public Slice<CallInfoDto> getNonCompleteCallsBySaleId(Long saleId, Long lastCallId, int pageSize) {
+		return null;
 	}
 }

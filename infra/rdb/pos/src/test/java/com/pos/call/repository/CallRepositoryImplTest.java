@@ -33,9 +33,9 @@ import com.vo.UserPassport;
 
 import domain.pos.call.entity.Call;
 import domain.pos.call.entity.CallMessage;
-import domain.pos.call.repository.CallRepository;
+import domain.pos.call.port.required.repository.CallRepository;
 import domain.pos.receipt.entity.Receipt;
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
 import domain.pos.store.entity.Store;
 
 class CallRepositoryImplTest extends RepositoryTest {

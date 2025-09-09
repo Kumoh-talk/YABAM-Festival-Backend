@@ -45,4 +45,6 @@ public interface StoreRepository {
 	Optional<Store> findStore(Long queryStoreId);
 
 	boolean isExistsByStoreIdAndUserId(Long queryStoreId, Long userId);
+
+	void updateIsOpen(Store store);
 }

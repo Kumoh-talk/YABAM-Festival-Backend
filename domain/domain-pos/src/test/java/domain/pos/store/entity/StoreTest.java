@@ -21,6 +21,7 @@ class StoreTest {
 
 		assertThat(store.getStoreInfo()).isEqualTo(storeInfo);
 		assertThat(store.getOwnerPassport().getUserId()).isEqualTo(OWNER_USER_PASSPORT().getUserId());
+		assertThat(store.getIsOpen()).isFalse();
 	}
 
 	@Test
@@ -55,6 +56,29 @@ class StoreTest {
 			store.update(DIFF_OWNER_PASSPORT(), newStoreInfo)
 		).isInstanceOf(ServiceException.class)
 			.hasFieldOrPropertyWithValue("errorCode", NOT_EQUAL_STORE_OWNER);
+	}
+
+	@Test
+	void openTest() {
+		var store = STORE_FIXTURE();
+
+		store.openStore();
+
+		assertThat(store.getIsOpen()).isTrue();
+	}
+
+	@Test
+	void openFailTest() {
+		var store = STORE_FIXTURE();
+
+		store.openStore();
+
+		assertThat(store.getIsOpen()).isTrue();
+
+		assertThatThrownBy(() ->
+			store.openStore()
+		).isInstanceOf(ServiceException.class)
+			.hasFieldOrPropertyWithValue("errorCode", CONFLICT_OPEN_STORE);
 	}
 
 }

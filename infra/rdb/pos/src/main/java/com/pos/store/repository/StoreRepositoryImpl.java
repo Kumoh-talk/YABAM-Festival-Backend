@@ -173,4 +173,8 @@ public class StoreRepositoryImpl implements StoreRepository {
 	public boolean isExistsByStoreIdAndUserId(Long queryStoreId, Long userId) {
 		return false;
 	}
+
+	@Override
+	public void updateIsOpen(Store store) {
+	}
 }

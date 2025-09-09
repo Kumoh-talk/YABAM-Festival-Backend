@@ -33,12 +33,12 @@ public record TableInfoResponse(
 	) {
 		public static TableInfoDTO from(Table table) {
 			return TableInfoDTO.builder()
-				.tableId(table.getTableId())
-				.tableNumber(table.getTableNumber())
+				.tableId(table.getId())
+				.tableNumber(table.getTableNumber().value())
 				.isActive(table.getIsActive())
 				.tableX(table.getTablePoint().getTableX())
 				.tableY(table.getTablePoint().getTableY())
-				.tableCapacity(table.getTableCapacity())
+				.tableCapacity(table.getTableCapacity().value())
 				.build();
 		}
 	}

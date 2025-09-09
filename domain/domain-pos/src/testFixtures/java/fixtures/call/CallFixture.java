@@ -7,7 +7,7 @@ import domain.pos.call.entity.Call;
 import domain.pos.call.entity.CallMessage;
 import domain.pos.call.entity.TableCallInfo;
 import domain.pos.receipt.entity.Receipt;
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
 import domain.pos.table.entity.Table;
 
 public class CallFixture {
@@ -21,6 +21,14 @@ public class CallFixture {
 	private static final Boolean IS_COMPLETE = false;
 	private static final LocalDateTime CREATED_AT = LocalDateTime.of(2025, 5, 1, 12, 0);
 
+	public static Call CREATE_CALL() {
+		var saleId = 1L;
+		var receiptId = UUID.randomUUID();
+		var message = "call message";
+
+		return Call.create(saleId, receiptId, message);
+	}
+
 	public static Call GENERAL_CALL() {
 		return Call.of(
 			SALE_ID,
@@ -33,11 +41,11 @@ public class CallFixture {
 
 	public static Call CUSTOM_GENERAL_CALL(Sale sale, Table table, Receipt receipt) {
 		return Call.of(
-			sale.getSaleId(),
+			sale.getId(),
 			CALL_ID,
 			TableCallInfo.of(
-				table.getTableId(),
-				table.getTableNumber(),
+				table.getId(),
+				table.getTableNumber().value(),
 				receipt.getReceiptInfo().getReceiptId()
 			),
 			CallMessage.of(

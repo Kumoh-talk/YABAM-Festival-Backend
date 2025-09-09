@@ -24,7 +24,7 @@ import com.pos.table.mapper.TableMapper;
 import domain.pos.store.entity.Store;
 import domain.pos.table.entity.Table;
 import domain.pos.table.entity.TablePoint;
-import domain.pos.table.repository.TableRepository;
+import domain.pos.table.port.required.repository.TableRepository;
 
 class TableRepositoryImplTest extends RepositoryTest {
 
@@ -57,8 +57,9 @@ class TableRepositoryImplTest extends RepositoryTest {
 
 		// then
 		assertSoftly(softly -> {
-			softly.assertThat(table.getTableId()).isEqualTo(tableEntities.get(0).getId());
-			softly.assertThat(table.getTableNumber()).isEqualTo(tableEntities.get(0).getTableNumber().getTableNumber());
+			softly.assertThat(table.getId()).isEqualTo(tableEntities.get(0).getId());
+			softly.assertThat(table.getTableNumber().value())
+				.isEqualTo(tableEntities.get(0).getTableNumber().getTableNumber());
 			softly.assertThat(table.getIsActive()).isFalse();
 		});
 	}
@@ -130,7 +131,7 @@ class TableRepositoryImplTest extends RepositoryTest {
 		assertSoftly(softly -> {
 			softly.assertThat(opt).isPresent();
 			Table table = opt.get();
-			softly.assertThat(table.getTableId()).isEqualTo(tableEntity.getId());
+			softly.assertThat(table.getId()).isEqualTo(tableEntity.getId());
 			softly.assertThat(table.getStore().getId()).isEqualTo(savedStore.getId());
 		});
 	}
@@ -143,9 +144,9 @@ class TableRepositoryImplTest extends RepositoryTest {
 		testEntityManager.flush();
 		testEntityManager.clear();
 		Table table = TableMapper.toTable(tableEntity, savedStore);
-		Integer newNumber = table.getTableNumber() + 2;
+		Integer newNumber = table.getTableNumber().value() + 2;
 		TablePoint newPoint = TablePoint.of(7, 8);
-		Integer newCapacity = table.getTableCapacity() + 1;
+		Integer newCapacity = table.getTableCapacity().value() + 1;
 		// when
 		System.out.println("===TableRepositoryImplTest.updateTableInfo 쿼리===");
 		tableRepository.updateTableInfo(table, newNumber, newPoint, newCapacity);

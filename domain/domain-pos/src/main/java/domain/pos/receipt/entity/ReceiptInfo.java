@@ -33,9 +33,9 @@ public class ReceiptInfo {
 	public void stopUsage(Table table, LocalDateTime stopUsageTime, int maxUnitCount) {
 		this.stopUsageTime = stopUsageTime;
 
-		if (table.getTableCapacity() == 4) {
+		if (table.getTableCapacity().value() == 4) {
 			this.occupancyFee = maxUnitCount * FOUR_TABLE_COST;
-		} else if (table.getTableCapacity() == 6) {
+		} else if (table.getTableCapacity().value() == 6) {
 			this.occupancyFee = maxUnitCount * SIX_TABLE_COST;
 		}
 	}

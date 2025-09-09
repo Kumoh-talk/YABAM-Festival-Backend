@@ -25,7 +25,7 @@ import domain.pos.receipt.entity.TableWithNonAdjustReceipt;
 import domain.pos.receipt.implement.ReceiptReader;
 import domain.pos.receipt.implement.ReceiptValidator;
 import domain.pos.receipt.implement.ReceiptWriter;
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
 import domain.pos.store.entity.Store;
 import domain.pos.store.implement.SaleReader;
 import domain.pos.store.implement.StoreValidator;
@@ -92,7 +92,7 @@ public class ReceiptService {
 		storeValidator.validateStoreOwner(ownerPassport, sale.getStore());
 
 		List<Table> tables = new ArrayList<>(tableReader.findTables(sale.getStore().getId()));
-		tables.sort(Comparator.comparingInt(Table::getTableNumber));
+		tables.sort(Comparator.comparingInt((table) -> table.getTableNumber().value()));
 		List<Receipt> receipts = receiptReader.getAllNonAdjustReceiptWithTableAndOrders(saleId);
 
 		return tables.stream()

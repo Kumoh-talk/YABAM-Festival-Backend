@@ -2,7 +2,7 @@ package fixtures.receipt;
 
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.entity.ReceiptInfo;
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
 import domain.pos.store.entity.Store;
 import domain.pos.table.entity.Table;
 import fixtures.store.SaleFixture;

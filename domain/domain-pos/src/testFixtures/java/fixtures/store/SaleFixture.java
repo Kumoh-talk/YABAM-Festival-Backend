@@ -2,7 +2,7 @@ package fixtures.store;
 
 import java.time.LocalDateTime;
 
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
 import domain.pos.store.entity.Store;
 
 public class SaleFixture {

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import domain.pos.store.entity.Store;
 import domain.pos.table.entity.Table;
-import domain.pos.table.repository.TableRepository;
+import domain.pos.table.port.required.repository.TableRepository;
 import lombok.RequiredArgsConstructor;
 
 @Component

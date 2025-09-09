@@ -2,9 +2,9 @@ package domain.pos.store.implement;
 
 import org.springframework.stereotype.Component;
 
-import domain.pos.store.entity.Sale;
+import domain.pos.sale.entity.Sale;
+import domain.pos.sale.port.required.SaleRepository;
 import domain.pos.store.entity.Store;
-import domain.pos.store.port.required.SaleRepository;
 import lombok.RequiredArgsConstructor;
 
 @Component
