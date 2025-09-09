@@ -47,6 +47,7 @@ public class OrderService {
 	private final SaleReader saleReader;
 
 	// TODO : 위치기반으로 특정 범위 내에 유저가 존재해야만 주문이 가능하도록 구현 필요
+	// TODO : 정산된 영수증에 주문 안들어가도록 명시적으로 막아야함
 	@Transactional
 	public Order postOrderWithCart(UUID receiptId, UserPassport userPassport) {
 		Receipt receipt = receiptReader.getNonStopReceiptsWithTableAndStoreAndLock(receiptId).orElseThrow(

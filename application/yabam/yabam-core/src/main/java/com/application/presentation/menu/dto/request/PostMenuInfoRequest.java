@@ -27,6 +27,7 @@ public record PostMenuInfoRequest(
 	@NotBlank(message = "메뉴 대표 이미지는 필수입니다.")
 	String menuImageUrl,
 
+	// TODO : 품절 여부, 추천 여부는 생성할 때 따로 안 받도록 수정
 	@Schema(description = "메뉴 품절 여부", example = "true")
 	@NotNull(message = "메뉴 품절 여부는 필수입니다.")
 	Boolean menuIsSoldOut,
