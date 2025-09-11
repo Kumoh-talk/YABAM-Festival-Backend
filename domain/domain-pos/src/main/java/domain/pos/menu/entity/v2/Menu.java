@@ -2,7 +2,6 @@ package domain.pos.menu.entity.v2;
 
 import static java.util.Objects.*;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import com.exception.ErrorCode;
@@ -16,7 +15,7 @@ import lombok.Getter;
 @Getter
 public class Menu {
 	private Long id;
-	private MenuInfo menuInfo;
+	private MenuInfoState menuInfo;
 	private Integer order;
 	private boolean isSoldOut;
 	private boolean isRecommended;
@@ -27,7 +26,7 @@ public class Menu {
 	private Long menuCategoryId;
 
 	@Builder
-	private Menu(Long id, MenuInfo menuInfo, Integer order,
+	private Menu(Long id, MenuInfoState menuInfo, Integer order,
 		boolean isSoldOut, boolean isRecommended, AuditStamp auditStamp, Long storeId, Long menuCategoryId) {
 		this.id = id;
 		this.menuInfo = menuInfo;
@@ -41,7 +40,7 @@ public class Menu {
 
 	public static Menu create(MenuInfoState createMenuInfoState, Integer order,
 		Long storeId, Long menuCategoryId) {
-		MenuInfo menuInfo = new MenuInfo(createMenuInfoState);
+		MenuInfoState menuInfo = MenuInfo.of(createMenuInfoState);
 		checkOrder(order);
 		return Menu.builder()
 			.id(null)
@@ -55,7 +54,7 @@ public class Menu {
 	}
 
 	public boolean updateMenuInfo(MenuInfoState updateMenuInfoState) {
-		MenuInfo newMenuInfo = new MenuInfo(updateMenuInfoState);
+		MenuInfoState newMenuInfo = MenuInfo.of(updateMenuInfoState);
 		if (this.menuInfo.equals(newMenuInfo)) {
 			return false;
 		} else {
@@ -101,21 +100,17 @@ public class Menu {
 	}
 
 	// util
-	public void setUpdatedAt(LocalDateTime updatedAt) {
-		this.auditStamp = this.auditStamp.update(updatedAt);
-	}
-
 	public static Menu fromInfra(Long id,
 		MenuInfoState menuInfoState,
 		Integer order, boolean isSoldOut, boolean isRecommended,
-		LocalDateTime createdAt, Long storeId, Long menuCategoryId) {
+		AuditStamp auditStamp, Long storeId, Long menuCategoryId) {
 		return Menu.builder()
 			.id(id)
-			.menuInfo(new MenuInfo(menuInfoState))
+			.menuInfo(MenuInfo.of(menuInfoState))
 			.order(order)
 			.isSoldOut(isSoldOut)
 			.isRecommended(isRecommended)
-			.auditStamp(new AuditStamp(createdAt, null, null))
+			.auditStamp(auditStamp)
 			.storeId(storeId)
 			.menuCategoryId(menuCategoryId)
 			.build();

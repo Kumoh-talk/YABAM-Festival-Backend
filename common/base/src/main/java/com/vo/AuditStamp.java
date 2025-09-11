@@ -14,8 +14,16 @@ public record AuditStamp(
 		requireNonNull(createdAt);
 	}
 
-	public AuditStamp update(LocalDateTime updatedAt) {
-		return new AuditStamp(this.createdAt, requireNonNull(updatedAt), this.deletedAt);
+	public static AuditStamp create(LocalDateTime createdAt) {
+		return new AuditStamp(createdAt, null, null);
+	}
+
+	public static AuditStamp update(LocalDateTime createdAt, LocalDateTime updatedAt) {
+		return new AuditStamp(createdAt, requireNonNull(updatedAt), null);
+	}
+
+	public static AuditStamp delete(LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
+		return new AuditStamp(createdAt, requireNonNull(updatedAt), requireNonNull(deletedAt));
 	}
 }
 
