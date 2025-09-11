@@ -15,7 +15,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
 
-class CreateTest {
+class MenuCreateTest {
 
 	@Test
 	@DisplayName("메뉴 생성 성공")

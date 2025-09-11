@@ -5,8 +5,6 @@ import static fixtures.menu.v2.state.MenuInfoStateFixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.SoftAssertions.*;
 
-import java.time.LocalDateTime;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,7 +16,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
 
-class UpdateTest {
+class MenuUpdateTest {
 	@Nested
 	@DisplayName("updateMenuInfo 테스트")
 	class updateMenuInfoTest {
@@ -205,28 +203,4 @@ class UpdateTest {
 			});
 		}
 	}
-
-	@Nested
-	@DisplayName("setUpdatedAt 테스트")
-	class setUpdatedAtTest {
-		@Test
-		@DisplayName("updatedAt 설정 성공")
-		void setUpdatedAt_success() {
-			// given
-			var menu = VALID_MENU();
-			var pastAuditStamp = menu.getAuditStamp();
-			var updatedAt = LocalDateTime.now();
-
-			// when
-			menu.setUpdatedAt(updatedAt);
-
-			// then
-			assertSoftly(softly -> {
-				softly.assertThat(menu.getAuditStamp().createdAt()).isEqualTo(pastAuditStamp.createdAt());
-				softly.assertThat(menu.getAuditStamp().updatedAt()).isEqualTo(updatedAt);
-				softly.assertThat(menu.getAuditStamp().deletedAt()).isNull();
-			});
-		}
-	}
-
 }
