@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 import domain.pos.menu.entity.MenuCategoryInfo;
-import domain.pos.menu.repository.MenuCategoryRepository;
+import domain.pos.menu.port.required.MenuCategoryRepository;
 import lombok.RequiredArgsConstructor;
 
 @Component

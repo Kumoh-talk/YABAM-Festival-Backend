@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import domain.pos.menu.entity.Menu;
 import domain.pos.menu.entity.MenuCategoryInfo;
 import domain.pos.menu.entity.MenuInfo;
-import domain.pos.menu.repository.MenuRepository;
+import domain.pos.menu.port.required.MenuRepository;
 import lombok.RequiredArgsConstructor;
 
 @Component

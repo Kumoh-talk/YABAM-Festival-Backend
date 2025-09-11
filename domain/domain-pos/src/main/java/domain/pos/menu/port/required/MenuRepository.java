@@ -1,4 +1,4 @@
-package domain.pos.menu.repository;
+package domain.pos.menu.port.required;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,4 +40,27 @@ public interface MenuRepository {
 	Long countByIdIn(Long storeId, Set<Long> menuIds);
 
 	Optional<MenuInfo> getMenuInfoById(Long menuId);
+
+	// v2
+	domain.pos.menu.entity.v2.Menu createMenu(domain.pos.menu.entity.v2.Menu menu);
+
+	Optional<domain.pos.menu.entity.v2.Menu> readMenu(Long storeId, Long menuId);
+
+	Integer readMaxMenuOrder(Long menuCategoryId);
+
+	domain.pos.menu.entity.v2.Menu updateMenuInfo(domain.pos.menu.entity.v2.Menu menu);
+
+	domain.pos.menu.entity.v2.Menu updateOrder(Long menuId, Integer updateOrder);
+
+	void updateTemporaryOrder(Long menuId, Integer temporaryOrder);
+
+	domain.pos.menu.entity.v2.Menu updateState(domain.pos.menu.entity.v2.Menu menu);
+
+	void deleteMenu(Long menuId);
+
+	domain.pos.menu.entity.v2.Menu refrsh(domain.pos.menu.entity.v2.Menu menu);
+
+	void decrementMenuOrdersInRange(Long menuCategoryId, Integer startOrder, Integer finishOrder);
+
+	void incrementMenuOrdersInRange(Long menuCategoryId, Integer startOrder, Integer finishOrder);
 }

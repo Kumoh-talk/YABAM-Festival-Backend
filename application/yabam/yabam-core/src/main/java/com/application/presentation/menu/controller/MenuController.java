@@ -44,6 +44,8 @@ public class MenuController implements MenuApi {
 	private final MenuService menuService;
 
 	// TODO : 메뉴 카테고리당 메뉴 생성 100개 이하로 제한되어있음 (사유 : order 재정렬 문제)
+	//  -> order 재정렬 시 -100 하지말고, 곱셈 이용하도록 변경
+	// TODO : idempotency_key 도입을 통한 멱등성 보장?
 	@PostMapping("/api/v1/stores/{storeId}/menus")
 	@HasRole(userRole = ROLE_OWNER)
 	@AssignUserPassport
@@ -95,6 +97,7 @@ public class MenuController implements MenuApi {
 		return ResponseEntity.ok(createSuccessResponse(MenuInfoResponse.from(menuInfo)));
 	}
 
+	// TODO : URI 리소스로 지정한 상태 변경은 patch -> put
 	@PatchMapping("/api/v1/stores/{storeId}/menus/{menuId}/order")
 	@HasRole(userRole = ROLE_OWNER)
 	@AssignUserPassport

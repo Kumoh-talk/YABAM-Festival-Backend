@@ -1,4 +1,4 @@
-package domain.pos.menu.repository;
+package domain.pos.menu.port.required;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,5 +28,8 @@ public interface MenuCategoryRepository {
 	MenuCategoryInfo patchMenuCategoryOrder(Long storeId, MenuCategoryInfo menuCategoryInfo, Integer patchOrder);
 
 	void deleteMenuCategory(Long storeId, Long categoryId);
+
+	// v2
+	void lockMenuCategory(Long menuCategoryId);
 
 }

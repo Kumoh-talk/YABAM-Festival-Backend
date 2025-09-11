@@ -40,6 +40,10 @@ public enum ErrorCode {
 	MENU_ORDER_INVALID(HttpStatus.BAD_REQUEST, "MENU_0004", "메뉴 순서가 유효하지 않습니다."),
 	MENU_SOLD_OUT(HttpStatus.BAD_REQUEST, "MENU_0005", "메뉴가 품절되었습니다."),
 	MENU_QUANTITY_OVERFLOW(HttpStatus.BAD_REQUEST, "MENU_0006", "카테고리 당 등록 가능한 메뉴 개수는 100개 이하입니다."),
+	DOMAIN_INVALID_MENU_NAME(HttpStatus.BAD_REQUEST, "MENU_0007", "메뉴 이름이 유효하지 않습니다."),
+	DOMAIN_INVALID_MENU_PRICE(HttpStatus.BAD_REQUEST, "MENU_0008", "메뉴 가격이 유효하지 않습니다."),
+	DOMAIN_INVALID_MENU_IMAGE_URL(HttpStatus.BAD_REQUEST, "MENU_0009", "메뉴 이미지 URL이 유효하지 않습니다."),
+	DOMAIN_INVALID_MENU_ORDER(HttpStatus.BAD_REQUEST, "MENU_0010", "메뉴 순서가 유효하지 않습니다."),
 
 	// MenuCategory
 	MENU_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "MENU_CATEGORY_0001", "존재하지 않는 메뉴 카테고리입니다."),

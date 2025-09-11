@@ -27,7 +27,7 @@
 // import domain.pos.menu.entity.Menu;
 // import domain.pos.menu.entity.MenuCategory;
 // import domain.pos.menu.entity.MenuInfo;
-// import domain.pos.menu.repository.MenuRepository;
+// import domain.pos.menu.repository.port.required.MenuRepository;
 // import domain.pos.store.entity.Store;
 // import fixtures.menu.MenuCategoryFixture;
 // import fixtures.menu.MenuCategoryInfoFixture;

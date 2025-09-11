@@ -20,7 +20,7 @@ import domain.pos.menu.entity.Menu;
 import domain.pos.menu.entity.MenuCategory;
 import domain.pos.menu.entity.MenuCategoryInfo;
 import domain.pos.menu.entity.MenuInfo;
-import domain.pos.menu.repository.MenuRepository;
+import domain.pos.menu.port.required.MenuRepository;
 import domain.pos.store.entity.Store;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -136,6 +136,7 @@ public class MenuRepositoryImpl implements MenuRepository {
 		return MenuMapper.toMenuInfo(menuEntity);
 	}
 
+	// TODO : 재정렬을 위한 카테고리 전 메뉴 잠금
 	@Override
 	public void deleteMenu(Menu menu) {
 		MenuEntity menuEntity = menuJpaRepository.findById(menu.getMenuInfo().getId()).get();
@@ -157,5 +158,62 @@ public class MenuRepositoryImpl implements MenuRepository {
 	public Optional<MenuInfo> getMenuInfoById(Long menuId) {
 		return menuJpaRepository.findById(menuId)
 			.map(MenuMapper::toMenuInfo);
+	}
+
+	// v2
+	@Override
+	public domain.pos.menu.entity.v2.Menu createMenu(domain.pos.menu.entity.v2.Menu menu) {
+		return null;
+	}
+
+	@Override
+	public Optional<domain.pos.menu.entity.v2.Menu> readMenu(Long storeId, Long menuId) {
+		return Optional.empty();
+	}
+
+	@Override
+	public Integer readMaxMenuOrder(Long menuCategoryId) {
+		return null;
+	}
+
+	@Override
+	public domain.pos.menu.entity.v2.Menu updateMenuInfo(domain.pos.menu.entity.v2.Menu menu) {
+		return null;
+	}
+
+	@Override
+	public domain.pos.menu.entity.v2.Menu updateOrder(Long menuId, Integer updateOrder) {
+		return null;
+	}
+
+	@Override
+	public void updateTemporaryOrder(Long menuId, Integer temporaryOrder) {
+
+	}
+
+	@Override
+	public domain.pos.menu.entity.v2.Menu updateState(domain.pos.menu.entity.v2.Menu menu) {
+		return null;
+	}
+
+	@Override
+	public void deleteMenu(Long menuId) {
+
+	}
+
+	// TODO : entityManager.refresh 호출
+	@Override
+	public domain.pos.menu.entity.v2.Menu refrsh(domain.pos.menu.entity.v2.Menu menu) {
+		return null;
+	}
+
+	@Override
+	public void decrementMenuOrdersInRange(Long menuCategoryId, Integer startOrder, Integer finishOrder) {
+
+	}
+
+	@Override
+	public void incrementMenuOrdersInRange(Long menuCategoryId, Integer startOrder, Integer finishOrder) {
+
 	}
 }

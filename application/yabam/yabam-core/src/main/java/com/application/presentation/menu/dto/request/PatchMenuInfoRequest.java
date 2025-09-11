@@ -11,6 +11,7 @@ public record PatchMenuInfoRequest(
 	@NotBlank(message = "메뉴 이름은 필수입니다.")
 	String menuName,
 
+	// TODO : 가격 양수(@Positive) 조건 추가
 	@Schema(description = "메뉴 가격", example = "10000")
 	@NotNull(message = "메뉴 가격은 필수입니다.")
 	Integer menuPrice,
@@ -22,6 +23,7 @@ public record PatchMenuInfoRequest(
 	@NotBlank(message = "메뉴 대표 이미지는 필수입니다.")
 	String menuImageUrl,
 
+	// TODO : 품절 여부 수정 API가 따로 있으므로 삭제해야함
 	@Schema(description = "메뉴 품절 여부", example = "true")
 	@NotNull(message = "메뉴 품절 여부는 필수입니다.")
 	Boolean menuIsSoldOut,

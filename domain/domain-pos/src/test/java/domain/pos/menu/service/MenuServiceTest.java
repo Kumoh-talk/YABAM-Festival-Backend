@@ -1,4 +1,4 @@
-// package domain.pos.menu;
+// package domain.pos.menu.service;
 //
 // import static fixtures.member.UserFixture.*;
 // import static fixtures.menu.MenuCategoryFixture.GENERAL_MENU_CATEGORY;
@@ -42,7 +42,6 @@
 // import domain.pos.menu.implement.MenuReader;
 // import domain.pos.menu.implement.MenuValidator;
 // import domain.pos.menu.implement.MenuWriter;
-// import domain.pos.menu.service.MenuService;
 // import domain.pos.store.entity.Store;
 // import domain.pos.store.implement.StoreReader;
 // import domain.pos.store.implement.StoreValidator;
