@@ -18,7 +18,7 @@ class MenuInfo implements MenuInfoState {
 
 	private static final Pattern IMAGE_URL_PATTERN = Pattern.compile("^(https?://).*");
 
-	MenuInfo(String name, Integer price, String description, String imageUrl) {
+	private MenuInfo(String name, Integer price, String description, String imageUrl) {
 		checkStates(name, price, imageUrl);
 		this.name = name;
 		this.price = price;
@@ -26,13 +26,12 @@ class MenuInfo implements MenuInfoState {
 		this.imageUrl = imageUrl;
 	}
 
-	MenuInfo(MenuInfoState menuInfoState) {
-		this(
+	static MenuInfo of(MenuInfoState menuInfoState) {
+		return new MenuInfo(
 			menuInfoState.getName(),
 			menuInfoState.getPrice(),
 			menuInfoState.getDescription(),
-			menuInfoState.getImageUrl()
-		);
+			menuInfoState.getImageUrl());
 	}
 
 	private void checkStates(String name, Integer price, String imageUrl) {
