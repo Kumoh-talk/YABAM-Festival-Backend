@@ -62,7 +62,7 @@ public class MenuOrderAllocator {
 		menuCategoryRepository.lockMenuCategory(menuCategoryId);
 
 		// 락 전 조회한 삭제 menu의 최신 order를 가져오기 위한 refresh
-		Menu refreshMenu = menuRepository.refrsh(menu);
+		Menu refreshMenu = menuRepository.refresh(menu);
 		Integer deleteOrder = refreshMenu.getOrder();
 
 		// 삭제 menu에게 null 순서 부여 -> unique 제약 조건 위반 방지

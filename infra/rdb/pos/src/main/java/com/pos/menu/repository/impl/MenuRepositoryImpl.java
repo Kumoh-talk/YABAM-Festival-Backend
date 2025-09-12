@@ -214,7 +214,7 @@ public class MenuRepositoryImpl implements MenuRepository {
 
 	// TODO : entityManager.refresh 호출
 	@Override
-	public domain.pos.menu.entity.v2.domain.Menu refrsh(domain.pos.menu.entity.v2.domain.Menu menu) {
+	public domain.pos.menu.entity.v2.domain.Menu refresh(domain.pos.menu.entity.v2.domain.Menu menu) {
 		return null;
 	}
 

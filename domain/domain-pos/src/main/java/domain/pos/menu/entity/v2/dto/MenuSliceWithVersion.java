@@ -8,7 +8,7 @@ public class MenuSliceWithVersion {
 	private final Slice<Menu> menuSlice;
 	private final Long lastMenuVersion;
 
-	public MenuSliceWithVersion(Slice<Menu> menuSlice, long lastMenuVersion) {
+	public MenuSliceWithVersion(Slice<Menu> menuSlice, Long lastMenuVersion) {
 		this.menuSlice = menuSlice;
 		this.lastMenuVersion = lastMenuVersion;
 	}
@@ -17,7 +17,7 @@ public class MenuSliceWithVersion {
 		return menuSlice;
 	}
 
-	public long getLastMenuVersion() {
+	public Long getLastMenuVersion() {
 		return lastMenuVersion;
 	}
 }

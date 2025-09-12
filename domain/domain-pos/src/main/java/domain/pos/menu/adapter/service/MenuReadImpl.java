@@ -39,8 +39,7 @@ public class MenuReadImpl implements MenuRead {
 		validateVersion(lastMenu, version);
 
 		Slice<Menu> menuSlice = menuRepository.readMenuSlice(pageSize, lastMenu);
-		Long nextVersion = menuCategoryRepository.readVersion(
-			menuSlice.getContent().get(menuSlice.getNumberOfElements() - 1).getMenuCategoryId());
+		Long nextVersion = readNextVersion(menuSlice);
 		return new MenuSliceWithVersion(menuSlice, nextVersion);
 	}
 
@@ -66,6 +65,15 @@ public class MenuReadImpl implements MenuRead {
 			if (!lastVersion.equals(version)) {
 				throw new ServiceException(ErrorCode.MENU_CATEGORY_VERSION_MISMATCH);
 			}
+		}
+	}
+
+	private Long readNextVersion(Slice<Menu> menuSlice) {
+		if (menuSlice.getNumberOfElements() == 0) {
+			return null;
+		} else {
+			return menuCategoryRepository.readVersion(
+				menuSlice.getContent().get(menuSlice.getNumberOfElements() - 1).getMenuCategoryId());
 		}
 	}
 }
