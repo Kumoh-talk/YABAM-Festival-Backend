@@ -1,4 +1,4 @@
-package domain.pos.menu.entity.v2.state;
+package domain.pos.menu.entity.v2.domain.state;
 
 public interface MenuInfoState {
 	String getName();

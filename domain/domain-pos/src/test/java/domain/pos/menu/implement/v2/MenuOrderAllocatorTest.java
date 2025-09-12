@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
 
-import domain.pos.menu.entity.v2.Menu;
+import domain.pos.menu.entity.v2.domain.Menu;
 import domain.pos.menu.port.required.MenuCategoryRepository;
 import domain.pos.menu.port.required.MenuRepository;
 
@@ -141,7 +141,7 @@ class MenuOrderAllocatorTest {
 		Long menuId = menu.getId();
 		Long categoryId = menu.getMenuCategoryId();
 		Integer deletedOrder = menu.getOrder();
-		
+
 		given(menuRepository.refrsh(menu)).willReturn(menu);
 
 		// when

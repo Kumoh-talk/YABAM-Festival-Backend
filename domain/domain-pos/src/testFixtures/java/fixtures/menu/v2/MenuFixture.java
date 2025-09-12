@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 import com.vo.AuditStamp;
 
-import domain.pos.menu.entity.v2.Menu;
+import domain.pos.menu.entity.v2.domain.Menu;
 
 public class MenuFixture {
 

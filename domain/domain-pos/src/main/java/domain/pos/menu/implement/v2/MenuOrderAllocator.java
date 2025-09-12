@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
 
-import domain.pos.menu.entity.v2.Menu;
+import domain.pos.menu.entity.v2.domain.Menu;
 import domain.pos.menu.port.required.MenuCategoryRepository;
 import domain.pos.menu.port.required.MenuRepository;
 import lombok.RequiredArgsConstructor;

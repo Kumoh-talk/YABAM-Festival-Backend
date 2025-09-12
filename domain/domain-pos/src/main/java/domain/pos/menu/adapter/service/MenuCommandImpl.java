@@ -7,8 +7,8 @@ import com.exception.ErrorCode;
 import com.exception.ServiceException;
 import com.vo.UserPassport;
 
-import domain.pos.menu.entity.v2.Menu;
-import domain.pos.menu.entity.v2.state.MenuInfoState;
+import domain.pos.menu.entity.v2.domain.Menu;
+import domain.pos.menu.entity.v2.domain.state.MenuInfoState;
 import domain.pos.menu.implement.MenuCategoryValidator;
 import domain.pos.menu.implement.v2.MenuOrderAllocator;
 import domain.pos.menu.port.provided.MenuCommand;
