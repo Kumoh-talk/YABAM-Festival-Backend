@@ -32,4 +32,6 @@ public interface MenuCategoryRepository {
 	// v2
 	void lockMenuCategory(Long menuCategoryId);
 
+	Long readVersion(Long menuCategoryId);
+
 }

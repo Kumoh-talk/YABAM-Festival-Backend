@@ -51,6 +51,8 @@ public enum ErrorCode {
 	MENU_CATEGORY_ORDER_INVALID(HttpStatus.BAD_REQUEST, "MENU_CATEGORY_0003", "메뉴 카테고리 순서가 유효하지 않습니다."),
 	MENU_CATEGORY_QUANTITY_OVERFLOW(HttpStatus.BAD_REQUEST, "MENU_CATEGORY_0004",
 		"주점 당 등록 가능한 메뉴 카테고리 개수는 100개 이하입니다."),
+	MENU_CATEGORY_VERSION_MISMATCH(HttpStatus.CONFLICT, "MENU_CATEGORY_0005",
+		"메뉴 카테고리 버전이 일치하지 않습니다. 페이지를 새로고침 해주세요."),
 
 	// Security
 	NEED_AUTHORIZED(HttpStatus.UNAUTHORIZED, "SECURITY_0001", "인증이 필요합니다."),

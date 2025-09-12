@@ -162,13 +162,24 @@ public class MenuRepositoryImpl implements MenuRepository {
 
 	// v2
 	@Override
-	public domain.pos.menu.entity.v2.Menu createMenu(domain.pos.menu.entity.v2.Menu menu) {
+	public domain.pos.menu.entity.v2.domain.Menu createMenu(domain.pos.menu.entity.v2.domain.Menu menu) {
 		return null;
 	}
 
 	@Override
-	public Optional<domain.pos.menu.entity.v2.Menu> readMenu(Long storeId, Long menuId) {
+	public Optional<domain.pos.menu.entity.v2.domain.Menu> readMenu(Long storeId, Long menuId) {
 		return Optional.empty();
+	}
+
+	@Override
+	public Slice<domain.pos.menu.entity.v2.domain.Menu> readMenuSlice(int pageSize,
+		domain.pos.menu.entity.v2.domain.Menu menu) {
+		return null;
+	}
+
+	@Override
+	public List<domain.pos.menu.entity.v2.domain.Menu> readCategoryMenuList(Long menuCategoryId) {
+		return null;
 	}
 
 	@Override
@@ -177,12 +188,12 @@ public class MenuRepositoryImpl implements MenuRepository {
 	}
 
 	@Override
-	public domain.pos.menu.entity.v2.Menu updateMenuInfo(domain.pos.menu.entity.v2.Menu menu) {
+	public domain.pos.menu.entity.v2.domain.Menu updateMenuInfo(domain.pos.menu.entity.v2.domain.Menu menu) {
 		return null;
 	}
 
 	@Override
-	public domain.pos.menu.entity.v2.Menu updateOrder(Long menuId, Integer updateOrder) {
+	public domain.pos.menu.entity.v2.domain.Menu updateOrder(Long menuId, Integer updateOrder) {
 		return null;
 	}
 
@@ -192,7 +203,7 @@ public class MenuRepositoryImpl implements MenuRepository {
 	}
 
 	@Override
-	public domain.pos.menu.entity.v2.Menu updateState(domain.pos.menu.entity.v2.Menu menu) {
+	public domain.pos.menu.entity.v2.domain.Menu updateState(domain.pos.menu.entity.v2.domain.Menu menu) {
 		return null;
 	}
 
@@ -203,7 +214,7 @@ public class MenuRepositoryImpl implements MenuRepository {
 
 	// TODO : entityManager.refresh 호출
 	@Override
-	public domain.pos.menu.entity.v2.Menu refrsh(domain.pos.menu.entity.v2.Menu menu) {
+	public domain.pos.menu.entity.v2.domain.Menu refrsh(domain.pos.menu.entity.v2.domain.Menu menu) {
 		return null;
 	}
 

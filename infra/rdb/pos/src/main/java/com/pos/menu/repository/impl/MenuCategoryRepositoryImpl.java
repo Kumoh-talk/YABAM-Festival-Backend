@@ -121,4 +121,9 @@ public class MenuCategoryRepositoryImpl implements MenuCategoryRepository {
 	public void lockMenuCategory(Long menuCategoryId) {
 
 	}
+
+	@Override
+	public Long readVersion(Long menuCategoryId) {
+		return null;
+	}
 }
