@@ -144,7 +144,7 @@ class MenuOrderAllocatorTest {
 		Long categoryId = menu.getMenuCategoryId();
 		Integer deletedOrder = menu.getOrder();
 
-		given(menuRepository.refrsh(menu)).willReturn(menu);
+		given(menuRepository.refresh(menu)).willReturn(menu);
 
 		// when
 		menuOrderAllocator.delete(menu);
