@@ -34,4 +34,6 @@ public interface MenuCategoryRepository {
 
 	Long readVersion(Long menuCategoryId);
 
+	void bumpVersion(Long menuCategoryId);
+
 }

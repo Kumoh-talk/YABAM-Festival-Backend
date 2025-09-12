@@ -77,6 +77,7 @@ class MenuOrderAllocatorTest {
 			verify(menuRepository).updateTemporaryOrder(menuId, TEMPORARY_ORDER);
 			verify(menuRepository).decrementMenuOrdersInRange(categoryId, previousOrder + 1, updatedOrder);
 			verify(menuRepository).updateOrder(menuId, updatedOrder);
+			verify(menuCategoryRepository).bumpVersion(categoryId);
 			assertThat(result).isSameAs(updateMenu);
 		}
 
@@ -107,6 +108,7 @@ class MenuOrderAllocatorTest {
 			verify(menuRepository).updateTemporaryOrder(menuId, TEMPORARY_ORDER);
 			verify(menuRepository).incrementMenuOrdersInRange(categoryId, updatedOrder, previousOrder - 1);
 			verify(menuRepository).updateOrder(menuId, updatedOrder);
+			verify(menuCategoryRepository).bumpVersion(categoryId);
 			assertThat(result).isSameAs(updateMenu);
 		}
 
@@ -152,6 +154,7 @@ class MenuOrderAllocatorTest {
 		verify(menuRepository).updateOrder(menuId, null);
 		verify(menuRepository).deleteMenu(menuId);
 		verify(menuRepository).decrementMenuOrdersInRange(categoryId, deletedOrder + 1, Integer.MAX_VALUE);
+		verify(menuCategoryRepository).bumpVersion(categoryId);
 	}
 
 }

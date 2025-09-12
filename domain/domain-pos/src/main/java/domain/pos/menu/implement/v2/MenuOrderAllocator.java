@@ -49,6 +49,8 @@ public class MenuOrderAllocator {
 			menuRepository.incrementMenuOrdersInRange(menuCategoryId, updatedOrder, previousOrder - 1);
 		}
 
+		menuCategoryRepository.bumpVersion(menuCategoryId);
+
 		// 주된 변경 메뉴에게 최종 순서 부여
 		return menuRepository.updateOrder(updatedMenu.getId(), updatedOrder);
 	}
@@ -70,5 +72,7 @@ public class MenuOrderAllocator {
 
 		// 삭제 menu order보다 큰 order를 가지는 메뉴들의 순서를 -1
 		menuRepository.decrementMenuOrdersInRange(menuCategoryId, deleteOrder + 1, Integer.MAX_VALUE);
+
+		menuCategoryRepository.bumpVersion(menuCategoryId);
 	}
 }

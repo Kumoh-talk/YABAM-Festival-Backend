@@ -126,4 +126,9 @@ public class MenuCategoryRepositoryImpl implements MenuCategoryRepository {
 	public Long readVersion(Long menuCategoryId) {
 		return null;
 	}
+
+	@Override
+	public void bumpVersion(Long menuCategoryId) {
+
+	}
 }
