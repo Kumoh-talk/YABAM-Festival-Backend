@@ -124,4 +124,12 @@ public class StoreMapper {
 				.toList()
 		);
 	}
+
+	public static String toDetailImage(StoreDetailImageEntity entity) {
+		return entity.getImageUrl();
+	}
+
+	public static StoreDetailImageEntity toDetailImageEntity(String url, Long storeId) {
+		return StoreDetailImageEntity.of(url, StoreEntity.from(storeId));
+	}
 }

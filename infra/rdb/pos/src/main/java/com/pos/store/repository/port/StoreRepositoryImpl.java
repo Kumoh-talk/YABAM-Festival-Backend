@@ -1,4 +1,4 @@
-package com.pos.store.repository;
+package com.pos.store.repository.port;
 
 import static com.pos.global.id.IdMapper.*;
 
@@ -16,6 +16,8 @@ import com.pos.store.entity.QStoreEntity;
 import com.pos.store.entity.StoreDetailImageEntity;
 import com.pos.store.entity.StoreEntity;
 import com.pos.store.mapper.StoreMapper;
+import com.pos.store.repository.StoreDetailImageJpaRepository;
+import com.pos.store.repository.StoreJpaRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.vo.UserPassport;
 
