@@ -14,37 +14,39 @@ import domain.pos.store.entity.dto.StoreHeadDto;
 
 @Repository
 public interface StoreRepository {
+	// deprecated
 	Long createStore(UserPassport userPassport, StoreInfo createRequestStoreInfo);
 
 	Optional<Store> findStoreByStoreId(Long storeId);
 
+	// deprecated
 	Store changeStoreInfo(Store previousStore, StoreInfo requestChangeStoreInfo);
 
 	void deleteStore(Store previousStore);
 
+	// deprecated
 	Store changeStoreOpenStatus(Store previousStore);
 
+	// deprecated
 	boolean isExistsById(Long storeId);
 
+	// deprecated
 	void postDetailImage(Store previousStore, String imageUrl);
 
+	// deprecated
 	boolean isExistsImageUrl(Long storeId, String imageUrl);
 
+	// deprecated
 	void deleteDetailImage(Store previousStore, String imageUrl);
 
 	Slice<StoreHeadDto> findStoresCursorOrderByCreated(Long lastStoreId, int size);
 
 	List<Store> findMyStores(Long userId);
 
+	// deprecated
 	Optional<Store> findStoreByStoreIdWithLock(Long queryStoreId);
 
-	Store saveStore(Store store);
-
-	Store updateStore(Store store);
-
-	Optional<Store> findStore(Long queryStoreId);
+	Store save(Store store);
 
 	boolean isExistsByStoreIdAndUserId(Long queryStoreId, Long userId);
-
-	void updateIsOpen(Store store);
 }

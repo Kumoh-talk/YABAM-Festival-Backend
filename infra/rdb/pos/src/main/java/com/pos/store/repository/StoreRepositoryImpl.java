@@ -1,6 +1,7 @@
 package com.pos.store.repository;
 
-import java.time.LocalDateTime;
+import static com.pos.global.id.IdMapper.*;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -45,14 +46,8 @@ public class StoreRepositoryImpl implements StoreRepository {
 
 	@Override
 	public Optional<Store> findStoreByStoreId(Long storeId) {
-		StoreEntity storeEntities = queryFactory
-			.select(qStoreEntity)
-			.from(qStoreEntity)
-			.leftJoin(qStoreEntity.storeDetailImageEntity, qStoreDetailImageEntity).fetchJoin()
-			.where(qStoreEntity.id.eq(storeId))
-			.fetchOne();
-
-		return StoreMapper.toStoreWithStoreDetailImages(storeEntities);
+		return storeJpaRepository.findStoreWithDetailImageByStoreId(storeId)
+			.map(StoreMapper::toStoreWithDetailImages);
 	}
 
 	@Override
@@ -67,10 +62,7 @@ public class StoreRepositoryImpl implements StoreRepository {
 	@Override
 	@Transactional
 	public void deleteStore(Store previousStore) {
-		queryFactory.update(qStoreEntity)
-			.where(qStoreEntity.id.eq(previousStore.getId()))
-			.set(qStoreEntity.deletedAt, LocalDateTime.now())
-			.execute();
+		storeJpaRepository.deleteById(previousStore.getId());
 	}
 
 	@Override
@@ -155,26 +147,20 @@ public class StoreRepositoryImpl implements StoreRepository {
 	}
 
 	@Override
-	public Store saveStore(Store store) {
-		return null;
-	}
+	public Store save(Store store) {
+		var entity = StoreEntity.of(store);
 
-	@Override
-	public Store updateStore(Store store) {
-		return null;
-	}
+		storeJpaRepository.save(entity);
 
-	@Override
-	public Optional<Store> findStore(Long queryStoreId) {
-		return Optional.empty();
+		if (store.getId() == null) {
+			idMapping(store, entity.getId());
+		}
+
+		return store;
 	}
 
 	@Override
 	public boolean isExistsByStoreIdAndUserId(Long queryStoreId, Long userId) {
-		return false;
-	}
-
-	@Override
-	public void updateIsOpen(Store store) {
+		return storeJpaRepository.existsByIdAndOwnerId(queryStoreId, userId);
 	}
 }

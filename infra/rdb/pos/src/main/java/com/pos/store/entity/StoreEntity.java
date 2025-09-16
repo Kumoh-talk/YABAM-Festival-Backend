@@ -10,6 +10,7 @@ import com.pos.global.base.entity.BaseEntity;
 import com.pos.store.vo.StorePoint;
 import com.pos.store.vo.TableCostPerTime;
 
+import domain.pos.store.entity.Store;
 import domain.pos.store.entity.StoreInfo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -103,6 +104,31 @@ public class StoreEntity extends BaseEntity {
 
 	public static StoreEntity from(Long storeId) {
 		return new StoreEntity(storeId);
+	}
+
+	public static StoreEntity of(Store store) {
+		if (store == null) {
+			return null;
+		}
+
+		return mappingToEntity(store);
+	}
+
+	private static StoreEntity mappingToEntity(Store store) {
+		var entity = new StoreEntity();
+
+		entity.id = store.getId();
+		entity.isOpen = store.getIsOpen();
+		entity.ownerId = store.getOwnerPassport().getUserId();
+		entity.name = store.getStoreInfo().getStoreName();
+		entity.location = StorePoint.of(store.getStoreInfo().getLocation().x, store.getStoreInfo().getLocation().y);
+		entity.university = store.getStoreInfo().getUniversity();
+		entity.description = store.getStoreInfo().getDescription();
+		entity.headImageUrl = store.getStoreInfo().getHeadImageUrl();
+		entity.tableCostPerTime = TableCostPerTime.of(store.getStoreInfo().getTableTime(),
+			store.getStoreInfo().getTableCost());
+
+		return entity;
 	}
 
 	public void changeStoreInfo(StoreInfo requestChangeStoreInfo) {

@@ -31,6 +31,10 @@ public class StoreMapper {
 		);
 	}
 
+	public static StoreEntity toStoreEntity(Store store) {
+		return StoreEntity.of(store);
+	}
+
 	public static StoreEntity toStoreEntity(Long storeId) {
 		return StoreEntity.from(storeId);
 	}
@@ -64,6 +68,7 @@ public class StoreMapper {
 		if (storeEntity == null) {
 			return null;
 		}
+
 		return Store.of(
 			storeEntity.getId(),
 			storeEntity.isOpen(),
