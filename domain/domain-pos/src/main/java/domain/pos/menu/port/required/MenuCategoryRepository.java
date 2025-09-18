@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import domain.pos.menu.entity.MenuCategory;
 import domain.pos.menu.entity.MenuCategoryInfo;
+import domain.pos.menu.entity.v2.dto.MenuCategoryDeleteGate;
 import domain.pos.store.entity.Store;
 
 @Repository
@@ -30,10 +31,37 @@ public interface MenuCategoryRepository {
 	void deleteMenuCategory(Long storeId, Long categoryId);
 
 	// v2
-	void lockMenuCategory(Long menuCategoryId);
+	void lock(Long menuCategoryId);
 
 	Long readVersion(Long menuCategoryId);
 
 	void bumpVersion(Long menuCategoryId);
+
+	Optional<domain.pos.menu.entity.v2.domain.MenuCategory> create(Long userId, Long storeId,
+		domain.pos.menu.entity.v2.domain.MenuCategory menuCategory);
+
+	List<domain.pos.menu.entity.v2.domain.MenuCategory> readList(Long storeId);
+
+	Integer readMaxOrder(Long storeId);
+
+	Optional<domain.pos.menu.entity.v2.domain.MenuCategory> readMenuCategory(Long storeId, Long menuCategoryId);
+
+	Optional<domain.pos.menu.entity.v2.domain.MenuCategory> updateName(Long userId, Long storeId,
+		domain.pos.menu.entity.v2.domain.MenuCategory menuCategory);
+
+	void updateToTemporaryOrder(Long menuCategoryId, Integer temporaryOrder);
+
+	Optional<domain.pos.menu.entity.v2.domain.MenuCategory> updateOrder(Long userId, Long storeId, Long menuCategoryId,
+		Integer updateOrder);
+
+	Optional<Object> delete(Long userId, Long storeId, Long menuCategoryId);
+
+	void incrementOrdersInRange(Long storeId, Integer startOrder, Integer endOrder);
+
+	void decrementOrdersInRange(Long storeId, Integer startOrder, Integer endOrder);
+
+	domain.pos.menu.entity.v2.domain.MenuCategory refresh(Long menuCategoryId);
+
+	Optional<MenuCategoryDeleteGate> loadMenuCategoryDeleteGate(Long storeId, Long menuCategoryId);
 
 }

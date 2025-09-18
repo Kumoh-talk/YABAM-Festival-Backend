@@ -13,6 +13,7 @@ import com.pos.menu.repository.jpa.MenuCategoryJpaRepository;
 
 import domain.pos.menu.entity.MenuCategory;
 import domain.pos.menu.entity.MenuCategoryInfo;
+import domain.pos.menu.entity.v2.dto.MenuCategoryDeleteGate;
 import domain.pos.menu.port.required.MenuCategoryRepository;
 import domain.pos.store.entity.Store;
 import jakarta.persistence.EntityManager;
@@ -118,7 +119,7 @@ public class MenuCategoryRepositoryImpl implements MenuCategoryRepository {
 	}
 
 	@Override
-	public void lockMenuCategory(Long menuCategoryId) {
+	public void lock(Long menuCategoryId) {
 
 	}
 
@@ -130,5 +131,68 @@ public class MenuCategoryRepositoryImpl implements MenuCategoryRepository {
 	@Override
 	public void bumpVersion(Long menuCategoryId) {
 
+	}
+
+	@Override
+	public Optional<domain.pos.menu.entity.v2.domain.MenuCategory> create(Long userId, Long storeId,
+		domain.pos.menu.entity.v2.domain.MenuCategory menuCategory) {
+		return Optional.empty();
+	}
+
+	@Override
+	public List<domain.pos.menu.entity.v2.domain.MenuCategory> readList(Long storeId) {
+		return null;
+	}
+
+	@Override
+	public Integer readMaxOrder(Long storeId) {
+		return null;
+	}
+
+	@Override
+	public Optional<domain.pos.menu.entity.v2.domain.MenuCategory> readMenuCategory(Long storeId, Long menuCategoryId) {
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<domain.pos.menu.entity.v2.domain.MenuCategory> updateName(Long userId, Long storeId,
+		domain.pos.menu.entity.v2.domain.MenuCategory menuCategory) {
+		return Optional.empty();
+	}
+
+	@Override
+	public void updateToTemporaryOrder(Long menuCategoryId, Integer temporaryOrder) {
+
+	}
+
+	@Override
+	public Optional<domain.pos.menu.entity.v2.domain.MenuCategory> updateOrder(Long userId, Long storeId,
+		Long menuCategoryId, Integer updateOrder) {
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<Object> delete(Long userId, Long storeId, Long menuCategoryId) {
+		return Optional.empty();
+	}
+
+	@Override
+	public void incrementOrdersInRange(Long storeId, Integer startOrder, Integer endOrder) {
+
+	}
+
+	@Override
+	public void decrementOrdersInRange(Long storeId, Integer startOrder, Integer endOrder) {
+
+	}
+
+	@Override
+	public domain.pos.menu.entity.v2.domain.MenuCategory refresh(Long menuCategoryId) {
+		return null;
+	}
+
+	@Override
+	public Optional<MenuCategoryDeleteGate> loadMenuCategoryDeleteGate(Long storeId, Long menuCategoryId) {
+		return Optional.empty();
 	}
 }

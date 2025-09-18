@@ -53,6 +53,9 @@ public enum ErrorCode {
 		"주점 당 등록 가능한 메뉴 카테고리 개수는 100개 이하입니다."),
 	MENU_CATEGORY_VERSION_MISMATCH(HttpStatus.CONFLICT, "MENU_CATEGORY_0005",
 		"메뉴 카테고리 버전이 일치하지 않습니다. 페이지를 새로고침 해주세요."),
+	STORE_IS_OPEN_MENU_CATEGORY_WRITE(HttpStatus.CONFLICT, "MENU_CATEGORY_0006", "운영중인 가게는 메뉴 카테고리를 추가 및 수정할 수 없습니다."),
+	DOMAIN_INVALID_MENU_CATEGORY_NAME(HttpStatus.BAD_REQUEST, "MENU_CATEGORY_0007", "메뉴 카테고리 이름이 유효하지 않습니다."),
+	DOMAIN_INVALID_MENU_CATEGORY_ORDER(HttpStatus.BAD_REQUEST, "MENU_CATEGORY_0008", "메뉴 카테고리 순서가 유효하지 않습니다."),
 
 	// Security
 	NEED_AUTHORIZED(HttpStatus.UNAUTHORIZED, "SECURITY_0001", "인증이 필요합니다."),
