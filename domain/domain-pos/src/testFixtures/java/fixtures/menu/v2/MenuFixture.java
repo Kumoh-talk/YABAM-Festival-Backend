@@ -12,7 +12,15 @@ import domain.pos.menu.entity.v2.domain.Menu;
 public class MenuFixture {
 
 	public static Menu VALID_MENU() {
-		return Menu.fromInfra(VALID_MENU_ID_1, VALID_STATE(), VALID_ORDER_1, false, false,
-			AuditStamp.create(LocalDateTime.now()), VALID_STORE_ID_1, VALID_MENU_CATEGORY_ID_1);
+		return Menu.builder()
+			.id(VALID_MENU_ID_1)
+			.menuInfo(VALID_STATE())
+			.order(VALID_ORDER_1)
+			.isSoldOut(false)
+			.isRecommended(false)
+			.auditStamp(AuditStamp.create(LocalDateTime.now()))
+			.storeId(VALID_STORE_ID_1)
+			.menuCategoryId(VALID_MENU_CATEGORY_ID_1)
+			.build();
 	}
 }
