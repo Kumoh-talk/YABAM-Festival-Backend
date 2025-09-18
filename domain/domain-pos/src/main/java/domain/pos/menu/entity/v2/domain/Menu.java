@@ -41,7 +41,7 @@ public class Menu {
 	public static Menu create(MenuInfoState createMenuInfoState, Integer order,
 		Long storeId, Long menuCategoryId) {
 		MenuInfoState menuInfo = MenuInfo.of(createMenuInfoState);
-		checkOrder(order);
+		checkOrderRule(order);
 		return Menu.builder()
 			.id(null)
 			.menuInfo(menuInfo)
@@ -64,7 +64,7 @@ public class Menu {
 	}
 
 	public boolean updateOrder(Integer updateOrder) {
-		checkOrder(updateOrder);
+		checkOrderRule(updateOrder);
 		if (Objects.equals(this.order, updateOrder)) {
 			return false;
 		} else {
@@ -93,7 +93,7 @@ public class Menu {
 		}
 	}
 
-	private static void checkOrder(Integer order) {
+	private static void checkOrderRule(Integer order) {
 		if (order == null || order < 1) {
 			throw new ServiceException(ErrorCode.DOMAIN_INVALID_MENU_ORDER);
 		}

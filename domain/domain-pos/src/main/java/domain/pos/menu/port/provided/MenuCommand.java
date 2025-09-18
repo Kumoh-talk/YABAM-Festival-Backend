@@ -6,7 +6,7 @@ import domain.pos.menu.entity.v2.domain.Menu;
 import domain.pos.menu.entity.v2.domain.state.MenuInfoState;
 
 public interface MenuCommand {
-	Menu createMenu(UserPassport userPassport, Long storeId,
+	Menu create(UserPassport userPassport, Long storeId,
 		Long menuCategoryId, MenuInfoState createMenuInfoState);
 
 	Menu updateMenuInfo(UserPassport userPassport, Long storeId,
@@ -21,7 +21,7 @@ public interface MenuCommand {
 	Menu updateIsRecommended(UserPassport userPassport, Long storeId,
 		Long menuId, Boolean updateIsRecommended);
 
-	void deleteMenu(UserPassport userPassport, Long storeId,
+	void delete(UserPassport userPassport, Long storeId,
 		Long menuId);
 
 }
