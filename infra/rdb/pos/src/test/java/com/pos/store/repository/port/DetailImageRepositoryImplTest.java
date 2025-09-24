@@ -12,10 +12,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import com.pos.global.config.RepositoryTest;
 
+import domain.pos.store.port.required.DetailImageRepository;
+
 class DetailImageRepositoryImplTest extends RepositoryTest {
 
 	@Autowired
-	DetailImageRepositoryImpl detailImageRepository;
+	DetailImageRepository detailImageRepository;
 
 	@Autowired
 	TestEntityManager em;
