@@ -31,7 +31,7 @@ public class SaleHandler implements SaleCommand, SaleRead {
 
 		store.openStore();
 
-		storeRepository.updateIsOpen(store);
+		storeRepository.save(store);
 
 		Sale sale = Sale.createOpenSale(store.getId());
 
@@ -48,7 +48,7 @@ public class SaleHandler implements SaleCommand, SaleRead {
 
 		store.closeStore();
 
-		storeRepository.updateIsOpen(store);
+		storeRepository.save(store);
 
 		sale.close(isNotExistsNonAdjustReceipt(sale));
 
