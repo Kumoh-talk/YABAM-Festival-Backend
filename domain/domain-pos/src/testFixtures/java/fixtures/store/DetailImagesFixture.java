@@ -15,10 +15,10 @@ public class DetailImagesFixture {
 		return DetailImages.of(GENERAL_CLOSE_STORE().getId(), imageUrls);
 	}
 
-	public static DetailImages DIFF_IMAGE_FIXTURE() {
+	public static DetailImages DIFF_IMAGE_FIXTURE(Long storeId) {
 		String imageUrl = "https://example.com/diff_image.jpg";
 		List<String> imageUrls = new ArrayList<>(List.of(imageUrl));
 
-		return DetailImages.of(GENERAL_CLOSE_STORE().getId(), imageUrls);
+		return DetailImages.of(storeId, imageUrls);
 	}
 }

@@ -1,6 +1,7 @@
 package com.pos.store.repository.port;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.pos.store.mapper.StoreMapper;
 import com.pos.store.repository.DetailImageJpaRepository;
@@ -24,13 +25,14 @@ public class DetailImageRepositoryImpl implements DetailImageRepository {
 	}
 
 	@Override
+	@Transactional
 	public void save(DetailImages detailImages) {
 		// 기존에 있던 이미지 중에서 요청에 없는 이미지는 삭제
 		detailImageJpaRepository.findByStoreId(detailImages.getStoreId())
 			.stream()
 			.filter(entity ->
 				!detailImages.getImageUrls().contains(entity.getImageUrl()))
-			.forEach(entity -> detailImageJpaRepository.deleteByImageUrl(entity.getImageUrl()));
+			.forEach(detailImageJpaRepository::delete);
 
 		// 요청에 있는 이미지 중에서 기존에 없던 이미지는 추가
 		var list = detailImages.getImageUrls().stream()
