@@ -26,7 +26,7 @@ public class StoreCommandImpl implements StoreCommand {
 	public Store createStore(UserPassport ownerPassport, StoreInfo createRequestStoreInfo) {
 		var store = Store.create(ownerPassport, createRequestStoreInfo);
 
-		return storeRepository.saveStore(store);
+		return storeRepository.save(store);
 	}
 
 	@Transactional
@@ -39,7 +39,7 @@ public class StoreCommandImpl implements StoreCommand {
 
 		savedStore.update(ownerPassport, modifyStoreInfo);
 
-		return storeRepository.updateStore(savedStore);
+		return storeRepository.save(savedStore);
 	}
 
 	@Transactional

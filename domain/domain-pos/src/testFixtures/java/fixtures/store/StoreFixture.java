@@ -82,4 +82,11 @@ public class StoreFixture {
 
 		return Store.create(passport, storeInfo);
 	}
+
+	public static Store DIFF_STORE_FIXTURE() {
+		var passport = OWNER_USER_PASSPORT();
+		var storeInfo = CHANGED_GENERAL_STORE_INFO();
+
+		return Store.create(passport, storeInfo);
+	}
 }

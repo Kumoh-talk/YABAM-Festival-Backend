@@ -31,6 +31,10 @@ public class StoreMapper {
 		);
 	}
 
+	public static StoreEntity toStoreEntity(Store store) {
+		return StoreEntity.of(store);
+	}
+
 	public static StoreEntity toStoreEntity(Long storeId) {
 		return StoreEntity.from(storeId);
 	}
@@ -64,6 +68,7 @@ public class StoreMapper {
 		if (storeEntity == null) {
 			return null;
 		}
+
 		return Store.of(
 			storeEntity.getId(),
 			storeEntity.isOpen(),
@@ -118,5 +123,13 @@ public class StoreMapper {
 				.map(StoreDetailImageEntity::getImageUrl)
 				.toList()
 		);
+	}
+
+	public static String toDetailImage(StoreDetailImageEntity entity) {
+		return entity.getImageUrl();
+	}
+
+	public static StoreDetailImageEntity toDetailImageEntity(String url, Long storeId) {
+		return StoreDetailImageEntity.of(url, StoreEntity.from(storeId));
 	}
 }

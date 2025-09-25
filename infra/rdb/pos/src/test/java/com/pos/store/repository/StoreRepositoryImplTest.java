@@ -4,6 +4,7 @@ import static com.pos.fixtures.sale.SaleFixture.*;
 import static com.pos.fixtures.store.StoreDetailImageFixture.*;
 import static com.pos.fixtures.store.StoreEntityFixture.*;
 import static fixtures.store.StoreFixture.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.SoftAssertions.*;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Slice;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.pos.fixtures.table.TableEntityFixture;
 import com.pos.global.config.RepositoryTest;
@@ -34,6 +36,35 @@ class StoreRepositoryImplTest extends RepositoryTest {
 
 	@Autowired
 	private StoreRepository storeRepository;
+
+	@Test
+	void saveTest() {
+		var store = STORE_FIXTURE();
+
+		storeRepository.save(store);
+
+		assertThat(store.getId()).isNotNull();
+	}
+
+	@Test
+	void saveForUpdateTest() {
+		var entity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(GENERAL_CLOSE_STORE()));
+		Store changed = DIFF_STORE_FIXTURE();
+		ReflectionTestUtils.setField(changed, "id", entity.getId());
+
+		// when
+		storeRepository.save(changed);
+
+		testEntityManager.flush();
+		testEntityManager.clear();
+
+		// then
+		var findEntity = testEntityManager.find(StoreEntity.class, entity.getId());
+		var findStore = StoreMapper.toStore(findEntity);
+
+		assertThat(findStore.getStoreInfo()).isEqualTo(DIFF_STORE_FIXTURE().getStoreInfo());
+		assertThat(findStore.getStoreInfo()).isNotEqualTo(GENERAL_CLOSE_STORE().getStoreInfo());
+	}
 
 	@Test
 	void StoreInfo_변경_테스트() {

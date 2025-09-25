@@ -8,4 +8,5 @@ import com.pos.store.repository.dsl.StoreDslRepository;
 
 @Repository
 public interface StoreJpaRepository extends JpaRepository<StoreEntity, Long>, StoreDslRepository {
+	boolean existsByIdAndOwnerId(Long storeId, Long userId);
 }
