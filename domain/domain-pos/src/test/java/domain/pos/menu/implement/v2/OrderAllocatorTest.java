@@ -52,9 +52,9 @@ class OrderAllocatorTest {
 		void updatedOrder_is_bigger_than_previousOrder() {
 			// given
 			Long userId = 1L;
-			Long storeId = 1L;
-			Long menuId = 1L;
-			Long menuCategoryId = 1L;
+			Long storeId = 2L;
+			Long menuId = 3L;
+			Long menuCategoryId = 4L;
 			Integer previousOrder = 2;
 			Integer updatedOrder = 5;
 
@@ -82,9 +82,9 @@ class OrderAllocatorTest {
 		void updateOrder_is_smaller_than_currentOrder() {
 			// given
 			Long userId = 1L;
-			Long storeId = 1L;
-			Long menuId = 1L;
-			Long menuCategoryId = 1L;
+			Long storeId = 2L;
+			Long menuId = 3L;
+			Long menuCategoryId = 4L;
 			Integer previousOrder = 5;
 			Integer updatedOrder = 2;
 
@@ -112,9 +112,9 @@ class OrderAllocatorTest {
 		void updateOrder_is_bigger_than_max() {
 			// given
 			Long userId = 1L;
-			Long storeId = 1L;
-			Long menuId = 1L;
-			Long menuCategoryId = 1L;
+			Long storeId = 2L;
+			Long menuId = 3L;
+			Long menuCategoryId = 4L;
 			Integer previousOrder = 5;
 			Integer updatedOrder = 10;
 
@@ -136,7 +136,7 @@ class OrderAllocatorTest {
 	void deleteMenu_success() {
 		// given
 		Long userId = 1L;
-		Long storeId = 1L;
+		Long storeId = 2L;
 		Menu menu = VALID_MENU();
 		Long menuId = menu.getId();
 		Long menuCategoryId = menu.getMenuCategoryId();

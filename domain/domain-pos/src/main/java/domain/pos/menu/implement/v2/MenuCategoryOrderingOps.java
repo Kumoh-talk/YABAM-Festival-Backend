@@ -40,13 +40,13 @@ public class MenuCategoryOrderingOps implements OrderingOps<MenuCategory> {
 	}
 
 	@Override
-	public void incrementOrdersInRange(Long targetId, Integer startOrder, Integer endOrder) {
-		menuCategoryRepository.incrementOrdersInRange(targetId, startOrder, endOrder);
+	public void incrementOrdersInRange(Long guardId, Integer startOrder, Integer endOrder) {
+		menuCategoryRepository.incrementOrdersInRange(guardId, startOrder, endOrder);
 	}
 
 	@Override
-	public void decrementOrdersInRange(Long targetId, Integer startOrder, Integer endOrder) {
-		menuCategoryRepository.decrementOrdersInRange(targetId, startOrder, endOrder);
+	public void decrementOrdersInRange(Long guardId, Integer startOrder, Integer endOrder) {
+		menuCategoryRepository.decrementOrdersInRange(guardId, startOrder, endOrder);
 	}
 
 	@Override

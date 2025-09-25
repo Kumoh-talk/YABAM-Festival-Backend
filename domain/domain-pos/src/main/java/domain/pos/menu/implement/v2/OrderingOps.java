@@ -15,9 +15,9 @@ public interface OrderingOps<T> {
 
 	Optional<T> updateOrder(Long userId, Long storeId, Long targetId, Integer order);
 
-	void incrementOrdersInRange(Long targetId, Integer startOrder, Integer endOrder);
+	void incrementOrdersInRange(Long guardId, Integer startOrder, Integer endOrder);
 
-	void decrementOrdersInRange(Long targetId, Integer startOrder, Integer endOrder);
+	void decrementOrdersInRange(Long guardId, Integer startOrder, Integer endOrder);
 
 	Integer refreshOrder(Long targetId);
 
