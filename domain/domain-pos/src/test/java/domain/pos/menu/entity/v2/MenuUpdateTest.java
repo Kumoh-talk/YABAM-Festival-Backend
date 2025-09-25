@@ -48,7 +48,7 @@ class MenuUpdateTest {
 			var pastMenuInfo = menu.getMenuInfo();
 
 			// when
-			boolean isUpdate = menu.updateMenuInfo(VALID_STATE());
+			boolean isUpdate = menu.updateMenuInfo(pastMenuInfo);
 
 			// then
 			assertSoftly(softly -> {
