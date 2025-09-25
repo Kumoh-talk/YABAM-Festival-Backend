@@ -9,7 +9,6 @@ import com.exception.ServiceException;
 import com.vo.UserPassport;
 
 import domain.pos.menu.entity.v2.domain.MenuCategory;
-import domain.pos.menu.entity.v2.dto.MenuCategoryDeleteGate;
 import domain.pos.menu.implement.v2.OrderAllocator;
 import domain.pos.menu.implement.v2.OrderingOps;
 import domain.pos.menu.port.provided.MenuCategoryCommand;
@@ -100,14 +99,10 @@ public class MenuCategoryCommandImpl implements MenuCategoryCommand {
 	}
 
 	private void validateForDelete(UserPassport userPassport, Long storeId, Long menuCategoryId) {
-		MenuCategoryDeleteGate gate = menuCategoryRepository.loadMenuCategoryDeleteGate(storeId, menuCategoryId)
-			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_CATEGORY_NOT_FOUND));
+		Store store = storeValidator.validateStoreOwner(userPassport, storeId);
+		validateStoreOpen(store);
 
-		if (!gate.userId().equals(userPassport.getUserId())) {
-			throw new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER);
-		}
-		if (gate.storeIsOpen()) {
-			throw new ServiceException(ErrorCode.STORE_IS_OPEN_MENU_CATEGORY_WRITE);
-		}
+		menuCategoryRepository.readMenuCategory(storeId, menuCategoryId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_CATEGORY_NOT_FOUND));
 	}
 }

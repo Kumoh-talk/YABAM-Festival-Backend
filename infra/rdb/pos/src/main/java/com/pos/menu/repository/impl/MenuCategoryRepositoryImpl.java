@@ -13,7 +13,6 @@ import com.pos.menu.repository.jpa.MenuCategoryJpaRepository;
 
 import domain.pos.menu.entity.MenuCategory;
 import domain.pos.menu.entity.MenuCategoryInfo;
-import domain.pos.menu.entity.v2.dto.MenuCategoryDeleteGate;
 import domain.pos.menu.port.required.MenuCategoryRepository;
 import domain.pos.store.entity.Store;
 import jakarta.persistence.EntityManager;
@@ -189,10 +188,5 @@ public class MenuCategoryRepositoryImpl implements MenuCategoryRepository {
 	@Override
 	public domain.pos.menu.entity.v2.domain.MenuCategory refresh(Long menuCategoryId) {
 		return null;
-	}
-
-	@Override
-	public Optional<MenuCategoryDeleteGate> loadMenuCategoryDeleteGate(Long storeId, Long menuCategoryId) {
-		return Optional.empty();
 	}
 }

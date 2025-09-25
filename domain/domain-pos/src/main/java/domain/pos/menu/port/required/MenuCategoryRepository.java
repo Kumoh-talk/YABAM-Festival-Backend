@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import domain.pos.menu.entity.MenuCategory;
 import domain.pos.menu.entity.MenuCategoryInfo;
-import domain.pos.menu.entity.v2.dto.MenuCategoryDeleteGate;
 import domain.pos.store.entity.Store;
 
 @Repository
@@ -61,7 +60,4 @@ public interface MenuCategoryRepository {
 	void decrementOrdersInRange(Long storeId, Integer startOrder, Integer endOrder);
 
 	domain.pos.menu.entity.v2.domain.MenuCategory refresh(Long menuCategoryId);
-
-	Optional<MenuCategoryDeleteGate> loadMenuCategoryDeleteGate(Long storeId, Long menuCategoryId);
-
 }
