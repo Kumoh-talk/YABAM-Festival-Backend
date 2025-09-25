@@ -27,10 +27,10 @@ public class DetailImages {
 		return List.copyOf(imageUrls);
 	}
 
-	public static DetailImages of(Store store, List<String> imageUrl) {
+	public static DetailImages of(Long storeId, List<String> imageUrl) {
 		var detailImage = new DetailImages();
 
-		detailImage.storeId = store.getId();
+		detailImage.storeId = requireNonNull(storeId);
 		detailImage.imageUrls = requireNonNull(imageUrl);
 
 		return detailImage;
@@ -51,14 +51,14 @@ public class DetailImages {
 	public void remove(String imageUrl) {
 		validatePattern(imageUrl);
 
-		if (isDetailImageContain(imageUrl)) {
+		if (isNotContainDetailImage(imageUrl)) {
 			throw new ServiceException(NOT_FOUND_STORE_DETAIL_IMAGE);
 		}
 
 		this.imageUrls.remove(imageUrl);
 	}
 
-	private boolean isDetailImageContain(String imageUrl) {
+	private boolean isNotContainDetailImage(String imageUrl) {
 		return !this.imageUrls.contains(imageUrl);
 	}
 }

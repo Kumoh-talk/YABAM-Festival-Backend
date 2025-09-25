@@ -1,13 +1,13 @@
 package com.pos.store.repository.dsl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
-import com.pos.review.entity.QReviewEntity;
 import com.pos.store.entity.QStoreDetailImageEntity;
 import com.pos.store.entity.QStoreEntity;
 import com.pos.store.entity.StoreEntity;
@@ -25,8 +25,18 @@ public class StoreDslRepositoryImpl implements StoreDslRepository {
 	private final JPAQueryFactory queryFactory;
 
 	private final QStoreEntity store = QStoreEntity.storeEntity;
-	private final QReviewEntity review = QReviewEntity.reviewEntity;
 	private final QStoreDetailImageEntity storeDetailImage = QStoreDetailImageEntity.storeDetailImageEntity;
+
+	@Override
+	public Optional<StoreEntity> findStoreWithDetailImageByStoreId(Long storeId) {
+		StoreEntity storeEntity = queryFactory
+			.select(store)
+			.from(store)
+			.leftJoin(store.storeDetailImageEntity, storeDetailImage).fetchJoin()
+			.where(store.id.eq(storeId))
+			.fetchOne();
+		return Optional.ofNullable(storeEntity);
+	}
 
 	@Override
 	public Slice<StoreHeadDto> findStoreHeadsByStoreIdCursor(
