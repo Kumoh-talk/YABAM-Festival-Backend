@@ -1,11 +1,11 @@
-package domain.pos.menu.entity.v2;
+package domain.pos.menu.entity.v2.domain;
 
 import java.util.regex.Pattern;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
 
-import domain.pos.menu.entity.v2.state.MenuInfoState;
+import domain.pos.menu.entity.v2.domain.state.MenuInfoState;
 import io.micrometer.common.util.StringUtils;
 import lombok.Value;
 

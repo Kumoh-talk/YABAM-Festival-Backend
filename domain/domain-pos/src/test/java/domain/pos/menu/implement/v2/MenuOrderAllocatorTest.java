@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
 
-import domain.pos.menu.entity.v2.Menu;
+import domain.pos.menu.entity.v2.domain.Menu;
 import domain.pos.menu.port.required.MenuCategoryRepository;
 import domain.pos.menu.port.required.MenuRepository;
 
@@ -77,6 +77,7 @@ class MenuOrderAllocatorTest {
 			verify(menuRepository).updateTemporaryOrder(menuId, TEMPORARY_ORDER);
 			verify(menuRepository).decrementMenuOrdersInRange(categoryId, previousOrder + 1, updatedOrder);
 			verify(menuRepository).updateOrder(menuId, updatedOrder);
+			verify(menuCategoryRepository).bumpVersion(categoryId);
 			assertThat(result).isSameAs(updateMenu);
 		}
 
@@ -107,6 +108,7 @@ class MenuOrderAllocatorTest {
 			verify(menuRepository).updateTemporaryOrder(menuId, TEMPORARY_ORDER);
 			verify(menuRepository).incrementMenuOrdersInRange(categoryId, updatedOrder, previousOrder - 1);
 			verify(menuRepository).updateOrder(menuId, updatedOrder);
+			verify(menuCategoryRepository).bumpVersion(categoryId);
 			assertThat(result).isSameAs(updateMenu);
 		}
 
@@ -142,7 +144,7 @@ class MenuOrderAllocatorTest {
 		Long categoryId = menu.getMenuCategoryId();
 		Integer deletedOrder = menu.getOrder();
 
-		given(menuRepository.refrsh(menu)).willReturn(menu);
+		given(menuRepository.refresh(menu)).willReturn(menu);
 
 		// when
 		menuOrderAllocator.delete(menu);
@@ -152,6 +154,7 @@ class MenuOrderAllocatorTest {
 		verify(menuRepository).updateOrder(menuId, null);
 		verify(menuRepository).deleteMenu(menuId);
 		verify(menuRepository).decrementMenuOrdersInRange(categoryId, deletedOrder + 1, Integer.MAX_VALUE);
+		verify(menuCategoryRepository).bumpVersion(categoryId);
 	}
 
 }

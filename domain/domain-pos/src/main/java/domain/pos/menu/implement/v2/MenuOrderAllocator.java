@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
 
-import domain.pos.menu.entity.v2.Menu;
+import domain.pos.menu.entity.v2.domain.Menu;
 import domain.pos.menu.port.required.MenuCategoryRepository;
 import domain.pos.menu.port.required.MenuRepository;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +49,8 @@ public class MenuOrderAllocator {
 			menuRepository.incrementMenuOrdersInRange(menuCategoryId, updatedOrder, previousOrder - 1);
 		}
 
+		menuCategoryRepository.bumpVersion(menuCategoryId);
+
 		// 주된 변경 메뉴에게 최종 순서 부여
 		return menuRepository.updateOrder(updatedMenu.getId(), updatedOrder);
 	}
@@ -60,7 +62,7 @@ public class MenuOrderAllocator {
 		menuCategoryRepository.lockMenuCategory(menuCategoryId);
 
 		// 락 전 조회한 삭제 menu의 최신 order를 가져오기 위한 refresh
-		Menu refreshMenu = menuRepository.refrsh(menu);
+		Menu refreshMenu = menuRepository.refresh(menu);
 		Integer deleteOrder = refreshMenu.getOrder();
 
 		// 삭제 menu에게 null 순서 부여 -> unique 제약 조건 위반 방지
@@ -70,5 +72,7 @@ public class MenuOrderAllocator {
 
 		// 삭제 menu order보다 큰 order를 가지는 메뉴들의 순서를 -1
 		menuRepository.decrementMenuOrdersInRange(menuCategoryId, deleteOrder + 1, Integer.MAX_VALUE);
+
+		menuCategoryRepository.bumpVersion(menuCategoryId);
 	}
 }

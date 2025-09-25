@@ -2,8 +2,8 @@ package domain.pos.menu.port.provided;
 
 import com.vo.UserPassport;
 
-import domain.pos.menu.entity.v2.Menu;
-import domain.pos.menu.entity.v2.state.MenuInfoState;
+import domain.pos.menu.entity.v2.domain.Menu;
+import domain.pos.menu.entity.v2.domain.state.MenuInfoState;
 
 public interface MenuCommand {
 	Menu createMenu(UserPassport userPassport, Long storeId,

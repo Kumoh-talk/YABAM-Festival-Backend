@@ -15,6 +15,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
 
+import domain.pos.menu.entity.v2.domain.Menu;
+
 class MenuCreateTest {
 
 	@Test

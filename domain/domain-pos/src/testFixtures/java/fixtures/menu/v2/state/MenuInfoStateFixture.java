@@ -4,7 +4,7 @@ import static fixtures.menu.v2.ValidMenuState.*;
 
 import java.util.function.Consumer;
 
-import domain.pos.menu.entity.v2.state.MenuInfoState;
+import domain.pos.menu.entity.v2.domain.state.MenuInfoState;
 
 public class MenuInfoStateFixture implements MenuInfoState {
 	private String name;

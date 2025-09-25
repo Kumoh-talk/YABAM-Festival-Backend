@@ -42,25 +42,31 @@ public interface MenuRepository {
 	Optional<MenuInfo> getMenuInfoById(Long menuId);
 
 	// v2
-	domain.pos.menu.entity.v2.Menu createMenu(domain.pos.menu.entity.v2.Menu menu);
+	domain.pos.menu.entity.v2.domain.Menu createMenu(domain.pos.menu.entity.v2.domain.Menu menu);
 
-	Optional<domain.pos.menu.entity.v2.Menu> readMenu(Long storeId, Long menuId);
+	Optional<domain.pos.menu.entity.v2.domain.Menu> readMenu(Long storeId, Long menuId);
+
+	Slice<domain.pos.menu.entity.v2.domain.Menu> readMenuSlice(int pageSize,
+		domain.pos.menu.entity.v2.domain.Menu menu);
+
+	List<domain.pos.menu.entity.v2.domain.Menu> readCategoryMenuList(Long menuCategoryId);
 
 	Integer readMaxMenuOrder(Long menuCategoryId);
 
-	domain.pos.menu.entity.v2.Menu updateMenuInfo(domain.pos.menu.entity.v2.Menu menu);
+	domain.pos.menu.entity.v2.domain.Menu updateMenuInfo(domain.pos.menu.entity.v2.domain.Menu menu);
 
-	domain.pos.menu.entity.v2.Menu updateOrder(Long menuId, Integer updateOrder);
+	domain.pos.menu.entity.v2.domain.Menu updateOrder(Long menuId, Integer updateOrder);
 
 	void updateTemporaryOrder(Long menuId, Integer temporaryOrder);
 
-	domain.pos.menu.entity.v2.Menu updateState(domain.pos.menu.entity.v2.Menu menu);
+	domain.pos.menu.entity.v2.domain.Menu updateState(domain.pos.menu.entity.v2.domain.Menu menu);
 
 	void deleteMenu(Long menuId);
 
-	domain.pos.menu.entity.v2.Menu refrsh(domain.pos.menu.entity.v2.Menu menu);
+	domain.pos.menu.entity.v2.domain.Menu refresh(domain.pos.menu.entity.v2.domain.Menu menu);
 
 	void decrementMenuOrdersInRange(Long menuCategoryId, Integer startOrder, Integer finishOrder);
 
 	void incrementMenuOrdersInRange(Long menuCategoryId, Integer startOrder, Integer finishOrder);
+
 }
