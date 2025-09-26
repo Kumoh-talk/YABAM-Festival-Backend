@@ -12,6 +12,7 @@ import com.exception.ServiceException;
 import com.pos.call.entity.CallEntity;
 import com.pos.call.mapper.CallMapper;
 import com.pos.call.repository.jpa.CallJpaRepository;
+import com.pos.global.id.IdMapper;
 import com.vo.UserPassport;
 
 import domain.pos.call.entity.Call;
@@ -51,16 +52,25 @@ public class CallRepositoryImpl implements CallRepository {
 
 	@Override
 	public Call save(Call call) {
-		return null;
+		var entity = CallEntity.of(call);
+
+		callJpaRepository.save(entity);
+
+		if (call.getId() == null) {
+			IdMapper.idMapping(call, entity.getId());
+		}
+
+		return call;
 	}
 
 	@Override
 	public Optional<Call> findById(Long callId) {
-		return Optional.empty();
+		return callJpaRepository.findById(callId)
+			.map(CallMapper::toCallV2);
 	}
 
 	@Override
 	public Slice<CallInfoDto> getNonCompleteCallsBySaleId(Long saleId, Long lastCallId, int pageSize) {
-		return null;
+		return callJpaRepository.getNonCompleteCallsWithReceiptTableV2(saleId, lastCallId, pageSize);
 	}
 }

@@ -36,6 +36,18 @@ public class Call {
 		return new Call(saleId, callId, tableCallInfo, callMessage, createdAt);
 	}
 
+	public static Call of(Long id, Long saleId, UUID receiptId, CallMessage callMessage,
+		LocalDateTime createdAt) {
+		var call = new Call();
+		call.id = requireNonNull(id);
+		call.saleId = requireNonNull(saleId);
+		call.receiptId = requireNonNull(receiptId);
+		call.callMessage = requireNonNull(callMessage);
+		call.createdAt = requireNonNull(createdAt);
+
+		return call;
+	}
+
 	public static Call create(final Long saleId, final UUID receiptId, final String message) {
 		var call = new Call();
 		call.saleId = requireNonNull(saleId);

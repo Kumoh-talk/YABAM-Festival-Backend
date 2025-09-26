@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import com.pos.receipt.entity.ReceiptEntity;
 import com.pos.sale.entity.SaleEntity;
 
+import domain.pos.call.entity.Call;
 import domain.pos.call.entity.CallMessage;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -61,6 +62,19 @@ public class CallEntity {
 			receiptEntity,
 			saleEntity
 		);
+	}
+
+	public static CallEntity of(Call call) {
+		var entity = new CallEntity();
+
+		entity.id = call.getId();
+		entity.isCompleted = call.getCallMessage().getIsComplete();
+		entity.message = call.getCallMessage().getMessage();
+		entity.receipt = ReceiptEntity.from(call.getReceiptId());
+		entity.sale = SaleEntity.from(call.getSaleId());
+		entity.createdAt = call.getCreatedAt();
+
+		return entity;
 	}
 
 	public void completeCall() {
