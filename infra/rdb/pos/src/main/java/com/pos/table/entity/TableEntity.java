@@ -75,14 +75,14 @@ public class TableEntity extends BaseEntity {
 	}
 
 	public static TableEntity of(domain.pos.table.entity.Table table) {
-		TableEntity entity = new TableEntity();
+		var entity = new TableEntity();
 
 		entity.id = table.getId();
 		entity.tableNumber = TableNumber.from(table.getTableNumber().value());
 		entity.tablePoint = TablePointVo.of(table.getTablePoint().getTableX(), table.getTablePoint().getTableY());
 		entity.isActive = table.getIsActive();
 		entity.capacity = table.getTableCapacity().value();
-		entity.store = StoreEntity.from(table.getStore().getId());
+		entity.store = StoreEntity.from(table.getStoreId());
 
 		return entity;
 	}

@@ -18,6 +18,7 @@ public class SaleMapper {
 		return SaleEntity.from(storeEntity);
 	}
 
+	// 곧 없엘듯
 	public static Sale toSale(SaleEntity saveSaleEntity, Store previousStore) {
 		return Sale.of(
 			saveSaleEntity.getId(),
@@ -27,11 +28,14 @@ public class SaleMapper {
 	}
 
 	public static Sale toSale(SaleEntity saleEntity) {
+		if (saleEntity == null) {
+			return null;
+		}
 		return Sale.of(
 			saleEntity.getId(),
 			saleEntity.getOpenDateTime(),
 			saleEntity.getCloseDateTime(),
-			null
+			saleEntity.getStore().getId()
 		);
 	}
 

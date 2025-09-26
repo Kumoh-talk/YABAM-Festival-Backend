@@ -1,7 +1,9 @@
 package com.pos.sale.repository;
 
+import static com.pos.fixtures.sale.SaleFixture.*;
 import static com.pos.fixtures.store.StoreEntityFixture.*;
 import static fixtures.store.StoreFixture.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.SoftAssertions.*;
 
 import java.util.Optional;
@@ -11,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Slice;
 
-import com.pos.fixtures.sale.SaleFixture;
 import com.pos.global.config.RepositoryTest;
 import com.pos.sale.entity.SaleEntity;
 import com.pos.sale.mapper.SaleMapper;
@@ -41,7 +42,7 @@ class SaleRepositoryImplTest extends RepositoryTest {
 	@Test
 	void Sale와Store_fetchjoin_테스트() {
 		// given
-		SaleEntity saleEntity = testFixtureBuilder.buildSaleEntity(SaleFixture.GENERAL_SALE(savedStoreEntity));
+		SaleEntity saleEntity = testFixtureBuilder.buildSaleEntity(GENERAL_SALE(savedStoreEntity));
 		testEntityManager.flush();
 		testEntityManager.clear();
 
@@ -81,7 +82,7 @@ class SaleRepositoryImplTest extends RepositoryTest {
 	@Test
 	void Sale_마감_테스트() {
 		// given
-		SaleEntity saleEntity = testFixtureBuilder.buildSaleEntity(SaleFixture.GENERAL_SALE(savedStoreEntity));
+		SaleEntity saleEntity = testFixtureBuilder.buildSaleEntity(GENERAL_SALE(savedStoreEntity));
 		Sale savedSale = SaleMapper.toSale(saleEntity, savedStore);
 		testEntityManager.flush();
 		testEntityManager.clear();
@@ -107,9 +108,9 @@ class SaleRepositoryImplTest extends RepositoryTest {
 	@Test
 	void SaleCursor_리스트_조회_테스트() {
 		// given
-		SaleEntity saleEntity = testFixtureBuilder.buildSaleEntity(SaleFixture.GENERAL_SALE(savedStoreEntity));
-		SaleEntity saleEntity2 = testFixtureBuilder.buildSaleEntity(SaleFixture.GENERAL_SALE(savedStoreEntity));
-		SaleEntity saleEntity3 = testFixtureBuilder.buildSaleEntity(SaleFixture.GENERAL_SALE(savedStoreEntity));
+		SaleEntity saleEntity = testFixtureBuilder.buildSaleEntity(GENERAL_SALE(savedStoreEntity));
+		SaleEntity saleEntity2 = testFixtureBuilder.buildSaleEntity(GENERAL_SALE(savedStoreEntity));
+		SaleEntity saleEntity3 = testFixtureBuilder.buildSaleEntity(GENERAL_SALE(savedStoreEntity));
 		testEntityManager.flush();
 		testEntityManager.clear();
 
@@ -126,6 +127,37 @@ class SaleRepositoryImplTest extends RepositoryTest {
 			softly.assertThat(resultSale.getContent().get(1).getId()).isEqualTo(saleEntity2.getId());
 			softly.assertThat(resultSale.getContent().get(2).getId()).isEqualTo(saleEntity.getId());
 		});
+	}
+
+	@Test
+	void findOpenSaleByStoreIdTest() {
+		// given
+		var openSaleEntity = testFixtureBuilder.buildSaleEntity(GENERAL_SALE(savedStoreEntity));
+		testEntityManager.flush();
+		testEntityManager.clear();
+
+		// when
+		System.out.println("===SaleRepositoryImplTest.SaleCursor_리스트_조회 쿼리===");
+		Optional<Sale> result = saleRepository.findOpenSaleByStoreId(savedStore.getId());
+		System.out.println("===SaleRepositoryImplTest.SaleCursor_리스트_조회 쿼리===");
+
+		assertThat(result).isNotEmpty();
+		assertThat(result.get().getId()).isEqualTo(openSaleEntity.getId());
+	}
+
+	@Test
+	void findOpenSaleByStoreIdFailCloseTest() {
+		// given
+		testFixtureBuilder.buildSaleEntity(CLOSED_SALE(savedStoreEntity));
+		testEntityManager.flush();
+		testEntityManager.clear();
+
+		// when
+		System.out.println("===SaleRepositoryImplTest.SaleCursor_리스트_조회 쿼리===");
+		Optional<Sale> result = saleRepository.findOpenSaleByStoreId(savedStore.getId());
+		System.out.println("===SaleRepositoryImplTest.SaleCursor_리스트_조회 쿼리===");
+
+		assertThat(result).isEmpty();
 	}
 
 }

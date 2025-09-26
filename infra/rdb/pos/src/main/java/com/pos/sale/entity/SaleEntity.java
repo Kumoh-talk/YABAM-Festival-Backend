@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.pos.store.entity.StoreEntity;
 
+import domain.pos.sale.entity.Sale;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -56,5 +57,16 @@ public class SaleEntity {
 
 	public static SaleEntity from(Long id) {
 		return new SaleEntity(id);
+	}
+
+	public static SaleEntity of(Sale sale) {
+		var entity = new SaleEntity();
+
+		entity.id = sale.getId();
+		entity.openDateTime = sale.getOpenDateTime();
+		entity.closeDateTime = sale.getCloseDateTime().orElseGet(() -> null);
+		entity.store = StoreEntity.from(sale.getStoreId());
+
+		return entity;
 	}
 }
