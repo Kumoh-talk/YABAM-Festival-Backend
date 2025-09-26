@@ -48,7 +48,7 @@ class MenuUpdateTest {
 			var pastMenuInfo = menu.getMenuInfo();
 
 			// when
-			boolean isUpdate = menu.updateMenuInfo(VALID_STATE());
+			boolean isUpdate = menu.updateMenuInfo(pastMenuInfo);
 
 			// then
 			assertSoftly(softly -> {
@@ -125,6 +125,59 @@ class MenuUpdateTest {
 				softly.assertThat(menu.getMenuInfo().getDescription()).isNull();
 				softly.assertThat(menu.getMenuInfo().getImageUrl()).isNull();
 			});
+		}
+	}
+
+	@Nested
+	@DisplayName("updateOrder 테스트")
+	class updateOrderTest {
+		@Test
+		@DisplayName("메뉴 순서 수정 성공")
+		void updateOrder_success() {
+			// given
+			var menu = VALID_MENU();
+			var updateOrder = menu.getOrder() + 1;
+
+			// when
+			boolean isChanged = menu.updateOrder(updateOrder);
+
+			// then
+			assertSoftly(softly -> {
+				softly.assertThat(isChanged).isTrue();
+				softly.assertThat(menu.getOrder()).isEqualTo(updateOrder);
+			});
+		}
+
+		@Test
+		@DisplayName("동일한 순서로 수정 시도하면 수정되지 않음")
+		void updateOrder_same_order() {
+			// given
+			var menu = VALID_MENU();
+			var pastOrder = menu.getOrder();
+
+			// when
+			boolean isChanged = menu.updateOrder(pastOrder);
+
+			// then
+			assertSoftly(softly -> {
+				softly.assertThat(isChanged).isFalse();
+				softly.assertThat(menu.getOrder()).isEqualTo(pastOrder);
+			});
+		}
+
+		@ParameterizedTest
+		@NullSource
+		@ValueSource(ints = {0, -1, -100})
+		@DisplayName("메뉴 순서가 Null 또는 1보다 작으면 ServiceException(DOMAIN_INVALID_MENU_ORDER)")
+		void order_must_be_positive(Integer invalidOrder) {
+			// given
+			var menu = VALID_MENU();
+
+			// when -> then
+			assertThatThrownBy(() -> menu.updateOrder(invalidOrder))
+				.isInstanceOf(ServiceException.class)
+				.extracting(ex -> ((ServiceException)ex).getErrorCode())
+				.isEqualTo(ErrorCode.DOMAIN_INVALID_MENU_ORDER);
 		}
 	}
 

@@ -162,7 +162,7 @@ public class MenuRepositoryImpl implements MenuRepository {
 
 	// v2
 	@Override
-	public domain.pos.menu.entity.v2.domain.Menu createMenu(domain.pos.menu.entity.v2.domain.Menu menu) {
+	public domain.pos.menu.entity.v2.domain.Menu create(domain.pos.menu.entity.v2.domain.Menu menu) {
 		return null;
 	}
 
@@ -183,7 +183,7 @@ public class MenuRepositoryImpl implements MenuRepository {
 	}
 
 	@Override
-	public Integer readMaxMenuOrder(Long menuCategoryId) {
+	public Integer readMaxOrder(Long menuCategoryId) {
 		return null;
 	}
 
@@ -193,13 +193,14 @@ public class MenuRepositoryImpl implements MenuRepository {
 	}
 
 	@Override
-	public domain.pos.menu.entity.v2.domain.Menu updateOrder(Long menuId, Integer updateOrder) {
-		return null;
+	public void updateToTemporaryOrder(Long menuId, Integer temporaryOrder) {
+
 	}
 
 	@Override
-	public void updateTemporaryOrder(Long menuId, Integer temporaryOrder) {
-
+	public Optional<domain.pos.menu.entity.v2.domain.Menu> updateOrder(Long userId, Long storeId, Long menuId,
+		Integer updateOrder) {
+		return Optional.empty();
 	}
 
 	@Override
@@ -208,23 +209,23 @@ public class MenuRepositoryImpl implements MenuRepository {
 	}
 
 	@Override
-	public void deleteMenu(Long menuId) {
+	public void delete(Long menuId) {
 
 	}
 
 	// TODO : entityManager.refresh 호출
 	@Override
-	public domain.pos.menu.entity.v2.domain.Menu refresh(domain.pos.menu.entity.v2.domain.Menu menu) {
+	public domain.pos.menu.entity.v2.domain.Menu refresh(Long menuId) {
 		return null;
 	}
 
 	@Override
-	public void decrementMenuOrdersInRange(Long menuCategoryId, Integer startOrder, Integer finishOrder) {
+	public void decrementOrdersInRange(Long menuCategoryId, Integer startOrder, Integer endOrder) {
 
 	}
 
 	@Override
-	public void incrementMenuOrdersInRange(Long menuCategoryId, Integer startOrder, Integer finishOrder) {
+	public void incrementOrdersInRange(Long menuCategoryId, Integer startOrder, Integer endOrder) {
 
 	}
 }

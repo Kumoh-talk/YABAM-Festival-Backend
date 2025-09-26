@@ -23,7 +23,6 @@ _Aggregate Root_
 - updateIsSoldOut() : 메뉴 품절 여부 수정
 - updateIsRecommended() : 메뉴 추천 여부 수정
 - 기타 util 함수
-    - setUpdatedAt() : 메뉴 수정 시간 변경
     - fromInfra() : Infra 에서 Menu 도메인으로 변환
 
 #### 제약
@@ -38,6 +37,7 @@ _Aggregate Root_
 - updateOrder 연산에는 메뉴 순서만 변경 가능하다.
     - 가게 소유자만 가능하다.
     - 영업전에만 가능하다.
+    - 범위 내의 다른 메뉴들의 순서 재배치가 이루어져야한다.
 - updateIsSoldOut 연산에는 메뉴 품절 여부만 변경 가능하다.
     - 가게 소유자만 가능하다.
 - updateIsRecommended 연산에는 메뉴 추천 여부만 변경 가능하다.
