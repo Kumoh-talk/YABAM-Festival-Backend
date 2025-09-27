@@ -13,9 +13,12 @@ import com.pos.receipt.entity.QReceiptEntity;
 import com.pos.sale.entity.QSaleEntity;
 import com.pos.store.entity.QStoreEntity;
 import com.pos.table.entity.QTableEntity;
+import com.querydsl.core.types.ConstructorExpression;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import domain.pos.call.entity.dto.CallInfoDto;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -35,6 +38,30 @@ public class CallDslRepositoryImpl implements CallDslRepository {
 			.from(qCallEntity)
 			.join(qCallEntity.receipt, qReceiptEntity).fetchJoin()
 			.join(qReceiptEntity.table, qTableEntity).fetchJoin()
+			.where(cursorWhereCondition(saleId, lastCallId))
+			.orderBy(qCallEntity.id.asc())
+			.limit(size + 1)
+			.fetch();
+
+		boolean hasNext = false;
+		if (fetch.size() > size) {
+			hasNext = true;
+			fetch.remove(size);
+		}
+		return new SliceImpl<>(fetch, PageRequest.of(0, size), hasNext);
+	}
+
+	@Override
+	public Slice<CallInfoDto> getNonCompleteCallsWithReceiptTableV2(Long saleId, Long lastCallId, int size) {
+		ConstructorExpression<CallInfoDto> constructor = Projections.constructor(CallInfoDto.class, qCallEntity.id,
+			qCallEntity.message, qCallEntity.receipt.table.id,
+			qCallEntity.receipt.table.tableNumber, qCallEntity.createdAt);
+
+		List<CallInfoDto> fetch = queryFactory
+			.select(constructor)
+			.from(qCallEntity)
+			.leftJoin(qCallEntity.receipt, qReceiptEntity)
+			.leftJoin(qReceiptEntity.table, qTableEntity)
 			.where(cursorWhereCondition(saleId, lastCallId))
 			.orderBy(qCallEntity.id.asc())
 			.limit(size + 1)

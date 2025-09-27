@@ -32,4 +32,22 @@ public class SaleFixture {
 			store
 		);
 	}
+
+	public static Sale OPEN_SALE(Store store) {
+		return Sale.of(
+			null,
+			GENERAL_SALE_START_DATETIME,
+			null,
+			store
+		);
+	}
+
+	public static Sale CLOSE_SALE(Store store) {
+		return Sale.of(
+			null,
+			GENERAL_SALE_START_DATETIME,
+			GENERAL_SALE_END_DATETIME,
+			store
+		);
+	}
 }
