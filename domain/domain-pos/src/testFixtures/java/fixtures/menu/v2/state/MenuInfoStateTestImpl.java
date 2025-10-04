@@ -6,13 +6,13 @@ import java.util.function.Consumer;
 
 import domain.pos.menu.entity.v2.domain.state.MenuInfoState;
 
-public class MenuInfoStateFixture implements MenuInfoState {
+public class MenuInfoStateTestImpl implements MenuInfoState {
 	private String name;
 	private Integer price;
 	private String description;
 	private String imageUrl;
 
-	private MenuInfoStateFixture(String name, Integer price, String description,
+	private MenuInfoStateTestImpl(String name, Integer price, String description,
 		String imageUrl) {
 		this.name = name;
 		this.price = price;
@@ -20,8 +20,8 @@ public class MenuInfoStateFixture implements MenuInfoState {
 		this.imageUrl = imageUrl;
 	}
 
-	public static MenuInfoStateFixture VALID_STATE() {
-		return new MenuInfoStateFixture(
+	public static MenuInfoStateTestImpl VALID_STATE() {
+		return new MenuInfoStateTestImpl(
 			VALID_NAME_1,
 			VALID_PRICE_1,
 			VALID_DESCRIPTION_1,
@@ -29,8 +29,8 @@ public class MenuInfoStateFixture implements MenuInfoState {
 		);
 	}
 
-	public static MenuInfoStateFixture ANOTHER_VALID_STATE() {
-		return new MenuInfoStateFixture(
+	public static MenuInfoStateTestImpl ANOTHER_VALID_STATE() {
+		return new MenuInfoStateTestImpl(
 			VALID_NAME_2,
 			VALID_PRICE_2,
 			VALID_DESCRIPTION_2,
@@ -38,7 +38,7 @@ public class MenuInfoStateFixture implements MenuInfoState {
 		);
 	}
 
-	public static MenuInfoStateFixture custom(Consumer<MenuInfoStateFixture> mutator) {
+	public static MenuInfoStateTestImpl custom(Consumer<MenuInfoStateTestImpl> mutator) {
 		var fixture = VALID_STATE();
 		mutator.accept(fixture);
 		return fixture;

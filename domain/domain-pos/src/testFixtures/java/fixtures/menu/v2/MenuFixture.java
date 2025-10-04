@@ -1,7 +1,7 @@
 package fixtures.menu.v2;
 
 import static fixtures.menu.v2.ValidMenuState.*;
-import static fixtures.menu.v2.state.MenuInfoStateFixture.*;
+import static fixtures.menu.v2.state.MenuInfoStateTestImpl.*;
 
 import java.time.LocalDateTime;
 
