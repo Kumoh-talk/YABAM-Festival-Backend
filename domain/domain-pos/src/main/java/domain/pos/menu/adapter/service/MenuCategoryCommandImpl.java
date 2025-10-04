@@ -34,6 +34,8 @@ public class MenuCategoryCommandImpl implements MenuCategoryCommand {
 		this.menuCategoryRepository = menuCategoryRepository;
 	}
 
+	// TODO : storeOpen -> readLock 기반 검증으로 변경
+
 	@Transactional
 	@Override
 	public MenuCategory create(UserPassport userPassport, Long storeId, String menuCategoryName) {

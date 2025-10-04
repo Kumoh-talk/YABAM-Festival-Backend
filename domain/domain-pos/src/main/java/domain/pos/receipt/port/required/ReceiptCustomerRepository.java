@@ -1,4 +1,4 @@
-package domain.pos.receipt.repository;
+package domain.pos.receipt.port.required;
 
 import java.util.UUID;
 

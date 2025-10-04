@@ -9,7 +9,7 @@ import com.exception.ErrorCode;
 import com.exception.ServiceException;
 
 import domain.pos.receipt.entity.Receipt;
-import domain.pos.receipt.repository.ReceiptRepository;
+import domain.pos.receipt.port.required.ReceiptRepository;
 import domain.pos.sale.entity.Sale;
 import domain.pos.table.entity.Table;
 import lombok.RequiredArgsConstructor;

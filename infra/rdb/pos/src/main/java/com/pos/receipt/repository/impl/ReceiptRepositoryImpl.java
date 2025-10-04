@@ -1,5 +1,6 @@
 package com.pos.receipt.repository.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -19,10 +20,11 @@ import com.pos.receipt.repository.jpa.ReceiptJpaRepository;
 import com.pos.sale.mapper.SaleMapper;
 import com.pos.store.mapper.StoreMapper;
 import com.pos.table.mapper.TableMapper;
+import com.vo.UserPassport;
 
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.entity.ReceiptInfo;
-import domain.pos.receipt.repository.ReceiptRepository;
+import domain.pos.receipt.port.required.ReceiptRepository;
 import domain.pos.sale.entity.Sale;
 import domain.pos.store.entity.Store;
 import domain.pos.table.entity.Table;
@@ -191,6 +193,75 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 
 	@Override
 	public Optional<Receipt> getReceiptById(UUID receiptId) {
+		return Optional.empty();
+	}
+
+	@Override
+	public List<domain.pos.receipt.entity.v2.domain.Receipt> writeLock(List<UUID> receiptIds) {
+		return null;
+	}
+
+	@Override
+	public Optional<domain.pos.receipt.entity.v2.domain.Receipt> readLock(UUID receiptId) {
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<domain.pos.receipt.entity.v2.domain.Receipt> create(UserPassport userPassport, Long storeId,
+		domain.pos.receipt.entity.v2.domain.Receipt receipt) {
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<domain.pos.receipt.entity.v2.domain.Receipt> readReceipt(UUID receiptId) {
+		return Optional.empty();
+	}
+
+	@Override
+	public List<domain.pos.receipt.entity.v2.domain.Receipt> readNonAdjusts(UserPassport userPassport, Long saleId) {
+		return null;
+	}
+
+	@Override
+	public Optional<domain.pos.receipt.entity.v2.domain.Receipt> readNonAdjusts(UUID tableId) {
+		return Optional.empty();
+	}
+
+	@Override
+	public Page<domain.pos.receipt.entity.v2.domain.Receipt> readAdjustedPage(UserPassport userPassport,
+		Pageable pageable, Long saleId) {
+		return null;
+	}
+
+	@Override
+	public int bulkUpdateStartUsageTime(UserPassport userPassport, List<UUID> receiptIds,
+		LocalDateTime startUsageTime) {
+		return 0;
+	}
+
+	@Override
+	public int bulkUpdateStopUsageTime(UserPassport userPassport,
+		List<domain.pos.receipt.entity.v2.domain.Receipt> receipts) {
+		return 0;
+	}
+
+	@Override
+	public int bulkUpdateRestartUsage(UserPassport userPassport, List<UUID> receiptIds) {
+		return 0;
+	}
+
+	@Override
+	public int bulkUpdateAdjust(UserPassport userPassport, List<UUID> receiptIds) {
+		return 0;
+	}
+
+	@Override
+	public int updateTableId(UserPassport userPassport, UUID receiptId, UUID tableId) {
+		return 0;
+	}
+
+	@Override
+	public Optional<Object> delete(UserPassport userPassport, UUID receiptId) {
 		return Optional.empty();
 	}
 }

@@ -1,5 +1,6 @@
-package domain.pos.receipt.repository;
+package domain.pos.receipt.port.required;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -8,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
+
+import com.vo.UserPassport;
 
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.entity.ReceiptInfo;
@@ -58,4 +61,32 @@ public interface ReceiptRepository {
 
 	Optional<Receipt> getReceiptById(UUID receiptId);
 
+	// v2
+	List<domain.pos.receipt.entity.v2.domain.Receipt> writeLock(List<UUID> receiptIds);
+
+	Optional<domain.pos.receipt.entity.v2.domain.Receipt> readLock(UUID receiptId);
+
+	Optional<domain.pos.receipt.entity.v2.domain.Receipt> create(UserPassport userPassport, Long storeId,
+		domain.pos.receipt.entity.v2.domain.Receipt receipt);
+
+	Optional<domain.pos.receipt.entity.v2.domain.Receipt> readReceipt(UUID receiptId);
+
+	List<domain.pos.receipt.entity.v2.domain.Receipt> readNonAdjusts(UserPassport userPassport, Long saleId);
+
+	Optional<domain.pos.receipt.entity.v2.domain.Receipt> readNonAdjusts(UUID tableId);
+
+	Page<domain.pos.receipt.entity.v2.domain.Receipt> readAdjustedPage(UserPassport userPassport, Pageable pageable,
+		Long saleId);
+
+	int bulkUpdateStartUsageTime(UserPassport userPassport, List<UUID> receiptIds, LocalDateTime startUsageTime);
+
+	int bulkUpdateStopUsageTime(UserPassport userPassport, List<domain.pos.receipt.entity.v2.domain.Receipt> receipts);
+
+	int bulkUpdateRestartUsage(UserPassport userPassport, List<UUID> receiptIds);
+
+	int bulkUpdateAdjust(UserPassport userPassport, List<UUID> receiptIds);
+
+	int updateTableId(UserPassport userPassport, UUID receiptId, UUID tableId);
+
+	Optional<Object> delete(UserPassport userPassport, UUID receiptId);
 }

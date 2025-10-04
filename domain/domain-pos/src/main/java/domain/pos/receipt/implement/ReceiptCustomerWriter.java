@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
-import domain.pos.receipt.repository.ReceiptCustomerRepository;
+import domain.pos.receipt.port.required.ReceiptCustomerRepository;
 import lombok.RequiredArgsConstructor;
 
 @Component
