@@ -27,4 +27,6 @@ public interface SaleRepository {
 	Sale updateSale(Sale sale);
 
 	boolean isExistsNonAdjustReceiptBySaleId(Long saleId);
+
+	Optional<Sale> readLock(Long saleId);
 }

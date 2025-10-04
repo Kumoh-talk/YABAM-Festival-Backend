@@ -17,6 +17,10 @@ public interface TableRepository {
 
 	Table changeTableActiveStatus(boolean isActive, Table savedInActiveTable);
 
+	Table changeTableActiveStatus(boolean isActive, List<UUID> receiptIds);
+
+	Table changeTableActiveStatus(boolean isActive, UUID receiptIds);
+
 	List<Table> findTablesByStoreId(Long storeId);
 
 	boolean existsTableByStoreAndTableNumWithLock(Store store, Integer tableNumber);
@@ -32,4 +36,7 @@ public interface TableRepository {
 	Table save(Table table);
 
 	Optional<Table> findById(UUID tableId);
+
+	Optional<Table> writeLock(UUID tableId);
+
 }

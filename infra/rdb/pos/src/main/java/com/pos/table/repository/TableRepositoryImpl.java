@@ -37,6 +37,16 @@ public class TableRepositoryImpl implements TableRepository {
 	}
 
 	@Override
+	public Table changeTableActiveStatus(boolean isActive, List<UUID> receiptIds) {
+		return null;
+	}
+
+	@Override
+	public Table changeTableActiveStatus(boolean isActive, UUID receiptIds) {
+		return null;
+	}
+
+	@Override
 	public List<Table> findTablesByStoreId(Long storeId) {
 		return tableJpaRepository.findByStoreId(storeId)
 			.stream()
@@ -88,6 +98,11 @@ public class TableRepositoryImpl implements TableRepository {
 
 	@Override
 	public Optional<Table> findById(UUID tableId) {
+		return Optional.empty();
+	}
+
+	@Override
+	public Optional<Table> writeLock(UUID tableId) {
 		return Optional.empty();
 	}
 }

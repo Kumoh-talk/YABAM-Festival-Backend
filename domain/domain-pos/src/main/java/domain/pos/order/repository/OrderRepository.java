@@ -14,6 +14,7 @@ import domain.pos.order.entity.Order;
 import domain.pos.order.entity.OrderMenu;
 import domain.pos.order.entity.vo.OrderStatus;
 import domain.pos.receipt.entity.Receipt;
+import domain.pos.receipt.entity.v2.dto.ReceiptOrderStatus;
 
 @Repository
 public interface OrderRepository {
@@ -41,4 +42,7 @@ public interface OrderRepository {
 	List<Order> getReceiptOrdersWithMenu(UUID receiptId);
 
 	void retryReceiveOrderStatus(Order order, UserRole userRole);
+
+	// v2
+	List<ReceiptOrderStatus> readLock(List<UUID> receiptIds);
 }

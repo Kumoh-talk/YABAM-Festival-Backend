@@ -111,6 +111,11 @@ public class SaleRepositoryImpl implements SaleRepository {
 		return false;
 	}
 
+	@Override
+	public Optional<Sale> readLock(Long saleId) {
+		return Optional.empty();
+	}
+
 	private BooleanExpression saleSliceCursorCondition(Long storeId, Long lastSaleId) {
 		if (lastSaleId == null) {
 			return qSaleEntity.store.id.eq(storeId);
