@@ -8,6 +8,8 @@ import lombok.Getter;
 public enum ErrorCode {
 	// Common
 	INVALID_INPUT_VALUE(HttpStatus.BAD_REQUEST, "COMMON_0001", "잘못된 입력 값입니다."),
+	INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON_0002", "서버 내부 오류입니다."),
+
 	// Owner
 	NOT_VALID_OWNER(HttpStatus.BAD_REQUEST, "OWNER_0001", "해당 사용자는 가게 점주가 아닙니다"),
 
@@ -85,6 +87,9 @@ public enum ErrorCode {
 	ALREADY_ADJUSTMENT_RECEIPT(HttpStatus.CONFLICT, "RECEIPT_0002", "이미 정산된 영수증입니다."),
 	RECEIPT_ACCESS_DENIED(HttpStatus.FORBIDDEN, "RECEIPT_0003", "대상 영수증에 접근 가능한 요청이 아닙니다."),
 	FAILED_TO_UPDATE_RECEIPT_TABLE(HttpStatus.CONFLICT, "RECEIPT_0004", "테이블 변경에 실패했습니다."),
+	ALREADY_STOPPED_RECEIPT(HttpStatus.CONFLICT, "RECEIPT_0005", "이미 종료된 영수증입니다."),
+	NOT_STARTED_RECEIPT(HttpStatus.BAD_REQUEST, "RECEIPT_0006", "시작되지 않은 영수증입니다."),
+
 	// Order
 	ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER_0001", "존재하지 않는 주문입니다."),
 	ORDER_ACCESS_DENIED(HttpStatus.FORBIDDEN, "ORDER_0002", "점주만이 사용할 수 있는 요청입니다."),

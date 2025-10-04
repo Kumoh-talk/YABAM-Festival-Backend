@@ -3,6 +3,7 @@ package com.exception.handler;
 import static com.exception.ErrorCode.*;
 import static com.response.ResponseUtil.*;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,7 +27,7 @@ public class GlobalExceptionHandler {
 		ServiceException exception) {
 		ErrorCode errorCode = exception.getErrorCode();
 		return ResponseEntity.status(errorCode.getStatus())
-			.body(createFailureResponse(errorCode));
+			.body(createFailureResponse(errorCode, exception.getErrorData()));
 	}
 
 	@ExceptionHandler(VoException.class)
@@ -45,5 +46,16 @@ public class GlobalExceptionHandler {
 		log.error("MethodArgumentNotValidException : {}", errorMessage);
 		return ResponseEntity.badRequest()
 			.body(createFailureResponse(ErrorCode.INVALID_INPUT_VALUE, errorMessage));
+	}
+
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<ResponseBody<Void>> handleUnexpectedException(
+		HttpServletRequest request, Exception ex) {
+
+		log.error("Unhandled exception {} {} : {}",
+			request.getMethod(), request.getRequestURI(), ex.getMessage(), ex);
+
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			.body(createFailureResponse(ErrorCode.INTERNAL_SERVER_ERROR));
 	}
 }
