@@ -42,7 +42,7 @@ public class Menu {
 	public static Menu create(MenuInfoState createMenuInfoState, Integer order,
 		Long storeId, Long menuCategoryId) {
 		MenuInfoState menuInfo = MenuInfo.of(createMenuInfoState);
-		if (isValidOrder(order)) {
+		if (!isValidOrder(order)) {
 			throw new IllegalArgumentException("메뉴 생성 시 주문 순서가 올바르지 않습니다.");
 		}
 		return Menu.builder()
@@ -67,7 +67,7 @@ public class Menu {
 	}
 
 	public boolean updateOrder(Integer updateOrder) {
-		if (isValidOrder(updateOrder)) {
+		if (!isValidOrder(updateOrder)) {
 			throw new ServiceException(ErrorCode.DOMAIN_INVALID_MENU_ORDER);
 		}
 

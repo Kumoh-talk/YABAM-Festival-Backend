@@ -30,7 +30,7 @@ public class MenuCategory {
 
 	public static MenuCategory create(String name, Integer order, Long storeId) {
 		checkStates(name, order);
-		if (isValidOrder(order)) {
+		if (!isValidOrder(order)) {
 			throw new IllegalArgumentException("카테고리 생성 시 주문 순서가 올바르지 않습니다.");
 		}
 
@@ -52,7 +52,7 @@ public class MenuCategory {
 	}
 
 	public boolean updateOrder(Integer updateOrder) {
-		if (isValidOrder(updateOrder)) {
+		if (!isValidOrder(updateOrder)) {
 			throw new ServiceException(ErrorCode.DOMAIN_INVALID_MENU_CATEGORY_ORDER);
 		}
 
