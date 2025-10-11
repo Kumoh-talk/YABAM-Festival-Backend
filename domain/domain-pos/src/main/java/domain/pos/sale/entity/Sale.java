@@ -37,6 +37,20 @@ public class Sale {
 			store);
 	}
 
+	public static Sale of(Long saleId,
+		LocalDateTime openDateTime,
+		LocalDateTime closeDateTime,
+		Long storeId) {
+		var sale = new Sale();
+
+		sale.id = saleId;
+		sale.openDateTime = openDateTime;
+		sale.closeDateTime = Optional.ofNullable(closeDateTime);
+		sale.storeId = storeId;
+
+		return sale;
+	}
+
 	public static Sale createOpenSale(Long storeId) {
 		var sale = new Sale();
 		sale.openDateTime = LocalDateTime.now();

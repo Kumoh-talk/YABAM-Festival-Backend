@@ -1,10 +1,13 @@
 package com.pos.table.repository;
 
+import static com.pos.global.id.IdMapper.*;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.pos.table.entity.TableEntity;
 import com.pos.table.mapper.TableMapper;
@@ -87,18 +90,29 @@ public class TableRepositoryImpl implements TableRepository {
 	}
 
 	@Override
+	@Transactional
 	public void deleteTable(Table table) {
 		tableJpaRepository.deleteById(table.getId());
 	}
 
 	@Override
+	@Transactional
 	public Table save(Table table) {
-		return null;
+		var entity = TableEntity.of(table);
+
+		tableJpaRepository.save(entity);
+
+		if (table.getId() == null) {
+			uuidMapping(table, entity.getId());
+		}
+
+		return table;
 	}
 
 	@Override
 	public Optional<Table> findById(UUID tableId) {
-		return Optional.empty();
+		return tableJpaRepository.findById(tableId)
+			.map(TableMapper::toTable);
 	}
 
 	@Override

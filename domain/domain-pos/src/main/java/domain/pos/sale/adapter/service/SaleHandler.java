@@ -52,7 +52,7 @@ public class SaleHandler implements SaleCommand, SaleRead {
 
 		sale.close(isNotExistsNonAdjustReceipt(sale));
 
-		return saleRepository.updateSale(sale);
+		return saleRepository.save(sale);
 	}
 
 	@Override

@@ -1,14 +1,18 @@
 package com.pos.sale.repository;
 
+import static com.pos.global.id.IdMapper.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
+import com.pos.receipt.entity.QReceiptEntity;
 import com.pos.sale.entity.QSaleEntity;
 import com.pos.sale.entity.SaleEntity;
 import com.pos.sale.mapper.SaleMapper;
@@ -29,6 +33,7 @@ public class SaleRepositoryImpl implements SaleRepository {
 
 	private final QSaleEntity qSaleEntity = QSaleEntity.saleEntity;
 	private final QStoreEntity qStoreEntity = QStoreEntity.storeEntity;
+	private final QReceiptEntity qReceiptEntity = QReceiptEntity.receiptEntity;
 
 	@Override
 	public Sale createSale(Store previousStore) {
@@ -91,36 +96,55 @@ public class SaleRepositoryImpl implements SaleRepository {
 		return new SliceImpl<>(list, PageRequest.of(0, size), hasNext);
 	}
 
-	@Override
-	public Sale save(Sale sale) {
-		return null;
-	}
-
-	@Override
-	public Optional<Sale> findOpenSaleByStoreId(Long storeId) {
-		return Optional.empty();
-	}
-
-	@Override
-	public Sale updateSale(Sale sale) {
-		return null;
-	}
-
-	@Override
-	public boolean isExistsNonAdjustReceiptBySaleId(Long saleId) {
-		return false;
-	}
-
-	@Override
-	public Optional<Sale> readLock(Long saleId) {
-		return Optional.empty();
-	}
-
 	private BooleanExpression saleSliceCursorCondition(Long storeId, Long lastSaleId) {
 		if (lastSaleId == null) {
 			return qSaleEntity.store.id.eq(storeId);
 		}
 		return qSaleEntity.store.id.eq(storeId)
 			.and(qSaleEntity.id.lt(lastSaleId));
+	}
+
+	@Override
+	public Sale save(Sale sale) {
+		var entity = SaleEntity.of(sale);
+
+		saleJpaRepository.save(entity);
+
+		if (sale.getId() == null) {
+			idMapping(sale, entity.getId());
+		}
+
+		return sale;
+	}
+
+	@Override
+	public Optional<Sale> findOpenSaleByStoreId(Long storeId) {
+		var entity = queryFactory
+			.selectFrom(qSaleEntity)
+			.where(qSaleEntity.store.id.eq(storeId)
+				.and(qSaleEntity.closeDateTime.isNull()))
+			.fetchOne();
+
+		return Optional.ofNullable(
+			SaleMapper.toSale(entity)
+		);
+	}
+
+	// TODO :  추후에 ReceiptRepository로 이동해야함
+	@Override
+	public boolean isExistsNonAdjustReceiptBySaleId(Long saleId) {
+		UUID uuid = queryFactory
+			.select(qReceiptEntity.id)
+			.from(qReceiptEntity)
+			.where(qReceiptEntity.isAdjustment.eq(Boolean.FALSE)
+				.and(qReceiptEntity.sale.id.eq(saleId)))
+			.fetchOne();
+
+		return uuid != null;
+	}
+
+	@Override
+	public Optional<Sale> readLock(Long saleId) {
+		return Optional.empty();
 	}
 }

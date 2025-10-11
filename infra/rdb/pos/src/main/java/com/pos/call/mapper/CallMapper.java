@@ -50,4 +50,13 @@ public class CallMapper {
 		);
 	}
 
+	public static Call toCallV2(CallEntity entity) {
+		return Call.of(
+			entity.getId(),
+			entity.getSale().getId(),
+			entity.getReceipt().getId(),
+			CallMessage.of(entity.getMessage(), entity.getIsCompleted()),
+			entity.getCreatedAt()
+		);
+	}
 }

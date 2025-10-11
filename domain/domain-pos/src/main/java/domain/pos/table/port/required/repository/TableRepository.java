@@ -15,6 +15,7 @@ public interface TableRepository {
 
 	Optional<Table> findByIdWithLock(UUID queryTableId, Long storeId);
 
+	// deprecated 예정
 	Table changeTableActiveStatus(boolean isActive, Table savedInActiveTable);
 
 	Table changeTableActiveStatus(boolean isActive, List<UUID> receiptIds);
@@ -25,10 +26,13 @@ public interface TableRepository {
 
 	boolean existsTableByStoreAndTableNumWithLock(Store store, Integer tableNumber);
 
+	// deprecated 예정
 	UUID saveTable(Store store, Integer tableNumber, TablePoint tablePoint, Integer tableCapacity);
 
+	// deprecated 예정
 	Optional<Table> findTableWithStoreByTableId(UUID qureyTableId);
 
+	// deprecated 예정
 	void updateTableInfo(Table table, Integer updateTableNumber, TablePoint updateTablePoint, Integer tableCapacity);
 
 	void deleteTable(Table table);

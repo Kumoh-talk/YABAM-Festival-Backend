@@ -24,8 +24,6 @@ public interface SaleRepository {
 
 	Optional<Sale> findOpenSaleByStoreId(Long storeId);
 
-	Sale updateSale(Sale sale);
-
 	boolean isExistsNonAdjustReceiptBySaleId(Long saleId);
 
 	Optional<Sale> readLock(Long saleId);
