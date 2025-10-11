@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 @Aspect
 public class AssignUserPassportAspect {
 
-	@Around("@annotation(com.authorization.AssignUserPassport)")
+	@Around("@annotation(com.annotation.AssignUserPassport)")
 	public Object assignUserPassport(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
 		ServletRequestAttributes attributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
 		HttpServletRequest request = attributes.getRequest();

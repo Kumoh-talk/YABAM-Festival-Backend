@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.annotation.AssignUserPassport;
+import com.annotation.HasRole;
 import com.application.global.response.GlobalSliceResponse;
 import com.application.presentation.menu.api.MenuApi;
 import com.application.presentation.menu.dto.request.PatchMenuInfoRequest;
@@ -24,8 +26,6 @@ import com.application.presentation.menu.dto.request.PostMenuInfoRequest;
 import com.application.presentation.menu.dto.response.MenuInfoResponse;
 import com.application.presentation.menu.dto.response.MenuResponse;
 import com.application.presentation.menu.dto.response.MenuSliceResponse;
-import com.authorization.AssignUserPassport;
-import com.authorization.HasRole;
 import com.response.ResponseBody;
 import com.vo.UserPassport;
 
