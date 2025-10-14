@@ -16,19 +16,27 @@ _Aggregate Root_
 
 - create() : 영수증 생성
 - stopUsage() : 영수증 사용 종료
+- restartUsage() : 영수증 재시작
+- adjust() : 영수증 정산
+- moveTable() : 영수증 테이블 이동
+- syncStartUsageTime() : 영수증 시작 시간 동기화
 - calculateUnits() : 테이블 비용 청구 단위 계산
 
 #### 제약
 
 - create 연산에는 필요한 입력값이 존재하지 않는다.
     - 연산 시 자동으로 시작 시간은 현재시간, 종료 시간은 null, 정산여부는 false로 설정된다.
+- restartUsage 연산에는 영수증이 정산되지 않은 상태여야 가능하다.
+- adjust 연산에는 종료시간이 null이 아니고, 영수증이 정산되지 않은 상태여야 가능하다.
+- moveTable 연산에는 영수증이 정산되지 않은 상태여야 가능하다.
+- syncStartUsageTime 연산에는 영수증이 정산되지 않은 상태여야 가능하다.
 - calculateUnits 연산에는 정적 변수로 선언된 계산 기준 시간을 가지고 비용 청구 단위를 계산한다.
 
 #### 특이사항
 
 - 도메인의 서비스 로직 특성상 여러 도메인의 락을 동시에 거는 로직이 존재한다.
   **Deadlock 방지를 위해 항상 동일한 순서로 락을 걸도록 한다.**
-    - Sale - Table 순으로 락을 건다.
+    - Sale - Table - Receipt 순으로 락을 건다.
     - Receipt - Order 순으로 락을 건다.
 
 ---

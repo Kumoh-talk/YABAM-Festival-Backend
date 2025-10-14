@@ -89,6 +89,7 @@ public enum ErrorCode {
 	FAILED_TO_UPDATE_RECEIPT_TABLE(HttpStatus.CONFLICT, "RECEIPT_0004", "테이블 변경에 실패했습니다."),
 	ALREADY_STOPPED_RECEIPT(HttpStatus.CONFLICT, "RECEIPT_0005", "이미 종료된 영수증입니다."),
 	NOT_STARTED_RECEIPT(HttpStatus.BAD_REQUEST, "RECEIPT_0006", "시작되지 않은 영수증입니다."),
+	NOT_STOPPED_RECEIPT(HttpStatus.BAD_REQUEST, "RECEIPT_0007", "종료되지 않은 영수증입니다."),
 
 	// Order
 	ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "ORDER_0001", "존재하지 않는 주문입니다."),

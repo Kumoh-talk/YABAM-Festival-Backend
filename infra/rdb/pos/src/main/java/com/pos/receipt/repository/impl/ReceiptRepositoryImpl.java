@@ -197,6 +197,11 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	}
 
 	@Override
+	public Optional<domain.pos.receipt.entity.v2.domain.Receipt> writeLock(UUID receiptIds) {
+		return Optional.empty();
+	}
+
+	@Override
 	public List<domain.pos.receipt.entity.v2.domain.Receipt> writeLock(List<UUID> receiptIds) {
 		return null;
 	}

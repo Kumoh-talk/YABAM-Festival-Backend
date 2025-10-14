@@ -47,10 +47,11 @@ public class ReceiptCommandImpl implements ReceiptCommand {
 	@Override
 	public List<Receipt> stopUsage(UserPassport userPassport, List<UUID> receiptIds) {
 		List<Receipt> receipts = receiptValidator.validateForStopUsage(receiptIds);
-
-		for (Receipt receipt : receipts) {
-			receipt.stopUsage();
+		if (receipts.size() != receiptIds.size()) {
+			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 		}
+
+		receipts.forEach(Receipt::stopUsage);
 
 		if (receiptRepository.bulkUpdateStopUsageTime(userPassport, receipts) != receipts.size()) {
 			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
@@ -62,7 +63,14 @@ public class ReceiptCommandImpl implements ReceiptCommand {
 	@Transactional
 	@Override
 	public void restartUsage(UserPassport userPassport, List<UUID> receiptIds) {
-		// TODO : isAdjustment true 인 영수증은 재시작 불가하도록 막기
+		// 리스트로 락을 획득하여 deadlock 가능성이 있다 -> 실제 발생 확률이 적기 떄문에, 우선은 이대로 진행
+		List<Receipt> receipts = receiptRepository.writeLock(receiptIds);
+		if (receipts.size() != receiptIds.size()) {
+			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
+		}
+
+		receipts.forEach(Receipt::restartUsage);
+
 		if (receiptRepository.bulkUpdateRestartUsage(userPassport, receiptIds) != receiptIds.size()) {
 			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 		}
@@ -71,11 +79,17 @@ public class ReceiptCommandImpl implements ReceiptCommand {
 	@Transactional
 	@Override
 	public void adjust(UserPassport userPassport, List<UUID> receiptIds) {
-		// TODO : stopUsageTime null, isAdjust true 인 영수증은 정산 불가하도록 막기
-		if (receiptRepository.bulkUpdateAdjust(userPassport, receiptIds) != receiptIds.size()) {
+		// 리스트로 락을 획득하여 deadlock 가능성이 있다 -> 실제 발생 확률이 적기 떄문에, 우선은 이대로 진행
+		List<Receipt> receipts = receiptRepository.writeLock(receiptIds);
+		if (receipts.size() != receiptIds.size()) {
 			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 		}
 
+		receipts.forEach(Receipt::adjust);
+
+		if (receiptRepository.bulkUpdateAdjust(userPassport, receiptIds) != receiptIds.size()) {
+			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
+		}
 		tableRepository.changeTableActiveStatus(false, receiptIds);
 	}
 
@@ -96,15 +110,18 @@ public class ReceiptCommandImpl implements ReceiptCommand {
 	@Override
 	public void moveTable(UserPassport userPassport, UUID receiptId, UUID moveTableId) {
 		receiptValidator.validateTableActive(moveTableId);
-		// TODO : isAdjust true 인 영수증은 테이블 이동 불가하도록 막기
+
+		Receipt receipt = receiptRepository.writeLock(receiptId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
+		UUID currentTableId = receipt.getTableId();
+		receipt.moveTable(moveTableId);
+
 		if (receiptRepository.updateTableId(userPassport, receiptId, moveTableId) == 0) {
 			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 		}
 
-		Receipt receipt = receiptRepository.readReceipt(receiptId)
-			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
 		tableRepository.changeTableActiveStatus(true, moveTableId);
-		tableRepository.changeTableActiveStatus(false, receipt.getTableId());
+		tableRepository.changeTableActiveStatus(false, currentTableId);
 
 	}
 
@@ -112,11 +129,17 @@ public class ReceiptCommandImpl implements ReceiptCommand {
 	@Transactional
 	@Override
 	public LocalDateTime syncStartUsageTime(UserPassport userPassport, UUID baseReceiptId, List<UUID> receiptIds) {
+		// 리스트로 락을 획득하여 deadlock 가능성이 있다 -> 실제 발생 확률이 적기 떄문에, 우선은 이대로 진행
 		Receipt baseReceipt = receiptRepository.readLock(baseReceiptId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
 		LocalDateTime baseStartUsageTime = baseReceipt.getUsageTime().getStart();
 
-		// TODO : stopUsageTime not null, isAdjust true 인 영수증은 시작시간 동기화 불가하도록 막기
+		List<Receipt> receipts = receiptRepository.writeLock(receiptIds);
+		if (receipts.size() != receiptIds.size()) {
+			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
+		}
+		receipts.forEach(receipt -> receipt.syncStartUsageTime(baseStartUsageTime));
+
 		if (receiptRepository.bulkUpdateStartUsageTime(userPassport, receiptIds, baseStartUsageTime)
 			!= receiptIds.size()) {
 			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);

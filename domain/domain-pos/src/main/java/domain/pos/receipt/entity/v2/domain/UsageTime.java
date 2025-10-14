@@ -1,5 +1,7 @@
 package domain.pos.receipt.entity.v2.domain;
 
+import static java.util.Objects.*;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -14,12 +16,16 @@ public class UsageTime {
 	LocalDateTime stop;
 
 	private UsageTime(LocalDateTime start, LocalDateTime stop) {
-		this.start = start;
+		this.start = requireNonNull(start);
 		this.stop = stop;
 	}
 
 	public static UsageTime startUse() {
 		return new UsageTime(LocalDateTime.now(), null);
+	}
+
+	public UsageTime restartUse() {
+		return new UsageTime(this.start, null);
 	}
 
 	public UsageTime stopUse() {
@@ -40,7 +46,7 @@ public class UsageTime {
 		return Math.max(1, (minutes + unitMinutes - 1) / unitMinutes);
 	}
 
-	public static UsageTime fromInfra(LocalDateTime start, LocalDateTime stop) {
+	public static UsageTime of(LocalDateTime start, LocalDateTime stop) {
 		return new UsageTime(start, stop);
 	}
 }

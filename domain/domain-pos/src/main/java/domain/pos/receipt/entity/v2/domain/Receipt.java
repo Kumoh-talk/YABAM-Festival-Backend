@@ -2,7 +2,11 @@ package domain.pos.receipt.entity.v2.domain;
 
 import static java.util.Objects.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
+
+import com.exception.ErrorCode;
+import com.exception.ServiceException;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -42,6 +46,38 @@ public class Receipt {
 
 	public void stopUsage() {
 		this.usageTime = this.usageTime.stopUse();
+	}
+
+	public void restartUsage() {
+		if (this.isAdjustment) {
+			throw new ServiceException(ErrorCode.ALREADY_ADJUSTMENT_RECEIPT);
+		}
+		this.usageTime = this.usageTime.restartUse();
+	}
+
+	public void adjust() {
+		if (this.usageTime.getStop() == null) {
+			throw new ServiceException(ErrorCode.NOT_STOPPED_RECEIPT);
+		}
+
+		if (this.isAdjustment) {
+			throw new ServiceException(ErrorCode.ALREADY_ADJUSTMENT_RECEIPT);
+		}
+		this.isAdjustment = true;
+	}
+
+	public void moveTable(UUID moveTableId) {
+		if (this.isAdjustment) {
+			throw new ServiceException(ErrorCode.ALREADY_ADJUSTMENT_RECEIPT);
+		}
+		this.tableId = requireNonNull(moveTableId);
+	}
+
+	public void syncStartUsageTime(LocalDateTime startUsageTime) {
+		if (this.isAdjustment) {
+			throw new ServiceException(ErrorCode.ALREADY_ADJUSTMENT_RECEIPT);
+		}
+		this.usageTime = UsageTime.of(startUsageTime, this.usageTime.getStop());
 	}
 
 	public long calculateUnits() {

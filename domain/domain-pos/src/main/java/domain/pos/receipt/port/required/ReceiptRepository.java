@@ -62,6 +62,8 @@ public interface ReceiptRepository {
 	Optional<Receipt> getReceiptById(UUID receiptId);
 
 	// v2
+	Optional<domain.pos.receipt.entity.v2.domain.Receipt> writeLock(UUID receiptIds);
+
 	List<domain.pos.receipt.entity.v2.domain.Receipt> writeLock(List<UUID> receiptIds);
 
 	Optional<domain.pos.receipt.entity.v2.domain.Receipt> readLock(UUID receiptId);
