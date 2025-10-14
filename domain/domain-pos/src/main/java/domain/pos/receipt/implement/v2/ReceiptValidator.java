@@ -29,6 +29,7 @@ public class ReceiptValidator {
 	private final OrderRepository orderRepository;
 
 	public List<Receipt> validateForStopUsage(List<UUID> receiptIds) {
+		// 리스트로 락을 획득하여 deadlock 가능성이 있다 -> 실제 발생 확률이 적기 떄문에, 우선은 이대로 진행
 		List<Receipt> receipts = receiptRepository.writeLock(receiptIds);
 		if (receipts.size() != receiptIds.size()) {
 			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
@@ -52,7 +53,7 @@ public class ReceiptValidator {
 		Sale sale = saleRepository.readLock(saleId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.NOT_FOUND_SALE));
 
-		if (sale.getCloseDateTime().isEmpty()) {
+		if (sale.getCloseDateTime().isPresent()) {
 			throw new ServiceException(ErrorCode.CLOSE_SALE);
 		}
 		return sale;
