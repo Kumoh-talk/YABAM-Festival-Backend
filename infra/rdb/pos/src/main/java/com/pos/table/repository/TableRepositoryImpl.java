@@ -40,12 +40,12 @@ public class TableRepositoryImpl implements TableRepository {
 	}
 
 	@Override
-	public Table changeTableActiveStatus(boolean isActive, List<UUID> receiptIds) {
+	public Table changeTableActiveStatus(boolean isActive, List<UUID> tableIds) {
 		return null;
 	}
 
 	@Override
-	public Table changeTableActiveStatus(boolean isActive, UUID receiptIds) {
+	public Table changeTableActiveStatus(boolean isActive, UUID tableId) {
 		return null;
 	}
 

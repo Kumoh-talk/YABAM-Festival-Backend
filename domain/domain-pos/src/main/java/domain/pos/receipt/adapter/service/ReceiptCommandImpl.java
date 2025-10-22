@@ -33,7 +33,7 @@ public class ReceiptCommandImpl implements ReceiptCommand {
 	public Receipt create(UserPassport userPassport, Long storeId, UUID tableId) {
 		CreateValidationResult validationResult = receiptValidator.validateForCreate(userPassport, storeId, tableId);
 
-		tableRepository.changeTableActiveStatus(true, validationResult.table());
+		tableRepository.changeTableActiveStatus(true, validationResult.table().getId());
 		Receipt receipt = Receipt.create(validationResult.sale().getId(), tableId);
 
 		return receiptRepository.create(userPassport, storeId, receipt)
@@ -78,7 +78,11 @@ public class ReceiptCommandImpl implements ReceiptCommand {
 		if (receiptRepository.bulkUpdateAdjust(receiptIds) != receiptIds.size()) {
 			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 		}
-		tableRepository.changeTableActiveStatus(false, receiptIds);
+
+		tableRepository.changeTableActiveStatus(false,
+			receipts.stream()
+				.map(Receipt::getTableId)
+				.toList());
 	}
 
 	@Transactional
@@ -90,7 +94,7 @@ public class ReceiptCommandImpl implements ReceiptCommand {
 		receiptRepository.delete(receiptId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
 		if (!receipt.isAdjustment()) {
-			tableRepository.changeTableActiveStatus(false, receiptId);
+			tableRepository.changeTableActiveStatus(false, receipt.getTableId());
 		}
 	}
 

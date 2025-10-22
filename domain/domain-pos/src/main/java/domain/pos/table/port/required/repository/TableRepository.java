@@ -18,9 +18,9 @@ public interface TableRepository {
 	// deprecated 예정
 	Table changeTableActiveStatus(boolean isActive, Table savedInActiveTable);
 
-	Table changeTableActiveStatus(boolean isActive, List<UUID> receiptIds);
+	Table changeTableActiveStatus(boolean isActive, List<UUID> tableIds);
 
-	Table changeTableActiveStatus(boolean isActive, UUID receiptIds);
+	Table changeTableActiveStatus(boolean isActive, UUID tableId);
 
 	List<Table> findTablesByStoreId(Long storeId);
 

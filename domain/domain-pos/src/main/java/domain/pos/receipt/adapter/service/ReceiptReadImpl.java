@@ -16,7 +16,6 @@ import domain.pos.receipt.entity.v2.domain.Receipt;
 import domain.pos.receipt.implement.v2.ReceiptValidator;
 import domain.pos.receipt.port.provided.ReceiptRead;
 import domain.pos.receipt.port.required.ReceiptRepository;
-import domain.pos.sale.port.required.SaleRepository;
 import domain.pos.table.port.required.repository.TableRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +26,6 @@ public class ReceiptReadImpl implements ReceiptRead {
 
 	private final ReceiptRepository receiptRepository;
 	private final TableRepository tableRepository;
-	private final SaleRepository saleRepository;
 
 	@Override
 	public List<Receipt> readAllTableNonAdjusts(UserPassport userPassport, Long saleId) {
@@ -52,10 +50,11 @@ public class ReceiptReadImpl implements ReceiptRead {
 	public UUID readNonAdjustReceiptId(UUID tableId) {
 		return receiptRepository.readNonAdjusts(tableId)
 			.map(Receipt::getId)
-			.orElseGet(() ->
+			.orElseGet(() -> {
 				tableRepository.findById(tableId)
-					.orElseThrow(() -> new ServiceException(ErrorCode.TABLE_NOT_FOUND))
-					.getId()
-			);
+					.orElseThrow(() -> new ServiceException(ErrorCode.TABLE_NOT_FOUND));
+
+				throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
+			});
 	}
 }
