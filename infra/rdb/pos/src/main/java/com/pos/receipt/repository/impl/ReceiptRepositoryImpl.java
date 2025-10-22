@@ -223,7 +223,7 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	}
 
 	@Override
-	public List<domain.pos.receipt.entity.v2.domain.Receipt> readNonAdjusts(UserPassport userPassport, Long saleId) {
+	public List<domain.pos.receipt.entity.v2.domain.Receipt> readNonAdjusts(Long saleId) {
 		return null;
 	}
 
@@ -233,40 +233,48 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	}
 
 	@Override
-	public Page<domain.pos.receipt.entity.v2.domain.Receipt> readAdjustedPage(UserPassport userPassport,
-		Pageable pageable, Long saleId) {
+	public Page<domain.pos.receipt.entity.v2.domain.Receipt> readAdjustedPage(Pageable pageable, Long saleId) {
 		return null;
 	}
 
 	@Override
-	public int bulkUpdateStartUsageTime(UserPassport userPassport, List<UUID> receiptIds,
-		LocalDateTime startUsageTime) {
+	public int bulkUpdateStartUsageTime(List<UUID> receiptIds, LocalDateTime startUsageTime) {
 		return 0;
 	}
 
 	@Override
-	public int bulkUpdateStopUsageTime(UserPassport userPassport,
-		List<domain.pos.receipt.entity.v2.domain.Receipt> receipts) {
+	public int bulkUpdateStopUsageTime(List<domain.pos.receipt.entity.v2.domain.Receipt> receipts) {
 		return 0;
 	}
 
 	@Override
-	public int bulkUpdateRestartUsage(UserPassport userPassport, List<UUID> receiptIds) {
+	public int bulkUpdateRestartUsage(List<UUID> receiptIds) {
 		return 0;
 	}
 
 	@Override
-	public int bulkUpdateAdjust(UserPassport userPassport, List<UUID> receiptIds) {
+	public int bulkUpdateAdjust(List<UUID> receiptIds) {
 		return 0;
 	}
 
 	@Override
-	public int updateTableId(UserPassport userPassport, UUID receiptId, UUID tableId) {
+	public int updateTableId(domain.pos.receipt.entity.v2.domain.Receipt receipt) {
 		return 0;
 	}
 
 	@Override
-	public Optional<Object> delete(UserPassport userPassport, UUID receiptId) {
+	public Optional<Object> delete(UUID receiptId) {
 		return Optional.empty();
 	}
+
+	@Override
+	public int validateStoreOwner(UserPassport userPassport, List<UUID> receiptIds) {
+		return 0;
+	}
+
+	@Override
+	public int validateStoreOwner(UserPassport userPassport, UUID receiptId) {
+		return 0;
+	}
+
 }

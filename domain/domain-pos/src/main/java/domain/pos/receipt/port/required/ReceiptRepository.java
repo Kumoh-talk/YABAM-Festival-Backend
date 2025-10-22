@@ -73,22 +73,25 @@ public interface ReceiptRepository {
 
 	Optional<domain.pos.receipt.entity.v2.domain.Receipt> readReceipt(UUID receiptId);
 
-	List<domain.pos.receipt.entity.v2.domain.Receipt> readNonAdjusts(UserPassport userPassport, Long saleId);
+	List<domain.pos.receipt.entity.v2.domain.Receipt> readNonAdjusts(Long saleId);
 
 	Optional<domain.pos.receipt.entity.v2.domain.Receipt> readNonAdjusts(UUID tableId);
 
-	Page<domain.pos.receipt.entity.v2.domain.Receipt> readAdjustedPage(UserPassport userPassport, Pageable pageable,
-		Long saleId);
+	Page<domain.pos.receipt.entity.v2.domain.Receipt> readAdjustedPage(Pageable pageable, Long saleId);
 
-	int bulkUpdateStartUsageTime(UserPassport userPassport, List<UUID> receiptIds, LocalDateTime startUsageTime);
+	int bulkUpdateStartUsageTime(List<UUID> receiptIds, LocalDateTime startUsageTime);
 
-	int bulkUpdateStopUsageTime(UserPassport userPassport, List<domain.pos.receipt.entity.v2.domain.Receipt> receipts);
+	int bulkUpdateStopUsageTime(List<domain.pos.receipt.entity.v2.domain.Receipt> receipts);
 
-	int bulkUpdateRestartUsage(UserPassport userPassport, List<UUID> receiptIds);
+	int bulkUpdateRestartUsage(List<UUID> receiptIds);
 
-	int bulkUpdateAdjust(UserPassport userPassport, List<UUID> receiptIds);
+	int bulkUpdateAdjust(List<UUID> receiptIds);
 
-	int updateTableId(UserPassport userPassport, UUID receiptId, UUID tableId);
+	int updateTableId(domain.pos.receipt.entity.v2.domain.Receipt receipt);
 
-	Optional<Object> delete(UserPassport userPassport, UUID receiptId);
+	Optional<Object> delete(UUID receiptId);
+
+	int validateStoreOwner(UserPassport userPassport, List<UUID> receiptIds);
+
+	int validateStoreOwner(UserPassport userPassport, UUID receiptId);
 }

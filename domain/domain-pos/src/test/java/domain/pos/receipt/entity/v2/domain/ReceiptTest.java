@@ -214,7 +214,7 @@ class ReceiptTest {
 		@DisplayName("시작 시간 동기화 성공")
 		void syncStartUsageTime_success() {
 			// given
-			Receipt receipt = ReceiptFixture.VALID_STOPPED_RECEIPT();
+			Receipt receipt = ReceiptFixture.VALID_STARTED_RECEIPT();
 			var newStartTime = receipt.getUsageTime().getStart().minusHours(1);
 
 			// when
@@ -242,7 +242,7 @@ class ReceiptTest {
 		@DisplayName("동기화할 시작 시간이 null이면 NullPointerException")
 		void newStartTime_null() {
 			// given
-			Receipt receipt = ReceiptFixture.VALID_STOPPED_RECEIPT();
+			Receipt receipt = ReceiptFixture.VALID_STARTED_RECEIPT();
 
 			// when -> then
 			assertThatThrownBy(() -> receipt.syncStartUsageTime(null))

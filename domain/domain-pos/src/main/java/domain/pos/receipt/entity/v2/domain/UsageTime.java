@@ -16,7 +16,12 @@ public class UsageTime {
 	LocalDateTime stop;
 
 	private UsageTime(LocalDateTime start, LocalDateTime stop) {
-		this.start = requireNonNull(start);
+		requireNonNull(start);
+		if (stop != null && start.isAfter(stop)) {
+			throw new IllegalArgumentException("start는 stop보다 이후일 수 없습니다.");
+		}
+
+		this.start = start;
 		this.stop = stop;
 	}
 
@@ -29,9 +34,6 @@ public class UsageTime {
 	}
 
 	public UsageTime stopUse() {
-		if (this.start == null) {
-			throw new ServiceException(ErrorCode.NOT_STARTED_RECEIPT);
-		}
 		if (this.stop != null) {
 			throw new ServiceException(ErrorCode.ALREADY_STOPPED_RECEIPT);
 		}
@@ -42,6 +44,10 @@ public class UsageTime {
 		if (this.start == null || this.stop == null) {
 			throw new IllegalStateException("점유 시간을 계산할 수 있는 상태가 아닙니다.");
 		}
+		if (unitMinutes <= 0) {
+			throw new IllegalArgumentException("단위 분은 1 이상이어야 합니다.");
+		}
+
 		long minutes = Duration.between(start, stop).toMinutes();
 		return Math.max(1, (minutes + unitMinutes - 1) / unitMinutes);
 	}

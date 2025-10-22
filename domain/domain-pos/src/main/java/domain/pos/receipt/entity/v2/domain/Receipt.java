@@ -77,6 +77,10 @@ public class Receipt {
 		if (this.isAdjustment) {
 			throw new ServiceException(ErrorCode.ALREADY_ADJUSTMENT_RECEIPT);
 		}
+
+		if (this.usageTime.getStop() != null) {
+			throw new ServiceException(ErrorCode.ALREADY_STOPPED_RECEIPT);
+		}
 		this.usageTime = UsageTime.of(startUsageTime, this.usageTime.getStop());
 	}
 

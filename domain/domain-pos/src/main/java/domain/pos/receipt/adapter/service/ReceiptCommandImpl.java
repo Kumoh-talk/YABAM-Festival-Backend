@@ -12,11 +12,10 @@ import com.exception.ServiceException;
 import com.vo.UserPassport;
 
 import domain.pos.receipt.entity.v2.domain.Receipt;
+import domain.pos.receipt.entity.v2.dto.CreateValidationResult;
 import domain.pos.receipt.implement.v2.ReceiptValidator;
 import domain.pos.receipt.port.provided.ReceiptCommand;
 import domain.pos.receipt.port.required.ReceiptRepository;
-import domain.pos.sale.entity.Sale;
-import domain.pos.table.entity.Table;
 import domain.pos.table.port.required.repository.TableRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -32,13 +31,11 @@ public class ReceiptCommandImpl implements ReceiptCommand {
 	@Transactional
 	@Override
 	public Receipt create(UserPassport userPassport, Long storeId, UUID tableId) {
-		Sale sale = receiptValidator.validateSaleOpen(storeId);
-		Table table = receiptValidator.validateTableActive(tableId);
+		CreateValidationResult validationResult = receiptValidator.validateForCreate(userPassport, storeId, tableId);
 
-		tableRepository.changeTableActiveStatus(true, table);
-		Receipt receipt = Receipt.create(sale.getId(), tableId);
+		tableRepository.changeTableActiveStatus(true, validationResult.table());
+		Receipt receipt = Receipt.create(validationResult.sale().getId(), tableId);
 
-		// TODO : 서브 조회쿼리로 userPassport 검증 + table의 storeId 검증
 		return receiptRepository.create(userPassport, storeId, receipt)
 			.orElseThrow(() -> new ServiceException(ErrorCode.INVALID_INPUT_VALUE));
 	}
@@ -46,14 +43,11 @@ public class ReceiptCommandImpl implements ReceiptCommand {
 	@Transactional
 	@Override
 	public List<Receipt> stopUsage(UserPassport userPassport, List<UUID> receiptIds) {
-		List<Receipt> receipts = receiptValidator.validateForStopUsage(receiptIds);
-		if (receipts.size() != receiptIds.size()) {
-			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
-		}
+		var receipts = receiptValidator.validateForStopUsage(userPassport, receiptIds);
 
 		receipts.forEach(Receipt::stopUsage);
 
-		if (receiptRepository.bulkUpdateStopUsageTime(userPassport, receipts) != receipts.size()) {
+		if (receiptRepository.bulkUpdateStopUsageTime(receipts) != receipts.size()) {
 			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 		}
 		return receipts;
@@ -63,15 +57,12 @@ public class ReceiptCommandImpl implements ReceiptCommand {
 	@Transactional
 	@Override
 	public void restartUsage(UserPassport userPassport, List<UUID> receiptIds) {
-		// 리스트로 락을 획득하여 deadlock 가능성이 있다 -> 실제 발생 확률이 적기 떄문에, 우선은 이대로 진행
-		List<Receipt> receipts = receiptRepository.writeLock(receiptIds);
-		if (receipts.size() != receiptIds.size()) {
-			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
-		}
+		receiptValidator.validateAllStoreOwners(userPassport, receiptIds);
 
+		List<Receipt> receipts = readReceiptsWithWriteLock(receiptIds);
 		receipts.forEach(Receipt::restartUsage);
 
-		if (receiptRepository.bulkUpdateRestartUsage(userPassport, receiptIds) != receiptIds.size()) {
+		if (receiptRepository.bulkUpdateRestartUsage(receiptIds) != receiptIds.size()) {
 			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 		}
 	}
@@ -79,15 +70,12 @@ public class ReceiptCommandImpl implements ReceiptCommand {
 	@Transactional
 	@Override
 	public void adjust(UserPassport userPassport, List<UUID> receiptIds) {
-		// 리스트로 락을 획득하여 deadlock 가능성이 있다 -> 실제 발생 확률이 적기 떄문에, 우선은 이대로 진행
-		List<Receipt> receipts = receiptRepository.writeLock(receiptIds);
-		if (receipts.size() != receiptIds.size()) {
-			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
-		}
+		receiptValidator.validateAllStoreOwners(userPassport, receiptIds);
 
+		List<Receipt> receipts = readReceiptsWithWriteLock(receiptIds);
 		receipts.forEach(Receipt::adjust);
 
-		if (receiptRepository.bulkUpdateAdjust(userPassport, receiptIds) != receiptIds.size()) {
+		if (receiptRepository.bulkUpdateAdjust(receiptIds) != receiptIds.size()) {
 			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 		}
 		tableRepository.changeTableActiveStatus(false, receiptIds);
@@ -96,12 +84,12 @@ public class ReceiptCommandImpl implements ReceiptCommand {
 	@Transactional
 	@Override
 	public void delete(UserPassport userPassport, UUID receiptId) {
-		Receipt receipt = receiptRepository.readReceipt(receiptId)
-			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
+		receiptValidator.validateSingleStoreOwner(userPassport, receiptId);
 
-		receiptRepository.delete(userPassport, receiptId)
+		Receipt receipt = readReceipt(receiptId);
+		receiptRepository.delete(receiptId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
-		if (receipt.isAdjustment()) {
+		if (!receipt.isAdjustment()) {
 			tableRepository.changeTableActiveStatus(false, receiptId);
 		}
 	}
@@ -109,42 +97,56 @@ public class ReceiptCommandImpl implements ReceiptCommand {
 	@Transactional
 	@Override
 	public void moveTable(UserPassport userPassport, UUID receiptId, UUID moveTableId) {
-		receiptValidator.validateTableActive(moveTableId);
+		receiptValidator.validateForMoveTable(userPassport, receiptId, moveTableId);
 
-		Receipt receipt = receiptRepository.writeLock(receiptId)
-			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
+		Receipt receipt = readReceiptWithWriteLock(receiptId);
 		UUID currentTableId = receipt.getTableId();
 		receipt.moveTable(moveTableId);
 
-		if (receiptRepository.updateTableId(userPassport, receiptId, moveTableId) == 0) {
+		if (receiptRepository.updateTableId(receipt) == 0) {
 			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 		}
-
 		tableRepository.changeTableActiveStatus(true, moveTableId);
 		tableRepository.changeTableActiveStatus(false, currentTableId);
-
 	}
 
 	// 테이블 그룹화 : 기준되는 영수증 id, 그룹화할 테이블 id 리스트 -> 영수증 생성 및 사용시간 동기화
 	@Transactional
 	@Override
 	public LocalDateTime syncStartUsageTime(UserPassport userPassport, UUID baseReceiptId, List<UUID> receiptIds) {
-		// 리스트로 락을 획득하여 deadlock 가능성이 있다 -> 실제 발생 확률이 적기 떄문에, 우선은 이대로 진행
-		Receipt baseReceipt = receiptRepository.readLock(baseReceiptId)
-			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
-		LocalDateTime baseStartUsageTime = baseReceipt.getUsageTime().getStart();
+		receiptValidator.validateForSyncStart(userPassport, baseReceiptId, receiptIds);
 
-		List<Receipt> receipts = receiptRepository.writeLock(receiptIds);
-		if (receipts.size() != receiptIds.size()) {
-			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
-		}
-		receipts.forEach(receipt -> receipt.syncStartUsageTime(baseStartUsageTime));
-
-		if (receiptRepository.bulkUpdateStartUsageTime(userPassport, receiptIds, baseStartUsageTime)
+		LocalDateTime baseStartUsageTime = readReceiptWithReadLock(baseReceiptId).getUsageTime().getStart();
+		readReceiptsWithWriteLock(receiptIds)
+			.forEach(syncReceipt -> syncReceipt.syncStartUsageTime(baseStartUsageTime));
+		if (receiptRepository.bulkUpdateStartUsageTime(receiptIds, baseStartUsageTime)
 			!= receiptIds.size()) {
 			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 		}
 
 		return baseStartUsageTime;
+	}
+
+	private Receipt readReceipt(UUID receiptId) {
+		return receiptRepository.readReceipt(receiptId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
+	}
+
+	private List<Receipt> readReceiptsWithWriteLock(List<UUID> receiptIds) {
+		List<Receipt> receipts = receiptRepository.writeLock(receiptIds);
+		if (receipts.size() != receiptIds.size()) {
+			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
+		}
+		return receipts;
+	}
+
+	private Receipt readReceiptWithWriteLock(UUID receiptId) {
+		return receiptRepository.writeLock(receiptId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
+	}
+
+	private Receipt readReceiptWithReadLock(UUID receiptId) {
+		return receiptRepository.readLock(receiptId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
 	}
 }

@@ -13,6 +13,7 @@ import com.exception.ServiceException;
 import com.vo.UserPassport;
 
 import domain.pos.receipt.entity.v2.domain.Receipt;
+import domain.pos.receipt.implement.v2.ReceiptValidator;
 import domain.pos.receipt.port.provided.ReceiptRead;
 import domain.pos.receipt.port.required.ReceiptRepository;
 import domain.pos.sale.port.required.SaleRepository;
@@ -22,18 +23,17 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class ReceiptReadImpl implements ReceiptRead {
+	private final ReceiptValidator receiptValidator;
+
 	private final ReceiptRepository receiptRepository;
 	private final TableRepository tableRepository;
 	private final SaleRepository saleRepository;
 
 	@Override
 	public List<Receipt> readAllTableNonAdjusts(UserPassport userPassport, Long saleId) {
-		List<Receipt> receipts = receiptRepository.readNonAdjusts(userPassport, saleId);
-		if (receipts.isEmpty()) {
-			saleRepository.findSaleWithStoreBySaleId(saleId)
-				.orElseThrow(() -> new ServiceException(ErrorCode.NOT_FOUND_SALE));
-		}
+		receiptValidator.validateSaleStoreOwner(userPassport, saleId);
 
+		List<Receipt> receipts = receiptRepository.readNonAdjusts(saleId);
 		receipts.sort(Comparator.comparing(Receipt::getTableId));
 
 		return receipts;
@@ -42,11 +42,9 @@ public class ReceiptReadImpl implements ReceiptRead {
 
 	@Override
 	public Page<Receipt> readAdjustsPageBySale(UserPassport userPassport, Pageable pageable, Long saleId) {
-		Page<Receipt> receiptPage = receiptRepository.readAdjustedPage(userPassport, pageable, saleId);
-		if (receiptPage.isEmpty()) {
-			saleRepository.findSaleWithStoreBySaleId(saleId)
-				.orElseThrow(() -> new ServiceException(ErrorCode.NOT_FOUND_SALE));
-		}
+		receiptValidator.validateSaleStoreOwner(userPassport, saleId);
+
+		Page<Receipt> receiptPage = receiptRepository.readAdjustedPage(pageable, saleId);
 		return receiptPage;
 	}
 
