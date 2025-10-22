@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.annotation.AssignUserPassport;
+import com.annotation.HasRole;
 import com.application.presentation.image.api.ImageApi;
 import com.application.presentation.image.dto.request.PresignedUrlRequest;
 import com.application.presentation.image.dto.response.PresignedUrlResponse;
-import com.authorization.AssignUserPassport;
-import com.authorization.HasRole;
 import com.response.ResponseBody;
 import com.vo.UserPassport;
 

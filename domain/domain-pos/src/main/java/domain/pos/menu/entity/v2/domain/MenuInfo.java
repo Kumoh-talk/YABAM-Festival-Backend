@@ -10,7 +10,7 @@ import io.micrometer.common.util.StringUtils;
 import lombok.Value;
 
 @Value
-class MenuInfo implements MenuInfoState {
+public class MenuInfo implements MenuInfoState {
 	String name;
 	Integer price;
 	String description;
@@ -26,7 +26,7 @@ class MenuInfo implements MenuInfoState {
 		this.imageUrl = imageUrl;
 	}
 
-	static MenuInfo of(MenuInfoState menuInfoState) {
+	public static MenuInfo of(MenuInfoState menuInfoState) {
 		return new MenuInfo(
 			menuInfoState.getName(),
 			menuInfoState.getPrice(),

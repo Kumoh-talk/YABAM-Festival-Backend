@@ -142,4 +142,9 @@ public class SaleRepositoryImpl implements SaleRepository {
 
 		return uuid != null;
 	}
+
+	@Override
+	public Optional<Sale> readLock(Long saleId) {
+		return Optional.empty();
+	}
 }

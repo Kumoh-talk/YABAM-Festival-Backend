@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.annotation.AssignUserPassport;
+import com.annotation.HasRole;
 import com.auth.domain.service.UserService;
 import com.auth.presentation.api.UserApi;
 import com.auth.presentation.dto.response.UserInfoResponse;
-import com.authorization.AssignUserPassport;
-import com.authorization.HasRole;
 import com.response.ResponseBody;
 import com.vo.UserPassport;
 

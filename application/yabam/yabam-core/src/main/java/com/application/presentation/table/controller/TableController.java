@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.annotation.AssignUserPassport;
+import com.annotation.HasRole;
 import com.application.presentation.table.api.TableApi;
 import com.application.presentation.table.dto.request.TableCreateRequest;
 import com.application.presentation.table.dto.request.TableModifyRequest;
 import com.application.presentation.table.dto.response.TableIdResponse;
 import com.application.presentation.table.dto.response.TableInfoResponse;
-import com.authorization.AssignUserPassport;
-import com.authorization.HasRole;
 import com.response.ResponseBody;
 import com.vo.UserPassport;
 

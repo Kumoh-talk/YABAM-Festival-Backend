@@ -3,7 +3,7 @@ package com.interceptor;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.authorization.HasRole;
+import com.annotation.HasRole;
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
 import com.vo.UserPassport;

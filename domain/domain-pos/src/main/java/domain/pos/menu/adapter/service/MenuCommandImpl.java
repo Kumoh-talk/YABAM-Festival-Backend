@@ -39,6 +39,8 @@ public class MenuCommandImpl implements MenuCommand {
 		this.menuRepository = menuRepository;
 	}
 
+	// TODO : storeOpen -> readLock 기반 검증으로 변경
+
 	@Transactional
 	@Override
 	public Menu create(UserPassport userPassport, Long storeId, Long menuCategoryId,

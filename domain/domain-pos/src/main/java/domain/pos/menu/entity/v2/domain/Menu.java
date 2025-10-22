@@ -9,6 +9,7 @@ import com.exception.ServiceException;
 import com.vo.AuditStamp;
 
 import domain.pos.menu.entity.v2.domain.state.MenuInfoState;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -25,7 +26,7 @@ public class Menu {
 	private Long storeId;
 	private Long menuCategoryId;
 
-	@Builder
+	@Builder(access = AccessLevel.PRIVATE)
 	private Menu(Long id, MenuInfoState menuInfo, Integer order,
 		boolean isSoldOut, boolean isRecommended, AuditStamp auditStamp, Long storeId, Long menuCategoryId) {
 		this.id = id;
@@ -41,7 +42,9 @@ public class Menu {
 	public static Menu create(MenuInfoState createMenuInfoState, Integer order,
 		Long storeId, Long menuCategoryId) {
 		MenuInfoState menuInfo = MenuInfo.of(createMenuInfoState);
-		checkOrderRule(order);
+		if (!isValidOrder(order)) {
+			throw new IllegalArgumentException("메뉴 생성 시 주문 순서가 올바르지 않습니다.");
+		}
 		return Menu.builder()
 			.id(null)
 			.menuInfo(menuInfo)
@@ -64,7 +67,10 @@ public class Menu {
 	}
 
 	public boolean updateOrder(Integer updateOrder) {
-		checkOrderRule(updateOrder);
+		if (!isValidOrder(updateOrder)) {
+			throw new ServiceException(ErrorCode.DOMAIN_INVALID_MENU_ORDER);
+		}
+
 		if (Objects.equals(this.order, updateOrder)) {
 			return false;
 		} else {
@@ -93,10 +99,8 @@ public class Menu {
 		}
 	}
 
-	private static void checkOrderRule(Integer order) {
-		if (order == null || order < 1) {
-			throw new ServiceException(ErrorCode.DOMAIN_INVALID_MENU_ORDER);
-		}
+	private static boolean isValidOrder(Integer order) {
+		return order != null && order >= 1;
 	}
 
 	// util

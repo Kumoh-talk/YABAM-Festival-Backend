@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.entity.ReceiptInfo;
-import domain.pos.receipt.repository.ReceiptRepository;
+import domain.pos.receipt.port.required.ReceiptRepository;
 import lombok.RequiredArgsConstructor;
 
 @Component

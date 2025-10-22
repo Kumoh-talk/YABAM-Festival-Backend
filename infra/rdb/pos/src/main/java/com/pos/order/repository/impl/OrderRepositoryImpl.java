@@ -30,6 +30,7 @@ import domain.pos.order.entity.OrderMenu;
 import domain.pos.order.entity.vo.OrderStatus;
 import domain.pos.order.repository.OrderRepository;
 import domain.pos.receipt.entity.Receipt;
+import domain.pos.receipt.entity.v2.dto.ReceiptOrderStatus;
 import domain.pos.store.entity.Store;
 import lombok.RequiredArgsConstructor;
 
@@ -214,5 +215,10 @@ public class OrderRepositoryImpl implements OrderRepository {
 	@Override
 	public void retryReceiveOrderStatus(Order order, UserRole userRole) {
 		orderJpaRepository.updateOrderStatus(order.getOrderId(), OrderStatus.RECEIVED);
+	}
+
+	@Override
+	public List<ReceiptOrderStatus> readLock(List<UUID> receiptIds) {
+		return null;
 	}
 }

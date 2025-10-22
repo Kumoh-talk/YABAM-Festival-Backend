@@ -18,7 +18,7 @@ import domain.pos.call.port.provided.CallCommand;
 import domain.pos.call.port.provided.CallRead;
 import domain.pos.call.port.required.repository.CallRepository;
 import domain.pos.receipt.entity.Receipt;
-import domain.pos.receipt.repository.ReceiptRepository;
+import domain.pos.receipt.port.required.ReceiptRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service

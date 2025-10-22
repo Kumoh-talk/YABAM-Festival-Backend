@@ -144,6 +144,7 @@ public class OrderService {
 
 	// 주문 취소, 주문 접수만 가능
 	public Order patchOrderStatus(Long orderId, UserPassport userPassport, OrderStatus orderStatus) {
+		// TODO : receipt가 정산상태가 아니어야함
 		Order order = orderReader.getOrderWithStore(orderId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_NOT_FOUND));
 

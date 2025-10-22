@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.annotation.AssignUserPassport;
+import com.annotation.HasRole;
 import com.application.presentation.sale.api.SaleApi;
 import com.application.presentation.sale.dto.response.SaleCursorResponse;
 import com.application.presentation.sale.dto.response.SaleIdResponse;
-import com.authorization.AssignUserPassport;
-import com.authorization.HasRole;
 import com.response.ResponseBody;
 import com.vo.UserPassport;
 

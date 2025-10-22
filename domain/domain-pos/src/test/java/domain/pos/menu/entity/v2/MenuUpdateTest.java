@@ -1,7 +1,7 @@
 package domain.pos.menu.entity.v2;
 
 import static fixtures.menu.v2.MenuFixture.*;
-import static fixtures.menu.v2.state.MenuInfoStateFixture.*;
+import static fixtures.menu.v2.state.MenuInfoStateTestImpl.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.SoftAssertions.*;
 

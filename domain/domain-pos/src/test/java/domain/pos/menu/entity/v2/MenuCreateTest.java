@@ -1,7 +1,7 @@
 package domain.pos.menu.entity.v2;
 
 import static fixtures.menu.v2.ValidMenuState.*;
-import static fixtures.menu.v2.state.MenuInfoStateFixture.*;
+import static fixtures.menu.v2.state.MenuInfoStateTestImpl.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.SoftAssertions.*;
 
@@ -47,13 +47,11 @@ class MenuCreateTest {
 	@ParameterizedTest
 	@NullSource
 	@ValueSource(ints = {0, -1, -100})
-	@DisplayName("order가 1 미만이면 ServiceException(DOMAIN_INVALID_MENU_ORDER)")
+	@DisplayName("order가 1 미만이면 IllegalArgumentException")
 	void order_must_be_positive(Integer invalidOrder) {
 		// when -> then
 		assertThatThrownBy(() -> Menu.create(VALID_STATE(), invalidOrder, VALID_STORE_ID_1, VALID_MENU_CATEGORY_ID_1))
-			.isInstanceOf(ServiceException.class)
-			.extracting(ex -> ((ServiceException)ex).getErrorCode())
-			.isEqualTo(ErrorCode.DOMAIN_INVALID_MENU_ORDER);
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test

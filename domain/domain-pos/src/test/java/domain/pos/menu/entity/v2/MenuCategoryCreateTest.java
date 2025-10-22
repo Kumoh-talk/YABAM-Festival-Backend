@@ -50,14 +50,12 @@ class MenuCategoryCreateTest {
 	@ParameterizedTest
 	@NullSource
 	@ValueSource(ints = {0, -1, -100})
-	@DisplayName("메뉴 순서가 Null 또는 1보다 작으면 ServiceException(DOMAIN_INVALID_MENU_CATEGORY_ORDER)")
+	@DisplayName("메뉴 순서가 Null 또는 1보다 작으면 IllegalArgumentException")
 	void order_must_be_positive(Integer invalidOrder) {
 		// when -> then
 		assertSoftly(softly -> {
 			softly.assertThatThrownBy(() -> MenuCategory.create("음료", invalidOrder, 1L))
-				.isInstanceOf(com.exception.ServiceException.class)
-				.extracting(ex -> ((com.exception.ServiceException)ex).getErrorCode())
-				.isEqualTo(com.exception.ErrorCode.DOMAIN_INVALID_MENU_CATEGORY_ORDER);
+				.isInstanceOf(IllegalArgumentException.class);
 		});
 	}
 

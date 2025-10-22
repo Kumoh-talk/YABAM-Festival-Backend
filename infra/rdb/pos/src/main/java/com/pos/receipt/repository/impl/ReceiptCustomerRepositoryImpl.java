@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.pos.receipt.entity.ReceiptCustomerEntity;
 import com.pos.receipt.repository.jpa.ReceiptCustomerJpaRepository;
 
-import domain.pos.receipt.repository.ReceiptCustomerRepository;
+import domain.pos.receipt.port.required.ReceiptCustomerRepository;
 import lombok.RequiredArgsConstructor;
 
 @Repository
