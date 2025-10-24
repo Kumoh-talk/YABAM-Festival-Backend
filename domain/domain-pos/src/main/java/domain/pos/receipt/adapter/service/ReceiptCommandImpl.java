@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.annotation.DeadlockRetry;
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
 import com.vo.UserPassport;
@@ -28,6 +29,7 @@ public class ReceiptCommandImpl implements ReceiptCommand {
 	private final TableRepository tableRepository;
 
 	// 수동 영수증 추가 -> 바로 사용 시작
+	@DeadlockRetry
 	@Transactional
 	@Override
 	public Receipt create(UserPassport userPassport, Long storeId, UUID tableId) {
@@ -40,6 +42,7 @@ public class ReceiptCommandImpl implements ReceiptCommand {
 			.orElseThrow(() -> new ServiceException(ErrorCode.INVALID_INPUT_VALUE));
 	}
 
+	@DeadlockRetry
 	@Transactional
 	@Override
 	public List<Receipt> stopUsage(UserPassport userPassport, List<UUID> receiptIds) {

@@ -9,15 +9,13 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.aop.AssignUserPassportAspect;
-import com.interceptor.AuthorizationInterceptor;
+import com.aop.DeadlockRetryAspect;
 import com.interceptor.DeserializingUserPassportInterceptor;
-
-import lombok.RequiredArgsConstructor;
+import com.interceptor.HasRoleInterceptor;
 
 @Configuration
 @ConditionalOnWebApplication
 @AutoConfigureAfter(WebMvcAutoConfiguration.class)
-@RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
 
 	@Bean
@@ -26,13 +24,18 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	}
 
 	@Bean
-	public AuthorizationInterceptor authorizationInterceptor() {
-		return new AuthorizationInterceptor();
+	public HasRoleInterceptor authorizationInterceptor() {
+		return new HasRoleInterceptor();
 	}
 
 	@Bean
 	public AssignUserPassportAspect assignUserPassportAspect() {
 		return new AssignUserPassportAspect();
+	}
+
+	@Bean
+	public DeadlockRetryAspect deadlockRetryAspect() {
+		return new DeadlockRetryAspect();
 	}
 
 	@Override

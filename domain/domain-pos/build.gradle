@@ -20,6 +20,7 @@ dependencies {
 
     // common exception
     implementation project(":common:base")
+    implementation project(":common:mvc")
 
     // util url
     implementation project(":utils:util-url")
