@@ -26,4 +26,16 @@ public class UserPassport {
 		UserRole userRole) {
 		return new UserPassport(userId, userNickname, userRole);
 	}
+
+	public static String getFieldUserId() {
+		return "userId";
+	}
+
+	public static String getFieldUserNickname() {
+		return "userNickname";
+	}
+
+	public static String getFieldUserRole() {
+		return "userRole";
+	}
 }

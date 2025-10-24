@@ -19,6 +19,7 @@ import com.gateway.exception.JwtTokenInvalidException;
 import com.gateway.jwt.JwtHandler;
 import com.gateway.jwt.JwtUserClaim;
 import com.http.HttpHeaderName;
+import com.vo.UserPassport;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -30,10 +31,6 @@ public class AuthenticationToHeaderFilter implements WebFilter {
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final ServerAuthenticationFailureHandler authenticationFailureHandler;
 	private final JwtHandler jwtHandler;
-
-	private final String USER_ID = "userId";
-	private final String USER_NICKNAME = "userNickname";
-	private final String USER_ROLE = "userRole";
 
 	public AuthenticationToHeaderFilter(
 		ServerAuthenticationFailureHandler authenticationFailureHandler,
@@ -74,9 +71,9 @@ public class AuthenticationToHeaderFilter implements WebFilter {
 
 		try {
 			Map<String, Object> userInfo = new LinkedHashMap<>();
-			userInfo.put(USER_ID, jwtUserClaim.userId());
-			userInfo.put(USER_NICKNAME, jwtUserClaim.userNickname());
-			userInfo.put(USER_ROLE, jwtUserClaim.userRole().name());
+			userInfo.put(UserPassport.getFieldUserId(), jwtUserClaim.userId());
+			userInfo.put(UserPassport.getFieldUserNickname(), jwtUserClaim.userNickname());
+			userInfo.put(UserPassport.getFieldUserRole(), jwtUserClaim.userRole().name());
 
 			String userInfoJson = objectMapper.writeValueAsString(userInfo);
 			ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
