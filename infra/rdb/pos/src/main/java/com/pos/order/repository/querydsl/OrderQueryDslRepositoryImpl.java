@@ -31,11 +31,11 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 		QOrderMenuEntity qOrderMenu = QOrderMenuEntity.orderMenuEntity;
 
 		OrderEntity orderEntity = jpaQueryFactory
-			.selectFrom(qOrderEntity).distinct()
-			.leftJoin(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
-			.leftJoin(qOrderMenu.menu).fetchJoin()
-			.where(qOrderEntity.id.eq(orderId))
-			.fetchOne();
+				.selectFrom(qOrderEntity).distinct()
+				.leftJoin(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
+				.leftJoin(qOrderMenu.menu).fetchJoin()
+				.where(qOrderEntity.id.eq(orderId))
+				.fetchOne();
 
 		return Optional.ofNullable(orderEntity);
 	}
@@ -45,12 +45,12 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 		QSaleEntity qSaleEntity = QSaleEntity.saleEntity;
 
 		OrderEntity orderEntity = jpaQueryFactory
-			.selectFrom(qOrderEntity)
-			.join(qOrderEntity.receipt).fetchJoin()
-			.join(qOrderEntity.receipt.sale, qSaleEntity).fetchJoin()
-			.join(qSaleEntity.store).fetchJoin()
-			.where(qOrderEntity.id.eq(orderId))
-			.fetchOne();
+				.selectFrom(qOrderEntity)
+				.join(qOrderEntity.receipt).fetchJoin()
+				.join(qOrderEntity.receipt.sale, qSaleEntity).fetchJoin()
+				.join(qSaleEntity.store).fetchJoin()
+				.where(qOrderEntity.id.eq(orderId))
+				.fetchOne();
 
 		return Optional.ofNullable(orderEntity);
 	}
@@ -60,39 +60,53 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 		QSaleEntity qSaleEntity = QSaleEntity.saleEntity;
 
 		OrderEntity orderEntity = jpaQueryFactory
-			.selectFrom(qOrderEntity).distinct()
-			.join(qOrderEntity.receipt).fetchJoin()
-			.join(qOrderEntity.receipt.sale, qSaleEntity).fetchJoin()
-			.join(qSaleEntity.store).fetchJoin()
-			.leftJoin(qOrderEntity.orderMenus).fetchJoin()
-			.where(qOrderEntity.id.eq(orderId))
-			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
-			.fetchOne();
+				.selectFrom(qOrderEntity).distinct()
+				.join(qOrderEntity.receipt).fetchJoin()
+				.join(qOrderEntity.receipt.sale, qSaleEntity).fetchJoin()
+				.join(qSaleEntity.store).fetchJoin()
+				.leftJoin(qOrderEntity.orderMenus).fetchJoin()
+				.where(qOrderEntity.id.eq(orderId))
+				.setLockMode(LockModeType.PESSIMISTIC_WRITE)
+				.fetchOne();
 
 		return Optional.ofNullable(orderEntity);
 	}
 
 	@Override
 	public Slice<OrderEntity> findSaleOrdersWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses, int pageSize,
-		Long lastOrderId) {
-		QOrderMenuEntity qOrderMenu = QOrderMenuEntity.orderMenuEntity;
+			Long lastOrderId) {
 
 		List<OrderEntity> orders = jpaQueryFactory
-			.selectFrom(qOrderEntity).distinct()
-			.leftJoin(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
-			.leftJoin(qOrderMenu.menu).fetchJoin()
-			.join(qOrderEntity.receipt).fetchJoin()
-			.join(qOrderEntity.receipt.table).fetchJoin()
-			.where(qOrderEntity.receipt.sale.id.eq(saleId)
-				.and(qOrderEntity.status.in(orderStatuses))
-				.and(lastOrderId == null ? Expressions.TRUE : qOrderEntity.id.lt(lastOrderId)))
-			.orderBy(qOrderEntity.id.desc())
-			.limit(pageSize + 1)
-			.fetch();
+				.selectFrom(qOrderEntity)
+				.join(qOrderEntity.receipt).fetchJoin()
+				.join(qOrderEntity.receipt.table).fetchJoin()
+				.where(qOrderEntity.receipt.sale.id.eq(saleId)
+						.and(qOrderEntity.status.in(orderStatuses))
+						.and(lastOrderId == null ? Expressions.TRUE : qOrderEntity.id.lt(lastOrderId)))
+				.orderBy(qOrderEntity.id.desc())
+				.limit(pageSize + 1)
+				.fetch();
+
+		if (orders.isEmpty()) {
+			return new SliceImpl<>(orders, Pageable.ofSize(pageSize), false);
+		}
+
+		List<Long> orderIds = orders.stream()
+				.map(OrderEntity::getId)
+				.toList();
+
+		QOrderMenuEntity qOrderMenu = QOrderMenuEntity.orderMenuEntity;
+
+		jpaQueryFactory
+				.selectFrom(qOrderEntity).distinct()
+				.leftJoin(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
+				.leftJoin(qOrderMenu.menu).fetchJoin()
+				.where(qOrderEntity.id.in(orderIds))
+				.fetch();
 
 		boolean hasNext = orders.size() > pageSize;
 		if (hasNext) {
-			orders.remove(orders.size() - 1);
+			orders.remove(pageSize);
 		}
 
 		return new SliceImpl<>(orders, Pageable.ofSize(pageSize), hasNext);
@@ -103,32 +117,32 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 		QOrderMenuEntity qOrderMenu = QOrderMenuEntity.orderMenuEntity;
 
 		return jpaQueryFactory
-			.selectFrom(qOrderEntity).distinct()
-			.leftJoin(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
-			.leftJoin(qOrderMenu.menu).fetchJoin()
-			.where(qOrderEntity.receipt.id.eq(receiptId))
-			.orderBy(qOrderEntity.createdAt.asc(), qOrderEntity.id.asc())
-			.fetch();
+				.selectFrom(qOrderEntity).distinct()
+				.leftJoin(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
+				.leftJoin(qOrderMenu.menu).fetchJoin()
+				.where(qOrderEntity.receipt.id.eq(receiptId))
+				.orderBy(qOrderEntity.createdAt.asc(), qOrderEntity.id.asc())
+				.fetch();
 	}
 
 	@Override
 	public boolean existsOrderByReceiptId(UUID receiptId) {
 		return jpaQueryFactory
-			.selectOne()
-			.from(qOrderEntity)
-			.where(qOrderEntity.receipt.id.eq(receiptId))
-			.fetchFirst() != null;
+				.selectOne()
+				.from(qOrderEntity)
+				.where(qOrderEntity.receipt.id.eq(receiptId))
+				.fetchFirst() != null;
 	}
 
 	@Override
 	public void updateOrderStatus(Long orderId, OrderStatus orderStatus) {
 		JPAUpdateClause updateClause = jpaQueryFactory
-			.update(qOrderEntity)
-			.where(qOrderEntity.id.eq(orderId));
+				.update(qOrderEntity)
+				.where(qOrderEntity.id.eq(orderId));
 
 		if (orderStatus == OrderStatus.CANCELED) {
 			updateClause.set(qOrderEntity.status, orderStatus)
-				.set(qOrderEntity.totalPrice, 0);
+					.set(qOrderEntity.totalPrice, 0);
 		} else {
 			updateClause.set(qOrderEntity.status, orderStatus);
 		}
@@ -139,25 +153,25 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 	@Override
 	public void updateCustomOrder(Long orderId, Order patchOrder) {
 		jpaQueryFactory.update(qOrderEntity)
-			.set(qOrderEntity.totalPrice, patchOrder.getTotalPrice())
-			.set(qOrderEntity.description, patchOrder.getDescription())
-			.where(qOrderEntity.id.eq(orderId))
-			.execute();
+				.set(qOrderEntity.totalPrice, patchOrder.getTotalPrice())
+				.set(qOrderEntity.description, patchOrder.getDescription())
+				.where(qOrderEntity.id.eq(orderId))
+				.execute();
 	}
 
 	@Override
 	public void subtractOrderPrice(Long orderId, Integer menuPrice) {
 		jpaQueryFactory.update(qOrderEntity)
-			.set(qOrderEntity.totalPrice, qOrderEntity.totalPrice.subtract(menuPrice))
-			.where(qOrderEntity.id.eq(orderId))
-			.execute();
+				.set(qOrderEntity.totalPrice, qOrderEntity.totalPrice.subtract(menuPrice))
+				.where(qOrderEntity.id.eq(orderId))
+				.execute();
 	}
 
 	@Override
 	public void plusOrderPrice(Long orderId, Integer menuPrice) {
 		jpaQueryFactory.update(qOrderEntity)
-			.set(qOrderEntity.totalPrice, qOrderEntity.totalPrice.add(menuPrice))
-			.where(qOrderEntity.id.eq(orderId))
-			.execute();
+				.set(qOrderEntity.totalPrice, qOrderEntity.totalPrice.add(menuPrice))
+				.where(qOrderEntity.id.eq(orderId))
+				.execute();
 	}
 }
