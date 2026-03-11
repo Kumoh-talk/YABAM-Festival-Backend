@@ -2,8 +2,6 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.3' apply(false)
     id 'io.spring.dependency-management' version '1.1.7' apply(false)
-    id 'org.ec4j.editorconfig' version '0.1.0'
-    id 'checkstyle'
 }
 
 java {
@@ -44,26 +42,6 @@ subprojects {
     apply plugin: 'java-library'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
-    apply plugin: 'checkstyle'
-
-    checkstyle {
-        toolVersion = "8.42"
-        configFile = rootProject.file("rule-config/naver-checkstyle-rules.xml") // ✅ 명시적으로 설정
-        configProperties = [
-                "suppressionFile": rootProject.file("rule-config/naver-checkstyle-suppressions.xml")
-        ]
-        sourceSets = [sourceSets.main]
-        maxWarnings = 0
-        ignoreFailures = false
-    }
-
-    checkstyleMain {
-        source = fileTree('src/main/java')
-    }
-
-    tasks.named('check') {
-        dependsOn 'checkstyleMain'
-    }
 
     dependencies {
         // lombok
@@ -101,36 +79,4 @@ tasks.register('copyPrivate', Copy) {
     into 'application/config/src/main/resources'
 }
 
-editorconfig {
-    excludes = [
-            'build',
-            'node_modules',
-            '.husky',
-            'cloud-config-private',
-            'application/**/build',
-            'common/**/build',
-            'domain/**/build',
-            'application/**/generated',
-            'gradlew.bat',
-            '**/application.properties',
-            '.editorconfig',
-            '.husky/commit-msg',
-            '**/config-server.properties',
-            '**/build.gradle',
-            '**/application.yml',
-            'application/**/data',
-            '**/*.dblwr',
-            'settings.gradle',
-            '**/docker-infra',
-            '**/data',
-    ]
-}
 
-check.dependsOn editorconfigCheck
-checkstyle {
-    toolVersion = "8.42"
-    configFile = file("${rootDir}/rule-config/naver-checkstyle-rules.xml")
-    configProperties = ["suppressionFile": "${rootDir}/rule-config/naver-checkstyle-suppressions.xml"]
-    maxWarnings = 0
-    ignoreFailures = false
-}

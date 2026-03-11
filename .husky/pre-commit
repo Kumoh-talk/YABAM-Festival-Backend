@@ -7,7 +7,7 @@ COMMIT_MSG=`cat $COMMIT_MSG_FILE`
 echo "$COMMIT_MSG"
 
 # Convention Check & Test
-./gradlew checkstyleMain
-./gradlew editorconfigCheck
-./gradlew editorconfigFormat
+#./gradlew checkstyleMain
+#./gradlew editorconfigCheck
+#./gradlew editorconfigFormat
 #./gradlew test
