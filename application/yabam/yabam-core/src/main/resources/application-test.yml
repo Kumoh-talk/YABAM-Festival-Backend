@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: yabam
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+
+  datasource:
+    url: jdbc:mysql://localhost:3315/local_mydb?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    username: root
+    password: "1234"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6380
+      timeout: 2000
+      lettuce:
+        command-timeout: PT2S
+        connect-timeout: PT2S
+
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+    credentials:
+      access-key: dummy
+      secret-key: dummy
+    s3:
+      bucket: dummy
+
+logging:
+  level:
+    root: INFO
+    domain.pos: DEBUG
+    com.pos: DEBUG
+    com.application: DEBUG
