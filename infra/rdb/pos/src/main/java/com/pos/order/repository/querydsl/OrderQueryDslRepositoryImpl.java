@@ -11,6 +11,7 @@ import org.springframework.data.domain.SliceImpl;
 import com.pos.order.entity.OrderEntity;
 import com.pos.order.entity.QOrderEntity;
 import com.pos.order.entity.QOrderMenuEntity;
+import com.pos.receipt.entity.QReceiptEntity;
 import com.pos.sale.entity.QSaleEntity;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -75,41 +76,91 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 	@Override
 	public Slice<OrderEntity> findSaleOrdersWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses, int pageSize,
 			Long lastOrderId) {
+		QReceiptEntity qReceipt = QReceiptEntity.receiptEntity;
 
-		List<OrderEntity> orders = jpaQueryFactory
-				.selectFrom(qOrderEntity)
-				.join(qOrderEntity.receipt).fetchJoin()
-				.join(qOrderEntity.receipt.table).fetchJoin()
-				.where(qOrderEntity.receipt.sale.id.eq(saleId)
+		// 1단계: sale_id 기반 receipt_ids 조회 (idx_receipts_sale_id 활용)
+		List<UUID> receiptIds = jpaQueryFactory
+				.select(qReceipt.id)
+				.from(qReceipt)
+				.where(qReceipt.sale.id.eq(saleId))
+				.fetch();
+
+		if (receiptIds.isEmpty()) {
+			return new SliceImpl<>(List.of(), Pageable.ofSize(pageSize), false);
+		}
+
+		// 2단계: JOIN 없이 order_ids만 조회 (PRIMARY key Backward scan → LIMIT 조기 종료)
+		List<Long> orderIds = jpaQueryFactory
+				.select(qOrderEntity.id)
+				.from(qOrderEntity)
+				.where(qOrderEntity.receipt.id.in(receiptIds)
 						.and(qOrderEntity.status.in(orderStatuses))
 						.and(lastOrderId == null ? Expressions.TRUE : qOrderEntity.id.lt(lastOrderId)))
 				.orderBy(qOrderEntity.id.desc())
 				.limit(pageSize + 1)
 				.fetch();
 
-		if (orders.isEmpty()) {
-			return new SliceImpl<>(orders, Pageable.ofSize(pageSize), false);
+		if (orderIds.isEmpty()) {
+			return new SliceImpl<>(List.of(), Pageable.ofSize(pageSize), false);
 		}
 
-		List<Long> orderIds = orders.stream()
-				.map(OrderEntity::getId)
-				.toList();
+		boolean hasNext = orderIds.size() > pageSize;
+		List<Long> fetchIds = hasNext ? orderIds.subList(0, pageSize) : orderIds;
 
+		// 3단계: fetchIds로 receipt, table, menus 한번에 조회 (N+1 방지)
 		QOrderMenuEntity qOrderMenu = QOrderMenuEntity.orderMenuEntity;
-
-		jpaQueryFactory
+		List<OrderEntity> orders = jpaQueryFactory
 				.selectFrom(qOrderEntity).distinct()
+				.join(qOrderEntity.receipt).fetchJoin()
+				.join(qOrderEntity.receipt.table).fetchJoin()
+				.leftJoin(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
+				.leftJoin(qOrderMenu.menu).fetchJoin()
+				.where(qOrderEntity.id.in(fetchIds))
+				.orderBy(qOrderEntity.id.desc())
+				.fetch();
+
+		return new SliceImpl<>(orders, Pageable.ofSize(pageSize), hasNext);
+	}
+
+	@Override
+	public List<OrderEntity> findSaleOrdersWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses) {
+		QReceiptEntity qReceipt = QReceiptEntity.receiptEntity;
+
+		// 1단계: sale_id 기반 receipt_ids 조회 (idx_receipts_sale_id 활용)
+		List<UUID> receiptIds = jpaQueryFactory
+				.select(qReceipt.id)
+				.from(qReceipt)
+				.where(qReceipt.sale.id.eq(saleId))
+				.fetch();
+
+		if (receiptIds.isEmpty()) {
+			return List.of();
+		}
+
+		// 2단계: JOIN 없이 order_ids 조회 (인덱스 활용)
+		List<Long> orderIds = jpaQueryFactory
+				.select(qOrderEntity.id)
+				.from(qOrderEntity)
+				.where(qOrderEntity.receipt.id.in(receiptIds)
+						.and(qOrderEntity.status.in(orderStatuses)))
+				.orderBy(qOrderEntity.id.desc())
+				.fetch();
+
+		if (orderIds.isEmpty()) {
+			return List.of();
+		}
+
+		// 3단계: fetchIds로 receipt, table, menus 한번에 조회 (N+1 방지)
+		QOrderMenuEntity qOrderMenu = QOrderMenuEntity.orderMenuEntity;
+		return jpaQueryFactory
+				.selectFrom(qOrderEntity).distinct()
+				.join(qOrderEntity.receipt).fetchJoin()
+				.join(qOrderEntity.receipt.table).fetchJoin()
 				.leftJoin(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
 				.leftJoin(qOrderMenu.menu).fetchJoin()
 				.where(qOrderEntity.id.in(orderIds))
+				.orderBy(qOrderEntity.id.desc())
 				.fetch();
-
-		boolean hasNext = orders.size() > pageSize;
-		if (hasNext) {
-			orders.remove(pageSize);
-		}
-
-		return new SliceImpl<>(orders, Pageable.ofSize(pageSize), hasNext);
 	}
 
 	@Override

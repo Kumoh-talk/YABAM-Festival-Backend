@@ -9,7 +9,6 @@ import com.exception.ServiceException;
 
 import lombok.RequiredArgsConstructor;
 
-@Component
 @RequiredArgsConstructor
 public class OrderAllocator<T> {
 	private final OrderingOps<T> orderingOps;
@@ -23,7 +22,7 @@ public class OrderAllocator<T> {
 
 	// 순서 변경 시, 변경 전 순서 ~ 변경 후 순서 사이의 순서 재배치 로직
 	public Optional<T> relocationOrders(Long userId, Long storeId,
-		Long guardId, Long targetId, Integer updatedOrder, Integer previousOrder) {
+			Long guardId, Long targetId, Integer updatedOrder, Integer previousOrder) {
 		// 동일 가드 내에 여러 타겟 순서 수정을 위한 가드 락 -> 동일 가드의 타겟 순서가 다른 요청에 의해 엉키지 않도록
 		orderingOps.lockGuard(guardId);
 

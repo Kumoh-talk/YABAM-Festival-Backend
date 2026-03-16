@@ -30,8 +30,12 @@ public class OrderReader {
 	}
 
 	public Slice<Order> getSaleOrderSliceWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses,
-		int pageSize, Long lastOrderId) {
+			int pageSize, Long lastOrderId) {
 		return orderRepository.getSaleOrderSliceWithMenuAndTable(saleId, orderStatuses, pageSize, lastOrderId);
+	}
+
+	public List<Order> getSaleOrdersWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses) {
+		return orderRepository.getSaleOrdersWithMenuAndTable(saleId, orderStatuses);
 	}
 
 	public List<Order> getReceiptOrdersWithMenu(UUID receiptId) {
