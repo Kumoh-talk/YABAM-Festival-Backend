@@ -14,4 +14,6 @@ public interface CartDslRepository {
 	void deleteCartMenuByReceiptIdAndMenuId(UUID receiptId, Long menuId);
 
 	Optional<CartEntity> findCartByReceiptId(UUID receiptId);
+
+	boolean isCartPending(UUID receiptId);
 }

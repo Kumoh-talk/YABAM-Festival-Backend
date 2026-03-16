@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.application.global.config.swagger.ApiErrorResponseExplanation;
@@ -58,7 +59,9 @@ public interface OrderApi {
 	)
 	ResponseEntity<ResponseBody<OrderResponse>> postOrderWithCart(
 		@Parameter(hidden = true) UserPassport userPassport,
-		@PathVariable UUID receiptId);
+		@PathVariable UUID receiptId,
+		@Parameter(description = "주문 대기 세션 토큰", required = true)
+		@RequestHeader("X-Order-Session-Token") UUID sessionToken);
 
 	@Operation(
 		summary = "메뉴 리스트 기반 주문 생성 API",

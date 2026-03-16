@@ -7,12 +7,15 @@ import java.util.UUID;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.application.presentation.cart.api.CartApi;
 import com.application.presentation.cart.dto.response.CartInfoResponse;
+import com.application.presentation.cart.dto.response.OrderSessionResponse;
 import com.response.ResponseBody;
 
 import domain.pos.cart.service.CartService;
@@ -49,6 +52,22 @@ public class CartController implements CartApi {
 				.map(CartInfoResponse::from)
 				.orElseGet(() -> CartInfoResponse.emptyFrom(receiptId))
 		));
+	}
+
+	@PostMapping("/api/v1/receipts/{receiptId}/order-session")
+	public ResponseEntity<ResponseBody<OrderSessionResponse>> enterOrderSession(
+		@PathVariable final UUID receiptId) {
+		return ResponseEntity.ok(createSuccessResponse(
+			OrderSessionResponse.from(cartService.enterOrderSession(receiptId))
+		));
+	}
+
+	@DeleteMapping("/api/v1/receipts/{receiptId}/order-session")
+	public ResponseEntity<ResponseBody<Void>> cancelOrderSession(
+		@PathVariable final UUID receiptId,
+		@RequestHeader("X-Order-Session-Token") final UUID sessionToken) {
+		cartService.cancelOrderSession(receiptId, sessionToken);
+		return ResponseEntity.ok(createSuccessResponse());
 	}
 
 }

@@ -112,6 +112,9 @@ public enum ErrorCode {
 	// Cart
 	CART_NOT_FOUND(HttpStatus.NOT_FOUND, "CART_0001", "존재하지 않는 장바구니입니다."),
 	CART_EMPTY(HttpStatus.BAD_REQUEST, "CART_0002", "장바구니가 비어있습니다."),
+	CART_ORDER_SESSION_ACTIVE(HttpStatus.CONFLICT, "CART_0006", "현재 다른 사용자가 주문을 진행 중입니다."),
+	CART_ORDER_SESSION_INVALID(HttpStatus.FORBIDDEN, "CART_0007", "유효하지 않은 주문 대기 세션 토큰입니다."),
+	CART_ORDER_SESSION_EXPIRED(HttpStatus.GONE, "CART_0008", "주문 대기 세션이 만료되었습니다."),
 
 	// Review
 	REVIEW_NOT_ADJUSTMENT(HttpStatus.BAD_REQUEST, "REVIEW_0001", "정산되지 않았으면 리뷰 생성 불가합니다."),

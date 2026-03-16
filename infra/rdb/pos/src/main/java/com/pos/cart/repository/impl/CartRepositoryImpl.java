@@ -1,11 +1,14 @@
 package com.pos.cart.repository.impl;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.exception.ErrorCode;
+import com.exception.ServiceException;
 import com.pos.cart.entity.CartEntity;
 import com.pos.cart.entity.CartMenuEntity;
 import com.pos.cart.mapper.CartMapper;
@@ -58,11 +61,54 @@ public class CartRepositoryImpl implements CartRepository {
 	}
 
 	@Override
+	public Optional<Cart> getCartWithLock(UUID receiptId) {
+		return cartJpaRepository.findCartByReceiptWithLock(receiptId)
+			.map(cartEntity -> CartMapper.toCart(receiptId, cartEntity));
+	}
+
+	@Override
 	public void deleteCartAndCartMenuByReceiptId(UUID receiptId) {
 		CartEntity cartEntity = cartJpaRepository.findCartByReceiptId(receiptId).orElseThrow(
 			() -> new IllegalArgumentException("해당 영수증 id에 해당하는 장바구니 내역이 없습니다." + receiptId));
 		cartMenuJpaRepository.deleteAll(cartEntity.getCartMenus());
 		cartEntity.getCartMenus().clear();
 		cartJpaRepository.delete(cartEntity);
+	}
+
+	@Override
+	@Transactional
+	public Cart enterOrderSession(UUID receiptId) {
+		CartEntity cartEntity = cartJpaRepository.findCartByReceiptWithLock(receiptId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.CART_NOT_FOUND));
+
+		if (cartEntity.getSessionToken() != null && cartEntity.getPendingAt() != null
+			&& cartEntity.getPendingAt().plusSeconds(60).isAfter(LocalDateTime.now())) {
+			throw new ServiceException(ErrorCode.CART_ORDER_SESSION_ACTIVE);
+		}
+
+		cartEntity.startSession(UUID.randomUUID());
+
+		return CartMapper.toCart(receiptId, cartEntity);
+	}
+
+	@Override
+	@Transactional
+	public void cancelOrderSession(UUID receiptId, UUID token) {
+		CartEntity cartEntity = cartJpaRepository.findCartByReceiptWithLock(receiptId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.CART_NOT_FOUND));
+
+		if (cartEntity.getSessionToken() == null
+			|| !cartEntity.getSessionToken().equals(token)
+			|| cartEntity.getPendingAt() == null
+			|| !cartEntity.getPendingAt().plusSeconds(60).isAfter(LocalDateTime.now())) {
+			throw new ServiceException(ErrorCode.CART_ORDER_SESSION_INVALID);
+		}
+
+		cartEntity.clearSession();
+	}
+
+	@Override
+	public boolean isCartPending(UUID receiptId) {
+		return cartJpaRepository.isCartPending(receiptId);
 	}
 }

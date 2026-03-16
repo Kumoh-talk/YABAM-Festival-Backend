@@ -1,5 +1,6 @@
 package com.pos.cart.repository.dsl;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -67,6 +68,17 @@ public class CartDslRepositoryImpl implements CartDslRepository {
 			.join(qCartMenuEntity.menu, qMenuEntity).fetchJoin()
 			.where(qCartEntity.receipt.id.eq(receiptId))
 			.fetchFirst());
+	}
+
+	@Override
+	public boolean isCartPending(UUID receiptId) {
+		return queryFactory
+			.selectOne()
+			.from(qCartEntity)
+			.where(qCartEntity.receipt.id.eq(receiptId)
+				.and(qCartEntity.sessionToken.isNotNull())
+				.and(qCartEntity.pendingAt.after(LocalDateTime.now().minusSeconds(60))))
+			.fetchFirst() != null;
 	}
 
 }

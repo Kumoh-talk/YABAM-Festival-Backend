@@ -49,16 +49,28 @@ public class OrderService {
 	// TODO : 위치기반으로 특정 범위 내에 유저가 존재해야만 주문이 가능하도록 구현 필요
 	// TODO : 정산된 영수증에 주문 안들어가도록 명시적으로 막아야함
 	@Transactional
-	public Order postOrderWithCart(UUID receiptId, UserPassport userPassport) {
+	public Order postOrderWithCart(UUID receiptId, UserPassport userPassport, UUID sessionToken) {
 		Receipt receipt = receiptReader.getNonStopReceiptsWithTableAndStoreAndLock(receiptId).orElseThrow(
 			() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
 
 		// 영업 상태 검증
 		saleValidator.validateSaleOpen(receipt.getSale());
 
-		// 장바구니 조회 및 장바구니 메뉴 존재 검증
-		Cart cart = cartWriter.getCart(receiptId)
+		// 장바구니 FOR UPDATE 조회 및 세션 검증
+		Cart cart = cartWriter.getCartWithLock(receiptId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.CART_NOT_FOUND));
+
+		if (cart.getSessionToken() == null) {
+			throw new ServiceException(ErrorCode.CART_ORDER_SESSION_INVALID);
+		}
+		if (!cart.isPending()) {
+			throw new ServiceException(ErrorCode.CART_ORDER_SESSION_EXPIRED);
+		}
+		if (!cart.isSessionOwner(sessionToken)) {
+			throw new ServiceException(ErrorCode.CART_ORDER_SESSION_INVALID);
+		}
+
+		// 장바구니 메뉴 존재 검증
 		if (cart.getCartMenus().isEmpty()) {
 			throw new ServiceException(ErrorCode.CART_EMPTY);
 		}

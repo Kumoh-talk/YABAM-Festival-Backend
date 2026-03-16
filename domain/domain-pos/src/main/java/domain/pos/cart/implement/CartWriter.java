@@ -28,7 +28,23 @@ public class CartWriter {
 		return cartRepository.getCart(receiptId);
 	}
 
+	public Optional<Cart> getCartWithLock(UUID receiptId) {
+		return cartRepository.getCartWithLock(receiptId);
+	}
+
 	public void deleteCartAndCartMenuByReceiptId(UUID receiptId) {
 		cartRepository.deleteCartAndCartMenuByReceiptId(receiptId);
+	}
+
+	public Cart enterOrderSession(UUID receiptId) {
+		return cartRepository.enterOrderSession(receiptId);
+	}
+
+	public void cancelOrderSession(UUID receiptId, UUID token) {
+		cartRepository.cancelOrderSession(receiptId, token);
+	}
+
+	public boolean isCartPending(UUID receiptId) {
+		return cartRepository.isCartPending(receiptId);
 	}
 }

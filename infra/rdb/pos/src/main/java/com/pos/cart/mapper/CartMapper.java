@@ -23,6 +23,6 @@ public class CartMapper {
 				return CartMenu.of(cartMenuEntity.getQuantity(), menuInfo);
 			})
 			.toList();
-		return Cart.of(receiptId, cartMenus);
+		return Cart.of(receiptId, cartMenus, cartEntity.getSessionToken(), cartEntity.getPendingAt());
 	}
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,8 +50,9 @@ public class OrderController implements OrderApi {
 	@AssignUserPassport
 	public ResponseEntity<ResponseBody<OrderResponse>> postOrderWithCart(
 		UserPassport userPassport,
-		@PathVariable UUID receiptId) {
-		Order order = orderService.postOrderWithCart(receiptId, userPassport);
+		@PathVariable UUID receiptId,
+		@RequestHeader("X-Order-Session-Token") UUID sessionToken) {
+		Order order = orderService.postOrderWithCart(receiptId, userPassport, sessionToken);
 		return ResponseEntity.ok(createSuccessResponse(OrderResponse.from(order)));
 	}
 
