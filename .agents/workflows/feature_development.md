@@ -14,6 +14,8 @@ description: 새로운 기능을 기획하고 개발하기 위한 필수 워크�
 - **계층(Domain, Infra, API 등)별 개발 패턴 및 객체(Mapper 등) 맵핑 규칙 확인이 필요할 때**: `@[/layer-development-pattern]`
 - **기능 개발이나 변경 후 어떻게 테스트 코드를 작성해야 하는지 가이드가 필요할 때**: `@[/testing-strategy]`
 - **커밋 메시지 작성 규칙이나 커밋 분리 원칙을 확인할 때**: `@[/commit-convention]`
+- **로컬에서 전체 시스템(Config, Discovery, Infra)을 실행하는 절차가 필요할 때**: `@[/local-application-running]`
+- **ZSET 캐싱 등 대규모 데이터 부하 테스트(k6)가 필요할 때**: `@[/performance-testing]`
 - **🚨 (중요) 새로운 워크플로우 생성 규칙**: 앞으로 사용자가 어시스턴트에게 "새로운 워크플로우를 만들어 주라"라고 지시할 경우, 워크플로우 파일을 생성한 후 **반드시 이 `feature_development` 파일의 "파생 워크플로우 길라잡이" 섹션에도 해당 워크플로우에 대한 설명과 명령어를 추가 업데이트해야 합니다.**
 
 ---
