@@ -50,3 +50,24 @@ out/
 /node_modules
 
 **/data
+
+# Claude Code (로컬 상태 / 플래닝 아티팩트)
+.claude/
+.plan/
+.sisyphus/
+
+# 로그 파일
+*.log
+
+# k6 성능 테스트 결과물 및 바이너리
+k6*.txt
+k6*.json
+k6*.exe
+k6 exit*
+
+# IDE / 빌드 생성 파일
+META-INF/
+org/
+
+# 실수로 생성된 파일
+echo
