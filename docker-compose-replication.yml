@@ -1,0 +1,98 @@
+version: '3.7'
+
+# =============================================================================
+# MySQL Master-Replica 레플리케이션 구성 (성능 테스트용)
+#
+# [목적]
+#   읽기/쓰기 분산을 통한 DB 스케일아웃 효과 측정
+#   - Master (port 3315): 쓰기 전용 (INSERT, UPDATE, DELETE)
+#   - Replica (port 3316): 읽기 전용 (SELECT) — Master의 binlog를 구독·복제
+#
+# [사용 방법]
+#   1. 기존 단일 MySQL 컨테이너 중지
+#      docker-compose -f docker-compose-test.yml down
+#
+#   2. 레플리케이션 컨테이너 기동
+#      docker-compose -f docker-compose-replication.yml up -d
+#
+#   3. 레플리케이션 초기화 (최초 1회)
+#      bash scripts/init-replication.sh
+#
+#   4. 앱을 Replication 프로파일로 기동
+#      ./gradlew :application:yabam:yabam-core:bootRun \
+#        --args='--spring.profiles.active=local,replication'
+#
+# [Spring 설정 — application-replication.yml 예시]
+#   spring:
+#     datasource:
+#       primary:   # 쓰기용
+#         url: jdbc:mysql://localhost:3315/local_mydb
+#       replica:   # 읽기용
+#         url: jdbc:mysql://localhost:3316/local_mydb
+#
+# [주의]
+#   - 레플리케이션 지연(Replication Lag)이 있을 수 있음 (로컬 환경: 일반적으로 수ms 이내)
+#   - 테스트 데이터는 Master에만 삽입하면 Replica로 자동 복제됨
+# =============================================================================
+
+services:
+  # ── MySQL Master (쓰기 전용) ──────────────────────────────────
+  mysql-master:
+    image: mysql:8.0
+    container_name: yabam-mysql-master
+    ports:
+      - "3315:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_DATABASE: "local_mydb"
+    command: >
+      --server-id=1
+      --log-bin=mysql-bin
+      --binlog-do-db=local_mydb
+      --binlog-format=ROW
+      --sync-binlog=1
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql-master-data:/var/lib/mysql
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p1234"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── MySQL Replica (읽기 전용) ─────────────────────────────────
+  mysql-replica:
+    image: mysql:8.0
+    container_name: yabam-mysql-replica
+    ports:
+      - "3316:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "1234"
+      MYSQL_DATABASE: "local_mydb"
+    command: >
+      --server-id=2
+      --relay-log=relay-bin
+      --read-only=1
+      --super-read-only=1
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql-replica-data:/var/lib/mysql
+    depends_on:
+      mysql-master:
+        condition: service_healthy
+    restart: always
+
+  # ── Redis (캐싱 테스트용 — 레플리케이션과 무관) ────────────────
+  redis:
+    image: redis:7.2-alpine
+    container_name: yabam-redis-test
+    ports:
+      - "6380:6379"
+    restart: always
+
+volumes:
+  mysql-master-data:
+  mysql-replica-data:
