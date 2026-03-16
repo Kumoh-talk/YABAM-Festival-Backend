@@ -1,6 +1,7 @@
 package domain.pos.cart.service;
 
 import static org.assertj.core.api.SoftAssertions.*;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
@@ -34,29 +35,67 @@ class CartServiceTest extends ServiceTest {
 
 	@Nested
 	class upsertCartTest {
+		private final UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+		private final Long menuId = 1L;
+		private final Integer quantity = 2;
+
 		@Test
 		void 성공() {
+			// given
+			given(cartWriter.isCartPending(receiptId)).willReturn(false);
+
 			// when
-			cartService.upsertCart(any(), anyLong(), anyInt());
+			cartService.upsertCart(receiptId, menuId, quantity);
 
 			// then
 			assertSoftly(softly -> {
-				verify(cartWriter).upsertCart(any(), anyLong(), anyInt());
+				verify(cartWriter).upsertCart(receiptId, menuId, quantity);
 			});
 		}
 
 		@Test
 		void menuId가_유효하지_않은_경우() {
 			// given
+			given(cartWriter.isCartPending(receiptId)).willReturn(false);
 			doThrow(IllegalArgumentException.class)
-				.when(cartWriter).upsertCart(any(), anyLong(), anyInt());
+				.when(cartWriter).upsertCart(receiptId, menuId, quantity);
 
 			// when -> then
 			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> cartService.upsertCart(any(), anyLong(), anyInt()))
+				softly.assertThatThrownBy(() -> cartService.upsertCart(receiptId, menuId, quantity))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.MENU_NOT_FOUND);
-				verify(cartWriter).upsertCart(any(), anyLong(), anyInt());
+				verify(cartWriter).upsertCart(receiptId, menuId, quantity);
+			});
+		}
+
+		@Test
+		void 활성_세션_중_메뉴_추가_차단() {
+			// given
+			UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+			given(cartWriter.isCartPending(receiptId)).willReturn(true);
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(() -> cartService.upsertCart(receiptId, 1L, 1))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_ORDER_SESSION_ACTIVE);
+				verify(cartWriter, never()).upsertCart(any(), anyLong(), anyInt());
+			});
+		}
+
+		@Test
+		void 세션_만료_후_메뉴_추가_성공() {
+			// given
+			UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+			given(cartWriter.isCartPending(receiptId)).willReturn(false);
+
+			// when
+			cartService.upsertCart(receiptId, 1L, 1);
+
+			// then
+			assertSoftly(softly -> {
+				verify(cartWriter).upsertCart(receiptId, 1L, 1);
 			});
 		}
 	}
@@ -70,6 +109,7 @@ class CartServiceTest extends ServiceTest {
 			// given
 			UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 			Long menuId = 10L;
+			given(cartWriter.isCartPending(receiptId)).willReturn(false);
 
 			// when
 			cartService.deleteCartMenu(receiptId, menuId);
@@ -77,7 +117,22 @@ class CartServiceTest extends ServiceTest {
 			// then
 			assertSoftly(softly -> {
 				verify(cartWriter).deleteCartMenu(receiptId, menuId);
-				// 반환값 없으므로 추가 assert 필요 없음
+			});
+		}
+
+		@Test
+		void 활성_세션_중_메뉴_삭제_차단() {
+			// given
+			UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+			Long menuId = 10L;
+			given(cartWriter.isCartPending(receiptId)).willReturn(true);
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(() -> cartService.deleteCartMenu(receiptId, menuId))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_ORDER_SESSION_ACTIVE);
+				verify(cartWriter, never()).deleteCartMenu(any(), anyLong());
 			});
 		}
 	}
@@ -120,6 +175,112 @@ class CartServiceTest extends ServiceTest {
 			assertSoftly(softly -> {
 				softly.assertThat(result).isEmpty();
 				verify(cartWriter).getCart(receiptId);
+			});
+		}
+	}
+
+	@Nested
+	@DisplayName("주문 대기 세션 진입")
+	class EnterOrderSessionTest {
+
+		@Test
+		void 성공_세션_없을때_진입() {
+			// given
+			Cart expected = CartFixture.CART_WITH_SESSION();
+			UUID receiptId = expected.getReceiptId();
+			given(cartWriter.enterOrderSession(receiptId)).willReturn(expected);
+
+			// when
+			Cart result = cartService.enterOrderSession(receiptId);
+
+			// then
+			assertSoftly(softly -> {
+				softly.assertThat(result.getSessionToken()).isNotNull();
+				softly.assertThat(result.getPendingAt()).isNotNull();
+				verify(cartWriter).enterOrderSession(receiptId);
+			});
+		}
+
+		@Test
+		void 장바구니_없을때_CART_NOT_FOUND() {
+			// given
+			UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+			given(cartWriter.enterOrderSession(receiptId))
+				.willThrow(new ServiceException(ErrorCode.CART_NOT_FOUND));
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(() -> cartService.enterOrderSession(receiptId))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_NOT_FOUND);
+			});
+		}
+
+		@Test
+		void 이미_활성_세션이_있을때_CART_ORDER_SESSION_ACTIVE() {
+			// given
+			UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+			given(cartWriter.enterOrderSession(receiptId))
+				.willThrow(new ServiceException(ErrorCode.CART_ORDER_SESSION_ACTIVE));
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(() -> cartService.enterOrderSession(receiptId))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_ORDER_SESSION_ACTIVE);
+			});
+		}
+	}
+
+	@Nested
+	@DisplayName("주문 대기 세션 취소")
+	class CancelOrderSessionTest {
+
+		@Test
+		void 유효한_토큰으로_세션_취소_성공() {
+			// given
+			UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+			UUID sessionToken = CartFixture.SESSION_TOKEN;
+			willDoNothing().given(cartWriter).cancelOrderSession(receiptId, sessionToken);
+
+			// when
+			cartService.cancelOrderSession(receiptId, sessionToken);
+
+			// then
+			assertSoftly(softly -> {
+				verify(cartWriter).cancelOrderSession(receiptId, sessionToken);
+			});
+		}
+
+		@Test
+		void 잘못된_토큰으로_세션_취소_CART_ORDER_SESSION_INVALID() {
+			// given
+			UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+			UUID wrongToken = UUID.randomUUID();
+			doThrow(new ServiceException(ErrorCode.CART_ORDER_SESSION_INVALID))
+				.when(cartWriter).cancelOrderSession(receiptId, wrongToken);
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(() -> cartService.cancelOrderSession(receiptId, wrongToken))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_ORDER_SESSION_INVALID);
+			});
+		}
+
+		@Test
+		void 세션_없는_상태에서_취소_CART_ORDER_SESSION_INVALID() {
+			// given
+			UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+			UUID token = UUID.randomUUID();
+			doThrow(new ServiceException(ErrorCode.CART_ORDER_SESSION_INVALID))
+				.when(cartWriter).cancelOrderSession(receiptId, token);
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(() -> cartService.cancelOrderSession(receiptId, token))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_ORDER_SESSION_INVALID);
 			});
 		}
 	}
