@@ -51,30 +51,30 @@ public class OrderRepositoryImpl implements OrderRepository {
 
 		// 주문 총 금액 계산
 		int totalPrice = cartMenus.stream()
-				.mapToInt(cartMenu -> cartMenu.getMenuInfo().getPrice() * cartMenu.getQuantity())
-				.sum();
+			.mapToInt(cartMenu -> cartMenu.getMenuInfo().getPrice() * cartMenu.getQuantity())
+			.sum();
 		OrderEntity orderEntity = OrderMapper.toOrderEntity(OrderStatus.ORDERED, totalPrice, receipt);
 
 		// CartMenu -> OrderMenuEntity 변환
 		List<OrderMenuEntity> orderMenuEntities = cartMenus.stream()
-				.map(cartMenu -> OrderMenuMapper.toOrderMenuEntity(
-						cartMenu,
-						orderEntity.getStatus().transferOrderMenuStatus(),
-						orderEntity,
-						MenuMapper.toMenuEntity(cartMenu.getMenuInfo(), null, null)))
-				.toList();
+			.map(cartMenu -> OrderMenuMapper.toOrderMenuEntity(
+				cartMenu,
+				orderEntity.getStatus().transferOrderMenuStatus(),
+				orderEntity,
+				MenuMapper.toMenuEntity(cartMenu.getMenuInfo(), null, null)))
+			.toList();
 		orderEntity.getOrderMenus().addAll(orderMenuEntities);
 
 		OrderEntity savedOrderEntity = orderJpaRepository.save(orderEntity);
 
 		List<OrderMenu> savedOrderMenus = savedOrderEntity.getOrderMenus().stream()
-				.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
-						MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
-				.toList();
+			.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
+				MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
+			.toList();
 		return OrderMapper.toOrder(
-				savedOrderEntity,
-				receipt,
-				savedOrderMenus);
+			savedOrderEntity,
+			receipt,
+			savedOrderMenus);
 	}
 
 	@Override
@@ -88,30 +88,30 @@ public class OrderRepositoryImpl implements OrderRepository {
 
 		// 주문 총 금액 계산
 		int totalPrice = orderMenus.stream()
-				.mapToInt(orderMenu -> orderMenu.getMenu().getMenuInfo().getPrice() * orderMenu.getQuantity())
-				.sum();
+			.mapToInt(orderMenu -> orderMenu.getMenu().getMenuInfo().getPrice() * orderMenu.getQuantity())
+			.sum();
 		OrderEntity orderEntity = OrderMapper.toOrderEntity(OrderStatus.ORDERED, totalPrice, receipt);
 
 		// orderMenu -> OrderMenuEntity 변환
 		List<OrderMenuEntity> orderMenuEntities = orderMenus.stream()
-				.map(orderMenu -> OrderMenuMapper.toOrderMenuEntity(
-						orderMenu.getMenu().getMenuInfo(),
-						orderMenu.getQuantity(),
-						orderEntity.getStatus().transferOrderMenuStatus(),
-						orderEntity))
-				.toList();
+			.map(orderMenu -> OrderMenuMapper.toOrderMenuEntity(
+				orderMenu.getMenu().getMenuInfo(),
+				orderMenu.getQuantity(),
+				orderEntity.getStatus().transferOrderMenuStatus(),
+				orderEntity))
+			.toList();
 		orderEntity.getOrderMenus().addAll(orderMenuEntities);
 
 		OrderEntity savedOrderEntity = orderJpaRepository.save(orderEntity);
 
 		List<OrderMenu> savedOrderMenus = savedOrderEntity.getOrderMenus().stream()
-				.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
-						MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
-				.toList();
+			.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
+				MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
+			.toList();
 		return OrderMapper.toOrder(
-				savedOrderEntity,
-				receipt,
-				savedOrderMenus);
+			savedOrderEntity,
+			receipt,
+			savedOrderMenus);
 	}
 
 	@Override
@@ -124,43 +124,41 @@ public class OrderRepositoryImpl implements OrderRepository {
 		OrderEntity orderEntity = OrderMapper.toOrderEntity(order, receipt);
 		OrderEntity savedOrderEntity = orderJpaRepository.save(orderEntity);
 		return OrderMapper.toOrder(
-				savedOrderEntity,
-				receipt,
-				new ArrayList<>());
+			savedOrderEntity,
+			receipt,
+			new ArrayList<>());
 	}
 
 	@Override
 	public Optional<Order> getOrderWithMenu(Long orderId) {
 		return orderJpaRepository.findByIdWithMenus(orderId)
-				.map(orderEntity -> OrderMapper.toOrder(orderEntity, null, orderEntity.getOrderMenus().stream().map(
-						orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
-								MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
-						.toList()));
+			.map(orderEntity -> OrderMapper.toOrder(orderEntity, null, orderEntity.getOrderMenus().stream().map(
+				orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
+					MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null))).toList()));
 	}
 
 	@Override
 	public Optional<Order> getOrderWithStore(Long orderId) {
 		return orderJpaRepository.findByIdWithStore(orderId)
-				.map(orderEntity -> OrderMapper.toOrder(
-						orderEntity, ReceiptMapper.toReceipt(orderEntity.getReceipt(), null,
-								SaleMapper.toSale(orderEntity.getReceipt().getSale(),
-										StoreMapper.toStore(orderEntity.getReceipt().getSale().getStore()))),
-						null));
+			.map(orderEntity -> OrderMapper.toOrder(orderEntity, ReceiptMapper.toReceipt(orderEntity.getReceipt(), null,
+					SaleMapper.toSale(orderEntity.getReceipt().getSale(),
+						StoreMapper.toStore(orderEntity.getReceipt().getSale().getStore()))),
+				null));
 	}
 
 	@Override
 	@Transactional
 	public Optional<Order> getOrderWithStoreAndMenusAndLock(Long orderId) {
 		return orderJpaRepository.findByIdWithStoreAndMenusAndLock(orderId)
-				.map(orderEntity -> OrderMapper.toOrder(
-						orderEntity,
-						ReceiptMapper.toReceipt(orderEntity.getReceipt(), null,
-								SaleMapper.toSale(orderEntity.getReceipt().getSale(),
-										StoreMapper.toStore(orderEntity.getReceipt().getSale().getStore()))),
-						orderEntity.getOrderMenus().stream()
-								.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
-										MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
-								.toList()));
+			.map(orderEntity -> OrderMapper.toOrder(
+				orderEntity,
+				ReceiptMapper.toReceipt(orderEntity.getReceipt(), null,
+					SaleMapper.toSale(orderEntity.getReceipt().getSale(),
+						StoreMapper.toStore(orderEntity.getReceipt().getSale().getStore()))),
+				orderEntity.getOrderMenus().stream()
+					.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
+						MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
+					.toList()));
 	}
 
 	@Override
@@ -168,7 +166,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 	public Order patchOrderStatus(Order order, OrderStatus orderStatus) {
 		orderJpaRepository.updateOrderStatus(order.getOrderId(), orderStatus);
 		orderMenuJpaRepository.updateOrderMenuStatusByOrderId(order.getOrderId(),
-				orderStatus.transferOrderMenuStatus());
+			orderStatus.transferOrderMenuStatus());
 		order.setOrderStatus(orderStatus);
 		return order;
 	}
@@ -186,50 +184,31 @@ public class OrderRepositoryImpl implements OrderRepository {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
 	public Slice<Order> getSaleOrderSliceWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses,
-			int pageSize, Long lastOrderId) {
+		int pageSize, Long lastOrderId) {
 		return orderJpaRepository.findSaleOrdersWithMenuAndTable(saleId, orderStatuses, pageSize, lastOrderId)
-				.map(orderEntity -> OrderMapper.toOrder(
-						orderEntity,
-						ReceiptMapper.toReceipt(
-								orderEntity.getReceipt(),
-								TableMapper.toTable(orderEntity.getReceipt().getTable(), (Store) null),
-								null),
-						orderEntity.getOrderMenus().stream()
-								.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
-										MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
-								.toList()));
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public List<Order> getSaleOrdersWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses) {
-		return orderJpaRepository.findSaleOrdersWithMenuAndTable(saleId, orderStatuses)
-				.stream()
-				.map(orderEntity -> OrderMapper.toOrder(
-						orderEntity,
-						ReceiptMapper.toReceipt(
-								orderEntity.getReceipt(),
-								TableMapper.toTable(orderEntity.getReceipt().getTable(), (Store) null),
-								null),
-						orderEntity.getOrderMenus().stream()
-								.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
-										MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
-								.toList()))
-				.toList();
+			.map(orderEntity -> OrderMapper.toOrder(
+				orderEntity,
+				ReceiptMapper.toReceipt(
+					orderEntity.getReceipt(),
+					TableMapper.toTable(orderEntity.getReceipt().getTable(), (Store)null),
+					null),
+				orderEntity.getOrderMenus().stream()
+					.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
+						MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
+					.toList()));
 	}
 
 	@Override
 	public List<Order> getReceiptOrdersWithMenu(UUID receiptId) {
 		return orderJpaRepository.findReceiptOrdersWithMenu(receiptId)
-				.stream()
-				.map(orderEntity -> OrderMapper.toOrder(orderEntity, null,
-						orderEntity.getOrderMenus().stream()
-								.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
-										MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
-								.toList()))
-				.toList();
+			.stream()
+			.map(orderEntity -> OrderMapper.toOrder(orderEntity, null,
+				orderEntity.getOrderMenus().stream()
+					.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
+						MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
+					.toList()))
+			.toList();
 	}
 
 	@Override

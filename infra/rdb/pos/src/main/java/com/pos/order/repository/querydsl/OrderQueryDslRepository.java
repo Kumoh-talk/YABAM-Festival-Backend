@@ -19,9 +19,7 @@ public interface OrderQueryDslRepository {
 	Optional<OrderEntity> findByIdWithStoreAndMenusAndLock(Long orderId);
 
 	Slice<OrderEntity> findSaleOrdersWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses, int pageSize,
-			Long lastOrderId);
-
-	List<OrderEntity> findSaleOrdersWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses);
+		Long lastOrderId);
 
 	List<OrderEntity> findReceiptOrdersWithMenu(UUID receiptId);
 

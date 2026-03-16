@@ -8,26 +8,24 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "주문 메뉴 응답 DTO")
 public record OrderMenuResponse(
-		@Schema(description = "주문 메뉴 id", example = "1") Long orderMenuId,
-		@Schema(description = "주문 메뉴 상태", example = "COOKING") OrderMenuStatus orderMenuStatus,
-		@Schema(description = "주문 메뉴 수량", example = "2") Integer quantity,
-		@Schema(description = "주문 메뉴 완료 수", example = "1") Integer completedCount,
-		@Schema(description = "메뉴 세부정보") MenuInfoResponse menuInfo) {
+	@Schema(description = "주문 메뉴 id", example = "1")
+	Long orderMenuId,
+	@Schema(description = "주문 메뉴 상태", example = "COOKING")
+	OrderMenuStatus orderMenuStatus,
+	@Schema(description = "주문 메뉴 수량", example = "2")
+	Integer quantity,
+	@Schema(description = "주문 메뉴 완료 수", example = "1")
+	Integer completedCount,
+	@Schema(description = "메뉴 세부정보")
+	MenuInfoResponse menuInfo
+) {
 	public static OrderMenuResponse from(OrderMenu orderMenu) {
 		return new OrderMenuResponse(
-				orderMenu.getOrderMenuId(),
-				orderMenu.getOrderMenuStatus(),
-				orderMenu.getQuantity(),
-				orderMenu.getCompletedCount(),
-				MenuInfoResponse.from(orderMenu.getMenu().getMenuInfo()));
-	}
-
-	public static OrderMenuResponse from(domain.pos.order.entity.vo.CachedOrderList.CachedOrderMenu cachedOrderMenu) {
-		return new OrderMenuResponse(
-				null,
-				cachedOrderMenu.status(),
-				cachedOrderMenu.quantity(),
-				null,
-				MenuInfoResponse.from(cachedOrderMenu.name(), cachedOrderMenu.price()));
+			orderMenu.getOrderMenuId(),
+			orderMenu.getOrderMenuStatus(),
+			orderMenu.getQuantity(),
+			orderMenu.getCompletedCount(),
+			MenuInfoResponse.from(orderMenu.getMenu().getMenuInfo())
+		);
 	}
 }

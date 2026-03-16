@@ -36,9 +36,7 @@ public interface OrderRepository {
 	void deleteOrder(Order order);
 
 	Slice<Order> getSaleOrderSliceWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses, int pageSize,
-			Long lastOrderId);
-
-	List<Order> getSaleOrdersWithMenuAndTable(Long saleId, List<OrderStatus> orderStatuses);
+		Long lastOrderId);
 
 	List<Order> getReceiptOrdersWithMenu(UUID receiptId);
 
