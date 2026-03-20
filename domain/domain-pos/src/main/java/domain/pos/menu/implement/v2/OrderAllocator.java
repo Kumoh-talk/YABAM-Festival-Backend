@@ -2,14 +2,11 @@ package domain.pos.menu.implement.v2;
 
 import java.util.Optional;
 
-import org.springframework.stereotype.Component;
-
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
 
 import lombok.RequiredArgsConstructor;
 
-@Component
 @RequiredArgsConstructor
 public class OrderAllocator<T> {
 	private final OrderingOps<T> orderingOps;
