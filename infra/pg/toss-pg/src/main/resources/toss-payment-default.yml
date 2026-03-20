@@ -1,0 +1,6 @@
+# 토스페이먼츠 설정 (로컬/개발 환경용 테스트 키)
+# 운영 secretKey는 cloud-config-private에서 관리
+toss:
+  payment:
+    secret-key: test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R  # 테스트 키 (실제 운영 시 교체)
+    base-url: https://api.tosspayments.com

@@ -1,0 +1,18 @@
+bootJar {
+    enabled = false
+}
+jar {
+    enabled = true
+}
+
+dependencies {
+    // domain-pos
+    compileOnly project(":domain:domain-pos")
+    compileOnly project(":common:base")
+
+    // Spring Web (RestClient)
+    compileOnly "org.springframework.boot:spring-boot-starter-web"
+
+    // test
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+}

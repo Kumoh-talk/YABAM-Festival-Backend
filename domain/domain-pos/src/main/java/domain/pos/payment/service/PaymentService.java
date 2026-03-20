@@ -1,0 +1,147 @@
+package domain.pos.payment.service;
+
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.exception.ErrorCode;
+import com.exception.ServiceException;
+import com.vo.UserPassport;
+
+import domain.pos.payment.entity.Payment;
+import domain.pos.payment.entity.PaymentStatus;
+import domain.pos.payment.entity.TossConfirmResult;
+import domain.pos.payment.implement.PaymentReader;
+import domain.pos.payment.implement.PaymentWriter;
+import domain.pos.payment.port.required.TossPaymentPort;
+import domain.pos.receipt.entity.Receipt;
+import domain.pos.receipt.entity.ReceiptInfo;
+import domain.pos.receipt.implement.ReceiptReader;
+import domain.pos.receipt.implement.ReceiptValidator;
+import domain.pos.receipt.implement.ReceiptWriter;
+import domain.pos.store.implement.StoreValidator;
+import domain.pos.table.implement.TableWriter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class PaymentService {
+
+    private final TossPaymentPort tossPaymentPort;
+    private final PaymentReader paymentReader;
+    private final PaymentWriter paymentWriter;
+    private final ReceiptReader receiptReader;
+    private final ReceiptWriter receiptWriter;
+    private final ReceiptValidator receiptValidator;
+    private final StoreValidator storeValidator;
+    private final TableWriter tableWriter;
+
+    /**
+     * 토스페이먼츠 결제 승인 및 영수증 자동 정산
+     */
+    @Transactional
+    public Payment confirmPayment(String paymentKey, String orderId, Integer amount) {
+        UUID receiptId = parseReceiptId(orderId);
+
+        Receipt receipt = receiptReader.getReceiptWithTableAndStore(receiptId)
+            .orElseThrow(() -> {
+                log.warn("결제 승인 대상 영수증을 찾을 수 없습니다. receiptId={}", receiptId);
+                return new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
+            });
+
+        ReceiptInfo receiptInfo = receipt.getReceiptInfo();
+
+        if (receiptInfo.isAdjustment()) {
+            log.warn("이미 정산된 영수증입니다. receiptId={}", receiptId);
+            throw new ServiceException(ErrorCode.ALREADY_PAID_RECEIPT);
+        }
+
+        if (paymentReader.findByReceiptId(receiptId).isPresent()) {
+            log.warn("이미 결제된 영수증입니다. receiptId={}", receiptId);
+            throw new ServiceException(ErrorCode.ALREADY_PAID_RECEIPT);
+        }
+
+        Integer expectedAmount = receiptInfo.getOccupancyFee();
+        if (expectedAmount != null && !expectedAmount.equals(amount)) {
+            log.warn("결제 금액 불일치. expected={}, actual={}", expectedAmount, amount);
+            throw new ServiceException(ErrorCode.PAYMENT_AMOUNT_MISMATCH);
+        }
+
+        TossConfirmResult result = tossPaymentPort.confirm(paymentKey, orderId, amount);
+        Payment payment = paymentWriter.save(result.toPayment(receiptId));
+
+        tableWriter.changeTableActiveStatus(false, receipt.getTable());
+        receiptWriter.adjustReceipts(java.util.List.of(receipt));
+
+        log.info("토스페이먼츠 결제 승인 완료. receiptId={}, paymentKey={}", receiptId, paymentKey);
+        return payment;
+    }
+
+    /**
+     * 결제 취소 (점주)
+     */
+    @Transactional
+    public void cancelPayment(String paymentKey, String cancelReason, UserPassport ownerPassport) {
+        Payment payment = paymentReader.getByTossPaymentKey(paymentKey);
+
+        Receipt receipt = receiptReader.getReceiptWithTableAndStore(payment.getReceiptId())
+            .orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
+
+        storeValidator.validateStoreOwner(ownerPassport, receipt.getSale().getStore());
+
+        tossPaymentPort.cancel(paymentKey, cancelReason);
+        paymentWriter.updateStatus(payment.getPaymentId(), PaymentStatus.CANCELED);
+
+        log.info("토스페이먼츠 결제 취소 완료. paymentKey={}", paymentKey);
+    }
+
+    /**
+     * 토스페이먼츠 웹훅 처리 (비동기 상태 동기화)
+     */
+    @Transactional
+    public void processWebhook(String paymentKey, String tossStatus) {
+        paymentReader.findByTossPaymentKey(paymentKey).ifPresentOrElse(
+            payment -> syncPaymentStatus(payment, tossStatus),
+            () -> log.warn("웹훅 수신: 로컬 결제 정보 없음. paymentKey={}, status={}", paymentKey, tossStatus)
+        );
+    }
+
+    /**
+     * 영수증 결제 정보 조회
+     */
+    public Optional<Payment> findPaymentByReceiptId(UUID receiptId) {
+        return paymentReader.findByReceiptId(receiptId);
+    }
+
+    private void syncPaymentStatus(Payment payment, String tossStatus) {
+        PaymentStatus newStatus;
+        try {
+            newStatus = PaymentStatus.valueOf(tossStatus);
+        } catch (IllegalArgumentException e) {
+            log.warn("웹훅 수신: 알 수 없는 상태값. paymentKey={}, status={}", payment.getTossPaymentKey(), tossStatus);
+            return;
+        }
+
+        if (payment.getStatus() == newStatus) {
+            return;
+        }
+
+        if (newStatus == PaymentStatus.CANCELED || newStatus == PaymentStatus.PARTIAL_CANCELED) {
+            paymentWriter.updateStatus(payment.getPaymentId(), newStatus);
+            log.info("웹훅 결제 상태 동기화 완료. paymentKey={}, status={}", payment.getTossPaymentKey(), newStatus);
+        }
+    }
+
+    private UUID parseReceiptId(String orderId) {
+        try {
+            return UUID.fromString(orderId);
+        } catch (IllegalArgumentException e) {
+            log.warn("orderId가 유효한 UUID 형식이 아닙니다. orderId={}", orderId);
+            throw new ServiceException(ErrorCode.INVALID_INPUT_VALUE);
+        }
+    }
+}
