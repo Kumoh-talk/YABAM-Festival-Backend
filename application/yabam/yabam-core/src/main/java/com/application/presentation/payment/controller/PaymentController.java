@@ -1,0 +1,70 @@
+package com.application.presentation.payment.controller;
+
+import static com.response.ResponseUtil.*;
+import static com.vo.UserRole.*;
+
+import java.util.UUID;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.application.presentation.payment.dto.request.TossCancelRequest;
+import com.application.presentation.payment.dto.request.TossConfirmRequest;
+import com.application.presentation.payment.dto.request.TossWebhookRequest;
+import com.application.presentation.payment.dto.response.PaymentResponse;
+import com.authorization.AssignUserPassport;
+import com.authorization.HasRole;
+import com.response.ResponseBody;
+import com.vo.UserPassport;
+
+import domain.pos.payment.entity.Payment;
+import domain.pos.payment.service.PaymentService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequiredArgsConstructor
+public class PaymentController {
+
+    private final PaymentService paymentService;
+
+    @PostMapping("/api/v1/payments/toss/confirm")
+    public ResponseEntity<ResponseBody<PaymentResponse>> confirmPayment(
+        @RequestBody @Valid TossConfirmRequest request) {
+        Payment payment = paymentService.confirmPayment(
+            request.paymentKey(), request.orderId(), request.amount());
+        return ResponseEntity.ok(createSuccessResponse(PaymentResponse.from(payment)));
+    }
+
+    @PostMapping("/api/v1/payments/{paymentKey}/cancel")
+    @HasRole(userRole = ROLE_OWNER)
+    @AssignUserPassport
+    public ResponseEntity<ResponseBody<Void>> cancelPayment(
+        UserPassport userPassport,
+        @PathVariable String paymentKey,
+        @RequestBody @Valid TossCancelRequest request) {
+        paymentService.cancelPayment(paymentKey, request.cancelReason(), userPassport);
+        return ResponseEntity.ok(createSuccessResponse());
+    }
+
+    @GetMapping("/api/v1/payments/receipts/{receiptId}")
+    public ResponseEntity<ResponseBody<PaymentResponse>> getPaymentByReceipt(
+        @PathVariable UUID receiptId) {
+        return paymentService.findPaymentByReceiptId(receiptId)
+            .map(payment -> ResponseEntity.ok(createSuccessResponse(PaymentResponse.from(payment))))
+            .orElseGet(() -> ResponseEntity.ok(createSuccessResponse(null)));
+    }
+
+    @PostMapping("/api/v1/payments/toss/webhook")
+    public ResponseEntity<Void> handleTossWebhook(
+        @RequestBody @Valid TossWebhookRequest request) {
+        if ("PAYMENT_STATUS_CHANGED".equals(request.eventType())) {
+            paymentService.processWebhook(request.data().paymentKey(), request.data().status());
+        }
+        return ResponseEntity.ok().build();
+    }
+}

@@ -7,6 +7,7 @@ import com.pos.call.repository.jpa.CallJpaRepository;
 import com.pos.cart.repository.CartJpaRepository;
 import com.pos.menu.repository.jpa.MenuCategoryJpaRepository;
 import com.pos.menu.repository.jpa.MenuJpaRepository;
+import com.pos.payment.repository.jpa.PaymentJpaRepository;
 import com.pos.receipt.repository.jpa.ReceiptJpaRepository;
 import com.pos.review.repository.jpa.ReviewJpaRepository;
 import com.pos.sale.repository.SaleJpaRepository;
@@ -46,6 +47,9 @@ public class BuilderSupporter {
 	@Autowired
 	private CallJpaRepository callJpaRepository;
 
+	@Autowired
+	private PaymentJpaRepository paymentJpaRepository;
+
 	public StoreJpaRepository getStoreJpaRepository() {
 		return storeJpaRepository;
 	}
@@ -84,5 +88,9 @@ public class BuilderSupporter {
 
 	public CallJpaRepository getCallJpaRepository() {
 		return callJpaRepository;
+	}
+
+	public PaymentJpaRepository getPaymentJpaRepository() {
+		return paymentJpaRepository;
 	}
 }
