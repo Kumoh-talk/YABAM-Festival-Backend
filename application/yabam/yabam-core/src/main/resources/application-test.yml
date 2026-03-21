@@ -42,6 +42,11 @@ cloud:
     s3:
       bucket: dummy
 
+toss:
+  payment:
+    secret-key: test_sk_dummy_for_unit_tests
+    base-url: https://api.tosspayments.com
+
 logging:
   level:
     root: INFO
