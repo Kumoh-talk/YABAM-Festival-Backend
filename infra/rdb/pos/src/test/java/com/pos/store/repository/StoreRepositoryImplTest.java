@@ -86,11 +86,10 @@ class StoreRepositoryImplTest extends RepositoryTest {
 		assertSoftly(softly -> {
 			StoreEntity findStoreEntity = testEntityManager.find(StoreEntity.class, savedStoreEntity.getId());
 			softly.assertThat(findStoreEntity.getName()).isEqualTo(changedStoreInfo.getStoreName());
-			softly.assertThat(findStoreEntity.getLocation().getLatitude()).isEqualTo(changedStoreInfo.getLocation().x);
-			softly.assertThat(findStoreEntity.getLocation().getLongitude()).isEqualTo(changedStoreInfo.getLocation().y);
+			softly.assertThat(findStoreEntity.getLocation()).isEqualTo(changedStoreInfo.getLocation());
 			softly.assertThat(findStoreEntity.getDescription()).isEqualTo(changedStoreInfo.getDescription());
-			softly.assertThat(findStoreEntity.getHeadImageUrl()).isEqualTo(changedStoreInfo.getHeadImageUrl());
-			softly.assertThat(findStoreEntity.getUniversity()).isEqualTo(changedStoreInfo.getUniversity());
+			softly.assertThat(findStoreEntity.getHeadImageUrl()).isEqualTo(changedStoreInfo.getThumbnailUrl());
+			softly.assertThat(findStoreEntity.getUniversity()).isEqualTo(changedStoreInfo.getUniversityName());
 			softly.assertThat(findStoreEntity.getTableCostPerTime().getTableCost())
 				.isEqualTo(changedStoreInfo.getTableCost());
 			softly.assertThat(findStoreEntity.getTableCostPerTime().getTableTime())
@@ -182,13 +181,10 @@ class StoreRepositoryImplTest extends RepositoryTest {
 		assertSoftly(softly -> {
 			softly.assertThat(store.getId()).isEqualTo(savedStoreEntity.getId());
 			softly.assertThat(store.getStoreInfo().getStoreName()).isEqualTo(savedStoreEntity.getName());
-			softly.assertThat(store.getStoreInfo().getLocation().x)
-				.isEqualTo(savedStoreEntity.getLocation().getLatitude());
-			softly.assertThat(store.getStoreInfo().getLocation().y)
-				.isEqualTo(savedStoreEntity.getLocation().getLongitude());
+			softly.assertThat(store.getStoreInfo().getLocation()).isEqualTo(savedStoreEntity.getLocation());
 			softly.assertThat(store.getStoreInfo().getDescription()).isEqualTo(savedStoreEntity.getDescription());
-			softly.assertThat(store.getStoreInfo().getHeadImageUrl()).isEqualTo(savedStoreEntity.getHeadImageUrl());
-			softly.assertThat(store.getStoreInfo().getUniversity()).isEqualTo(savedStoreEntity.getUniversity());
+			softly.assertThat(store.getStoreInfo().getThumbnailUrl()).isEqualTo(savedStoreEntity.getHeadImageUrl());
+			softly.assertThat(store.getStoreInfo().getUniversityName()).isEqualTo(savedStoreEntity.getUniversity());
 			softly.assertThat(store.getStoreInfo().getTableCost())
 				.isEqualTo(savedStoreEntity.getTableCostPerTime().getTableCost());
 			softly.assertThat(store.getStoreInfo().getTableTime())
@@ -221,13 +217,10 @@ class StoreRepositoryImplTest extends RepositoryTest {
 		assertSoftly(softly -> {
 			softly.assertThat(store.getId()).isEqualTo(savedStoreEntity.getId());
 			softly.assertThat(store.getStoreInfo().getStoreName()).isEqualTo(savedStoreEntity.getName());
-			softly.assertThat(store.getStoreInfo().getLocation().x)
-				.isEqualTo(savedStoreEntity.getLocation().getLatitude());
-			softly.assertThat(store.getStoreInfo().getLocation().y)
-				.isEqualTo(savedStoreEntity.getLocation().getLongitude());
+			softly.assertThat(store.getStoreInfo().getLocation()).isEqualTo(savedStoreEntity.getLocation());
 			softly.assertThat(store.getStoreInfo().getDescription()).isEqualTo(savedStoreEntity.getDescription());
-			softly.assertThat(store.getStoreInfo().getHeadImageUrl()).isEqualTo(savedStoreEntity.getHeadImageUrl());
-			softly.assertThat(store.getStoreInfo().getUniversity()).isEqualTo(savedStoreEntity.getUniversity());
+			softly.assertThat(store.getStoreInfo().getThumbnailUrl()).isEqualTo(savedStoreEntity.getHeadImageUrl());
+			softly.assertThat(store.getStoreInfo().getUniversityName()).isEqualTo(savedStoreEntity.getUniversity());
 			softly.assertThat(store.getStoreInfo().getTableCost())
 				.isEqualTo(savedStoreEntity.getTableCostPerTime().getTableCost());
 			softly.assertThat(store.getStoreInfo().getTableTime())
@@ -275,7 +268,7 @@ class StoreRepositoryImplTest extends RepositoryTest {
 					softly.assertThat(storeHeadDto.getStoreId()).isEqualTo(savedStoreEntityList.get(i).getId());
 					softly.assertThat(storeHeadDto.getStoreName()).isEqualTo(savedStoreEntityList.get(i).getName());
 					softly.assertThat(storeHeadDto.getIsOpened()).isEqualTo(savedStoreEntityList.get(i).isOpen());
-					softly.assertThat(storeHeadDto.getHeadImageUrl())
+					softly.assertThat(storeHeadDto.getThumbnailUrl())
 						.isEqualTo(savedStoreEntityList.get(i).getHeadImageUrl());
 				}
 			});

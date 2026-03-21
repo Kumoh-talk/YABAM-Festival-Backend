@@ -9,23 +9,27 @@ public class StoreHeadDto {
 	private final Long storeId;
 	private final String storeName;
 	private final Boolean isOpened;
-	private final String headImageUrl;
+	private final String thumbnailUrl;
+	private final String location;
+	private final String universityName;
 	private final String description;
-	private final List<String> storeDetailImageUrls;
+	private final List<String> detailImageUrls;
 
-	private StoreHeadDto(Long storeId, String storeName, Boolean isOpened, String headImageUrl, String description,
-		List<String> storeDetailImageUrls) {
+	private StoreHeadDto(Long storeId, String storeName, Boolean isOpened, String thumbnailUrl, String location,
+		String universityName, String description, List<String> detailImageUrls) {
 		this.storeId = storeId;
 		this.storeName = storeName;
 		this.isOpened = isOpened;
-		this.headImageUrl = headImageUrl;
+		this.thumbnailUrl = thumbnailUrl;
+		this.location = location;
+		this.universityName = universityName;
 		this.description = description;
-		this.storeDetailImageUrls = storeDetailImageUrls != null ? List.copyOf(storeDetailImageUrls) : List.of();
+		this.detailImageUrls = detailImageUrls != null ? List.copyOf(detailImageUrls) : List.of();
 	}
 
-	public static StoreHeadDto of(Long storeId, String storeName, Boolean isOpened, String headImageUrl,
-		String description, List<String> storeDetailImageUrls) {
-		return new StoreHeadDto(storeId, storeName, isOpened, headImageUrl, description,
-			storeDetailImageUrls);
+	public static StoreHeadDto of(Long storeId, String storeName, Boolean isOpened, String thumbnailUrl,
+		String location, String universityName, String description, List<String> detailImageUrls) {
+		return new StoreHeadDto(storeId, storeName, isOpened, thumbnailUrl, location, universityName, description,
+			detailImageUrls);
 	}
 }

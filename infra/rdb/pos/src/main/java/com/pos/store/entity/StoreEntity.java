@@ -7,7 +7,6 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import com.pos.global.base.entity.BaseEntity;
-import com.pos.store.vo.StorePoint;
 import com.pos.store.vo.TableCostPerTime;
 
 import domain.pos.store.entity.Store;
@@ -45,8 +44,8 @@ public class StoreEntity extends BaseEntity {
 	@Column(name = "name", nullable = false)
 	private String name;
 
-	@Embedded
-	private StorePoint location;
+	@Column(name = "location", nullable = false)
+	private String location;
 
 	@Column(name = "description")
 	private String description;
@@ -63,7 +62,7 @@ public class StoreEntity extends BaseEntity {
 	@OneToMany(mappedBy = "store", orphanRemoval = false, fetch = FetchType.LAZY)
 	private List<StoreDetailImageEntity> storeDetailImageEntity = new ArrayList<>();
 
-	private StoreEntity(Long ownerId, boolean isOpen, String name, StorePoint location, String description,
+	private StoreEntity(Long ownerId, boolean isOpen, String name, String location, String description,
 		String headImageUrl, String university, TableCostPerTime tableCostPerTime) {
 		this.ownerId = ownerId;
 		this.isOpen = isOpen;
@@ -83,8 +82,7 @@ public class StoreEntity extends BaseEntity {
 		Long ownerId,
 		boolean isOpen,
 		String name,
-		Double latitude,
-		Double longitude,
+		String location,
 		String description,
 		String headImageUrl,
 		String university,
@@ -94,7 +92,7 @@ public class StoreEntity extends BaseEntity {
 			ownerId,
 			isOpen,
 			name,
-			StorePoint.of(latitude, longitude),
+			location,
 			description,
 			headImageUrl,
 			university,
@@ -121,10 +119,10 @@ public class StoreEntity extends BaseEntity {
 		entity.isOpen = store.getIsOpen();
 		entity.ownerId = store.getOwnerPassport().getUserId();
 		entity.name = store.getStoreInfo().getStoreName();
-		entity.location = StorePoint.of(store.getStoreInfo().getLocation().x, store.getStoreInfo().getLocation().y);
-		entity.university = store.getStoreInfo().getUniversity();
+		entity.location = store.getStoreInfo().getLocation();
+		entity.university = store.getStoreInfo().getUniversityName();
 		entity.description = store.getStoreInfo().getDescription();
-		entity.headImageUrl = store.getStoreInfo().getHeadImageUrl();
+		entity.headImageUrl = store.getStoreInfo().getThumbnailUrl();
 		entity.tableCostPerTime = TableCostPerTime.of(store.getStoreInfo().getTableTime(),
 			store.getStoreInfo().getTableCost());
 
@@ -133,16 +131,15 @@ public class StoreEntity extends BaseEntity {
 
 	public void changeStoreInfo(StoreInfo requestChangeStoreInfo) {
 		this.name = requestChangeStoreInfo.getStoreName();
-		this.headImageUrl = requestChangeStoreInfo.getHeadImageUrl();
+		this.headImageUrl = requestChangeStoreInfo.getThumbnailUrl();
 		this.description = requestChangeStoreInfo.getDescription();
-		this.university = requestChangeStoreInfo.getUniversity();
-		this.location = StorePoint.of(
-			requestChangeStoreInfo.getLocation().x,
-			requestChangeStoreInfo.getLocation().y
-		);
+		this.university = requestChangeStoreInfo.getUniversityName();
+		this.location = requestChangeStoreInfo.getLocation();
 		this.tableCostPerTime = TableCostPerTime.of(
 			requestChangeStoreInfo.getTableTime(),
 			requestChangeStoreInfo.getTableCost()
 		);
 	}
+
 }
+

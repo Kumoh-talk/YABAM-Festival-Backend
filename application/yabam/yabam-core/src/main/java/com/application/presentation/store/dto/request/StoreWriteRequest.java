@@ -1,7 +1,5 @@
 package com.application.presentation.store.dto.request;
 
-import java.awt.geom.Point2D;
-
 import domain.pos.store.entity.StoreInfo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
@@ -13,23 +11,20 @@ public record StoreWriteRequest(
 	@Schema(description = "가게 이름", example = "가게 이름")
 	@NotBlank(message = "가게 이름은 필수입니다.")
 	String storeName,
-	@Schema(description = "가게 위도", example = "37.123456")
-	@NotNull(message = "위도는 필수입니다.")
-	Double latitude,
-	@Schema(description = "가게 경도", example = "127.123456")
-	@NotNull(message = "경도는 필수입니다.")
-	Double longitude,
+	@Schema(description = "가게 위치", example = "A구역 3번 부스")
+	@NotBlank(message = "가게 위치는 필수입니다.")
+	String location,
 	@Schema(description = "가게 설명", example = "가게 설명")
-	@NotBlank(message = "가게 설명은 필수입니다.")
 	String description,
 	@Schema(description = "가게 대표 이미지 URL", example = "https://example.com/image.jpg")
 	@NotBlank(message = "가게 대표 이미지는 필수입니다.")
-	String headImageUrl,
+	String thumbnailUrl,
 	@Schema(description = "가게 소속 대학교", example = "서울대학교")
-	String university,
-	@Schema(description = "가게 테이블 시간", example = "30")
+	@NotBlank(message = "가게 소속 대학교는 필수입니다.")
+	String universityName,
+	@Schema(description = "가게 테이블 시간", example = "1")
 	@NotNull(message = "가게 테이블 시간은 필수입니다.")
-	@Min(value = 1, message = "가게 테이블 시간은 1분 이상이어야 합니다.")
+	@Min(value = 1, message = "가게 테이블 시간은 1시간 이상이어야 합니다.")
 	Integer tableTime,
 	@Schema(description = "가게 테이블 비용", example = "10000")
 	@NotNull(message = "가게 테이블 비용은 필수입니다.")
@@ -39,10 +34,10 @@ public record StoreWriteRequest(
 	public StoreInfo toStoreInfo() {
 		return StoreInfo.of(
 			storeName,
-			new Point2D.Double(latitude, longitude),
+			location,
 			description,
-			headImageUrl,
-			university,
+			thumbnailUrl,
+			universityName,
 			tableTime,
 			tableCost
 		);
