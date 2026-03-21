@@ -37,6 +37,10 @@ public record StoreCursorResponse(
 		String universityName,
 		@Schema(description = "가게 설명", example = "가게 설명")
 		String description,
+		@Schema(description = "가게 테이블 시간", example = "1")
+		Integer tableTime,
+		@Schema(description = "가게 테이블 비용", example = "10000")
+		Integer tableCost,
 		@Schema(description = "가게 상세 이미지 URL 리스트")
 		List<String> detailImageUrls
 	) {
@@ -49,6 +53,8 @@ public record StoreCursorResponse(
 				.location(storeHeadDto.getLocation())
 				.universityName(storeHeadDto.getUniversityName())
 				.description(storeHeadDto.getDescription())
+				.tableTime(storeHeadDto.getTableTime())
+				.tableCost(storeHeadDto.getTableCost())
 				.detailImageUrls(storeHeadDto.getDetailImageUrls())
 				.build();
 		}

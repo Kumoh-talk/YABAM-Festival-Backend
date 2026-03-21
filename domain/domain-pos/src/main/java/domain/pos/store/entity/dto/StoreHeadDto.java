@@ -13,10 +13,13 @@ public class StoreHeadDto {
 	private final String location;
 	private final String universityName;
 	private final String description;
+	private final Integer tableTime;
+	private final Integer tableCost;
 	private final List<String> detailImageUrls;
 
 	private StoreHeadDto(Long storeId, String storeName, Boolean isOpened, String thumbnailUrl, String location,
-		String universityName, String description, List<String> detailImageUrls) {
+		String universityName, String description, Integer tableTime, Integer tableCost,
+		List<String> detailImageUrls) {
 		this.storeId = storeId;
 		this.storeName = storeName;
 		this.isOpened = isOpened;
@@ -24,12 +27,15 @@ public class StoreHeadDto {
 		this.location = location;
 		this.universityName = universityName;
 		this.description = description;
+		this.tableTime = tableTime;
+		this.tableCost = tableCost;
 		this.detailImageUrls = detailImageUrls != null ? List.copyOf(detailImageUrls) : List.of();
 	}
 
 	public static StoreHeadDto of(Long storeId, String storeName, Boolean isOpened, String thumbnailUrl,
-		String location, String universityName, String description, List<String> detailImageUrls) {
+		String location, String universityName, String description, Integer tableTime, Integer tableCost,
+		List<String> detailImageUrls) {
 		return new StoreHeadDto(storeId, storeName, isOpened, thumbnailUrl, location, universityName, description,
-			detailImageUrls);
+			tableTime, tableCost, detailImageUrls);
 	}
 }

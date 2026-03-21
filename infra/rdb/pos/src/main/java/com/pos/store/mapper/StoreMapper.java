@@ -119,6 +119,8 @@ public class StoreMapper {
 			store.getLocation(),
 			store.getUniversity(),
 			store.getDescription(),
+			store.getTableCostPerTime().getTableTime(),
+			store.getTableCostPerTime().getTableCost(),
 			store.getStoreDetailImageEntity().stream()
 				.map(StoreDetailImageEntity::getImageUrl)
 				.toList()
