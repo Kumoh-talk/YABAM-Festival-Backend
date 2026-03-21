@@ -129,6 +129,7 @@ public enum ErrorCode {
 	PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "PAYMENT_0004", "결제 금액이 일치하지 않습니다."),
 	ALREADY_PAID_RECEIPT(HttpStatus.CONFLICT, "PAYMENT_0005", "이미 결제된 영수증입니다."),
 	PAYMENT_WEBHOOK_INVALID_SIGNATURE(HttpStatus.UNAUTHORIZED, "PAYMENT_0006", "웹훅 서명이 유효하지 않습니다."),
+	PAYMENT_CANCEL_AMOUNT_EXCEEDED(HttpStatus.BAD_REQUEST, "PAYMENT_0007", "취소 금액이 결제 금액을 초과합니다."),
 
 	// Call
 	STORE_NOT_MATCH(HttpStatus.BAD_REQUEST, "CALL_0001", "가게와 일치하지 않는 영수증에 대한 호출입니다."),

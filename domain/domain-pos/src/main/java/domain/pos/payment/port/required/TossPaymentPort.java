@@ -14,4 +14,9 @@ public interface TossPaymentPort {
     PaymentStatus cancel(String paymentKey, String cancelReason, Integer cancelAmount);
 
     void verifyWebhookSignature(String rawBody, String signature);
+
+    /**
+     * 토스페이먼츠에서 결제 정보 실시간 조회. 점주 정산 확인 등 reconciliation 목적.
+     */
+    TossConfirmResult getPayment(String paymentKey);
 }

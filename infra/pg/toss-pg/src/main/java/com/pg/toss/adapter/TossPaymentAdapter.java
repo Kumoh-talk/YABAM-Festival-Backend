@@ -42,6 +42,11 @@ public class TossPaymentAdapter implements TossPaymentPort {
     }
 
     @Override
+    public TossConfirmResult getPayment(String paymentKey) {
+        return tossPaymentClient.getPayment(paymentKey);
+    }
+
+    @Override
     public void verifyWebhookSignature(String rawBody, String signature) {
         if (signature == null) {
             log.warn("토스페이먼츠 웹훅 서명 헤더 누락");

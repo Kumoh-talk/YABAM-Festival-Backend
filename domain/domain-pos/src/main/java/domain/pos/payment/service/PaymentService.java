@@ -121,6 +121,13 @@ public class PaymentService {
         return paymentReader.findByReceiptId(receiptId);
     }
 
+    /**
+     * 토스페이먼츠 실시간 결제 상태 조회 (점주 reconciliation 용)
+     */
+    public TossConfirmResult getPaymentFromToss(String paymentKey) {
+        return tossPaymentPort.getPayment(paymentKey);
+    }
+
     private void syncPaymentStatus(Payment payment, String tossStatus) {
         PaymentStatus newStatus;
         try {

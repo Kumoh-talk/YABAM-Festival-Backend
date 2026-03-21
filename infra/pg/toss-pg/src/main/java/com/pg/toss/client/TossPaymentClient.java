@@ -11,6 +11,7 @@ import org.springframework.web.client.RestClient;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import domain.pos.payment.entity.PaymentStatus;
 import domain.pos.payment.entity.TossConfirmResult;
@@ -24,8 +25,10 @@ public class TossPaymentClient {
 
     private static final String CONFIRM_PATH = "/v1/payments/confirm";
     private static final String CANCEL_PATH = "/v1/payments/{paymentKey}/cancel";
+    private static final String QUERY_PATH = "/v1/payments/{paymentKey}";
 
     private final RestClient tossRestClient;
+    private final ObjectMapper objectMapper;
 
     public TossConfirmResult confirm(String paymentKey, String orderId, Integer amount) {
         Map<String, Object> body = Map.of(
@@ -36,12 +39,13 @@ public class TossPaymentClient {
 
         TossPaymentResponse response = tossRestClient.post()
             .uri(CONFIRM_PATH)
+            .header("Idempotency-Key", orderId)
             .body(body)
             .retrieve()
             .onStatus(HttpStatusCode::isError, (req, res) -> {
-                String errorBody = new String(res.getBody().readAllBytes(), StandardCharsets.UTF_8);
-                log.warn("토스페이먼츠 결제 승인 실패. status={}, body={}", res.getStatusCode(), errorBody);
-                throw new ServiceException(ErrorCode.PAYMENT_CONFIRM_FAILED);
+                String rawBody = new String(res.getBody().readAllBytes(), StandardCharsets.UTF_8);
+                log.warn("토스페이먼츠 결제 승인 실패. status={}, body={}", res.getStatusCode(), rawBody);
+                throw resolveConfirmError(rawBody);
             })
             .body(TossPaymentResponse.class);
 
@@ -53,7 +57,7 @@ public class TossPaymentClient {
             .tossPaymentKey(response.paymentKey())
             .tossOrderId(response.orderId())
             .amount(response.totalAmount())
-            .status(PaymentStatus.DONE)
+            .status(parseStatus(response.status()))
             .paymentMethod(response.method())
             .approvedAt(response.approvedAt() != null ? response.approvedAt().toLocalDateTime() : null)
             .build();
@@ -71,10 +75,10 @@ public class TossPaymentClient {
             .body(body)
             .retrieve()
             .onStatus(HttpStatusCode::isError, (req, res) -> {
-                String errorBody = new String(res.getBody().readAllBytes(), StandardCharsets.UTF_8);
+                String rawBody = new String(res.getBody().readAllBytes(), StandardCharsets.UTF_8);
                 log.warn("토스페이먼츠 결제 취소 실패. paymentKey={}, status={}, body={}",
-                    paymentKey, res.getStatusCode(), errorBody);
-                throw new ServiceException(ErrorCode.PAYMENT_CANCEL_FAILED);
+                    paymentKey, res.getStatusCode(), rawBody);
+                throw resolveCancelError(rawBody);
             })
             .body(TossCancelResponse.class);
 
@@ -92,6 +96,83 @@ public class TossPaymentClient {
         }
     }
 
+    public TossConfirmResult getPayment(String paymentKey) {
+        TossPaymentResponse response = tossRestClient.get()
+            .uri(QUERY_PATH, paymentKey)
+            .retrieve()
+            .onStatus(HttpStatusCode::isError, (req, res) -> {
+                String rawBody = new String(res.getBody().readAllBytes(), StandardCharsets.UTF_8);
+                log.warn("토스페이먼츠 결제 조회 실패. paymentKey={}, status={}, body={}",
+                    paymentKey, res.getStatusCode(), rawBody);
+                throw new ServiceException(ErrorCode.PAYMENT_NOT_FOUND);
+            })
+            .body(TossPaymentResponse.class);
+
+        if (response == null) {
+            throw new ServiceException(ErrorCode.PAYMENT_NOT_FOUND);
+        }
+
+        return TossConfirmResult.builder()
+            .tossPaymentKey(response.paymentKey())
+            .tossOrderId(response.orderId())
+            .amount(response.totalAmount())
+            .status(parseStatus(response.status()))
+            .paymentMethod(response.method())
+            .approvedAt(response.approvedAt() != null ? response.approvedAt().toLocalDateTime() : null)
+            .build();
+    }
+
+    private ServiceException resolveConfirmError(String rawBody) {
+        TossErrorResponse error = parseError(rawBody);
+        if (error == null) {
+            return new ServiceException(ErrorCode.PAYMENT_CONFIRM_FAILED);
+        }
+        return switch (error.code()) {
+            case "ALREADY_PROCESSED_PAYMENT" -> new ServiceException(ErrorCode.ALREADY_PAID_RECEIPT);
+            case "AMOUNT_MISMATCH" -> new ServiceException(ErrorCode.PAYMENT_AMOUNT_MISMATCH);
+            default -> {
+                log.warn("토스페이먼츠 알 수 없는 승인 오류. code={}, message={}", error.code(), error.message());
+                yield new ServiceException(ErrorCode.PAYMENT_CONFIRM_FAILED);
+            }
+        };
+    }
+
+    private ServiceException resolveCancelError(String rawBody) {
+        TossErrorResponse error = parseError(rawBody);
+        if (error == null) {
+            return new ServiceException(ErrorCode.PAYMENT_CANCEL_FAILED);
+        }
+        return switch (error.code()) {
+            case "ALREADY_CANCELED_PAYMENT" -> new ServiceException(ErrorCode.PAYMENT_CANCEL_FAILED);
+            case "EXCEED_MAX_REFUND_AMOUNT" -> new ServiceException(ErrorCode.PAYMENT_CANCEL_AMOUNT_EXCEEDED);
+            default -> {
+                log.warn("토스페이먼츠 알 수 없는 취소 오류. code={}, message={}", error.code(), error.message());
+                yield new ServiceException(ErrorCode.PAYMENT_CANCEL_FAILED);
+            }
+        };
+    }
+
+    private TossErrorResponse parseError(String rawBody) {
+        try {
+            return objectMapper.readValue(rawBody, TossErrorResponse.class);
+        } catch (Exception e) {
+            log.warn("토스페이먼츠 에러 응답 파싱 실패. rawBody={}", rawBody);
+            return null;
+        }
+    }
+
+    private PaymentStatus parseStatus(String status) {
+        if (status == null) {
+            return PaymentStatus.DONE;
+        }
+        try {
+            return PaymentStatus.valueOf(status);
+        } catch (IllegalArgumentException e) {
+            log.warn("알 수 없는 토스 결제 상태값. status={}", status);
+            return PaymentStatus.DONE;
+        }
+    }
+
     private record TossPaymentResponse(
         String paymentKey,
         String orderId,
@@ -103,5 +184,8 @@ public class TossPaymentClient {
     }
 
     private record TossCancelResponse(String status) {
+    }
+
+    private record TossErrorResponse(String code, String message) {
     }
 }

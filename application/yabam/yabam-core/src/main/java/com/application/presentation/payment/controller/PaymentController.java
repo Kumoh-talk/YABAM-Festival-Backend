@@ -18,6 +18,7 @@ import com.application.presentation.payment.dto.request.TossCancelRequest;
 import com.application.presentation.payment.dto.request.TossConfirmRequest;
 import com.application.presentation.payment.dto.request.TossWebhookRequest;
 import com.application.presentation.payment.dto.response.PaymentResponse;
+import com.application.presentation.payment.dto.response.TossPaymentQueryResponse;
 import com.authorization.AssignUserPassport;
 import com.authorization.HasRole;
 import com.exception.ErrorCode;
@@ -27,6 +28,7 @@ import com.response.ResponseBody;
 import com.vo.UserPassport;
 
 import domain.pos.payment.entity.Payment;
+import domain.pos.payment.entity.TossConfirmResult;
 import domain.pos.payment.port.required.TossPaymentPort;
 import domain.pos.payment.service.PaymentService;
 import jakarta.validation.Valid;
@@ -67,6 +69,16 @@ public class PaymentController {
         return paymentService.findPaymentByReceiptId(receiptId)
             .map(payment -> ResponseEntity.ok(createSuccessResponse(PaymentResponse.from(payment))))
             .orElseGet(() -> ResponseEntity.ok(createSuccessResponse(null)));
+    }
+
+    @GetMapping("/api/v1/payments/toss/{paymentKey}")
+    @HasRole(userRole = ROLE_OWNER)
+    @AssignUserPassport
+    public ResponseEntity<ResponseBody<TossPaymentQueryResponse>> getTossPayment(
+        UserPassport userPassport,
+        @PathVariable String paymentKey) {
+        TossConfirmResult result = paymentService.getPaymentFromToss(paymentKey);
+        return ResponseEntity.ok(createSuccessResponse(TossPaymentQueryResponse.from(result)));
     }
 
     @PostMapping("/api/v1/payments/toss/webhook")
