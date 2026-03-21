@@ -36,6 +36,9 @@ public class PaymentEntity extends BaseEntity {
     @JoinColumn(name = "receipt_id", nullable = false)
     private ReceiptEntity receipt;
 
+    @Column(name = "receipt_id", insertable = false, updatable = false)
+    private UUID receiptId;
+
     @Column(name = "toss_payment_key", nullable = false, unique = true)
     private String tossPaymentKey;
 

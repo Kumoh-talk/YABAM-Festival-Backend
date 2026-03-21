@@ -2,6 +2,7 @@ package com.pg.toss.client;
 
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.http.HttpStatusCode;
@@ -58,10 +59,14 @@ public class TossPaymentClient {
             .build();
     }
 
-    public void cancel(String paymentKey, String cancelReason) {
-        Map<String, String> body = Map.of("cancelReason", cancelReason);
+    public PaymentStatus cancel(String paymentKey, String cancelReason, Integer cancelAmount) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("cancelReason", cancelReason);
+        if (cancelAmount != null) {
+            body.put("cancelAmount", cancelAmount);
+        }
 
-        tossRestClient.post()
+        TossCancelResponse response = tossRestClient.post()
             .uri(CANCEL_PATH, paymentKey)
             .body(body)
             .retrieve()
@@ -71,9 +76,20 @@ public class TossPaymentClient {
                     paymentKey, res.getStatusCode(), errorBody);
                 throw new ServiceException(ErrorCode.PAYMENT_CANCEL_FAILED);
             })
-            .toBodilessEntity();
+            .body(TossCancelResponse.class);
 
-        log.info("토스페이먼츠 결제 취소 완료. paymentKey={}", paymentKey);
+        if (response == null) {
+            throw new ServiceException(ErrorCode.PAYMENT_CANCEL_FAILED);
+        }
+
+        log.info("토스페이먼츠 결제 취소 완료. paymentKey={}, resultStatus={}", paymentKey, response.status());
+
+        try {
+            return PaymentStatus.valueOf(response.status());
+        } catch (IllegalArgumentException e) {
+            log.warn("토스페이먼츠 취소 응답 상태값 파싱 실패. status={}", response.status());
+            return PaymentStatus.CANCELED;
+        }
     }
 
     private record TossPaymentResponse(
@@ -84,5 +100,8 @@ public class TossPaymentClient {
         String status,
         OffsetDateTime approvedAt
     ) {
+    }
+
+    private record TossCancelResponse(String status) {
     }
 }

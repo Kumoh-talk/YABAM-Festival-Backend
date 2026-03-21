@@ -15,6 +15,7 @@ import com.exception.ServiceException;
 import com.pg.toss.client.TossPaymentClient;
 import com.pg.toss.config.TossPaymentProperties;
 
+import domain.pos.payment.entity.PaymentStatus;
 import domain.pos.payment.entity.TossConfirmResult;
 import domain.pos.payment.port.required.TossPaymentPort;
 import lombok.RequiredArgsConstructor;
@@ -36,8 +37,8 @@ public class TossPaymentAdapter implements TossPaymentPort {
     }
 
     @Override
-    public void cancel(String paymentKey, String cancelReason) {
-        tossPaymentClient.cancel(paymentKey, cancelReason);
+    public PaymentStatus cancel(String paymentKey, String cancelReason, Integer cancelAmount) {
+        return tossPaymentClient.cancel(paymentKey, cancelReason, cancelAmount);
     }
 
     @Override

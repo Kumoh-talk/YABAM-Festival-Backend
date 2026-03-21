@@ -80,21 +80,27 @@ public class PaymentService {
     }
 
     /**
-     * 결제 취소 (점주)
+     * 결제 취소 (점주). cancelAmount가 null이면 전액 취소.
      */
     @Transactional
-    public void cancelPayment(String paymentKey, String cancelReason, UserPassport ownerPassport) {
+    public void cancelPayment(String paymentKey, String cancelReason, Integer cancelAmount,
+        UserPassport ownerPassport) {
         Payment payment = paymentReader.getByTossPaymentKey(paymentKey);
+
+        if (payment.getStatus() == PaymentStatus.CANCELED) {
+            log.warn("이미 취소된 결제입니다. paymentKey={}", paymentKey);
+            throw new ServiceException(ErrorCode.PAYMENT_CANCEL_FAILED);
+        }
 
         Receipt receipt = receiptReader.getReceiptWithTableAndStore(payment.getReceiptId())
             .orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
 
         storeValidator.validateStoreOwner(ownerPassport, receipt.getSale().getStore());
 
-        tossPaymentPort.cancel(paymentKey, cancelReason);
-        paymentWriter.updateStatus(payment.getPaymentId(), PaymentStatus.CANCELED);
+        PaymentStatus resultStatus = tossPaymentPort.cancel(paymentKey, cancelReason, cancelAmount);
+        paymentWriter.updateStatus(payment.getPaymentId(), resultStatus);
 
-        log.info("토스페이먼츠 결제 취소 완료. paymentKey={}", paymentKey);
+        log.info("토스페이먼츠 결제 취소 완료. paymentKey={}, status={}", paymentKey, resultStatus);
     }
 
     /**

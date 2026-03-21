@@ -13,7 +13,7 @@ public class PaymentMapper {
     public static Payment toDomain(PaymentEntity entity) {
         return Payment.builder()
             .paymentId(entity.getId())
-            .receiptId(entity.getReceipt().getId())
+            .receiptId(entity.getReceiptId())
             .tossPaymentKey(entity.getTossPaymentKey())
             .tossOrderId(entity.getTossOrderId())
             .amount(entity.getAmount())

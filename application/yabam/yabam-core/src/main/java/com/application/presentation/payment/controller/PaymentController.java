@@ -57,7 +57,7 @@ public class PaymentController {
         UserPassport userPassport,
         @PathVariable String paymentKey,
         @RequestBody @Valid TossCancelRequest request) {
-        paymentService.cancelPayment(paymentKey, request.cancelReason(), userPassport);
+        paymentService.cancelPayment(paymentKey, request.cancelReason(), request.cancelAmount(), userPassport);
         return ResponseEntity.ok(createSuccessResponse());
     }
 
