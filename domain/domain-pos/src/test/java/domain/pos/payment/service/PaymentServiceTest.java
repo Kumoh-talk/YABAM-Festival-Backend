@@ -408,6 +408,22 @@ class PaymentServiceTest extends ServiceTest {
 		}
 
 		@Test
+		void 성공_PARTIAL_CANCELED_상태_업데이트() {
+			// given
+			Payment payment = GENERAL_DONE_PAYMENT();
+			given(paymentReader.findByTossPaymentKey(paymentKey))
+				.willReturn(Optional.of(payment));
+			given(paymentWriter.updateStatus(payment.getPaymentId(), PaymentStatus.PARTIAL_CANCELED))
+				.willReturn(GENERAL_PARTIAL_CANCELED_PAYMENT());
+
+			// when
+			paymentService.processWebhook(paymentKey, "PARTIAL_CANCELED");
+
+			// then
+			verify(paymentWriter).updateStatus(payment.getPaymentId(), PaymentStatus.PARTIAL_CANCELED);
+		}
+
+		@Test
 		void 성공_로컬에_없는_결제키_무시() {
 			// given
 			given(paymentReader.findByTossPaymentKey(paymentKey))

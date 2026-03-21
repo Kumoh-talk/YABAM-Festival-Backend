@@ -42,6 +42,19 @@ public class PaymentFixture {
 			.build();
 	}
 
+	public static Payment GENERAL_PARTIAL_CANCELED_PAYMENT() {
+		return Payment.builder()
+			.paymentId(GENERAL_PAYMENT_ID)
+			.receiptId(GENERAL_RECEIPT_ID)
+			.tossPaymentKey(GENERAL_TOSS_PAYMENT_KEY)
+			.tossOrderId(GENERAL_TOSS_ORDER_ID)
+			.amount(GENERAL_AMOUNT)
+			.status(PaymentStatus.PARTIAL_CANCELED)
+			.paymentMethod(GENERAL_PAYMENT_METHOD)
+			.approvedAt(GENERAL_APPROVED_AT)
+			.build();
+	}
+
 	public static Payment GENERAL_WAITING_FOR_DEPOSIT_PAYMENT() {
 		return Payment.builder()
 			.paymentId(GENERAL_PAYMENT_ID)
