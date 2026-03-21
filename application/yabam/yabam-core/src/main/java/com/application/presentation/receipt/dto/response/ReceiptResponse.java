@@ -14,7 +14,7 @@ public record ReceiptResponse(
 ) {
 	public static ReceiptResponse from(Receipt receipt) {
 		return new ReceiptResponse(
-			ReceiptInfoResponse.from(receipt.getReceiptInfo()),
+			ReceiptInfoResponse.from(receipt),
 			TableInfoResponse.TableInfoDTO.from(receipt.getTable())
 		);
 	}

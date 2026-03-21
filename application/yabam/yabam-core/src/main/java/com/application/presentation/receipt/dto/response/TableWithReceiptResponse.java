@@ -61,7 +61,7 @@ public record TableWithReceiptResponse(
 			if (nonAdjustReceipt == null) {
 				return new ReceiptAndOrders(null, List.of());
 			}
-			return new ReceiptAndOrders(ReceiptInfoResponse.from(nonAdjustReceipt.getReceiptInfo()),
+			return new ReceiptAndOrders(ReceiptInfoResponse.from(nonAdjustReceipt),
 				nonAdjustReceipt.getOrders().stream().map(OrderInfoResponse::from).toList());
 		}
 

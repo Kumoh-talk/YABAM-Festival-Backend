@@ -16,7 +16,7 @@ public record ReceiptAndOrdersResponse(
 ) {
 	public static ReceiptAndOrdersResponse from(Receipt receipt) {
 		return new ReceiptAndOrdersResponse(
-			ReceiptInfoResponse.from(receipt.getReceiptInfo()),
+			ReceiptInfoResponse.from(receipt),
 			receipt.getOrders().stream().map(OrderAndMenusResponse::from).toList());
 	}
 }

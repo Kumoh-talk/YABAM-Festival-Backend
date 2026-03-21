@@ -104,9 +104,11 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	}
 
 	@Override
-	public Page<ReceiptInfo> getAdjustedReceiptPageBySale(Pageable pageable, Long saleId) {
+	public Page<Receipt> getAdjustedReceiptPageBySale(Pageable pageable, Long saleId) {
 		return receiptJpaRepository.findAdjustedReceiptPageBySaleId(pageable, saleId)
-			.map(ReceiptMapper::toReceiptInfo);
+			.map(receiptEntity -> ReceiptMapper.toReceipt(receiptEntity,
+				TableMapper.toTable(receiptEntity.getTable(), (Store)null),
+				null));
 	}
 
 	@Override
@@ -138,7 +140,8 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	@Override
 	public Slice<Receipt> getCustomerReceiptSlice(int pageSize, UUID lastReceiptId, Long customerId) {
 		return receiptJpaRepository.findCustomerReceiptSliceWithStore(pageSize, lastReceiptId, customerId)
-			.map(receiptEntity -> ReceiptMapper.toReceipt(receiptEntity, null,
+			.map(receiptEntity -> ReceiptMapper.toReceipt(receiptEntity,
+				TableMapper.toTable(receiptEntity.getTable(), (Store)null),
 				SaleMapper.toSale(receiptEntity.getSale(), StoreMapper.toStore(receiptEntity.getSale().getStore()))));
 	}
 
