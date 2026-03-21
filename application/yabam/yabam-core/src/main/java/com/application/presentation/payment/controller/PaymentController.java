@@ -99,7 +99,7 @@ public class PaymentController {
         tossPaymentPort.verifyWebhookSignature(rawBody, signature);
 
         TossWebhookRequest request = parseWebhookRequest(rawBody);
-        if ("PAYMENT_STATUS_CHANGED".equals(request.eventType())) {
+        if ("PAYMENT_STATUS_CHANGED".equals(request.eventType()) && request.data() != null) {
             paymentService.processWebhook(request.data().paymentKey(), request.data().status());
         }
         return ResponseEntity.ok().build();
