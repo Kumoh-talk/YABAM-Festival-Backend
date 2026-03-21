@@ -421,6 +421,34 @@ class PaymentControllerTest {
         }
 
         @Test
+        void 성공_가상계좌_입금완료_DONE_이벤트() throws Exception {
+            // given
+            willDoNothing().given(tossPaymentPort).verifyWebhookSignature(any(), eq(VALID_SIGNATURE));
+            willDoNothing().given(paymentService).processWebhook(any(), any());
+
+            String body = """
+                {
+                    "eventType": "PAYMENT_STATUS_CHANGED",
+                    "createdAt": "2024-06-01T12:00:00+09:00",
+                    "data": {
+                        "paymentKey": "%s",
+                        "orderId": "%s",
+                        "status": "DONE"
+                    }
+                }
+                """.formatted(PAYMENT_KEY, ORDER_ID);
+
+            // when & then
+            mockMvc.perform(post("/api/v1/payments/toss/webhook")
+                    .header("TossPayments-Signature", VALID_SIGNATURE)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(body))
+                .andExpect(status().isOk());
+
+            then(paymentService).should().processWebhook(PAYMENT_KEY, "DONE");
+        }
+
+        @Test
         void 무시_알수없는_eventType() throws Exception {
             // given
             willDoNothing().given(tossPaymentPort).verifyWebhookSignature(any(), any());

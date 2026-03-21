@@ -433,6 +433,50 @@ class PaymentServiceTest extends ServiceTest {
 			// then
 			verify(paymentWriter, never()).updateStatus(any(), any());
 		}
+
+		@Test
+		void 성공_가상계좌_입금완료_DONE_영수증_정산() {
+			// given
+			Payment waitingPayment = GENERAL_WAITING_FOR_DEPOSIT_PAYMENT();
+			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
+
+			given(paymentReader.findByTossPaymentKey(paymentKey))
+				.willReturn(Optional.of(waitingPayment));
+			given(paymentWriter.updateStatus(waitingPayment.getPaymentId(), PaymentStatus.DONE))
+				.willReturn(GENERAL_DONE_PAYMENT());
+			given(receiptReader.getReceiptWithTableAndStore(waitingPayment.getReceiptId()))
+				.willReturn(Optional.of(receipt));
+
+			// when
+			paymentService.processWebhook(paymentKey, "DONE");
+
+			// then
+			verify(paymentWriter).updateStatus(waitingPayment.getPaymentId(), PaymentStatus.DONE);
+			verify(tableWriter).changeTableActiveStatus(eq(false), any());
+			verify(receiptWriter).adjustReceipts(anyList());
+		}
+
+		@Test
+		void 성공_가상계좌_입금완료_이미_정산된_영수증_스킵() {
+			// given
+			Payment waitingPayment = GENERAL_WAITING_FOR_DEPOSIT_PAYMENT();
+			Receipt alreadyAdjustedReceipt = GENERAL_ADJUSTMENT_RECEIPT();
+
+			given(paymentReader.findByTossPaymentKey(paymentKey))
+				.willReturn(Optional.of(waitingPayment));
+			given(paymentWriter.updateStatus(waitingPayment.getPaymentId(), PaymentStatus.DONE))
+				.willReturn(GENERAL_DONE_PAYMENT());
+			given(receiptReader.getReceiptWithTableAndStore(waitingPayment.getReceiptId()))
+				.willReturn(Optional.of(alreadyAdjustedReceipt));
+
+			// when
+			paymentService.processWebhook(paymentKey, "DONE");
+
+			// then
+			verify(paymentWriter).updateStatus(waitingPayment.getPaymentId(), PaymentStatus.DONE);
+			verify(tableWriter, never()).changeTableActiveStatus(anyBoolean(), any());
+			verify(receiptWriter, never()).adjustReceipts(anyList());
+		}
 	}
 
 	@Nested
