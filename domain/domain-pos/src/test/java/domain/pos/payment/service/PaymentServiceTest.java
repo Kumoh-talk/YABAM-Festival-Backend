@@ -204,6 +204,38 @@ class PaymentServiceTest extends ServiceTest {
 				verify(receiptReader, never()).getReceiptWithTableAndStore(any());
 			});
 		}
+
+		@Test
+		void 성공_가상계좌_입금대기_영수증_정산_안함() {
+			// given
+			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
+			TossConfirmResult waitingResult = TossConfirmResult.builder()
+				.tossPaymentKey(paymentKey)
+				.tossOrderId(orderId)
+				.amount(amount)
+				.status(PaymentStatus.WAITING_FOR_DEPOSIT)
+				.paymentMethod("가상계좌")
+				.approvedAt(null)
+				.build();
+			Payment savedPayment = GENERAL_DONE_PAYMENT();
+
+			given(receiptReader.getReceiptWithTableAndStore(any(UUID.class)))
+				.willReturn(Optional.of(receipt));
+			given(paymentReader.findByReceiptId(any(UUID.class)))
+				.willReturn(Optional.empty());
+			given(tossPaymentPort.confirm(paymentKey, orderId, amount))
+				.willReturn(waitingResult);
+			given(paymentWriter.save(any(Payment.class)))
+				.willReturn(savedPayment);
+
+			// when
+			paymentService.confirmPayment(paymentKey, orderId, amount);
+
+			// then
+			verify(paymentWriter).save(any(Payment.class));
+			verify(tableWriter, never()).changeTableActiveStatus(anyBoolean(), any());
+			verify(receiptWriter, never()).adjustReceipts(anyList());
+		}
 	}
 
 	@Nested

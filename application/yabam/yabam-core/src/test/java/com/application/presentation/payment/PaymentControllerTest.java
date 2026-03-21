@@ -135,6 +135,24 @@ class PaymentControllerTest {
         }
 
         @Test
+        void 실패_금액_0원() throws Exception {
+            // given
+            String body = """
+                {
+                    "paymentKey": "%s",
+                    "orderId": "%s",
+                    "amount": 0
+                }
+                """.formatted(PAYMENT_KEY, ORDER_ID);
+
+            // when & then
+            mockMvc.perform(post("/api/v1/payments/toss/confirm")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(body))
+                .andExpect(status().isBadRequest());
+        }
+
+        @Test
         void 실패_이미_결제된_영수증() throws Exception {
             // given
             given(paymentService.confirmPayment(any(), any(), any()))
