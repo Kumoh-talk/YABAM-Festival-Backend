@@ -1,5 +1,6 @@
 package domain.pos.payment.implement;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,5 +35,9 @@ public class PaymentReader {
                 log.warn("결제 정보를 찾을 수 없습니다. tossPaymentKey={}", tossPaymentKey);
                 return new ServiceException(ErrorCode.PAYMENT_NOT_FOUND);
             });
+    }
+
+    public List<Payment> findBySaleId(Long saleId) {
+        return paymentRepository.findBySaleId(saleId);
     }
 }

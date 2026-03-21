@@ -33,7 +33,7 @@ public class PaymentEntity extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "receipt_id", nullable = false)
+    @JoinColumn(name = "receipt_id", nullable = false, unique = true)
     private ReceiptEntity receipt;
 
     @Column(name = "receipt_id", insertable = false, updatable = false)

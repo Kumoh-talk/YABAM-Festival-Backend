@@ -1,5 +1,6 @@
 package domain.pos.payment.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,4 +16,6 @@ public interface PaymentRepository {
     Optional<Payment> findByTossPaymentKey(String tossPaymentKey);
 
     Payment updateStatus(Long paymentId, PaymentStatus status);
+
+    List<Payment> findBySaleId(Long saleId);
 }

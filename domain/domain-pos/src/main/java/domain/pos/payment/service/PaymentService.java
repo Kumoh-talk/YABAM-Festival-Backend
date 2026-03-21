@@ -1,5 +1,6 @@
 package domain.pos.payment.service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -119,6 +120,13 @@ public class PaymentService {
      */
     public Optional<Payment> findPaymentByReceiptId(UUID receiptId) {
         return paymentReader.findByReceiptId(receiptId);
+    }
+
+    /**
+     * 영업별 결제 목록 조회 (점주 정산 확인 용)
+     */
+    public List<Payment> findPaymentsBySaleId(Long saleId) {
+        return paymentReader.findBySaleId(saleId);
     }
 
     /**

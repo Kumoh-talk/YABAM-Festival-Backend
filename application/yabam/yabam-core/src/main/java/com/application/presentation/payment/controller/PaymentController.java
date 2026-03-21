@@ -6,12 +6,15 @@ import static com.vo.UserRole.*;
 import java.io.IOException;
 import java.util.UUID;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.application.presentation.payment.dto.request.TossCancelRequest;
@@ -61,6 +64,16 @@ public class PaymentController {
         @RequestBody @Valid TossCancelRequest request) {
         paymentService.cancelPayment(paymentKey, request.cancelReason(), request.cancelAmount(), userPassport);
         return ResponseEntity.ok(createSuccessResponse());
+    }
+
+    @GetMapping("/api/v1/payments")
+    @HasRole(userRole = ROLE_OWNER)
+    public ResponseEntity<ResponseBody<List<PaymentResponse>>> getPaymentsBySale(
+        @RequestParam Long saleId) {
+        List<PaymentResponse> responses = paymentService.findPaymentsBySaleId(saleId).stream()
+            .map(PaymentResponse::from)
+            .toList();
+        return ResponseEntity.ok(createSuccessResponse(responses));
     }
 
     @GetMapping("/api/v1/payments/receipts/{receiptId}")

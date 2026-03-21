@@ -1,5 +1,6 @@
 package com.pos.payment.repository.impl;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,5 +48,12 @@ public class PaymentRepositoryImpl implements PaymentRepository {
             .orElseThrow(() -> new ServiceException(ErrorCode.PAYMENT_NOT_FOUND));
         entity.updateStatus(status);
         return PaymentMapper.toDomain(entity);
+    }
+
+    @Override
+    public List<Payment> findBySaleId(Long saleId) {
+        return paymentJpaRepository.findBySaleId(saleId).stream()
+            .map(PaymentMapper::toDomain)
+            .toList();
     }
 }
