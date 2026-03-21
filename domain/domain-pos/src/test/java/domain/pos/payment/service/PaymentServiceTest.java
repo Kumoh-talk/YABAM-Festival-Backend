@@ -32,7 +32,6 @@ import domain.pos.payment.implement.PaymentWriter;
 import domain.pos.payment.port.required.TossPaymentPort;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.implement.ReceiptReader;
-import domain.pos.receipt.implement.ReceiptValidator;
 import domain.pos.receipt.implement.ReceiptWriter;
 import domain.pos.store.implement.StoreValidator;
 import domain.pos.table.implement.TableWriter;
@@ -49,8 +48,6 @@ class PaymentServiceTest extends ServiceTest {
 	private ReceiptReader receiptReader;
 	@Mock
 	private ReceiptWriter receiptWriter;
-	@Mock
-	private ReceiptValidator receiptValidator;
 	@Mock
 	private StoreValidator storeValidator;
 	@Mock

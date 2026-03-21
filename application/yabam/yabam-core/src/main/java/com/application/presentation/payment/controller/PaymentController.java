@@ -3,6 +3,7 @@ package com.application.presentation.payment.controller;
 import static com.response.ResponseUtil.*;
 import static com.vo.UserRole.*;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.application.presentation.payment.dto.request.TossCancelRequest;
@@ -18,19 +20,27 @@ import com.application.presentation.payment.dto.request.TossWebhookRequest;
 import com.application.presentation.payment.dto.response.PaymentResponse;
 import com.authorization.AssignUserPassport;
 import com.authorization.HasRole;
+import com.exception.ErrorCode;
+import com.exception.ServiceException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.response.ResponseBody;
 import com.vo.UserPassport;
 
 import domain.pos.payment.entity.Payment;
+import domain.pos.payment.port.required.TossPaymentPort;
 import domain.pos.payment.service.PaymentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class PaymentController {
 
     private final PaymentService paymentService;
+    private final TossPaymentPort tossPaymentPort;
+    private final ObjectMapper objectMapper;
 
     @PostMapping("/api/v1/payments/toss/confirm")
     public ResponseEntity<ResponseBody<PaymentResponse>> confirmPayment(
@@ -61,10 +71,23 @@ public class PaymentController {
 
     @PostMapping("/api/v1/payments/toss/webhook")
     public ResponseEntity<Void> handleTossWebhook(
-        @RequestBody @Valid TossWebhookRequest request) {
+        @RequestHeader(value = "TossPayments-Signature", required = false) String signature,
+        @RequestBody String rawBody) {
+        tossPaymentPort.verifyWebhookSignature(rawBody, signature);
+
+        TossWebhookRequest request = parseWebhookRequest(rawBody);
         if ("PAYMENT_STATUS_CHANGED".equals(request.eventType())) {
             paymentService.processWebhook(request.data().paymentKey(), request.data().status());
         }
         return ResponseEntity.ok().build();
+    }
+
+    private TossWebhookRequest parseWebhookRequest(String rawBody) {
+        try {
+            return objectMapper.readValue(rawBody, TossWebhookRequest.class);
+        } catch (IOException e) {
+            log.warn("웹훅 요청 본문 파싱 실패. body={}", rawBody);
+            throw new ServiceException(ErrorCode.INVALID_INPUT_VALUE);
+        }
     }
 }

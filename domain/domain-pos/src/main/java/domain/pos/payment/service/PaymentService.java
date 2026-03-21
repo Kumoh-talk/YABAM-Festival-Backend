@@ -19,7 +19,6 @@ import domain.pos.payment.port.required.TossPaymentPort;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.receipt.implement.ReceiptReader;
-import domain.pos.receipt.implement.ReceiptValidator;
 import domain.pos.receipt.implement.ReceiptWriter;
 import domain.pos.store.implement.StoreValidator;
 import domain.pos.table.implement.TableWriter;
@@ -36,7 +35,6 @@ public class PaymentService {
     private final PaymentWriter paymentWriter;
     private final ReceiptReader receiptReader;
     private final ReceiptWriter receiptWriter;
-    private final ReceiptValidator receiptValidator;
     private final StoreValidator storeValidator;
     private final TableWriter tableWriter;
 

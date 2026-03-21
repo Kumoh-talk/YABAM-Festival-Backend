@@ -7,4 +7,6 @@ public interface TossPaymentPort {
     TossConfirmResult confirm(String paymentKey, String orderId, Integer amount);
 
     void cancel(String paymentKey, String cancelReason);
+
+    void verifyWebhookSignature(String rawBody, String signature);
 }

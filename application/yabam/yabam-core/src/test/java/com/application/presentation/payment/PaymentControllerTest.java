@@ -32,6 +32,7 @@ import com.vo.UserRole;
 
 import domain.pos.payment.entity.Payment;
 import domain.pos.payment.entity.PaymentStatus;
+import domain.pos.payment.port.required.TossPaymentPort;
 import domain.pos.payment.service.PaymentService;
 
 @WebMvcTest(PaymentController.class)
@@ -46,6 +47,9 @@ class PaymentControllerTest {
 
     @MockitoBean
     private PaymentService paymentService;
+
+    @MockitoBean
+    private TossPaymentPort tossPaymentPort;
 
     private static final String PAYMENT_KEY = "toss_payment_key_test_1234567890";
     private static final String ORDER_ID = "123e4567-e89b-12d3-a456-426614174000";
@@ -212,9 +216,12 @@ class PaymentControllerTest {
     @DisplayName("POST /api/v1/payments/toss/webhook")
     class HandleWebhook {
 
+        private static final String VALID_SIGNATURE = "valid-hmac-signature";
+
         @Test
-        void 성공_PAYMENT_STATUS_CHANGED() throws Exception {
+        void 성공_서명_유효_PAYMENT_STATUS_CHANGED() throws Exception {
             // given
+            willDoNothing().given(tossPaymentPort).verifyWebhookSignature(any(), eq(VALID_SIGNATURE));
             willDoNothing().given(paymentService).processWebhook(any(), any());
 
             String body = """
@@ -231,6 +238,7 @@ class PaymentControllerTest {
 
             // when & then
             mockMvc.perform(post("/api/v1/payments/toss/webhook")
+                    .header("TossPayments-Signature", VALID_SIGNATURE)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(body))
                 .andExpect(status().isOk());
@@ -239,8 +247,38 @@ class PaymentControllerTest {
         }
 
         @Test
+        void 실패_서명_불일치() throws Exception {
+            // given
+            willThrow(new ServiceException(ErrorCode.PAYMENT_WEBHOOK_INVALID_SIGNATURE))
+                .given(tossPaymentPort).verifyWebhookSignature(any(), any());
+
+            String body = """
+                {
+                    "eventType": "PAYMENT_STATUS_CHANGED",
+                    "createdAt": "2024-06-01T12:00:00+09:00",
+                    "data": {
+                        "paymentKey": "%s",
+                        "orderId": "%s",
+                        "status": "CANCELED"
+                    }
+                }
+                """.formatted(PAYMENT_KEY, ORDER_ID);
+
+            // when & then
+            mockMvc.perform(post("/api/v1/payments/toss/webhook")
+                    .header("TossPayments-Signature", "wrong-signature")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(body))
+                .andExpect(status().isUnauthorized());
+
+            then(paymentService).should(never()).processWebhook(any(), any());
+        }
+
+        @Test
         void 무시_알수없는_eventType() throws Exception {
             // given
+            willDoNothing().given(tossPaymentPort).verifyWebhookSignature(any(), any());
+
             String body = """
                 {
                     "eventType": "UNKNOWN_EVENT",
@@ -255,6 +293,7 @@ class PaymentControllerTest {
 
             // when & then
             mockMvc.perform(post("/api/v1/payments/toss/webhook")
+                    .header("TossPayments-Signature", VALID_SIGNATURE)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(body))
                 .andExpect(status().isOk());

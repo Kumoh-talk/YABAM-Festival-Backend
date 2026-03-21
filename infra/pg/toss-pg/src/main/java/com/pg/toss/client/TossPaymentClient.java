@@ -1,6 +1,7 @@
 package com.pg.toss.client;
 
-import java.time.LocalDateTime;
+import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
 import java.util.Map;
 
 import org.springframework.http.HttpStatusCode;
@@ -37,7 +38,8 @@ public class TossPaymentClient {
             .body(body)
             .retrieve()
             .onStatus(HttpStatusCode::isError, (req, res) -> {
-                log.warn("토스페이먼츠 결제 승인 실패. status={}", res.getStatusCode());
+                String errorBody = new String(res.getBody().readAllBytes(), StandardCharsets.UTF_8);
+                log.warn("토스페이먼츠 결제 승인 실패. status={}, body={}", res.getStatusCode(), errorBody);
                 throw new ServiceException(ErrorCode.PAYMENT_CONFIRM_FAILED);
             })
             .body(TossPaymentResponse.class);
@@ -52,7 +54,7 @@ public class TossPaymentClient {
             .amount(response.totalAmount())
             .status(PaymentStatus.DONE)
             .paymentMethod(response.method())
-            .approvedAt(response.approvedAt())
+            .approvedAt(response.approvedAt() != null ? response.approvedAt().toLocalDateTime() : null)
             .build();
     }
 
@@ -64,7 +66,9 @@ public class TossPaymentClient {
             .body(body)
             .retrieve()
             .onStatus(HttpStatusCode::isError, (req, res) -> {
-                log.warn("토스페이먼츠 결제 취소 실패. paymentKey={}, status={}", paymentKey, res.getStatusCode());
+                String errorBody = new String(res.getBody().readAllBytes(), StandardCharsets.UTF_8);
+                log.warn("토스페이먼츠 결제 취소 실패. paymentKey={}, status={}, body={}",
+                    paymentKey, res.getStatusCode(), errorBody);
                 throw new ServiceException(ErrorCode.PAYMENT_CANCEL_FAILED);
             })
             .toBodilessEntity();
@@ -78,7 +82,7 @@ public class TossPaymentClient {
         Integer totalAmount,
         String method,
         String status,
-        LocalDateTime approvedAt
+        OffsetDateTime approvedAt
     ) {
     }
 }
