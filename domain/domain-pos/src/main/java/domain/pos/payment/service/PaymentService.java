@@ -157,10 +157,29 @@ public class PaymentService {
         if (newStatus == PaymentStatus.CANCELED || newStatus == PaymentStatus.PARTIAL_CANCELED) {
             paymentWriter.updateStatus(payment.getPaymentId(), newStatus);
             log.info("웹훅 결제 상태 동기화 완료. paymentKey={}, status={}", payment.getTossPaymentKey(), newStatus);
+        } else if (newStatus == PaymentStatus.DONE
+            && payment.getStatus() == PaymentStatus.WAITING_FOR_DEPOSIT) {
+            paymentWriter.updateStatus(payment.getPaymentId(), newStatus);
+            settleReceiptForVirtualAccount(payment);
         } else {
             log.debug("웹훅 수신: 처리 대상 아닌 상태값 무시. paymentKey={}, status={}",
                 payment.getTossPaymentKey(), newStatus);
         }
+    }
+
+    private void settleReceiptForVirtualAccount(Payment payment) {
+        receiptReader.getReceiptWithTableAndStore(payment.getReceiptId()).ifPresentOrElse(
+            receipt -> {
+                if (!receipt.getReceiptInfo().isAdjustment()) {
+                    tableWriter.changeTableActiveStatus(false, receipt.getTable());
+                    receiptWriter.adjustReceipts(List.of(receipt));
+                    log.info("웹훅 가상계좌 입금 완료 처리. paymentKey={}, receiptId={}",
+                        payment.getTossPaymentKey(), payment.getReceiptId());
+                }
+            },
+            () -> log.warn("웹훅 가상계좌 입금 완료: 영수증을 찾을 수 없음. receiptId={}",
+                payment.getReceiptId())
+        );
     }
 
     private UUID parseReceiptId(String orderId) {
