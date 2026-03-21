@@ -73,9 +73,7 @@ public class PaymentController {
 
     @GetMapping("/api/v1/payments/toss/{paymentKey}")
     @HasRole(userRole = ROLE_OWNER)
-    @AssignUserPassport
     public ResponseEntity<ResponseBody<TossPaymentQueryResponse>> getTossPayment(
-        UserPassport userPassport,
         @PathVariable String paymentKey) {
         TossConfirmResult result = paymentService.getPaymentFromToss(paymentKey);
         return ResponseEntity.ok(createSuccessResponse(TossPaymentQueryResponse.from(result)));

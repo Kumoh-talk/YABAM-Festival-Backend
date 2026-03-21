@@ -53,14 +53,7 @@ public class TossPaymentClient {
             throw new ServiceException(ErrorCode.PAYMENT_CONFIRM_FAILED);
         }
 
-        return TossConfirmResult.builder()
-            .tossPaymentKey(response.paymentKey())
-            .tossOrderId(response.orderId())
-            .amount(response.totalAmount())
-            .status(parseStatus(response.status()))
-            .paymentMethod(response.method())
-            .approvedAt(response.approvedAt() != null ? response.approvedAt().toLocalDateTime() : null)
-            .build();
+        return buildResult(response);
     }
 
     public PaymentStatus cancel(String paymentKey, String cancelReason, Integer cancelAmount) {
@@ -112,6 +105,10 @@ public class TossPaymentClient {
             throw new ServiceException(ErrorCode.PAYMENT_NOT_FOUND);
         }
 
+        return buildResult(response);
+    }
+
+    private TossConfirmResult buildResult(TossPaymentResponse response) {
         return TossConfirmResult.builder()
             .tossPaymentKey(response.paymentKey())
             .tossOrderId(response.orderId())

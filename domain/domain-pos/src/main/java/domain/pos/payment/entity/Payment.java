@@ -30,7 +30,4 @@ public class Payment {
         this.approvedAt = approvedAt;
     }
 
-    public void cancel() {
-        this.status = PaymentStatus.CANCELED;
-    }
 }
