@@ -33,6 +33,7 @@ import com.vo.UserRole;
 
 import domain.pos.payment.entity.Payment;
 import domain.pos.payment.entity.PaymentStatus;
+import domain.pos.payment.entity.TossConfirmResult;
 import domain.pos.payment.port.required.TossPaymentPort;
 import domain.pos.payment.service.PaymentService;
 
@@ -61,6 +62,17 @@ class PaymentControllerTest {
         return Payment.builder()
             .paymentId(1L)
             .receiptId(RECEIPT_ID)
+            .tossPaymentKey(PAYMENT_KEY)
+            .tossOrderId(ORDER_ID)
+            .amount(AMOUNT)
+            .status(PaymentStatus.DONE)
+            .paymentMethod("카드")
+            .approvedAt(LocalDateTime.of(2024, 6, 1, 12, 0, 0))
+            .build();
+    }
+
+    private TossConfirmResult sampleTossResult() {
+        return TossConfirmResult.builder()
             .tossPaymentKey(PAYMENT_KEY)
             .tossOrderId(ORDER_ID)
             .amount(AMOUNT)
@@ -227,6 +239,51 @@ class PaymentControllerTest {
             mockMvc.perform(get("/api/v1/payments/receipts/{receiptId}", RECEIPT_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").doesNotExist());
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /api/v1/payments/toss/{paymentKey}")
+    class GetTossPayment {
+
+        @Test
+        void 성공() throws Exception {
+            // given
+            given(paymentService.getPaymentFromToss(PAYMENT_KEY))
+                .willReturn(sampleTossResult());
+
+            // when & then
+            mockMvc.perform(get("/api/v1/payments/toss/{paymentKey}", PAYMENT_KEY)
+                    .header("X-User-Info", ownerPassportHeader()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.tossPaymentKey").value(PAYMENT_KEY))
+                .andExpect(jsonPath("$.data.status").value("DONE"))
+                .andExpect(jsonPath("$.data.amount").value(AMOUNT));
+        }
+
+        @Test
+        void 실패_권한_없음() throws Exception {
+            // given
+            UserPassport userPassport = UserPassport.of(1L, "일반유저", UserRole.ROLE_USER);
+            String json = objectMapper.writeValueAsString(userPassport);
+            String encodedHeader = URLEncoder.encode(json, StandardCharsets.UTF_8);
+
+            // when & then
+            mockMvc.perform(get("/api/v1/payments/toss/{paymentKey}", PAYMENT_KEY)
+                    .header("X-User-Info", encodedHeader))
+                .andExpect(status().isForbidden());
+        }
+
+        @Test
+        void 실패_결제키_없음() throws Exception {
+            // given
+            given(paymentService.getPaymentFromToss(PAYMENT_KEY))
+                .willThrow(new ServiceException(ErrorCode.PAYMENT_NOT_FOUND));
+
+            // when & then
+            mockMvc.perform(get("/api/v1/payments/toss/{paymentKey}", PAYMENT_KEY)
+                    .header("X-User-Info", ownerPassportHeader()))
+                .andExpect(status().isNotFound());
         }
     }
 

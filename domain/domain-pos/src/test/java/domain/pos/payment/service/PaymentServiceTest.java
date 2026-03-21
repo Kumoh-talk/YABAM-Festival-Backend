@@ -401,4 +401,50 @@ class PaymentServiceTest extends ServiceTest {
 			verify(paymentWriter, never()).updateStatus(any(), any());
 		}
 	}
+
+	@Nested
+	@DisplayName("토스 실시간 결제 조회")
+	class GetPaymentFromToss {
+
+		private final String paymentKey = GENERAL_TOSS_PAYMENT_KEY;
+
+		@Test
+		void 성공() {
+			// given
+			TossConfirmResult tossResult = TossConfirmResult.builder()
+				.tossPaymentKey(paymentKey)
+				.tossOrderId(GENERAL_RECEIPT_ID.toString())
+				.amount(GENERAL_AMOUNT)
+				.status(PaymentStatus.DONE)
+				.paymentMethod(GENERAL_PAYMENT_METHOD)
+				.approvedAt(GENERAL_APPROVED_AT)
+				.build();
+
+			given(tossPaymentPort.getPayment(paymentKey)).willReturn(tossResult);
+
+			// when
+			TossConfirmResult result = paymentService.getPaymentFromToss(paymentKey);
+
+			// then
+			assertSoftly(softly -> {
+				softly.assertThat(result.getTossPaymentKey()).isEqualTo(paymentKey);
+				softly.assertThat(result.getStatus()).isEqualTo(PaymentStatus.DONE);
+				softly.assertThat(result.getAmount()).isEqualTo(GENERAL_AMOUNT);
+				verify(tossPaymentPort).getPayment(paymentKey);
+			});
+		}
+
+		@Test
+		void 실패_토스에서_결제_없음() {
+			// given
+			given(tossPaymentPort.getPayment(paymentKey))
+				.willThrow(new ServiceException(ErrorCode.PAYMENT_NOT_FOUND));
+
+			// when -> then
+			assertSoftly(softly -> softly.assertThatThrownBy(
+					() -> paymentService.getPaymentFromToss(paymentKey))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_NOT_FOUND));
+		}
+	}
 }
