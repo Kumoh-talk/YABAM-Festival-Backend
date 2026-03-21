@@ -213,7 +213,7 @@ class PaymentServiceTest extends ServiceTest {
 		private final String cancelReason = "고객 요청에 의한 취소";
 
 		@Test
-		void 성공() {
+		void 성공_전액취소() {
 			// given
 			UserPassport ownerPassport = OWNER_USER_PASSPORT();
 			Payment payment = GENERAL_DONE_PAYMENT();
@@ -223,17 +223,71 @@ class PaymentServiceTest extends ServiceTest {
 				.willReturn(payment);
 			given(receiptReader.getReceiptWithTableAndStore(payment.getReceiptId()))
 				.willReturn(Optional.of(receipt));
+			given(tossPaymentPort.cancel(paymentKey, cancelReason, null))
+				.willReturn(PaymentStatus.CANCELED);
 			given(paymentWriter.updateStatus(payment.getPaymentId(), PaymentStatus.CANCELED))
 				.willReturn(GENERAL_CANCELED_PAYMENT());
 
 			// when
-			paymentService.cancelPayment(paymentKey, cancelReason, ownerPassport);
+			paymentService.cancelPayment(paymentKey, cancelReason, null, ownerPassport);
 
 			// then
 			assertSoftly(softly -> {
-				verify(tossPaymentPort).cancel(paymentKey, cancelReason);
+				verify(tossPaymentPort).cancel(paymentKey, cancelReason, null);
 				verify(paymentWriter).updateStatus(payment.getPaymentId(), PaymentStatus.CANCELED);
 				verify(paymentWriter, never()).save(any());
+			});
+		}
+
+		@Test
+		void 성공_부분취소() {
+			// given
+			UserPassport ownerPassport = OWNER_USER_PASSPORT();
+			Payment payment = GENERAL_DONE_PAYMENT();
+			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
+			Integer cancelAmount = GENERAL_AMOUNT / 2;
+
+			given(paymentReader.getByTossPaymentKey(paymentKey))
+				.willReturn(payment);
+			given(receiptReader.getReceiptWithTableAndStore(payment.getReceiptId()))
+				.willReturn(Optional.of(receipt));
+			given(tossPaymentPort.cancel(paymentKey, cancelReason, cancelAmount))
+				.willReturn(PaymentStatus.PARTIAL_CANCELED);
+			given(paymentWriter.updateStatus(payment.getPaymentId(), PaymentStatus.PARTIAL_CANCELED))
+				.willReturn(Payment.builder()
+					.paymentId(GENERAL_PAYMENT_ID).receiptId(GENERAL_RECEIPT_ID)
+					.tossPaymentKey(paymentKey).tossOrderId(GENERAL_TOSS_ORDER_ID)
+					.amount(GENERAL_AMOUNT).status(PaymentStatus.PARTIAL_CANCELED)
+					.paymentMethod(GENERAL_PAYMENT_METHOD).approvedAt(GENERAL_APPROVED_AT).build());
+
+			// when
+			paymentService.cancelPayment(paymentKey, cancelReason, cancelAmount, ownerPassport);
+
+			// then
+			assertSoftly(softly -> {
+				verify(tossPaymentPort).cancel(paymentKey, cancelReason, cancelAmount);
+				verify(paymentWriter).updateStatus(payment.getPaymentId(), PaymentStatus.PARTIAL_CANCELED);
+			});
+		}
+
+		@Test
+		void 실패_이미_취소된_결제() {
+			// given
+			UserPassport ownerPassport = OWNER_USER_PASSPORT();
+			Payment canceledPayment = GENERAL_CANCELED_PAYMENT();
+
+			given(paymentReader.getByTossPaymentKey(paymentKey))
+				.willReturn(canceledPayment);
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(
+						() -> paymentService.cancelPayment(paymentKey, cancelReason, null, ownerPassport))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_CANCEL_FAILED);
+
+				verify(tossPaymentPort, never()).cancel(any(), any(), any());
+				verify(paymentWriter, never()).updateStatus(any(), any());
 			});
 		}
 
@@ -248,11 +302,11 @@ class PaymentServiceTest extends ServiceTest {
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
-						() -> paymentService.cancelPayment(paymentKey, cancelReason, ownerPassport))
+						() -> paymentService.cancelPayment(paymentKey, cancelReason, null, ownerPassport))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_NOT_FOUND);
 
-				verify(tossPaymentPort, never()).cancel(any(), any());
+				verify(tossPaymentPort, never()).cancel(any(), any(), any());
 				verify(paymentWriter, never()).updateStatus(any(), any());
 			});
 		}
@@ -274,11 +328,11 @@ class PaymentServiceTest extends ServiceTest {
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(
-						() -> paymentService.cancelPayment(paymentKey, cancelReason, diffOwnerPassport))
+						() -> paymentService.cancelPayment(paymentKey, cancelReason, null, diffOwnerPassport))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
 
-				verify(tossPaymentPort, never()).cancel(any(), any());
+				verify(tossPaymentPort, never()).cancel(any(), any(), any());
 				verify(paymentWriter, never()).updateStatus(any(), any());
 			});
 		}

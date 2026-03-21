@@ -2,6 +2,7 @@ package com.application.presentation.payment;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
+import static org.mockito.Mockito.isNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -147,12 +148,29 @@ class PaymentControllerTest {
     class CancelPayment {
 
         @Test
-        void 성공_점주_권한() throws Exception {
+        void 성공_전액취소() throws Exception {
             // given
-            willDoNothing().given(paymentService).cancelPayment(eq(PAYMENT_KEY), any(), any());
+            willDoNothing().given(paymentService).cancelPayment(eq(PAYMENT_KEY), any(), isNull(), any());
 
             String body = """
                 {"cancelReason": "고객 요청"}
+                """;
+
+            // when & then
+            mockMvc.perform(post("/api/v1/payments/{paymentKey}/cancel", PAYMENT_KEY)
+                    .header("X-User-Info", ownerPassportHeader())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(body))
+                .andExpect(status().isOk());
+        }
+
+        @Test
+        void 성공_부분취소() throws Exception {
+            // given
+            willDoNothing().given(paymentService).cancelPayment(eq(PAYMENT_KEY), any(), eq(3000), any());
+
+            String body = """
+                {"cancelReason": "부분 환불", "cancelAmount": 3000}
                 """;
 
             // when & then

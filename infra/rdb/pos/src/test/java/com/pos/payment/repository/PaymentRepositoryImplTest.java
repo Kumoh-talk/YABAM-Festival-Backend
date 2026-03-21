@@ -17,6 +17,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
+
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
 import com.pos.global.config.RepositoryTest;
@@ -71,8 +73,15 @@ class PaymentRepositoryImplTest extends RepositoryTest {
 				.orElse(null);
 
 			// when
-			Payment newPayment = com.pos.payment.mapper.PaymentMapper.toDomain(
-				CUSTOM_PAYMENT_ENTITY(anotherReceipt, "another_key_xyz", 5000));
+			Payment newPayment = Payment.builder()
+				.receiptId(anotherReceipt.getId())
+				.tossPaymentKey("another_key_xyz")
+				.tossOrderId(anotherReceipt.getId().toString())
+				.amount(5000)
+				.status(PaymentStatus.DONE)
+				.paymentMethod("카드")
+				.approvedAt(LocalDateTime.of(2024, 6, 1, 12, 0, 0))
+				.build();
 			Payment saved = paymentRepository.save(newPayment);
 			testEntityManager.flush();
 			testEntityManager.clear();
