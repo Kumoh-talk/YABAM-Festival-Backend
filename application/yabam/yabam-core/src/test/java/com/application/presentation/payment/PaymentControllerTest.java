@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -284,6 +285,58 @@ class PaymentControllerTest {
             mockMvc.perform(get("/api/v1/payments/toss/{paymentKey}", PAYMENT_KEY)
                     .header("X-User-Info", ownerPassportHeader()))
                 .andExpect(status().isNotFound());
+        }
+    }
+
+    @Nested
+    @DisplayName("GET /api/v1/payments")
+    class GetPaymentsBySale {
+
+        @Test
+        void 성공_결제_목록_반환() throws Exception {
+            // given
+            Long saleId = 1L;
+            given(paymentService.findPaymentsBySaleId(saleId))
+                .willReturn(List.of(samplePayment()));
+
+            // when & then
+            mockMvc.perform(get("/api/v1/payments")
+                    .header("X-User-Info", ownerPassportHeader())
+                    .param("saleId", String.valueOf(saleId)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].tossPaymentKey").value(PAYMENT_KEY))
+                .andExpect(jsonPath("$.data[0].status").value("DONE"))
+                .andExpect(jsonPath("$.data[0].amount").value(AMOUNT));
+        }
+
+        @Test
+        void 성공_결제_없음() throws Exception {
+            // given
+            Long saleId = 99L;
+            given(paymentService.findPaymentsBySaleId(saleId))
+                .willReturn(List.of());
+
+            // when & then
+            mockMvc.perform(get("/api/v1/payments")
+                    .header("X-User-Info", ownerPassportHeader())
+                    .param("saleId", String.valueOf(saleId)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").isArray())
+                .andExpect(jsonPath("$.data").isEmpty());
+        }
+
+        @Test
+        void 실패_권한_없음() throws Exception {
+            // given
+            UserPassport userPassport = UserPassport.of(1L, "일반유저", UserRole.ROLE_USER);
+            String json = objectMapper.writeValueAsString(userPassport);
+            String encodedHeader = URLEncoder.encode(json, StandardCharsets.UTF_8);
+
+            // when & then
+            mockMvc.perform(get("/api/v1/payments")
+                    .header("X-User-Info", encodedHeader)
+                    .param("saleId", "1"))
+                .andExpect(status().isForbidden());
         }
     }
 

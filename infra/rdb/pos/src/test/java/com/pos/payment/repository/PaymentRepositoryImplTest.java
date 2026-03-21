@@ -8,6 +8,7 @@ import static com.pos.receipt.ReceiptEntityFixture.*;
 import static fixtures.store.StoreFixture.*;
 import static org.assertj.core.api.SoftAssertions.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -155,6 +156,39 @@ class PaymentRepositoryImplTest extends RepositoryTest {
 
 			// when
 			Optional<Payment> result = paymentRepository.findByTossPaymentKey(nonExistentKey);
+
+			// then
+			assertSoftly(softly -> softly.assertThat(result).isEmpty());
+		}
+	}
+
+	@Nested
+	@DisplayName("영업별 결제 목록 조회")
+	class FindBySaleId {
+
+		@Test
+		void 성공() {
+			// given
+			Long saleId = savedSaleEntity.getId();
+
+			// when
+			List<Payment> result = paymentRepository.findBySaleId(saleId);
+
+			// then
+			assertSoftly(softly -> {
+				softly.assertThat(result).hasSize(1);
+				softly.assertThat(result.get(0).getStatus()).isEqualTo(PaymentStatus.DONE);
+				softly.assertThat(result.get(0).getReceiptId()).isEqualTo(savedReceiptEntity.getId());
+			});
+		}
+
+		@Test
+		void 성공_결제_없음() {
+			// given
+			Long nonExistentSaleId = 999L;
+
+			// when
+			List<Payment> result = paymentRepository.findBySaleId(nonExistentSaleId);
 
 			// then
 			assertSoftly(softly -> softly.assertThat(result).isEmpty());

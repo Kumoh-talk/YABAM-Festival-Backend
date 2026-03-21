@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.*;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -399,6 +400,43 @@ class PaymentServiceTest extends ServiceTest {
 
 			// then
 			verify(paymentWriter, never()).updateStatus(any(), any());
+		}
+	}
+
+	@Nested
+	@DisplayName("영업별 결제 목록 조회")
+	class FindPaymentsBySaleId {
+
+		@Test
+		void 성공_결제_있음() {
+			// given
+			Long saleId = 1L;
+			List<Payment> payments = List.of(GENERAL_DONE_PAYMENT(), GENERAL_CANCELED_PAYMENT());
+			given(paymentReader.findBySaleId(saleId)).willReturn(payments);
+
+			// when
+			List<Payment> result = paymentService.findPaymentsBySaleId(saleId);
+
+			// then
+			assertSoftly(softly -> {
+				softly.assertThat(result).hasSize(2);
+				softly.assertThat(result.get(0).getStatus()).isEqualTo(PaymentStatus.DONE);
+				softly.assertThat(result.get(1).getStatus()).isEqualTo(PaymentStatus.CANCELED);
+				verify(paymentReader).findBySaleId(saleId);
+			});
+		}
+
+		@Test
+		void 성공_결제_없음() {
+			// given
+			Long saleId = 999L;
+			given(paymentReader.findBySaleId(saleId)).willReturn(List.of());
+
+			// when
+			List<Payment> result = paymentService.findPaymentsBySaleId(saleId);
+
+			// then
+			assertSoftly(softly -> softly.assertThat(result).isEmpty());
 		}
 	}
 
