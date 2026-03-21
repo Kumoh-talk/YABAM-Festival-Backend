@@ -73,10 +73,15 @@ public class PaymentService {
         TossConfirmResult result = tossPaymentPort.confirm(paymentKey, orderId, amount);
         Payment payment = paymentWriter.save(result.toPayment(receiptId));
 
-        tableWriter.changeTableActiveStatus(false, receipt.getTable());
-        receiptWriter.adjustReceipts(java.util.List.of(receipt));
+        if (result.getStatus() == PaymentStatus.DONE) {
+            tableWriter.changeTableActiveStatus(false, receipt.getTable());
+            receiptWriter.adjustReceipts(java.util.List.of(receipt));
+            log.info("토스페이먼츠 결제 승인 완료. receiptId={}, paymentKey={}", receiptId, paymentKey);
+        } else {
+            log.info("토스페이먼츠 결제 승인 대기. receiptId={}, paymentKey={}, status={}",
+                receiptId, paymentKey, result.getStatus());
+        }
 
-        log.info("토스페이먼츠 결제 승인 완료. receiptId={}, paymentKey={}", receiptId, paymentKey);
         return payment;
     }
 
@@ -152,6 +157,9 @@ public class PaymentService {
         if (newStatus == PaymentStatus.CANCELED || newStatus == PaymentStatus.PARTIAL_CANCELED) {
             paymentWriter.updateStatus(payment.getPaymentId(), newStatus);
             log.info("웹훅 결제 상태 동기화 완료. paymentKey={}, status={}", payment.getTossPaymentKey(), newStatus);
+        } else {
+            log.debug("웹훅 수신: 처리 대상 아닌 상태값 무시. paymentKey={}, status={}",
+                payment.getTossPaymentKey(), newStatus);
         }
     }
 

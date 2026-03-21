@@ -160,13 +160,14 @@ public class TossPaymentClient {
 
     private PaymentStatus parseStatus(String status) {
         if (status == null) {
-            return PaymentStatus.DONE;
+            log.warn("토스페이먼츠 응답에 status 필드가 없습니다.");
+            throw new ServiceException(ErrorCode.PAYMENT_CONFIRM_FAILED);
         }
         try {
             return PaymentStatus.valueOf(status);
         } catch (IllegalArgumentException e) {
             log.warn("알 수 없는 토스 결제 상태값. status={}", status);
-            return PaymentStatus.DONE;
+            throw new ServiceException(ErrorCode.PAYMENT_CONFIRM_FAILED);
         }
     }
 
