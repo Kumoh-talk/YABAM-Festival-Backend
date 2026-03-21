@@ -175,6 +175,27 @@ For new features, follow this sequence:
 
 Planning files (`.plan/`, `.claude/`, `.sisyphus/`) must not be mixed into production commits.
 
+## Domain Requirements Documents
+
+**Always reference these docs before implementing or modifying domain features.**
+Each document contains the current API spec, business rules, entity attributes, and state transitions.
+
+| Domain | Use Cases | Domain Model |
+|--------|-----------|--------------|
+| 가게 | `docs/store/use-cases.md` | `docs/store/domain-model.md` |
+| 테이블 | `docs/table/use-cases.md` | `docs/table/domain-model.md` |
+| 메뉴 | `docs/menu/use-cases.md` | `docs/menu/domain-model.md` |
+| 영업 | `docs/sale/use-cases.md` | `docs/sale/domain-model.md` |
+| 영수증 | `docs/receipt/use-cases.md` | `docs/receipt/domain-model.md` |
+| 주문 | `docs/order/use-cases.md` | `docs/order/domain-model.md` |
+| 직원 호출 | `docs/call/use-cases.md` | `docs/call/domain-model.md` |
+| 결제 | `docs/payment/use-cases.md` | `docs/payment/domain-model.md` |
+
+- **use-cases.md**: 액터 기반 유스케이스 명세 (한국어 prose)
+- **domain-model.md**: 엔티티 속성, API 명세, 상태 전이 다이어그램
+
+**When changing domain rules:** Run `/update-domain-docs` or the skill will auto-trigger to keep docs in sync.
+
 ## Key Domain Terminology
 
 Refer to `docs/도메인_용어집.md` for the canonical glossary. Key terms:
@@ -207,3 +228,5 @@ The following are available as Claude Code skills (invoke with `/skill-name`) an
 | `/local-application-running` | Running the full stack locally (Docker + Config + Core) |
 | `/performance-testing` | k6 load testing for Redis ZSET caching |
 | `/notion-report` | 노션 "클로드 코드 보고서" 페이지 하위에 보고서 서브페이지 생성 |
+| `/pr-to-main-v2` | 현재 브랜치 → main-v2 PR 메시지 자동 작성 및 GitHub PR 생성 안내 |
+| `/update-domain-docs` | 도메인 규칙/API/엔티티 변경 시 `docs/{domain}/requirements.md` 자동 갱신 (자동 활성화) |
