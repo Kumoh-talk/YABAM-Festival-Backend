@@ -85,7 +85,7 @@ public class TossPaymentClient {
             return PaymentStatus.valueOf(response.status());
         } catch (IllegalArgumentException e) {
             log.warn("토스페이먼츠 취소 응답 상태값 파싱 실패. status={}", response.status());
-            return PaymentStatus.CANCELED;
+            throw new ServiceException(ErrorCode.PAYMENT_CANCEL_FAILED);
         }
     }
 
