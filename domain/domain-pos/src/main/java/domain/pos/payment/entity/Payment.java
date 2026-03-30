@@ -16,10 +16,12 @@ public class Payment {
     private PaymentStatus status;
     private final String paymentMethod;
     private final LocalDateTime approvedAt;
+    private final LocalDateTime createdAt;
 
     @Builder
     public Payment(Long paymentId, UUID receiptId, String tossPaymentKey, String tossOrderId,
-        Integer amount, PaymentStatus status, String paymentMethod, LocalDateTime approvedAt) {
+        Integer amount, PaymentStatus status, String paymentMethod, LocalDateTime approvedAt,
+        LocalDateTime createdAt) {
         this.paymentId = paymentId;
         this.receiptId = receiptId;
         this.tossPaymentKey = tossPaymentKey;
@@ -28,6 +30,7 @@ public class Payment {
         this.status = status;
         this.paymentMethod = paymentMethod;
         this.approvedAt = approvedAt;
+        this.createdAt = createdAt;
     }
 
 }

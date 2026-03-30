@@ -1,5 +1,6 @@
 package domain.pos.payment.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,5 +18,12 @@ public interface PaymentRepository {
 
     Payment updateStatus(Long paymentId, PaymentStatus status);
 
+    Payment updateConfirmResult(Long paymentId, PaymentStatus status, String paymentMethod,
+        LocalDateTime approvedAt);
+
+    void delete(Long paymentId);
+
     List<Payment> findBySaleId(Long saleId);
+
+    List<Payment> findInProgressOlderThan(LocalDateTime threshold);
 }

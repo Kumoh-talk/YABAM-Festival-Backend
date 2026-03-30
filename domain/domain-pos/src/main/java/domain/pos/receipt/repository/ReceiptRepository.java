@@ -28,6 +28,8 @@ public interface ReceiptRepository {
 
 	List<Receipt> getStopReceiptsWithStore(List<UUID> receiptIds);
 
+	Optional<Receipt> getReceiptWithTableAndStoreAndLock(UUID receiptId);
+
 	Optional<Receipt> getNonStopReceiptsWithTableAndStoreAndLock(UUID receiptId);
 
 	Optional<Receipt> getReceiptsWithStoreAndLock(UUID receiptId);

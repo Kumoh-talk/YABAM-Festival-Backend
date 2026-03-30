@@ -1,5 +1,6 @@
 package domain.pos.payment.implement;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,5 +40,9 @@ public class PaymentReader {
 
     public List<Payment> findBySaleId(Long saleId) {
         return paymentRepository.findBySaleId(saleId);
+    }
+
+    public List<Payment> findInProgressOlderThan(LocalDateTime threshold) {
+        return paymentRepository.findInProgressOlderThan(threshold);
     }
 }
