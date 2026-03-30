@@ -20,6 +20,7 @@ public class PaymentMapper {
             .status(entity.getStatus())
             .paymentMethod(entity.getPaymentMethod())
             .approvedAt(entity.getApprovedAt())
+            .createdAt(entity.getCreatedAt())
             .build();
     }
 

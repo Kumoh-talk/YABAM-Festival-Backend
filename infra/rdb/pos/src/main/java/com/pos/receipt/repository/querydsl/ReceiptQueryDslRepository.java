@@ -20,6 +20,8 @@ public interface ReceiptQueryDslRepository {
 
 	List<ReceiptEntity> findStopReceiptsByIdWithStore(List<UUID> receiptIds);
 
+	Optional<ReceiptEntity> findByIdWithTableAndStoreAndLock(UUID receiptId);
+
 	Optional<ReceiptEntity> findNonStopReceiptsByIdWithTableAndStoreAndLock(UUID receiptId);
 
 	Optional<ReceiptEntity> findReceiptsByIdWithStoreAndLock(UUID receiptId);

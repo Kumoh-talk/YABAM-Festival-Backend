@@ -79,6 +79,15 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	}
 
 	@Override
+	public Optional<Receipt> getReceiptWithTableAndStoreAndLock(UUID receiptId) {
+		return receiptJpaRepository.findByIdWithTableAndStoreAndLock(receiptId)
+			.map(receiptEntity -> ReceiptMapper.toReceipt(receiptEntity,
+				TableMapper.toTable(receiptEntity.getTable(), (Store)null),
+				SaleMapper.toSale(receiptEntity.getSale(),
+					StoreMapper.toStore(receiptEntity.getSale().getStore()))));
+	}
+
+	@Override
 	public Optional<Receipt> getNonStopReceiptsWithTableAndStoreAndLock(UUID receiptId) {
 		return receiptJpaRepository.findNonStopReceiptsByIdWithTableAndStoreAndLock(receiptId)
 			.map(receiptEntity -> ReceiptMapper.toReceipt(receiptEntity,

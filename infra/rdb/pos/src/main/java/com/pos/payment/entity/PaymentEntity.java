@@ -73,4 +73,11 @@ public class PaymentEntity extends BaseEntity {
     public void updateStatus(PaymentStatus status) {
         this.status = status;
     }
+
+    public void updateConfirmResult(PaymentStatus status, String paymentMethod,
+        LocalDateTime approvedAt) {
+        this.status = status;
+        this.paymentMethod = paymentMethod;
+        this.approvedAt = approvedAt;
+    }
 }

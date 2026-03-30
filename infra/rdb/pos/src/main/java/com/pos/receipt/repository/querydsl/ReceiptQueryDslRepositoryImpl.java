@@ -64,6 +64,19 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 	}
 
 	@Override
+	public Optional<ReceiptEntity> findByIdWithTableAndStoreAndLock(UUID receiptId) {
+		ReceiptEntity receiptEntity = jpaQueryFactory.selectFrom(qReceiptEntity)
+			.join(qReceiptEntity.table).fetchJoin()
+			.join(qReceiptEntity.sale).fetchJoin()
+			.join(qReceiptEntity.sale.store).fetchJoin()
+			.where(qReceiptEntity.id.eq(receiptId))
+			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
+			.fetchOne();
+
+		return Optional.ofNullable(receiptEntity);
+	}
+
+	@Override
 	public Optional<ReceiptEntity> findNonStopReceiptsByIdWithTableAndStoreAndLock(UUID receiptId) {
 		ReceiptEntity receiptEntity = jpaQueryFactory.selectFrom(qReceiptEntity)
 			.join(qReceiptEntity.table).fetchJoin()

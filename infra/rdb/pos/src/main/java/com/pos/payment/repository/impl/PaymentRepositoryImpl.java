@@ -1,10 +1,12 @@
 package com.pos.payment.repository.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
@@ -43,6 +45,7 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     }
 
     @Override
+    @Transactional
     public Payment updateStatus(Long paymentId, PaymentStatus status) {
         PaymentEntity entity = paymentJpaRepository.findById(paymentId)
             .orElseThrow(() -> new ServiceException(ErrorCode.PAYMENT_NOT_FOUND));
@@ -51,9 +54,30 @@ public class PaymentRepositoryImpl implements PaymentRepository {
     }
 
     @Override
+    public Payment updateConfirmResult(Long paymentId, PaymentStatus status, String paymentMethod,
+        LocalDateTime approvedAt) {
+        PaymentEntity entity = paymentJpaRepository.findById(paymentId)
+            .orElseThrow(() -> new ServiceException(ErrorCode.PAYMENT_NOT_FOUND));
+        entity.updateConfirmResult(status, paymentMethod, approvedAt);
+        return PaymentMapper.toDomain(entity);
+    }
+
+    @Override
+    public void delete(Long paymentId) {
+        paymentJpaRepository.deleteById(paymentId);
+    }
+
+    @Override
     public List<Payment> findBySaleId(Long saleId) {
         return paymentJpaRepository.findBySaleId(saleId).stream()
             .map(PaymentMapper::toDomain)
             .toList();
+    }
+
+    @Override
+    public List<Payment> findInProgressOlderThan(LocalDateTime threshold) {
+        return paymentJpaRepository
+            .findByStatusAndCreatedAtBefore(PaymentStatus.IN_PROGRESS, threshold)
+            .stream().map(PaymentMapper::toDomain).toList();
     }
 }
