@@ -43,6 +43,10 @@ public class ReceiptReader {
 		return receiptRepository.getStopReceiptsWithTableAndStore(receiptIds);
 	}
 
+	public Optional<Receipt> getReceiptWithTableAndStoreAndLock(UUID receiptId) {
+		return receiptRepository.getReceiptWithTableAndStoreAndLock(receiptId);
+	}
+
 	public Optional<Receipt> getNonStopReceiptsWithTableAndStoreAndLock(UUID receiptId) {
 		return receiptRepository.getNonStopReceiptsWithTableAndStoreAndLock(receiptId);
 	}
@@ -55,7 +59,7 @@ public class ReceiptReader {
 		return receiptRepository.getNonStopReceiptsWithTableStoreAndOrdersAndLock(receiptIds);
 	}
 
-	public Page<ReceiptInfo> getAdjustedReceiptPageBySale(Pageable pageable, Long saleId) {
+	public Page<Receipt> getAdjustedReceiptPageBySale(Pageable pageable, Long saleId) {
 		return receiptRepository.getAdjustedReceiptPageBySale(pageable, saleId);
 	}
 

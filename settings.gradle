@@ -22,6 +22,7 @@ include(":domain:domain-pos")
 include(":domain:domain-event:store-event")
 
 // infra
+include(":infra:pg:toss-pg")
 include(":infra:rdb:pos")
 include(":infra:mq:kafka-pos")
 include(":infra:aws:infra-s3")

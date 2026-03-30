@@ -8,11 +8,13 @@ import com.pos.order.mapper.OrderMenuMapper;
 import com.pos.receipt.entity.ReceiptEntity;
 import com.pos.sale.entity.SaleEntity;
 import com.pos.table.entity.TableEntity;
+import com.pos.table.mapper.TableMapper;
 
 import domain.pos.order.entity.Order;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.sale.entity.Sale;
+import domain.pos.store.entity.Store;
 import domain.pos.table.entity.Table;
 
 public class ReceiptMapper {
@@ -47,10 +49,10 @@ public class ReceiptMapper {
 					.toList()))
 			.toList();
 
-		Receipt receipt = Receipt.of(
-			toReceiptInfo(receiptEntity),
-			null,
-			null);
+		Table table = receiptEntity.getTable() != null
+			? TableMapper.toTable(receiptEntity.getTable(), (Store)null)
+			: null;
+		Receipt receipt = Receipt.of(toReceiptInfo(receiptEntity), null, table);
 		receipt.getOrders().addAll(orders);
 		return receipt;
 	}

@@ -3,6 +3,7 @@ USE local_mydb;
 -- Clear
 DELETE FROM order_menus;
 DELETE FROM orders;
+DELETE FROM payments;
 DELETE FROM receipts;
 DELETE FROM tables;
 DELETE FROM menus;
@@ -11,8 +12,8 @@ DELETE FROM sales;
 DELETE FROM stores;
 
 -- 1. Store
-INSERT INTO stores (id, owner_id, is_open, name, latitude, longitude, university, table_time, table_cost, created_at, updated_at, description, head_image_url)
-VALUES (1, 1, 1, 'Test Store', 37.123, 127.123, 'Kumoh Univ', 60, 1000, NOW(), NOW(), 'Premium Store', 'http://img.com/1.jpg');
+INSERT INTO stores (id, owner_id, is_open, name, location, university, table_time, table_cost, created_at, updated_at, description, head_image_url)
+VALUES (1, 1, 1, 'Test Store', '37.123, 127.123', 'Kumoh Univ', 60, 1000, NOW(), NOW(), 'Premium Store', 'http://img.com/1.jpg');
 
 -- 2. Sale
 INSERT INTO sales (id, open_date_time, store_id)

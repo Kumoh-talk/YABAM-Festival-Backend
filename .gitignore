@@ -70,5 +70,8 @@ k6 exit*
 META-INF/
 org/
 
+# 프론트엔드 프로젝트 (독립 실행)
+/front/
+
 # 실수로 생성된 파일
 echo

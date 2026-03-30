@@ -64,6 +64,19 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 	}
 
 	@Override
+	public Optional<ReceiptEntity> findByIdWithTableAndStoreAndLock(UUID receiptId) {
+		ReceiptEntity receiptEntity = jpaQueryFactory.selectFrom(qReceiptEntity)
+			.join(qReceiptEntity.table).fetchJoin()
+			.join(qReceiptEntity.sale).fetchJoin()
+			.join(qReceiptEntity.sale.store).fetchJoin()
+			.where(qReceiptEntity.id.eq(receiptId))
+			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
+			.fetchOne();
+
+		return Optional.ofNullable(receiptEntity);
+	}
+
+	@Override
 	public Optional<ReceiptEntity> findNonStopReceiptsByIdWithTableAndStoreAndLock(UUID receiptId) {
 		ReceiptEntity receiptEntity = jpaQueryFactory.selectFrom(qReceiptEntity)
 			.join(qReceiptEntity.table).fetchJoin()
@@ -106,6 +119,7 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 	public Page<ReceiptEntity> findAdjustedReceiptPageBySaleId(Pageable pageable, Long saleId) {
 		List<ReceiptEntity> receipts = jpaQueryFactory
 			.selectFrom(qReceiptEntity)
+			.join(qReceiptEntity.table).fetchJoin()
 			.where(qReceiptEntity.sale.id.eq(saleId)
 				.and(qReceiptEntity.isAdjustment.isTrue()))
 			.offset(pageable.getOffset())
@@ -152,6 +166,7 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 
 		List<ReceiptEntity> receipts = jpaQueryFactory
 			.selectFrom(qReceiptEntity)
+			.join(qReceiptEntity.table).fetchJoin()
 			.join(qReceiptEntity.sale).fetchJoin()
 			.join(qReceiptEntity.sale.store).fetchJoin()
 			.join(qReceiptCustomerEntity).on(qReceiptCustomerEntity.receipt.id.eq(qReceiptEntity.id))
@@ -174,6 +189,7 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 	public Optional<ReceiptEntity> findByIdWithOrders(UUID receiptId) {
 		ReceiptEntity receiptEntity = jpaQueryFactory
 			.selectFrom(qReceiptEntity).distinct()
+			.join(qReceiptEntity.table).fetchJoin()
 			.leftJoin(qReceiptEntity.orders).fetchJoin()
 			.where(qReceiptEntity.id.eq(receiptId))
 			.fetchOne();

@@ -101,7 +101,7 @@ public class ReceiptService {
 	}
 
 	// Owner api
-	public Page<ReceiptInfo> getAdjustedReceiptPageBySale(Pageable pageable, UserPassport userPassport, Long saleId) {
+	public Page<Receipt> getAdjustedReceiptPageBySale(Pageable pageable, UserPassport userPassport, Long saleId) {
 		Sale sale = saleReader.readSingleSale(saleId)
 			.orElseThrow(() -> {
 				log.warn("Sale 을 찾을 수 없습니다. saleId: {}, userId: {}", saleId, null);

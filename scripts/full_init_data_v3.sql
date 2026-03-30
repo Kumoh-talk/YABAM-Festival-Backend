@@ -44,6 +44,7 @@ USE local_mydb;
 -- 기존 데이터 전체 삭제 (외래키 순서 준수)
 DELETE FROM order_menus;
 DELETE FROM orders;
+DELETE FROM payments;
 DELETE FROM receipts;
 DELETE FROM tables;
 DELETE FROM menus;
@@ -63,14 +64,14 @@ ALTER TABLE stores AUTO_INCREMENT = 1;
 -- 1. 매장 5개 (금오공과대학교 축제 부스)
 --    실제 축제 부스명 및 위치 좌표 사용 (현실감 부여)
 -- =============================================================================
-INSERT INTO stores (id, owner_id, is_open, name, latitude, longitude, university,
+INSERT INTO stores (id, owner_id, is_open, name, location, university,
                     table_time, table_cost, created_at, updated_at, description, head_image_url)
 VALUES
-(1, 1, 1, '불닭발 포차',   36.1432, 128.3172, '금오공과대학교', 60, 500, NOW(), NOW(), '매콤한 닭발 & 닭갈비 전문', 'https://dummy.com/store1.jpg'),
-(2, 2, 1, '소떡소떡 부스', 36.1433, 128.3175, '금오공과대학교', 60, 500, NOW(), NOW(), '소시지·떡볶이·핫도그',     'https://dummy.com/store2.jpg'),
-(3, 3, 1, '오삼불고기',    36.1434, 128.3178, '금오공과대학교', 60, 500, NOW(), NOW(), '오징어·삼겹살 불고기 콤보',  'https://dummy.com/store3.jpg'),
-(4, 4, 1, '바삭 닭강정',   36.1435, 128.3181, '금오공과대학교', 60, 500, NOW(), NOW(), '순살 & 뼈닭강정',           'https://dummy.com/store4.jpg'),
-(5, 5, 1, '순대볶음 마차', 36.1436, 128.3184, '금오공과대학교', 60, 500, NOW(), NOW(), '순대·야채·당면 볶음',        'https://dummy.com/store5.jpg');
+(1, 1, 1, '불닭발 포차',   '36.1432, 128.3172', '금오공과대학교', 60, 500, NOW(), NOW(), '매콤한 닭발 & 닭갈비 전문', 'https://dummy.com/store1.jpg'),
+(2, 2, 1, '소떡소떡 부스', '36.1433, 128.3175', '금오공과대학교', 60, 500, NOW(), NOW(), '소시지·떡볶이·핫도그',     'https://dummy.com/store2.jpg'),
+(3, 3, 1, '오삼불고기',    '36.1434, 128.3178', '금오공과대학교', 60, 500, NOW(), NOW(), '오징어·삼겹살 불고기 콤보',  'https://dummy.com/store3.jpg'),
+(4, 4, 1, '바삭 닭강정',   '36.1435, 128.3181', '금오공과대학교', 60, 500, NOW(), NOW(), '순살 & 뼈닭강정',           'https://dummy.com/store4.jpg'),
+(5, 5, 1, '순대볶음 마차', '36.1436, 128.3184', '금오공과대학교', 60, 500, NOW(), NOW(), '순대·야채·당면 볶음',        'https://dummy.com/store5.jpg');
 
 -- =============================================================================
 -- 2. 영업 5개 (각 매장 1개 활성 영업, 3일 전 시작 - 축제 중간 시점)

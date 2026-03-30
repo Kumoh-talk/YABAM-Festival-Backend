@@ -1,6 +1,5 @@
 package com.pos.store.mapper;
 
-import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,11 +20,10 @@ public class StoreMapper {
 			userPassport.getUserId(),
 			isOpen,
 			storeInfo.getStoreName(),
-			storeInfo.getLocation().getX(),
-			storeInfo.getLocation().getY(),
+			storeInfo.getLocation(),
 			storeInfo.getDescription(),
-			storeInfo.getHeadImageUrl(),
-			storeInfo.getUniversity(),
+			storeInfo.getThumbnailUrl(),
+			storeInfo.getUniversityName(),
 			storeInfo.getTableTime(),
 			storeInfo.getTableCost()
 		);
@@ -42,7 +40,7 @@ public class StoreMapper {
 	public static StoreInfo toStoreInfo(StoreEntity storeEntity) {
 		return StoreInfo.of(
 			storeEntity.getName(),
-			new Point2D.Double(storeEntity.getLocation().getLatitude(), storeEntity.getLocation().getLongitude()),
+			storeEntity.getLocation(),
 			storeEntity.getDescription(),
 			storeEntity.getHeadImageUrl(),
 			storeEntity.getUniversity(),
@@ -118,7 +116,11 @@ public class StoreMapper {
 			store.getName(),
 			store.isOpen(),
 			store.getHeadImageUrl(),
+			store.getLocation(),
+			store.getUniversity(),
 			store.getDescription(),
+			store.getTableCostPerTime().getTableTime(),
+			store.getTableCostPerTime().getTableCost(),
 			store.getStoreDetailImageEntity().stream()
 				.map(StoreDetailImageEntity::getImageUrl)
 				.toList()

@@ -143,7 +143,7 @@ public class ReceiptController implements ReceiptApi {
 		@RequestParam @Min(value = 1, message = "페이지 크기는 최소 1 이상입니다.") int pageSize,
 		@RequestParam(required = false) UUID lastReceiptId) {
 		Slice<ReceiptInfoResponse> receipts = receiptService.getCustomerReceiptSlice(pageSize, userPassport, customerId,
-			lastReceiptId).map(receipt -> ReceiptInfoResponse.from(receipt.getReceiptInfo()));
+			lastReceiptId).map(ReceiptInfoResponse::from);
 		return ResponseEntity.ok(createSuccessResponse(GlobalSliceResponse.from(receipts)));
 	}
 

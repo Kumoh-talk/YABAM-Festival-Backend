@@ -43,6 +43,9 @@ dependencies {
     // s3
     runtimeOnly(project(':infra:aws:infra-s3'))
 
+    // toss pg
+    runtimeOnly(project(':infra:pg:toss-pg'))
+
     // actuator
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-registry-prometheus'

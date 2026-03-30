@@ -4,7 +4,7 @@ spring:
   config:
     activate:
       on-profile: local
-    import: configserver:http://localhost:8888
+    import: configserver:http://localhost:8888,optional:classpath:toss-payment-default.yml,optional:classpath:redis-local.yml
   data:
     web:
       pageable:

@@ -1,0 +1,27 @@
+bootJar {
+    enabled = false
+}
+jar {
+    enabled = true
+}
+
+dependencies {
+    // domain-pos
+    compileOnly project(":domain:domain-pos")
+    compileOnly project(":common:base")
+
+    // Spring Web (RestClient)
+    compileOnly "org.springframework.boot:spring-boot-starter-web"
+
+    // Spring Retry
+    compileOnly "org.springframework.retry:spring-retry"
+    compileOnly "org.springframework:spring-aspects"
+
+    // test
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.springframework.boot:spring-boot-starter-web"
+    testImplementation "org.springframework.retry:spring-retry"
+    testImplementation "org.springframework:spring-aspects"
+    testImplementation project(":domain:domain-pos")
+    testImplementation project(":common:base")
+}

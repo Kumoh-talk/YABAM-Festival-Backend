@@ -122,6 +122,17 @@ public enum ErrorCode {
 	REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "REVIEW_0003", "존재하지 않는 리뷰입니다."),
 	REVIEW_NOT_USER(HttpStatus.BAD_REQUEST, "REVIEW_0004", "해당 사용자가 작성한 리뷰가 아닙니다."),
 
+	// Payment
+	PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "PAYMENT_0001", "존재하지 않는 결제 정보입니다."),
+	PAYMENT_CONFIRM_FAILED(HttpStatus.BAD_REQUEST, "PAYMENT_0002", "결제 승인에 실패했습니다."),
+	PAYMENT_CANCEL_FAILED(HttpStatus.BAD_REQUEST, "PAYMENT_0003", "결제 취소에 실패했습니다."),
+	PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "PAYMENT_0004", "결제 금액이 일치하지 않습니다."),
+	ALREADY_PAID_RECEIPT(HttpStatus.CONFLICT, "PAYMENT_0005", "이미 결제된 영수증입니다."),
+	PAYMENT_WEBHOOK_INVALID_SIGNATURE(HttpStatus.UNAUTHORIZED, "PAYMENT_0006", "웹훅 서명이 유효하지 않습니다."),
+	PAYMENT_CANCEL_AMOUNT_EXCEEDED(HttpStatus.BAD_REQUEST, "PAYMENT_0007", "취소 금액이 결제 금액을 초과합니다."),
+	PAYMENT_CONFIRM_TIMEOUT(HttpStatus.BAD_REQUEST, "PAYMENT_0008", "결제 승인 요청이 타임아웃되었습니다. 결제가 진행 중일 수 있습니다."),
+	PAYMENT_IN_PROGRESS(HttpStatus.ACCEPTED, "PAYMENT_0009", "결제 승인이 처리 중입니다. 잠시 후 결제 내역을 확인해주세요."),
+
 	// Call
 	STORE_NOT_MATCH(HttpStatus.BAD_REQUEST, "CALL_0001", "가게와 일치하지 않는 영수증에 대한 호출입니다."),
 	NOT_FOUND_CALL(HttpStatus.NOT_FOUND, "CALL_0002", "존재하지 않는 호출입니다."),
