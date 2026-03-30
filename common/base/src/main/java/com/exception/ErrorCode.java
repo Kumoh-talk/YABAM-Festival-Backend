@@ -130,6 +130,8 @@ public enum ErrorCode {
 	ALREADY_PAID_RECEIPT(HttpStatus.CONFLICT, "PAYMENT_0005", "이미 결제된 영수증입니다."),
 	PAYMENT_WEBHOOK_INVALID_SIGNATURE(HttpStatus.UNAUTHORIZED, "PAYMENT_0006", "웹훅 서명이 유효하지 않습니다."),
 	PAYMENT_CANCEL_AMOUNT_EXCEEDED(HttpStatus.BAD_REQUEST, "PAYMENT_0007", "취소 금액이 결제 금액을 초과합니다."),
+	PAYMENT_CONFIRM_TIMEOUT(HttpStatus.BAD_REQUEST, "PAYMENT_0008", "결제 승인 요청이 타임아웃되었습니다. 결제가 진행 중일 수 있습니다."),
+	PAYMENT_IN_PROGRESS(HttpStatus.ACCEPTED, "PAYMENT_0009", "결제 승인이 처리 중입니다. 잠시 후 결제 내역을 확인해주세요."),
 
 	// Call
 	STORE_NOT_MATCH(HttpStatus.BAD_REQUEST, "CALL_0001", "가게와 일치하지 않는 영수증에 대한 호출입니다."),
