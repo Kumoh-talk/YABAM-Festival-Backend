@@ -26,10 +26,11 @@ import base.ServiceTest;
 import domain.pos.payment.entity.Payment;
 import domain.pos.payment.entity.PaymentStatus;
 import domain.pos.payment.entity.TossConfirmResult;
-import domain.pos.receipt.entity.ReceiptInfo;
-import domain.pos.store.entity.Store;
+import domain.pos.payment.implement.PaymentProcessor;
 import domain.pos.payment.implement.PaymentReader;
 import domain.pos.payment.implement.PaymentWriter;
+import domain.pos.payment.implement.PreemptionResult;
+import domain.pos.store.entity.Store;
 import domain.pos.payment.port.required.TossPaymentPort;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.implement.ReceiptReader;
@@ -41,6 +42,8 @@ class PaymentServiceTest extends ServiceTest {
 
 	@Mock
 	private TossPaymentPort tossPaymentPort;
+	@Mock
+	private PaymentProcessor paymentProcessor;
 	@Mock
 	private PaymentReader paymentReader;
 	@Mock
@@ -68,7 +71,9 @@ class PaymentServiceTest extends ServiceTest {
 		@Test
 		void 성공() {
 			// given
+			Payment preemptionPayment = GENERAL_IN_PROGRESS_PAYMENT();
 			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
+			PreemptionResult preemptionResult = new PreemptionResult(preemptionPayment, receipt);
 			TossConfirmResult confirmResult = TossConfirmResult.builder()
 				.tossPaymentKey(paymentKey)
 				.tossOrderId(orderId)
@@ -79,14 +84,12 @@ class PaymentServiceTest extends ServiceTest {
 				.build();
 			Payment savedPayment = GENERAL_DONE_PAYMENT();
 
-			given(receiptReader.getReceiptWithTableAndStore(any(UUID.class)))
-				.willReturn(Optional.of(receipt));
-			given(paymentReader.findByReceiptId(any(UUID.class)))
-				.willReturn(Optional.empty());
+			given(paymentProcessor.validateAndPreempt(any(UUID.class), eq(paymentKey), eq(orderId),
+				eq(amount))).willReturn(preemptionResult);
 			given(tossPaymentPort.confirm(paymentKey, orderId, amount))
 				.willReturn(confirmResult);
-			given(paymentWriter.save(any(Payment.class)))
-				.willReturn(savedPayment);
+			given(paymentProcessor.finalizeAndSettle(eq(preemptionPayment.getPaymentId()),
+				any(TossConfirmResult.class), eq(receipt))).willReturn(savedPayment);
 
 			// when
 			Payment result = paymentService.confirmPayment(paymentKey, orderId, amount);
@@ -95,18 +98,19 @@ class PaymentServiceTest extends ServiceTest {
 			assertSoftly(softly -> {
 				softly.assertThat(result.getStatus()).isEqualTo(PaymentStatus.DONE);
 				softly.assertThat(result.getTossPaymentKey()).isEqualTo(paymentKey);
+				verify(paymentProcessor).validateAndPreempt(any(UUID.class), eq(paymentKey),
+					eq(orderId), eq(amount));
 				verify(tossPaymentPort).confirm(paymentKey, orderId, amount);
-				verify(paymentWriter).save(any(Payment.class));
-				verify(tableWriter).changeTableActiveStatus(eq(false), any());
-				verify(receiptWriter).adjustReceipts(anyList());
+				verify(paymentProcessor).finalizeAndSettle(eq(preemptionPayment.getPaymentId()),
+					any(TossConfirmResult.class), eq(receipt));
 			});
 		}
 
 		@Test
 		void 실패_영수증_없음() {
 			// given
-			given(receiptReader.getReceiptWithTableAndStore(any(UUID.class)))
-				.willReturn(Optional.empty());
+			given(paymentProcessor.validateAndPreempt(any(UUID.class), eq(paymentKey), eq(orderId),
+				eq(amount))).willThrow(new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
 
 			// when -> then
 			assertSoftly(softly -> {
@@ -116,17 +120,15 @@ class PaymentServiceTest extends ServiceTest {
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
 
 				verify(tossPaymentPort, never()).confirm(any(), any(), any());
-				verify(paymentWriter, never()).save(any());
+				verify(paymentProcessor, never()).finalizeAndSettle(any(), any(), any());
 			});
 		}
 
 		@Test
 		void 실패_이미_정산된_영수증() {
 			// given
-			Receipt adjustedReceipt = GENERAL_ADJUSTMENT_RECEIPT();
-
-			given(receiptReader.getReceiptWithTableAndStore(any(UUID.class)))
-				.willReturn(Optional.of(adjustedReceipt));
+			given(paymentProcessor.validateAndPreempt(any(UUID.class), eq(paymentKey), eq(orderId),
+				eq(amount))).willThrow(new ServiceException(ErrorCode.ALREADY_PAID_RECEIPT));
 
 			// when -> then
 			assertSoftly(softly -> {
@@ -135,7 +137,6 @@ class PaymentServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_PAID_RECEIPT);
 
-				verify(paymentReader, never()).findByReceiptId(any());
 				verify(tossPaymentPort, never()).confirm(any(), any(), any());
 			});
 		}
@@ -143,13 +144,8 @@ class PaymentServiceTest extends ServiceTest {
 		@Test
 		void 실패_이미_결제된_영수증() {
 			// given
-			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
-			Payment existingPayment = GENERAL_DONE_PAYMENT();
-
-			given(receiptReader.getReceiptWithTableAndStore(any(UUID.class)))
-				.willReturn(Optional.of(receipt));
-			given(paymentReader.findByReceiptId(any(UUID.class)))
-				.willReturn(Optional.of(existingPayment));
+			given(paymentProcessor.validateAndPreempt(any(UUID.class), eq(paymentKey), eq(orderId),
+				eq(amount))).willThrow(new ServiceException(ErrorCode.ALREADY_PAID_RECEIPT));
 
 			// when -> then
 			assertSoftly(softly -> {
@@ -165,18 +161,9 @@ class PaymentServiceTest extends ServiceTest {
 		@Test
 		void 실패_결제금액_불일치() {
 			// given
-			ReceiptInfo feeReceiptInfo = ReceiptInfo.builder()
-				.receiptId(GENERAL_RECEIPT_ID)
-				.isAdjustment(false)
-				.occupancyFee(GENERAL_AMOUNT)
-				.build();
-			Receipt receipt = CUSTOM_RECEIPT(feeReceiptInfo, GENERAL_OPEN_SALE, GENERAL_TABLE);
 			Integer wrongAmount = GENERAL_AMOUNT + 1000;
-
-			given(receiptReader.getReceiptWithTableAndStore(any(UUID.class)))
-				.willReturn(Optional.of(receipt));
-			given(paymentReader.findByReceiptId(any(UUID.class)))
-				.willReturn(Optional.empty());
+			given(paymentProcessor.validateAndPreempt(any(UUID.class), eq(paymentKey), eq(orderId),
+				eq(wrongAmount))).willThrow(new ServiceException(ErrorCode.PAYMENT_AMOUNT_MISMATCH));
 
 			// when -> then
 			assertSoftly(softly -> {
@@ -201,14 +188,17 @@ class PaymentServiceTest extends ServiceTest {
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.INVALID_INPUT_VALUE);
 
-				verify(receiptReader, never()).getReceiptWithTableAndStore(any());
+				verify(paymentProcessor, never()).validateAndPreempt(any(), any(), any(), any());
+				verify(tossPaymentPort, never()).confirm(any(), any(), any());
 			});
 		}
 
 		@Test
 		void 성공_가상계좌_입금대기_영수증_정산_안함() {
 			// given
+			Payment preemptionPayment = GENERAL_IN_PROGRESS_PAYMENT();
 			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
+			PreemptionResult preemptionResult = new PreemptionResult(preemptionPayment, receipt);
 			TossConfirmResult waitingResult = TossConfirmResult.builder()
 				.tossPaymentKey(paymentKey)
 				.tossOrderId(orderId)
@@ -217,24 +207,144 @@ class PaymentServiceTest extends ServiceTest {
 				.paymentMethod("가상계좌")
 				.approvedAt(null)
 				.build();
-			Payment savedPayment = GENERAL_DONE_PAYMENT();
+			Payment savedPayment = GENERAL_WAITING_FOR_DEPOSIT_PAYMENT();
 
-			given(receiptReader.getReceiptWithTableAndStore(any(UUID.class)))
-				.willReturn(Optional.of(receipt));
-			given(paymentReader.findByReceiptId(any(UUID.class)))
-				.willReturn(Optional.empty());
+			given(paymentProcessor.validateAndPreempt(any(UUID.class), eq(paymentKey), eq(orderId),
+				eq(amount))).willReturn(preemptionResult);
 			given(tossPaymentPort.confirm(paymentKey, orderId, amount))
 				.willReturn(waitingResult);
-			given(paymentWriter.save(any(Payment.class)))
-				.willReturn(savedPayment);
+			given(paymentProcessor.finalizeAndSettle(eq(preemptionPayment.getPaymentId()),
+				any(TossConfirmResult.class), eq(receipt))).willReturn(savedPayment);
 
 			// when
 			paymentService.confirmPayment(paymentKey, orderId, amount);
 
 			// then
-			verify(paymentWriter).save(any(Payment.class));
-			verify(tableWriter, never()).changeTableActiveStatus(anyBoolean(), any());
-			verify(receiptWriter, never()).adjustReceipts(anyList());
+			verify(paymentProcessor).finalizeAndSettle(eq(preemptionPayment.getPaymentId()),
+				any(TossConfirmResult.class), eq(receipt));
+		}
+
+		@Test
+		void 실패_PG_호출_실패시_선점_레코드_ABORTED_처리() {
+			// given
+			Payment preemptionPayment = GENERAL_IN_PROGRESS_PAYMENT();
+			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
+			PreemptionResult preemptionResult = new PreemptionResult(preemptionPayment, receipt);
+
+			given(paymentProcessor.validateAndPreempt(any(UUID.class), eq(paymentKey), eq(orderId),
+				eq(amount))).willReturn(preemptionResult);
+			given(tossPaymentPort.confirm(paymentKey, orderId, amount))
+				.willThrow(new ServiceException(ErrorCode.PAYMENT_CONFIRM_FAILED));
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(
+						() -> paymentService.confirmPayment(paymentKey, orderId, amount))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_CONFIRM_FAILED);
+
+				verify(paymentWriter).updateStatus(preemptionPayment.getPaymentId(),
+					PaymentStatus.ABORTED);
+				verify(paymentProcessor, never()).finalizeAndSettle(any(), any(), any());
+			});
+		}
+
+		@Test
+		void 실패_타임아웃_재전송_소진시_선점_레코드_IN_PROGRESS_유지_스케줄러_복구_대기() {
+			// given
+			Payment preemptionPayment = GENERAL_IN_PROGRESS_PAYMENT();
+			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
+			PreemptionResult preemptionResult = new PreemptionResult(preemptionPayment, receipt);
+
+			given(paymentProcessor.validateAndPreempt(any(UUID.class), eq(paymentKey), eq(orderId),
+				eq(amount))).willReturn(preemptionResult);
+			given(tossPaymentPort.confirm(paymentKey, orderId, amount))
+				.willThrow(new ServiceException(ErrorCode.PAYMENT_CONFIRM_TIMEOUT));
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(
+						() -> paymentService.confirmPayment(paymentKey, orderId, amount))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_IN_PROGRESS);
+
+				// 타임아웃 소진 — ABORTED 마킹 없이 IN_PROGRESS 유지 (스케줄러가 복구)
+				verify(paymentWriter, never()).updateStatus(any(), eq(PaymentStatus.ABORTED));
+				verify(paymentProcessor, never()).finalizeAndSettle(any(), any(), any());
+			});
+		}
+
+		@Test
+		void 실패_저장_실패시_DONE_결제_보상_취소_및_선점_레코드_ABORTED_처리() {
+			// given
+			Payment preemptionPayment = GENERAL_IN_PROGRESS_PAYMENT();
+			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
+			PreemptionResult preemptionResult = new PreemptionResult(preemptionPayment, receipt);
+			TossConfirmResult doneResult = TossConfirmResult.builder()
+				.tossPaymentKey(paymentKey)
+				.tossOrderId(orderId)
+				.amount(amount)
+				.status(PaymentStatus.DONE)
+				.paymentMethod(GENERAL_PAYMENT_METHOD)
+				.approvedAt(GENERAL_APPROVED_AT)
+				.build();
+
+			given(paymentProcessor.validateAndPreempt(any(UUID.class), eq(paymentKey), eq(orderId),
+				eq(amount))).willReturn(preemptionResult);
+			given(tossPaymentPort.confirm(paymentKey, orderId, amount))
+				.willReturn(doneResult);
+			given(paymentProcessor.finalizeAndSettle(eq(preemptionPayment.getPaymentId()),
+				any(TossConfirmResult.class), eq(receipt)))
+				.willThrow(new RuntimeException("DB 저장 실패"));
+			given(tossPaymentPort.cancel(paymentKey, "결제 데이터 저장 실패로 인한 자동 취소", null))
+				.willReturn(PaymentStatus.CANCELED);
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(
+						() -> paymentService.confirmPayment(paymentKey, orderId, amount))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_CONFIRM_FAILED);
+
+				verify(tossPaymentPort).cancel(eq(paymentKey),
+					eq("결제 데이터 저장 실패로 인한 자동 취소"), isNull());
+				verify(paymentWriter).updateStatus(preemptionPayment.getPaymentId(),
+					PaymentStatus.ABORTED);
+			});
+		}
+
+		@Test
+		void 실패_저장_실패_보상_취소도_실패해도_PAYMENT_CONFIRM_FAILED_반환() {
+			// given
+			Payment preemptionPayment = GENERAL_IN_PROGRESS_PAYMENT();
+			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
+			PreemptionResult preemptionResult = new PreemptionResult(preemptionPayment, receipt);
+			TossConfirmResult doneResult = TossConfirmResult.builder()
+				.tossPaymentKey(paymentKey)
+				.tossOrderId(orderId)
+				.amount(amount)
+				.status(PaymentStatus.DONE)
+				.paymentMethod(GENERAL_PAYMENT_METHOD)
+				.approvedAt(GENERAL_APPROVED_AT)
+				.build();
+
+			given(paymentProcessor.validateAndPreempt(any(UUID.class), eq(paymentKey), eq(orderId),
+				eq(amount))).willReturn(preemptionResult);
+			given(tossPaymentPort.confirm(paymentKey, orderId, amount))
+				.willReturn(doneResult);
+			given(paymentProcessor.finalizeAndSettle(eq(preemptionPayment.getPaymentId()),
+				any(TossConfirmResult.class), eq(receipt)))
+				.willThrow(new RuntimeException("DB 저장 실패"));
+			given(tossPaymentPort.cancel(anyString(), anyString(), isNull()))
+				.willThrow(new ServiceException(ErrorCode.PAYMENT_CANCEL_FAILED));
+
+			// when -> then
+			assertSoftly(softly -> {
+				softly.assertThatThrownBy(
+						() -> paymentService.confirmPayment(paymentKey, orderId, amount))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_CONFIRM_FAILED);
+			});
 		}
 	}
 

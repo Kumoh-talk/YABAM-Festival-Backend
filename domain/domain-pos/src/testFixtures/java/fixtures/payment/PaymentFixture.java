@@ -55,6 +55,19 @@ public class PaymentFixture {
 			.build();
 	}
 
+	public static Payment GENERAL_IN_PROGRESS_PAYMENT() {
+		return Payment.builder()
+			.paymentId(GENERAL_PAYMENT_ID)
+			.receiptId(GENERAL_RECEIPT_ID)
+			.tossPaymentKey(GENERAL_TOSS_PAYMENT_KEY)
+			.tossOrderId(GENERAL_TOSS_ORDER_ID)
+			.amount(GENERAL_AMOUNT)
+			.status(PaymentStatus.IN_PROGRESS)
+			.paymentMethod(null)
+			.approvedAt(null)
+			.build();
+	}
+
 	public static Payment GENERAL_WAITING_FOR_DEPOSIT_PAYMENT() {
 		return Payment.builder()
 			.paymentId(GENERAL_PAYMENT_ID)

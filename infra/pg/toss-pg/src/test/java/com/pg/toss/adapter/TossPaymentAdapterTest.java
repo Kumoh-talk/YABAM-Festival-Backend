@@ -21,8 +21,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
+import com.pg.toss.client.AlreadyProcessedAtTossException;
 import com.pg.toss.client.TossPaymentClient;
 import com.pg.toss.config.TossPaymentProperties;
+
+import domain.pos.payment.entity.PaymentStatus;
+import domain.pos.payment.entity.TossConfirmResult;
 
 @ExtendWith(MockitoExtension.class)
 class TossPaymentAdapterTest {
@@ -41,6 +45,55 @@ class TossPaymentAdapterTest {
     @BeforeEach
     void setUp() {
         adapter = new TossPaymentAdapter(tossPaymentClient, properties);
+    }
+
+    @Nested
+    @DisplayName("결제 승인 — ALREADY_PROCESSED_PAYMENT 복구")
+    class ConfirmAlreadyProcessed {
+
+        private static final String PAYMENT_KEY = "toss_payment_key_test_1234567890";
+        private static final String ORDER_ID = "123e4567-e89b-12d3-a456-426614174000";
+        private static final Integer AMOUNT = 10000;
+
+        @Test
+        void ALREADY_PROCESSED_PAYMENT_수신시_getPayment로_복구하여_반환() {
+            // given
+            TossConfirmResult recoveredResult = TossConfirmResult.builder()
+                .tossPaymentKey(PAYMENT_KEY)
+                .tossOrderId(ORDER_ID)
+                .amount(AMOUNT)
+                .status(PaymentStatus.DONE)
+                .paymentMethod("카드")
+                .approvedAt(null)
+                .build();
+
+            given(tossPaymentClient.confirm(PAYMENT_KEY, ORDER_ID, AMOUNT))
+                .willThrow(new AlreadyProcessedAtTossException(PAYMENT_KEY));
+            given(tossPaymentClient.getPayment(PAYMENT_KEY))
+                .willReturn(recoveredResult);
+
+            // when
+            TossConfirmResult result = adapter.confirm(PAYMENT_KEY, ORDER_ID, AMOUNT);
+
+            // then
+            assertThat(result.getStatus()).isEqualTo(PaymentStatus.DONE);
+            assertThat(result.getTossPaymentKey()).isEqualTo(PAYMENT_KEY);
+            then(tossPaymentClient).should().getPayment(PAYMENT_KEY);
+        }
+
+        @Test
+        void ALREADY_PROCESSED_PAYMENT_후_getPayment_실패시_예외_전파() {
+            // given
+            given(tossPaymentClient.confirm(PAYMENT_KEY, ORDER_ID, AMOUNT))
+                .willThrow(new AlreadyProcessedAtTossException(PAYMENT_KEY));
+            given(tossPaymentClient.getPayment(PAYMENT_KEY))
+                .willThrow(new ServiceException(ErrorCode.PAYMENT_NOT_FOUND));
+
+            // when / then
+            assertThatThrownBy(() -> adapter.confirm(PAYMENT_KEY, ORDER_ID, AMOUNT))
+                .isInstanceOf(ServiceException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_NOT_FOUND);
+        }
     }
 
     @Nested
