@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.exception.ErrorCode;
 import com.exception.ServiceException;
+import com.pg.toss.client.AlreadyProcessedAtTossException;
 import com.pg.toss.client.TossPaymentClient;
 import com.pg.toss.config.TossPaymentProperties;
 
@@ -33,7 +34,13 @@ public class TossPaymentAdapter implements TossPaymentPort {
 
     @Override
     public TossConfirmResult confirm(String paymentKey, String orderId, Integer amount) {
-        return tossPaymentClient.confirm(paymentKey, orderId, amount);
+        try {
+            return tossPaymentClient.confirm(paymentKey, orderId, amount);
+        } catch (AlreadyProcessedAtTossException e) {
+            // 토스에서 이미 처리됐지만 로컬에 없는 경우 — 현재 결제 상태를 조회해서 반환
+            log.warn("토스페이먼츠 ALREADY_PROCESSED_PAYMENT 수신. 결제 상태 조회로 복구. paymentKey={}", paymentKey);
+            return tossPaymentClient.getPayment(paymentKey);
+        }
     }
 
     @Override
