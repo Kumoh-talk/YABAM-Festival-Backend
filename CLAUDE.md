@@ -230,3 +230,5 @@ The following are available as Claude Code skills (invoke with `/skill-name`) an
 | `/notion-report` | 노션 "클로드 코드 보고서" 페이지 하위에 보고서 서브페이지 생성 |
 | `/pr-to-main-v2` | 현재 브랜치 → main-v2 PR 메시지 자동 작성 및 GitHub PR 생성 안내 |
 | `/update-domain-docs` | 도메인 규칙/API/엔티티 변경 시 `docs/{domain}/requirements.md` 자동 갱신 (자동 활성화) |
+| `/excalidraw-diagram` | 시스템 아키텍처, 유스케이스, 플로우차트, ER, 상태 전이 등 소프트웨어 다이어그램 생성 |
+| `/excalidraw-SSD` | 시스템 시퀀스 다이어그램 생성 — 참여자 아이콘 + 번호 화살표 스타일, Node.js로 JSON 직접 생성 |
