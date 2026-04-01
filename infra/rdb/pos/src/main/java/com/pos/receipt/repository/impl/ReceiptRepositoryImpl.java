@@ -1,6 +1,5 @@
 package com.pos.receipt.repository.impl;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -149,18 +148,17 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 
 	@Override
 	public List<Receipt> stopReceiptsWithMenu(List<Receipt> patchReceipts) {
-		List<Receipt> responseReceipts = new ArrayList<>();
-		for (Receipt patchReceipt : patchReceipts) {
-			ReceiptEntity receiptEntity = receiptJpaRepository.findByIdWithOrders(
-					patchReceipt.getReceiptInfo().getReceiptId())
-				.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
-			receiptEntity.updateInfo(patchReceipt.getReceiptInfo());
-
-			Receipt receipt = ReceiptMapper.toReceiptWithMenus(receiptEntity);
-			receipt.filterCompletedOrders();
-			responseReceipts.add(receipt);
-		}
-		return responseReceipts;
+		return patchReceipts.stream()
+			.map(patchReceipt -> {
+				ReceiptEntity receiptEntity = receiptJpaRepository.findByIdWithOrders(
+						patchReceipt.getReceiptInfo().getReceiptId())
+					.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
+				receiptEntity.updateInfo(patchReceipt.getReceiptInfo());
+				Receipt receipt = ReceiptMapper.toReceiptWithMenus(receiptEntity);
+				receipt.filterCompletedOrders();
+				return receipt;
+			})
+			.toList();
 	}
 
 	@Override

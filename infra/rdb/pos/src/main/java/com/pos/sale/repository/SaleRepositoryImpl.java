@@ -84,11 +84,7 @@ public class SaleRepositoryImpl implements SaleRepository {
 		if (hasNext) {
 			fetch.remove(size);
 		}
-		List<Sale> list = fetch.stream()
-			.map(SaleMapper::toSale)
-			.toList();
-
-		return new SliceImpl<>(list, PageRequest.of(0, size), hasNext);
+		return new SliceImpl<>(fetch.stream().map(SaleMapper::toSale).toList(), PageRequest.of(0, size), hasNext);
 	}
 
 	private BooleanExpression saleSliceCursorCondition(Long storeId, Long lastSaleId) {

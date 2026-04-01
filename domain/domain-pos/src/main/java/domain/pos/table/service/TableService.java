@@ -68,19 +68,14 @@ public class TableService {
 			log.warn("가게가 운영중입니다. 테이블 생성 불가 : storeId={}", table.getStore().getId());
 			throw new ServiceException(ErrorCode.STORE_IS_OPEN_TABLE_WRITE);
 		}
-		if (isDiffTableNumAndQueryNum(updateTableNumber, table)) {
-			if (tableReader.isExistsTableByStoreAndTableNumWithLock(table.getStore(), updateTableNumber)) {
-				log.warn("존재하는 테이블 수정 에러 : storeId={}, tableNumber={}",
-					table.getStore().getId(),
-					updateTableNumber);
-				throw new ServiceException(ErrorCode.EXIST_TABLE);
-			}
+		if (!table.getTableNumber().equals(updateTableNumber)
+			&& tableReader.isExistsTableByStoreAndTableNumWithLock(table.getStore(), updateTableNumber)) {
+			log.warn("존재하는 테이블 수정 에러 : storeId={}, tableNumber={}",
+				table.getStore().getId(),
+				updateTableNumber);
+			throw new ServiceException(ErrorCode.EXIST_TABLE);
 		}
 		tableWriter.updateTable(table, updateTableNumber, updateTablePoint, tableCapacity);
-	}
-
-	private static boolean isDiffTableNumAndQueryNum(Integer updateTableNumber, Table table) {
-		return !table.getTableNumber().equals(updateTableNumber);
 	}
 
 	private static boolean isNotStoreOwnerOfTable(UserPassport ownerPassport, Table table) {

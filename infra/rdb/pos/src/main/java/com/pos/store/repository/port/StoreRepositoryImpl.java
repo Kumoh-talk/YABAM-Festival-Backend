@@ -125,12 +125,12 @@ public class StoreRepositoryImpl implements StoreRepository {
 
 	@Override
 	public List<Store> findMyStores(Long userId) {
-		List<StoreEntity> storeEntities = queryFactory.select(qStoreEntity)
+		return queryFactory.select(qStoreEntity)
 			.from(qStoreEntity)
 			.leftJoin(qStoreEntity.storeDetailImageEntity, qStoreDetailImageEntity).fetchJoin()
 			.where(qStoreEntity.ownerId.eq(userId))
-			.fetch();
-		return storeEntities.stream()
+			.fetch()
+			.stream()
 			.map(StoreMapper::toStoreWithDetailImages)
 			.toList();
 	}
