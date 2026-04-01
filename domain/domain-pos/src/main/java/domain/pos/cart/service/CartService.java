@@ -11,11 +11,9 @@ import com.exception.ServiceException;
 import domain.pos.cart.entity.Cart;
 import domain.pos.cart.implement.CartWriter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class CartService {
 	private final CartWriter cartWriter;
 
@@ -23,12 +21,7 @@ public class CartService {
 		if (cartWriter.isCartPending(receiptId)) {
 			throw new ServiceException(ErrorCode.CART_ORDER_SESSION_ACTIVE);
 		}
-		try {
-			cartWriter.upsertCart(receiptId, menuId, quantity);
-		} catch (IllegalArgumentException e) {
-			log.warn(e.getMessage());
-			throw new ServiceException(ErrorCode.MENU_NOT_FOUND);
-		}
+		cartWriter.upsertCart(receiptId, menuId, quantity);
 	}
 
 	public void deleteCartMenu(final UUID receiptId, final Long menuId) {

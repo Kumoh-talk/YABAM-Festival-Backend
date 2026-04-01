@@ -25,11 +25,6 @@ public class SsePosService implements SseEventHandler {
 	@Override
 	public void handleEventWithSSE(SseChannelProvider sseChannelProvider, String eventName, String key,
 		Object eventData) {
-		unicast(sseChannelProvider, eventName, Long.parseLong(key), eventData);
-	}
-
-	private void unicast(SseChannelProvider sseChannelProvider, String eventName, Long storeId,
-		Object eventData) {
-		sseChannelMap.get(sseChannelProvider).unicast(eventName, storeId, eventData);
+		sseChannelMap.get(sseChannelProvider).unicast(eventName, Long.parseLong(key), eventData);
 	}
 }

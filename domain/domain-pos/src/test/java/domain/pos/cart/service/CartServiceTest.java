@@ -52,7 +52,7 @@ class CartServiceTest extends ServiceTest {
 		@Test
 		void menuId가_유효하지_않은_경우() {
 			given(cartWriter.isCartPending(receiptId)).willReturn(false);
-			doThrow(IllegalArgumentException.class)
+			doThrow(new ServiceException(ErrorCode.MENU_NOT_FOUND))
 				.when(cartWriter).upsertCart(receiptId, menuId, quantity);
 
 			assertThatThrownBy(() -> cartService.upsertCart(receiptId, menuId, quantity))
