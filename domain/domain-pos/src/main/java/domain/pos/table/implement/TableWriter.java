@@ -16,8 +16,7 @@ public class TableWriter {
 	private final TableRepository tableRepository;
 
 	public Table changeTableActiveStatus(boolean isActive, Table savedInActiveTable) {
-		Table changeActiveTable = tableRepository.changeTableActiveStatus(isActive, savedInActiveTable);
-		return changeActiveTable;
+		return tableRepository.changeTableActiveStatus(isActive, savedInActiveTable);
 	}
 
 	public UUID createTable(Store store, Integer tableNumber, TablePoint tablePoint, Integer tableCapacity) {
