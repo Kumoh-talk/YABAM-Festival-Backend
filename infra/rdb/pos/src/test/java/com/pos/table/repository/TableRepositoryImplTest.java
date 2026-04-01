@@ -48,11 +48,9 @@ class TableRepositoryImplTest extends RepositoryTest {
 		List<TableEntity> tableEntities = testFixtureBuilder
 			.buildTableEntityList(TABLEENTITY_LIST(3, savedStoreEntity));
 
-		System.out.println("===TableRepositoryImplTest.테이블_아이디로_락_조회 쿼리===");
 		Table table = tableRepository.findByIdWithLock(tableEntities.get(0).getId(), savedStore.getId()).get();
 		testEntityManager.flush();
 		testEntityManager.clear();
-		System.out.println("===TableRepositoryImplTest.테이블_아이디로_락_조회 쿼리===");
 
 		assertSoftly(softly -> {
 			softly.assertThat(table.getId()).isEqualTo(tableEntities.get(0).getId());
@@ -68,9 +66,7 @@ class TableRepositoryImplTest extends RepositoryTest {
 
 		@Test
 		void false_테이블없음() {
-			System.out.println("===TableRepositoryImplTest.existsTableByStoreAndTableNumWithLock 쿼리===");
 			boolean exists = tableRepository.existsTableByStoreAndTableNumWithLock(savedStore, 1);
-			System.out.println("===TableRepositoryImplTest.existsTableByStoreAndTableNumWithLock 쿼리===");
 			assertThat(exists).isFalse();
 		}
 
@@ -79,9 +75,7 @@ class TableRepositoryImplTest extends RepositoryTest {
 			testFixtureBuilder.buildTableEntityList(TABLEENTITY_LIST(2, savedStoreEntity));
 			testEntityManager.flush();
 			testEntityManager.clear();
-			System.out.println("===TableRepositoryImplTest.existsTableByStoreAndTableNumWithLock 쿼리===");
 			boolean exists = tableRepository.existsTableByStoreAndTableNumWithLock(savedStore, 2);
-			System.out.println("===TableRepositoryImplTest.existsTableByStoreAndTableNumWithLock 쿼리===");
 			assertThat(exists).isTrue();
 		}
 	}
@@ -92,9 +86,7 @@ class TableRepositoryImplTest extends RepositoryTest {
 		Integer tableNum = 1;
 		TablePoint point = TablePoint.of(3, 4);
 		Integer tableCapacity = 4;
-		System.out.println("===TableRepositoryImplTest.saveTable 쿼리===");
 		UUID id = tableRepository.saveTable(savedStore, tableNum, point, tableCapacity);
-		System.out.println("===TableRepositoryImplTest.saveTable 쿼리===");
 		testEntityManager.flush();
 		testEntityManager.clear();
 		assertSoftly(softly -> {
@@ -112,9 +104,7 @@ class TableRepositoryImplTest extends RepositoryTest {
 		TableEntity tableEntity = testFixtureBuilder.buildTableEntity(GENERAL_TABLE_ENTITY(savedStoreEntity));
 		testEntityManager.flush();
 		testEntityManager.clear();
-		System.out.println("===TableRepositoryImplTest.findTableJoinStore 쿼리===");
 		Optional<Table> opt = tableRepository.findTableWithStoreByTableId(tableEntity.getId());
-		System.out.println("===TableRepositoryImplTest.findTableJoinStore 쿼리===");
 		assertSoftly(softly -> {
 			softly.assertThat(opt).isPresent();
 			Table table = opt.get();
@@ -133,9 +123,7 @@ class TableRepositoryImplTest extends RepositoryTest {
 		Integer newNumber = table.getTableNumber().value() + 2;
 		TablePoint newPoint = TablePoint.of(7, 8);
 		Integer newCapacity = table.getTableCapacity().value() + 1;
-		System.out.println("===TableRepositoryImplTest.updateTableInfo 쿼리===");
 		tableRepository.updateTableInfo(table, newNumber, newPoint, newCapacity);
-		System.out.println("===TableRepositoryImplTest.updateTableInfo 쿼리===");
 		testEntityManager.flush();
 		testEntityManager.clear();
 		assertSoftly(softly -> {

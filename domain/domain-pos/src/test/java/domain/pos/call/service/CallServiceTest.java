@@ -94,7 +94,7 @@ class CallServiceTest extends ServiceTest {
 			@Test
 			@DisplayName("영수증이 닫힌 가게와 연결돼 있으면 CONFLICT_CLOSE_STORE")
 			void 실패_가게_종료() {
-				Store store = GENERAL_CLOSE_STORE();           // isOpen = false
+				Store store = GENERAL_CLOSE_STORE();
 				Table table = GENERAL_ACTIVE_TABLE(store);
 				Sale sale = SaleFixture.GENERAL_OPEN_SALE(store);
 				Receipt receipt = CUSTOM_ADJUSTMENT_RECEIPT(sale, table);

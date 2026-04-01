@@ -34,7 +34,6 @@ class UuidUtilsTest {
 			UuidUtils.randomV7();
 		}
 		long endTime = System.currentTimeMillis();
-		System.out.println("UUID 생성 시간: " + (endTime - startTime) + "ms");
 		assertTrue((endTime - startTime) < 100000, "UUID generation took too long");
 	}
 }

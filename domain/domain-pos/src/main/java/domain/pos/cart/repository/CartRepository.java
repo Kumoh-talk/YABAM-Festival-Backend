@@ -20,15 +20,11 @@ public interface CartRepository {
 	// FOR UPDATE 락으로 Cart 조회 (주문 생성 시 사용)
 	Optional<Cart> getCartWithLock(UUID receiptId);
 
-	// 외부에서 영수증을 삭제할 때, 장바구니도 삭제한다.
 	void deleteCartAndCartMenuByReceiptId(UUID receiptId);
 
-	// 세션 진입 → sessionToken 생성 + Cart 반환
 	Cart enterOrderSession(UUID receiptId);
 
-	// 토큰 검증 후 세션 해제
 	void cancelOrderSession(UUID receiptId, UUID token);
 
-	// 세션 활성 여부 확인 (장바구니 수정 차단용)
 	boolean isCartPending(UUID receiptId);
 }

@@ -45,7 +45,6 @@ class SaleRepositoryImplTest extends RepositoryTest {
 		testEntityManager.flush();
 		testEntityManager.clear();
 
-		System.out.println("===SaleRepositoryImplTest.Sale와Store_DB데이터를_찾을수_있다 쿼리===");
 		Sale resultSale = saleRepository.findSaleWithStoreBySaleId(saleEntity.getId()).get();
 
 		assertSoftly(softly -> {
@@ -58,11 +57,9 @@ class SaleRepositoryImplTest extends RepositoryTest {
 
 	@Test
 	void Sale생성_테스트() {
-		System.out.println("===SaleRepositoryImplTest.Sale생성 쿼리===");
 		Sale resultSale = saleRepository.createSale(savedStore);
 		testEntityManager.flush();
 		testEntityManager.clear();
-		System.out.println("===SaleRepositoryImplTest.Sale생성 쿼리===");
 		Sale sale = saleRepository.findSaleWithStoreBySaleId(resultSale.getId()).get();
 		assertSoftly(softly -> {
 			softly.assertThat(sale.getId()).isEqualTo(resultSale.getId());
@@ -81,11 +78,9 @@ class SaleRepositoryImplTest extends RepositoryTest {
 		testEntityManager.flush();
 		testEntityManager.clear();
 
-		System.out.println("===SaleRepositoryImplTest.Sale_마감 쿼리===");
 		Sale resultSale = saleRepository.closeSale(savedSale, savedStore);
 		testEntityManager.flush();
 		testEntityManager.clear();
-		System.out.println("===SaleRepositoryImplTest.Sale_마감 쿼리===");
 		Sale sale = saleRepository.findSaleWithStoreBySaleId(resultSale.getId()).get();
 		assertSoftly(softly -> {
 			softly.assertThat(sale.getId()).isEqualTo(savedSale.getId());
@@ -105,9 +100,7 @@ class SaleRepositoryImplTest extends RepositoryTest {
 		testEntityManager.flush();
 		testEntityManager.clear();
 
-		System.out.println("===SaleRepositoryImplTest.SaleCursor_리스트_조회 쿼리===");
 		Slice<Sale> resultSale = saleRepository.getSaleSliceByStoreId(savedStore.getId(), null, 3);
-		System.out.println("===SaleRepositoryImplTest.SaleCursor_리스트_조회 쿼리===");
 
 		assertSoftly(softly -> {
 			softly.assertThat(resultSale.getContent().size()).isEqualTo(3);
@@ -124,9 +117,7 @@ class SaleRepositoryImplTest extends RepositoryTest {
 		testEntityManager.flush();
 		testEntityManager.clear();
 
-		System.out.println("===SaleRepositoryImplTest.SaleCursor_리스트_조회 쿼리===");
 		Optional<Sale> result = saleRepository.findOpenSaleByStoreId(savedStore.getId());
-		System.out.println("===SaleRepositoryImplTest.SaleCursor_리스트_조회 쿼리===");
 
 		assertThat(result).isNotEmpty();
 		assertThat(result.get().getId()).isEqualTo(openSaleEntity.getId());
@@ -138,9 +129,7 @@ class SaleRepositoryImplTest extends RepositoryTest {
 		testEntityManager.flush();
 		testEntityManager.clear();
 
-		System.out.println("===SaleRepositoryImplTest.SaleCursor_리스트_조회 쿼리===");
 		Optional<Sale> result = saleRepository.findOpenSaleByStoreId(savedStore.getId());
-		System.out.println("===SaleRepositoryImplTest.SaleCursor_리스트_조회 쿼리===");
 
 		assertThat(result).isEmpty();
 	}

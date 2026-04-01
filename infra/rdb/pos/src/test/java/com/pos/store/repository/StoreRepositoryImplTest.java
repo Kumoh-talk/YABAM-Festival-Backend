@@ -72,11 +72,9 @@ class StoreRepositoryImplTest extends RepositoryTest {
 		testEntityManager.clear();
 
 		StoreInfo changedStoreInfo = CHANGED_GENERAL_STORE().getStoreInfo();
-		System.out.println("===StoreRepositoryImplTest.StoreInfo_변경_테스트 쿼리===");
 		storeRepository.changeStoreInfo(savedStore, changedStoreInfo);
 		testEntityManager.flush();
 		testEntityManager.clear();
-		System.out.println("===StoreRepositoryImplTest.StoreInfo_변경_테스트 쿼리===");
 
 		assertSoftly(softly -> {
 			StoreEntity findStoreEntity = testEntityManager.find(StoreEntity.class, savedStoreEntity.getId());
@@ -100,11 +98,9 @@ class StoreRepositoryImplTest extends RepositoryTest {
 		testEntityManager.clear();
 		Store queryStore = StoreMapper.toStore(savedStoreEntity);
 
-		System.out.println("===StoreRepositoryImplTest.Store엔티티_논리_삭제_테스트 쿼리===");
 		storeRepository.deleteStore(queryStore);
 		testEntityManager.flush();
 		testEntityManager.clear();
-		System.out.println("===StoreRepositoryImplTest.Store엔티티_논리_삭제_테스트 쿼리===");
 
 		StoreEntity findStoreEntity = testEntityManager.find(StoreEntity.class, savedStoreEntity.getId());
 		assertThat(findStoreEntity).isNull();
@@ -118,9 +114,7 @@ class StoreRepositoryImplTest extends RepositoryTest {
 		testEntityManager.clear();
 
 		Store opendStore = StoreMapper.toStore(savedStoreEntity).open();
-		System.out.println("===StoreRepositoryImplTest.Store_오픈_상태_변경_테스트 쿼리===");
 		storeRepository.changeStoreOpenStatus(opendStore);
-		System.out.println("===StoreRepositoryImplTest.Store_오픈_상태_변경_테스트 쿼리===");
 
 		StoreEntity findStoreEntity = testEntityManager.find(StoreEntity.class, savedStoreEntity.getId());
 		assertThat(findStoreEntity.isOpen()).isFalse();
@@ -133,10 +127,8 @@ class StoreRepositoryImplTest extends RepositoryTest {
 		testEntityManager.flush();
 		testEntityManager.clear();
 
-		System.out.println("===StoreRepositoryImplTest.store_존재여부_테스트 쿼리===");
 		boolean exists = storeRepository.isExistsById(savedStoreEntity.getId());
 		boolean exists2 = storeRepository.isExistsById(savedStoreEntity.getId() + 1);
-		System.out.println("===StoreRepositoryImplTest.store_존재여부_테스트 쿼리===");
 
 		assertSoftly(softly -> {
 			softly.assertThat(exists).isTrue();
@@ -153,9 +145,7 @@ class StoreRepositoryImplTest extends RepositoryTest {
 		testEntityManager.flush();
 		testEntityManager.clear();
 
-		System.out.println("===StoreRepositoryImplTest.가게조회_테스트 쿼리===");
 		Store store = storeRepository.findStoreByStoreId(savedStoreEntity.getId()).get();
-		System.out.println("===StoreRepositoryImplTest.가게조회_테스트 쿼리===");
 
 		assertSoftly(softly -> {
 			softly.assertThat(store.getId()).isEqualTo(savedStoreEntity.getId());
@@ -186,9 +176,7 @@ class StoreRepositoryImplTest extends RepositoryTest {
 		testEntityManager.flush();
 		testEntityManager.clear();
 
-		System.out.println("===StoreRepositoryImplTest.가게조회_테스트 쿼리===");
 		Store store = storeRepository.findStoreByStoreId(savedStoreEntity.getId()).get();
-		System.out.println("===StoreRepositoryImplTest.가게조회_테스트 쿼리===");
 
 		assertSoftly(softly -> {
 			softly.assertThat(store.getId()).isEqualTo(savedStoreEntity.getId());
@@ -232,10 +220,8 @@ class StoreRepositoryImplTest extends RepositoryTest {
 
 		@Test
 		void 가게_리스트_조회_테스트() {
-			System.out.println("===StoreRepositoryImplTest.가게_리스트_조회_테스트 쿼리===");
 			Slice<StoreHeadDto> storesCursorOrderByReviewCount = storeRepository.findStoresCursorOrderByCreated(
 				null, 10);
-			System.out.println("===StoreRepositoryImplTest.가게_리스트_조회_테스트 쿼리===");
 
 			assertSoftly(softly -> {
 				softly.assertThat(storesCursorOrderByReviewCount.getContent().size()).isEqualTo(2);

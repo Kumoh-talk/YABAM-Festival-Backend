@@ -78,11 +78,9 @@ class CallRepositoryImplTest extends RepositoryTest {
 		Long saleId = savedSaleEntity.getId();
 		CallMessage callMessage = GENERAL_CALL_MESSAGE();
 
-		System.out.println("===CallRepositoryImplTest.호출_저장_및_조회 쿼리===");
 		callRepository.createCall(receiptId, saleId, callMessage);
 		testEntityManager.flush();
 		testEntityManager.clear();
-		System.out.println("===CallRepositoryImplTest.호출_저장_및_조회 쿼리===");
 
 		assertSoftly(softly -> {
 			var slice = callRepository.getNonCompleteCalls(saleId, null, 10);
@@ -93,12 +91,8 @@ class CallRepositoryImplTest extends RepositoryTest {
 		});
 	}
 
-	/*----------------------------------------------------------------------
-	 * getNonCompleteCalls (Cursor/Paging)
-	 *--------------------------------------------------------------------*/
 	@Test
 	void 미완료_호출_슬라이스_조회() {
-		// given : 호출 3건 저장
 		UUID receiptId = savedReceiptEntity.getId();
 		Long saleId = savedSaleEntity.getId();
 
@@ -108,9 +102,7 @@ class CallRepositoryImplTest extends RepositoryTest {
 		testEntityManager.flush();
 		testEntityManager.clear();
 
-		System.out.println("===CallRepositoryImplTest.미완료_호출_슬라이스_조회 쿼리===");
-		var slice = callRepository.getNonCompleteCalls(saleId, null, 2); // pageSize = 2
-		System.out.println("===CallRepositoryImplTest.미완료_호출_슬라이스_조회 쿼리===");
+		var slice = callRepository.getNonCompleteCalls(saleId, null, 2);
 
 		assertSoftly(softly -> {
 			softly.assertThat(slice.getContent()).hasSize(2);
@@ -131,11 +123,9 @@ class CallRepositoryImplTest extends RepositoryTest {
 			.getSingleResult();
 		Long callId = callEntity.getId();
 
-		System.out.println("===CallRepositoryImplTest.호출_완료_처리 쿼리===");
 		callRepository.modifyCallComplete(callId);
 		testEntityManager.flush();
 		testEntityManager.clear();
-		System.out.println("===CallRepositoryImplTest.호출_완료_처리 쿼리===");
 
 		assertSoftly(softly -> {
 			CallEntity updated = testEntityManager.find(CallEntity.class, callId);
@@ -178,9 +168,7 @@ class CallRepositoryImplTest extends RepositoryTest {
 		void 성공_TRUE() {
 			UserPassport ownerPassport = OWNER_USER_PASSPORT();
 
-			System.out.println("===CallRepositoryImplTest.성공_TRUE 쿼리===");
 			boolean exists = callRepository.isExistsCallOwner(callId, ownerPassport);
-			System.out.println("===CallRepositoryImplTest.성공_TRUE 쿼리===");
 			assertThat(exists).isTrue();
 		}
 
@@ -188,9 +176,7 @@ class CallRepositoryImplTest extends RepositoryTest {
 		void 실패_FALSE() {
 			UserPassport diffOwnerPassport = DIFF_OWNER_PASSPORT();
 
-			System.out.println("===CallRepositoryImplTest.실패_FALSE 쿼리===");
 			boolean exists = callRepository.isExistsCallOwner(callId, diffOwnerPassport);
-			System.out.println("===CallRepositoryImplTest.실패_FALSE 쿼리===");
 			assertThat(exists).isFalse();
 		}
 	}
