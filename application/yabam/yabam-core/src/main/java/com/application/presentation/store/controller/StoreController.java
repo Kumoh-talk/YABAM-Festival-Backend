@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.application.presentation.store.api.StoreApi;
 import com.application.presentation.store.dto.request.StoreWriteRequest;
-import com.application.presentation.store.dto.response.MyStoreResopnse;
+import com.application.presentation.store.dto.response.MyStoreResponse;
 import com.application.presentation.store.dto.response.StoreCursorResponse;
 import com.application.presentation.store.dto.response.StoreIdResponse;
 import com.application.presentation.store.dto.response.StoreInfoResponse;
@@ -117,11 +117,11 @@ public class StoreController implements StoreApi {
 	@GetMapping("/api/v1/mystore")
 	@HasRole(userRole = ROLE_OWNER)
 	@AssignUserPassport
-	public ResponseEntity<ResponseBody<MyStoreResopnse>> getMyStoreList(
+	public ResponseEntity<ResponseBody<MyStoreResponse>> getMyStoreList(
 		UserPassport userPassport
 	) {
 		return ResponseEntity.ok(createSuccessResponse(
-			MyStoreResopnse
+			MyStoreResponse
 				.from(storeService.getMyStores(userPassport))
 		));
 	}
