@@ -3,6 +3,7 @@ package com.pos.store.repository.port;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.pos.store.entity.StoreDetailImageEntity;
 import com.pos.store.mapper.StoreMapper;
 import com.pos.store.repository.DetailImageJpaRepository;
 
@@ -19,7 +20,7 @@ public class DetailImageRepositoryImpl implements DetailImageRepository {
 	public DetailImages findByStoreId(Long queryStoreId) {
 		var list = detailImageJpaRepository.findByStoreId(queryStoreId)
 			.stream()
-			.map(StoreMapper::toDetailImage)
+			.map(StoreDetailImageEntity::getImageUrl)
 			.toList();
 		return DetailImages.of(queryStoreId, list);
 	}

@@ -95,10 +95,6 @@ public class StoreMapper {
 		));
 	}
 
-	public static Optional<Store> toStoreWithStoreDetailImages(StoreEntity storeEntity) {
-		return Optional.ofNullable(toStoreWithDetailImages(storeEntity));
-	}
-
 	public static StoreHeadDto toStoreHeadDto(StoreEntity store) {
 		return StoreHeadDto.of(
 			store.getId(),
@@ -114,10 +110,6 @@ public class StoreMapper {
 				.map(StoreDetailImageEntity::getImageUrl)
 				.toList()
 		);
-	}
-
-	public static String toDetailImage(StoreDetailImageEntity entity) {
-		return entity.getImageUrl();
 	}
 
 	public static StoreDetailImageEntity toDetailImageEntity(String url, Long storeId) {
