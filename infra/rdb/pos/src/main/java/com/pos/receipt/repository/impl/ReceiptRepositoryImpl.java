@@ -95,9 +95,7 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	public List<Receipt> getNonStopReceiptsWithTableStoreAndOrdersAndLock(List<UUID> receiptIds) {
 		return receiptJpaRepository.findNonStopReceiptsWithTableStoreAndOrdersAndLock(receiptIds)
 			.stream()
-			.map(receiptEntity -> ReceiptMapper.toReceipt(receiptEntity,
-				TableMapper.toTable(receiptEntity.getTable(), StoreMapper.toStore(receiptEntity.getTable().getStore())),
-				null))
+			.map(ReceiptRepositoryImpl::toReceiptWithTableAndStoreOnly)
 			.toList();
 	}
 
@@ -191,7 +189,8 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 
 	@Override
 	public Optional<Receipt> getReceiptById(UUID receiptId) {
-		return Optional.empty();
+		return receiptJpaRepository.findByIdWithTableAndStore(receiptId)
+			.map(ReceiptRepositoryImpl::toReceiptWithTableAndSale);
 	}
 
 	private static Receipt toReceiptWithTableAndSale(ReceiptEntity receiptEntity) {
@@ -203,5 +202,11 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	private static Receipt toReceiptWithSaleOnly(ReceiptEntity receiptEntity) {
 		return ReceiptMapper.toReceipt(receiptEntity, null,
 			SaleMapper.toSale(receiptEntity.getSale(), StoreMapper.toStore(receiptEntity.getSale().getStore())));
+	}
+
+	private static Receipt toReceiptWithTableAndStoreOnly(ReceiptEntity receiptEntity) {
+		return ReceiptMapper.toReceipt(receiptEntity,
+			TableMapper.toTable(receiptEntity.getTable(), StoreMapper.toStore(receiptEntity.getTable().getStore())),
+			null);
 	}
 }

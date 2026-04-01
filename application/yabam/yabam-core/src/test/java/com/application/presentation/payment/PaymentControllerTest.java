@@ -89,6 +89,12 @@ class PaymentControllerTest {
         return URLEncoder.encode(json, StandardCharsets.UTF_8);
     }
 
+    private String userPassportHeader() throws Exception {
+        UserPassport passport = UserPassport.of(1L, "일반유저", UserRole.ROLE_USER);
+        String json = objectMapper.writeValueAsString(passport);
+        return URLEncoder.encode(json, StandardCharsets.UTF_8);
+    }
+
     @Nested
     @DisplayName("POST /api/v1/payments/toss/confirm")
     class ConfirmPayment {
@@ -202,16 +208,12 @@ class PaymentControllerTest {
 
         @Test
         void 실패_권한_없음() throws Exception {
-            UserPassport userPassport = UserPassport.of(1L, "일반유저", UserRole.ROLE_USER);
-            String json = objectMapper.writeValueAsString(userPassport);
-            String encodedHeader = URLEncoder.encode(json, StandardCharsets.UTF_8);
-
             String body = """
                 {"cancelReason": "고객 요청"}
                 """;
 
             mockMvc.perform(post("/api/v1/payments/{paymentKey}/cancel", PAYMENT_KEY)
-                    .header("X-User-Info", encodedHeader)
+                    .header("X-User-Info", userPassportHeader())
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(body))
                 .andExpect(status().isForbidden());
@@ -262,12 +264,8 @@ class PaymentControllerTest {
 
         @Test
         void 실패_권한_없음() throws Exception {
-            UserPassport userPassport = UserPassport.of(1L, "일반유저", UserRole.ROLE_USER);
-            String json = objectMapper.writeValueAsString(userPassport);
-            String encodedHeader = URLEncoder.encode(json, StandardCharsets.UTF_8);
-
             mockMvc.perform(get("/api/v1/payments/toss/{paymentKey}", PAYMENT_KEY)
-                    .header("X-User-Info", encodedHeader))
+                    .header("X-User-Info", userPassportHeader()))
                 .andExpect(status().isForbidden());
         }
 
@@ -317,12 +315,8 @@ class PaymentControllerTest {
 
         @Test
         void 실패_권한_없음() throws Exception {
-            UserPassport userPassport = UserPassport.of(1L, "일반유저", UserRole.ROLE_USER);
-            String json = objectMapper.writeValueAsString(userPassport);
-            String encodedHeader = URLEncoder.encode(json, StandardCharsets.UTF_8);
-
             mockMvc.perform(get("/api/v1/payments")
-                    .header("X-User-Info", encodedHeader)
+                    .header("X-User-Info", userPassportHeader())
                     .param("saleId", "1"))
                 .andExpect(status().isForbidden());
         }
