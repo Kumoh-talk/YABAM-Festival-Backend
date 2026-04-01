@@ -20,13 +20,11 @@ public class ImageService {
 		final ImageProperty imageProperty) {
 		storeValidator.validateStoreOwner(ownerPassport, storeId);
 
-		String url = UrlHandleUtil.generateDetailUrl(storeId);
-		if (imageProperty.equals(ImageProperty.STORE_HEAD)) {
-			url = UrlHandleUtil.generateHeadUrl(storeId);
-		}
-		if (imageProperty.equals(ImageProperty.MENU_IMAGE)) {
-			url = UrlHandleUtil.generateStoreMenuUrl(storeId);
-		}
+		String url = switch (imageProperty) {
+			case STORE_HEAD -> UrlHandleUtil.generateHeadUrl(storeId);
+			case MENU_IMAGE -> UrlHandleUtil.generateStoreMenuUrl(storeId);
+			default -> UrlHandleUtil.generateDetailUrl(storeId);
+		};
 		return storeImageHandler.generatePresignedUrl(url);
 	}
 
