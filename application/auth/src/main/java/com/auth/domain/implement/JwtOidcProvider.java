@@ -55,12 +55,6 @@ public class JwtOidcProvider {
 		return splitToken[0] + "." + splitToken[1] + ".";
 	}
 
-	/**
-	 * ID Token의 header와 body를 Base64 방식으로 디코딩
-	 * 페이로드의 iss 값이 소셜 링크와 일치하는지 확인
-	 * 페이로드의 aud 값이 서비스 앱 키와 일치하는지 확인
-	 * 페이로드의 nonce 값이 소셜 로그인 요청 시 전달한 값과 일치하는지 확인
-	 */
 	private Map<String, Map<String, String>> getUnsignedTokenClaims(String token, String iss, String sub,
 		List<String> auds,
 		String nonce) {
