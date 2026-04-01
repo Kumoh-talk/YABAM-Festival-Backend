@@ -1,8 +1,9 @@
 package com.pos.util;
 
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ChannelPrefixUtil {
 	public static final String STORE_ORDER_PREFIX = "storeId:";
 

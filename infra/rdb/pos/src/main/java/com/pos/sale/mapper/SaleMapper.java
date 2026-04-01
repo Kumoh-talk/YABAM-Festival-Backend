@@ -8,9 +8,10 @@ import com.pos.store.mapper.StoreMapper;
 
 import domain.pos.sale.entity.Sale;
 import domain.pos.store.entity.Store;
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SaleMapper {
 	public static SaleEntity toSaleEntity(Store store) {
 		return SaleEntity.from(StoreEntity.from(store.getId()));

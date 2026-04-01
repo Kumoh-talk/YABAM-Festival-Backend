@@ -9,9 +9,10 @@ import com.vo.UserPassport;
 import domain.pos.receipt.entity.ReceiptInfo;
 import domain.pos.review.entity.Review;
 import domain.pos.review.entity.ReviewInfo;
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReviewMapper {
 
 	public static ReviewEntity toReviewEntity(UserPassport userPassport, Long storeId, ReceiptInfo receiptInfo,
