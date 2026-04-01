@@ -117,20 +117,20 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	public List<Receipt> getAllNonAdjustReceiptWithTableAndOrders(Long saleId) {
 		return receiptJpaRepository.findAllNonAdjustReceiptWithTableAndOrders(saleId)
 			.stream()
-			.sorted(Comparator.comparing(
-				r -> r.getTable().getTableNumber().getTableNumber()
-			))
-			.map(receiptEntity -> {
-				Receipt receipt = ReceiptMapper.toReceipt(
-					receiptEntity,
-					TableMapper.toTable(receiptEntity.getTable(), (Store)null),
-					null);
-				receipt.getOrders().addAll(receiptEntity.getOrders().stream()
-					.map(orderEntity -> OrderMapper.toOrder(orderEntity, null, null))
-					.toList());
-				return receipt;
-			})
+			.sorted(Comparator.comparing(r -> r.getTable().getTableNumber().getTableNumber()))
+			.map(ReceiptRepositoryImpl::toReceiptWithOrders)
 			.toList();
+	}
+
+	private static Receipt toReceiptWithOrders(ReceiptEntity receiptEntity) {
+		Receipt receipt = ReceiptMapper.toReceipt(
+			receiptEntity,
+			TableMapper.toTable(receiptEntity.getTable(), (Store)null),
+			null);
+		receipt.getOrders().addAll(receiptEntity.getOrders().stream()
+			.map(orderEntity -> OrderMapper.toOrder(orderEntity, null, null))
+			.toList());
+		return receipt;
 	}
 
 	@Override
@@ -147,16 +147,18 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	@Override
 	public List<Receipt> stopReceiptsWithMenu(List<Receipt> patchReceipts) {
 		return patchReceipts.stream()
-			.map(patchReceipt -> {
-				ReceiptEntity receiptEntity = receiptJpaRepository.findByIdWithOrders(
-						patchReceipt.getReceiptInfo().getReceiptId())
-					.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
-				receiptEntity.updateInfo(patchReceipt.getReceiptInfo());
-				Receipt receipt = ReceiptMapper.toReceiptWithMenus(receiptEntity);
-				receipt.filterCompletedOrders();
-				return receipt;
-			})
+			.map(this::applyStopToReceipt)
 			.toList();
+	}
+
+	private Receipt applyStopToReceipt(Receipt patchReceipt) {
+		ReceiptEntity receiptEntity = receiptJpaRepository.findByIdWithOrders(
+				patchReceipt.getReceiptInfo().getReceiptId())
+			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
+		receiptEntity.updateInfo(patchReceipt.getReceiptInfo());
+		Receipt receipt = ReceiptMapper.toReceiptWithMenus(receiptEntity);
+		receipt.filterCompletedOrders();
+		return receipt;
 	}
 
 	@Override
