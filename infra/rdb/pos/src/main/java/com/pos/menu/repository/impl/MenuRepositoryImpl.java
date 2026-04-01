@@ -38,16 +38,16 @@ public class MenuRepositoryImpl implements MenuRepository {
 	@Transactional
 	public Menu postMenu(Store store, MenuCategoryInfo menuCategoryInfo, MenuInfo menuInfo) {
 		MenuEntity menuEntity = MenuMapper.toMenuEntity(menuInfo, store, menuCategoryInfo);
-		menuJpaRepository.findMaxOrderByMenuCategoryId(menuCategoryInfo.getId())
-			.ifPresentOrElse(
-				order -> {
-					if (order > 99) {
-						throw new ServiceException(ErrorCode.MENU_QUANTITY_OVERFLOW);
-					}
-					menuEntity.updateOrder(order + 1);
-				},
-				() -> menuEntity.updateOrder(1)
-			);
+		Optional<Integer> maxOrderOpt = menuJpaRepository.findMaxOrderByMenuCategoryId(menuCategoryInfo.getId());
+		if (maxOrderOpt.isPresent()) {
+			int order = maxOrderOpt.get();
+			if (order > 99) {
+				throw new ServiceException(ErrorCode.MENU_QUANTITY_OVERFLOW);
+			}
+			menuEntity.updateOrder(order + 1);
+		} else {
+			menuEntity.updateOrder(1);
+		}
 		menuJpaRepository.save(menuEntity);
 		return MenuMapper.toMenu(menuEntity, store, MenuCategory.fromWithoutStore(menuCategoryInfo));
 	}
