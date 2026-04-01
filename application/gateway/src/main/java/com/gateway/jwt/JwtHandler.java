@@ -39,7 +39,7 @@ public class JwtHandler {
 	}
 
 	public Mono<Token> createTokens(JwtUserClaim jwtUserClaim) {
-		Map<String, Object> tokenClaims = this.createClaims(jwtUserClaim);
+		Map<String, Object> tokenClaims = createClaims(jwtUserClaim);
 		Date now = new Date(System.currentTimeMillis());
 
 		String nickname = jwtUserClaim.userNickname();
@@ -67,7 +67,7 @@ public class JwtHandler {
 				.build());
 	}
 
-	public Map<String, Object> createClaims(JwtUserClaim jwtUserClaim) {
+	private Map<String, Object> createClaims(JwtUserClaim jwtUserClaim) {
 		return Map.of(
 			USER_ID, jwtUserClaim.userId(),
 			USER_NICKNAME, jwtUserClaim.userNickname(),
@@ -82,7 +82,7 @@ public class JwtHandler {
 			.parseSignedClaims(token)
 			.getPayload();
 
-		return this.convert(claims);
+		return convert(claims);
 	}
 
 	public JwtUserClaim createAnonymous() {
@@ -105,7 +105,7 @@ public class JwtHandler {
 		}
 	}
 
-	public JwtUserClaim convert(Claims claims) {
+	private JwtUserClaim convert(Claims claims) {
 		return new JwtUserClaim(
 			claims.get(USER_ID, Long.class),
 			claims.get(USER_NICKNAME, String.class),
