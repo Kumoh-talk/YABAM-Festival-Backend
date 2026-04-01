@@ -4,12 +4,9 @@ import com.vo.UserPassport;
 import com.vo.UserRole;
 
 public class UserFixture {
-	// 유저 고유 id
 	private static final Long GENERAL_USER_ID = 1L;
 	private static final Long DIFF_USER_ID = 999L;
-	// 유저 닉네임
 	private static final String GENERAL_USER_NICKNAME = "유저1";
-	// 유저 권한
 	private static final UserRole OWNER_USER_ROLE = UserRole.ROLE_OWNER;
 	private static final UserRole GENERAL_USER_ROLE = UserRole.ROLE_USER;
 	private static final UserRole ANONYMOUS_USER_ROLE = UserRole.ROLE_ANONYMOUS;
