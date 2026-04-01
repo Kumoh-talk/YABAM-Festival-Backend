@@ -51,14 +51,10 @@ public class DetailImages {
 	public void remove(String imageUrl) {
 		validatePattern(imageUrl);
 
-		if (isNotContainDetailImage(imageUrl)) {
+		if (!this.imageUrls.contains(imageUrl)) {
 			throw new ServiceException(NOT_FOUND_STORE_DETAIL_IMAGE);
 		}
 
 		this.imageUrls.remove(imageUrl);
-	}
-
-	private boolean isNotContainDetailImage(String imageUrl) {
-		return !this.imageUrls.contains(imageUrl);
 	}
 }
