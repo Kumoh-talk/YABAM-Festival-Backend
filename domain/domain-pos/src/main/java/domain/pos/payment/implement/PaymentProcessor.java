@@ -22,14 +22,7 @@ import domain.pos.table.implement.TableWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * 결제 승인 트랜잭션을 외부 API 호출 전후로 분리하기 위한 컴포넌트.
- * <ul>
- *   <li>{@link #validateAndPreempt} — write 트랜잭션으로 비관적 잠금·검증·선점 레코드 저장 후 커밋</li>
- *   <li>{@link #finalizeAndSettle} — REQUIRES_NEW 트랜잭션으로 선점 레코드 업데이트·정산 처리</li>
- * </ul>
- * 동일 클래스 내 메서드 호출은 Spring AOP 프록시를 우회하므로 PaymentService와 분리한다.
- */
+// 동일 클래스 내 메서드 호출은 Spring AOP 프록시를 우회하므로 PaymentService와 분리한다.
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -41,15 +34,6 @@ public class PaymentProcessor {
 	private final ReceiptWriter receiptWriter;
 	private final TableWriter tableWriter;
 
-	/**
-	 * 비관적 잠금 검증 및 선점 레코드 저장 — write 트랜잭션 (커밋 후 잠금·커넥션 해제).
-	 *
-	 * <p>영수증 행에 PESSIMISTIC_WRITE 잠금을 획득해 동시 결제 요청을 직렬화한다.
-	 * 검증 통과 후 {@link PaymentStatus#IN_PROGRESS} 선점 레코드를 저장하고 즉시 커밋한다.
-	 * 이후 도착하는 중복 요청은 선점 레코드 존재를 감지해 {@code ALREADY_PAID_RECEIPT}로 실패한다.
-	 *
-	 * @return 선점 레코드 Payment와 잠금 조회된 영수증
-	 */
 	@Transactional
 	public PreemptionResult validateAndPreempt(UUID receiptId, String paymentKey, String orderId,
 		Integer amount) {
@@ -99,9 +83,6 @@ public class PaymentProcessor {
 		return new PreemptionResult(preemptionPayment, receipt);
 	}
 
-	/**
-	 * 선점 레코드 최종 업데이트 및 영수증 정산 — 별도 트랜잭션 (외부 API 호출 후 실행).
-	 */
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public Payment finalizeAndSettle(Long preemptionPaymentId, TossConfirmResult result,
 		Receipt receipt) {

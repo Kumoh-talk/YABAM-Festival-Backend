@@ -21,18 +21,6 @@ import domain.pos.receipt.implement.ReceiptReader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * IN_PROGRESS 상태로 멈춘 선점 레코드를 주기적으로 복구하는 스케줄러.
- *
- * <p>타임아웃·네트워크 장애로 confirm 흐름이 완료되지 못하면 선점 레코드가
- * IN_PROGRESS 상태로 남는다. 이 스케줄러는 1분마다 5분 이상 경과한 IN_PROGRESS 레코드를
- * Toss에 재조회해 다음 세 가지 경로로 보정한다.
- * <ul>
- *   <li>DONE / WAITING_FOR_DEPOSIT: finalizeAndSettle() 호출로 정상 완료 처리</li>
- *   <li>그 외 상태 (ABORTED 등): 로컬 레코드를 ABORTED로 마킹</li>
- *   <li>Toss 여전히 미응답: 다음 사이클에 재시도 (IN_PROGRESS 유지)</li>
- * </ul>
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
