@@ -56,7 +56,6 @@ class MenuCategoryUpdateTest {
 			MenuCategory menuCategory = VALID_CATEGORY();
 			String pastName = menuCategory.getName();
 
-			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(() -> menuCategory.updateName(invalidName))
 					.isInstanceOf(ServiceException.class)
@@ -107,7 +106,6 @@ class MenuCategoryUpdateTest {
 			MenuCategory menuCategory = VALID_CATEGORY();
 			Integer pastOrder = menuCategory.getOrder();
 
-			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(() -> menuCategory.updateOrder(invalidOrder))
 					.isInstanceOf(ServiceException.class)

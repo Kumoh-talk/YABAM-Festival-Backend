@@ -102,7 +102,6 @@ class TossPaymentClientTest {
 		void 재전송_소진시_PAYMENT_CONFIRM_TIMEOUT_예외() {
 			ResourceAccessException timeoutEx = new ResourceAccessException("timeout");
 
-			// when / then
 			assertThatThrownBy(() ->
 				tossPaymentClient.recoverFromConfirmTimeout(timeoutEx, PAYMENT_KEY, ORDER_ID, AMOUNT))
 				.isInstanceOf(ServiceException.class)

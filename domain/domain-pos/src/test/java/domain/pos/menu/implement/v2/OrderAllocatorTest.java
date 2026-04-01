@@ -110,7 +110,6 @@ class OrderAllocatorTest {
 
 			given(orderingOps.readGuardMaxOrder(menuCategoryId)).willReturn(previousOrder);
 
-			// when -> then
 			assertThatThrownBy(
 				() -> orderAllocator.relocationOrders(userId, storeId, menuCategoryId, menuId, updatedOrder,
 					previousOrder))

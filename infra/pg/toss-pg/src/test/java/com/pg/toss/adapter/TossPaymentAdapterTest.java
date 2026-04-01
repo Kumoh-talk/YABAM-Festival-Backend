@@ -85,7 +85,6 @@ class TossPaymentAdapterTest {
             given(tossPaymentClient.getPayment(PAYMENT_KEY))
                 .willThrow(new ServiceException(ErrorCode.PAYMENT_NOT_FOUND));
 
-            // when / then
             assertThatThrownBy(() -> adapter.confirm(PAYMENT_KEY, ORDER_ID, AMOUNT))
                 .isInstanceOf(ServiceException.class)
                 .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_NOT_FOUND);

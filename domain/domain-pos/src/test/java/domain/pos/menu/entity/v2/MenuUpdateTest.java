@@ -59,7 +59,6 @@ class MenuUpdateTest {
 			var menu = VALID_MENU();
 			var updateMenuInfo = custom(s -> s.customName(menuName));
 
-			// when -> then
 			assertThatThrownBy(
 				() -> menu.updateMenuInfo(updateMenuInfo))
 				.isInstanceOf(ServiceException.class)
@@ -75,7 +74,6 @@ class MenuUpdateTest {
 			var menu = VALID_MENU();
 			var updateMenuInfo = custom(s -> s.customPrice(price));
 
-			// when -> then
 			assertThatThrownBy(
 				() -> menu.updateMenuInfo(updateMenuInfo))
 				.isInstanceOf(ServiceException.class)
@@ -89,7 +87,6 @@ class MenuUpdateTest {
 			var menu = VALID_MENU();
 			var updateMenuInfo = custom(s -> s.customImageUrl("ftp://bad"));
 
-			// when -> then
 			assertThatThrownBy(
 				() -> menu.updateMenuInfo(updateMenuInfo))
 				.isInstanceOf(ServiceException.class)
@@ -154,7 +151,6 @@ class MenuUpdateTest {
 		void order_must_be_positive(Integer invalidOrder) {
 			var menu = VALID_MENU();
 
-			// when -> then
 			assertThatThrownBy(() -> menu.updateOrder(invalidOrder))
 				.isInstanceOf(ServiceException.class)
 				.extracting(ex -> ((ServiceException)ex).getErrorCode())

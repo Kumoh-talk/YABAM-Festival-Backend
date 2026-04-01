@@ -38,7 +38,6 @@ class MenuCategoryCreateTest {
 	@ValueSource(strings = {" ", "   ", "\t", "\n"})
 	@DisplayName("메뉴 이름이 Null 또는 공백이면 ServiceException(DOMAIN_INVALID_MENU_CATEGORY_NAME)")
 	void name_null_or_blank(String name) {
-		// when -> then
 		assertThatThrownBy(() -> MenuCategory.create(name, 1, 1L))
 			.isInstanceOf(ServiceException.class)
 			.extracting(ex -> ((ServiceException)ex).getErrorCode())
@@ -50,7 +49,6 @@ class MenuCategoryCreateTest {
 	@ValueSource(ints = {0, -1, -100})
 	@DisplayName("메뉴 순서가 Null 또는 1보다 작으면 ServiceException(DOMAIN_INVALID_MENU_CATEGORY_ORDER)")
 	void order_must_be_positive(Integer invalidOrder) {
-		// when -> then
 		assertThatThrownBy(() -> MenuCategory.create("음료", invalidOrder, 1L))
 			.isInstanceOf(ServiceException.class)
 			.extracting(ex -> ((ServiceException)ex).getErrorCode())
@@ -60,7 +58,6 @@ class MenuCategoryCreateTest {
 	@Test
 	@DisplayName("storeId가 null이면 NullPointerException")
 	void storeId_null() {
-		// when -> then
 		assertThatThrownBy(() -> MenuCategory.create("음료", 1, null))
 			.isInstanceOf(NullPointerException.class);
 	}

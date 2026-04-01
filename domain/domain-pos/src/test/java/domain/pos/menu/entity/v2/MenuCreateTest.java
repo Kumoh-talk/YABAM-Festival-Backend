@@ -45,7 +45,6 @@ class MenuCreateTest {
 	@ValueSource(ints = {0, -1, -100})
 	@DisplayName("order가 1 미만이면 ServiceException(DOMAIN_INVALID_MENU_ORDER)")
 	void order_must_be_positive(Integer invalidOrder) {
-		// when -> then
 		assertThatThrownBy(() -> Menu.create(VALID_STATE(), invalidOrder, VALID_STORE_ID_1, VALID_MENU_CATEGORY_ID_1))
 			.isInstanceOf(ServiceException.class)
 			.extracting(ex -> ((ServiceException)ex).getErrorCode())
@@ -55,7 +54,6 @@ class MenuCreateTest {
 	@Test
 	@DisplayName("storeId가 null이면 NullPointerException")
 	void storeId_null() {
-		// when -> then
 		assertThatThrownBy(
 			() -> Menu.create(VALID_STATE(), VALID_ORDER_1, null, VALID_MENU_CATEGORY_ID_1))
 			.isInstanceOf(NullPointerException.class);
@@ -64,7 +62,6 @@ class MenuCreateTest {
 	@Test
 	@DisplayName("menuCategoryId가 null이면 NullPointerException")
 	void categoryId_null() {
-		// when -> then
 		assertThatThrownBy(
 			() -> Menu.create(VALID_STATE(), VALID_ORDER_1, VALID_STORE_ID_1, null))
 			.isInstanceOf(NullPointerException.class);
@@ -77,7 +74,6 @@ class MenuCreateTest {
 	void name_null_or_blank(String menuName) {
 		var menuInfoState = custom(s -> s.customName(menuName));
 
-		// when -> then
 		assertThatThrownBy(
 			() -> Menu.create(menuInfoState, VALID_ORDER_1, VALID_STORE_ID_1, VALID_MENU_CATEGORY_ID_1))
 			.isInstanceOf(ServiceException.class)
@@ -92,7 +88,6 @@ class MenuCreateTest {
 	void price_negative(Integer price) {
 		var menuInfoState = custom(s -> s.customPrice(price));
 
-		// when -> then
 		assertThatThrownBy(
 			() -> Menu.create(menuInfoState, VALID_ORDER_1, VALID_STORE_ID_1, VALID_MENU_CATEGORY_ID_1))
 			.isInstanceOf(ServiceException.class)
@@ -105,7 +100,6 @@ class MenuCreateTest {
 	void image_url_invalid() {
 		var menuInfoState = custom(s -> s.customImageUrl("ftp://bad"));
 
-		// when -> then
 		assertThatThrownBy(
 			() -> Menu.create(menuInfoState, VALID_ORDER_1, VALID_STORE_ID_1, VALID_MENU_CATEGORY_ID_1))
 			.isInstanceOf(ServiceException.class)
