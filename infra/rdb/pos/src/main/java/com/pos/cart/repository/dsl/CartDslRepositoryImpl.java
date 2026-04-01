@@ -30,7 +30,6 @@ public class CartDslRepositoryImpl implements CartDslRepository {
 	public Optional<CartEntity> findCartByReceiptWithLock(UUID receiptId) {
 		return Optional.ofNullable(queryFactory
 			.selectFrom(qCartEntity)
-			.from(qCartEntity)
 			.where(qCartEntity.receipt.id.eq(receiptId))
 			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
 			.fetchOne());
@@ -39,7 +38,6 @@ public class CartDslRepositoryImpl implements CartDslRepository {
 	public Optional<CartMenuEntity> findCartMenuByCartIdAndCartMenuWithLock(CartEntity cartEntity, Long menuId) {
 		return Optional.ofNullable(queryFactory
 			.selectFrom(qCartMenuEntity)
-			.from(qCartMenuEntity)
 			.where(qCartMenuEntity.cart.id.eq(cartEntity.getId())
 				.and(qCartMenuEntity.menu.id.eq(menuId)))
 			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
