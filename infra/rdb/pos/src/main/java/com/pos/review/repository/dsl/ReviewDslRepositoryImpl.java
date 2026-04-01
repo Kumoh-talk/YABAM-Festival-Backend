@@ -36,7 +36,7 @@ public class ReviewDslRepositoryImpl implements ReviewDslRepository {
 	public Slice<ReviewEntity> findReviewsWithUser(Long storeId, Long lastReviewId, int size) {
 		List<ReviewEntity> results = queryFactory
 			.selectFrom(qReviewEntity)
-			.where(reviewCusorWhereCondition(storeId, lastReviewId))
+			.where(reviewCursorWhereCondition(storeId, lastReviewId))
 			.orderBy(qReviewEntity.id.desc())
 			.limit(size + 1)
 			.fetch();
@@ -48,7 +48,7 @@ public class ReviewDslRepositoryImpl implements ReviewDslRepository {
 		return new SliceImpl<>(results, PageRequest.of(0, size), hasNext);
 	}
 
-	private BooleanExpression reviewCusorWhereCondition(Long storeId, Long lastReviewId) {
+	private BooleanExpression reviewCursorWhereCondition(Long storeId, Long lastReviewId) {
 		if (lastReviewId == null) {
 			return qReviewEntity.store.id.eq(storeId);
 		}

@@ -16,7 +16,7 @@ import com.application.presentation.review.api.ReviewApi;
 import com.application.presentation.review.dto.request.ReviewCreateRequest;
 import com.application.presentation.review.dto.request.ReviewUpdateRequest;
 import com.application.presentation.review.dto.response.ReviewIdResponse;
-import com.application.presentation.review.dto.response.ReviewsCusorResponse;
+import com.application.presentation.review.dto.response.ReviewsCursorResponse;
 import com.authorization.AssignUserPassport;
 import com.authorization.HasRole;
 import com.response.ResponseBody;
@@ -93,13 +93,13 @@ public class ReviewController implements ReviewApi {
 	 */
 	@Deprecated(since = "2025-05-15")
 	@GetMapping("/api/v1/reviews")
-	public ResponseEntity<ResponseBody<ReviewsCusorResponse>> getReview(
+	public ResponseEntity<ResponseBody<ReviewsCursorResponse>> getReview(
 		@RequestParam Long storeId,
 		@RequestParam(required = false) Long lastReviewId,
 		@RequestParam int size
 	) {
 		return ResponseEntity.ok(createSuccessResponse(
-			ReviewsCusorResponse.from(reviewService.getReviews(
+			ReviewsCursorResponse.from(reviewService.getReviews(
 				storeId, lastReviewId, size))
 		));
 	}

@@ -10,7 +10,7 @@ import com.application.global.config.swagger.ApiSuccessResponseExplanation;
 import com.application.presentation.review.dto.request.ReviewCreateRequest;
 import com.application.presentation.review.dto.request.ReviewUpdateRequest;
 import com.application.presentation.review.dto.response.ReviewIdResponse;
-import com.application.presentation.review.dto.response.ReviewsCusorResponse;
+import com.application.presentation.review.dto.response.ReviewsCursorResponse;
 import com.exception.ErrorCode;
 import com.response.ResponseBody;
 import com.vo.UserPassport;
@@ -91,14 +91,14 @@ public interface ReviewApi {
 	)
 	@ApiResponse(content = @Content(
 		mediaType = "application/json",
-		schema = @Schema(implementation = ReviewsCusorResponse.class)))
+		schema = @Schema(implementation = ReviewsCursorResponse.class)))
 	@ApiResponseExplanations(
 		success = @ApiSuccessResponseExplanation(
-			responseClass = ReviewsCusorResponse.class,
+			responseClass = ReviewsCursorResponse.class,
 			description = "리뷰 목록 조회 성공"
 		)
 	)
-	ResponseEntity<ResponseBody<ReviewsCusorResponse>> getReview(
+	ResponseEntity<ResponseBody<ReviewsCursorResponse>> getReview(
 		@RequestParam Long storeId,
 		@RequestParam Long lastReviewId,
 		@RequestParam int size);
