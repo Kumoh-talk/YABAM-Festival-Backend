@@ -10,6 +10,9 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import com.exception.ErrorCode;
+import com.exception.ServiceException;
+
 import domain.pos.menu.entity.v2.domain.MenuCategory;
 
 class MenuCategoryCreateTest {
@@ -37,9 +40,9 @@ class MenuCategoryCreateTest {
 	void name_null_or_blank(String name) {
 		// when -> then
 		assertThatThrownBy(() -> MenuCategory.create(name, 1, 1L))
-			.isInstanceOf(com.exception.ServiceException.class)
-			.extracting(ex -> ((com.exception.ServiceException)ex).getErrorCode())
-			.isEqualTo(com.exception.ErrorCode.DOMAIN_INVALID_MENU_CATEGORY_NAME);
+			.isInstanceOf(ServiceException.class)
+			.extracting(ex -> ((ServiceException)ex).getErrorCode())
+			.isEqualTo(ErrorCode.DOMAIN_INVALID_MENU_CATEGORY_NAME);
 	}
 
 	@ParameterizedTest
@@ -49,9 +52,9 @@ class MenuCategoryCreateTest {
 	void order_must_be_positive(Integer invalidOrder) {
 		// when -> then
 		assertThatThrownBy(() -> MenuCategory.create("음료", invalidOrder, 1L))
-			.isInstanceOf(com.exception.ServiceException.class)
-			.extracting(ex -> ((com.exception.ServiceException)ex).getErrorCode())
-			.isEqualTo(com.exception.ErrorCode.DOMAIN_INVALID_MENU_CATEGORY_ORDER);
+			.isInstanceOf(ServiceException.class)
+			.extracting(ex -> ((ServiceException)ex).getErrorCode())
+			.isEqualTo(ErrorCode.DOMAIN_INVALID_MENU_CATEGORY_ORDER);
 	}
 
 	@Test

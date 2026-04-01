@@ -11,6 +11,9 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import com.exception.ErrorCode;
+import com.exception.ServiceException;
+
 import domain.pos.menu.entity.v2.domain.MenuCategory;
 
 class MenuCategoryUpdateTest {
@@ -56,9 +59,9 @@ class MenuCategoryUpdateTest {
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(() -> menuCategory.updateName(invalidName))
-					.isInstanceOf(com.exception.ServiceException.class)
-					.extracting(ex -> ((com.exception.ServiceException)ex).getErrorCode())
-					.isEqualTo(com.exception.ErrorCode.DOMAIN_INVALID_MENU_CATEGORY_NAME);
+					.isInstanceOf(ServiceException.class)
+					.extracting(ex -> ((ServiceException)ex).getErrorCode())
+					.isEqualTo(ErrorCode.DOMAIN_INVALID_MENU_CATEGORY_NAME);
 
 				softly.assertThat(menuCategory.getName()).isEqualTo(pastName);
 			});
@@ -107,9 +110,9 @@ class MenuCategoryUpdateTest {
 			// when -> then
 			assertSoftly(softly -> {
 				softly.assertThatThrownBy(() -> menuCategory.updateOrder(invalidOrder))
-					.isInstanceOf(com.exception.ServiceException.class)
-					.extracting(ex -> ((com.exception.ServiceException)ex).getErrorCode())
-					.isEqualTo(com.exception.ErrorCode.DOMAIN_INVALID_MENU_CATEGORY_ORDER);
+					.isInstanceOf(ServiceException.class)
+					.extracting(ex -> ((ServiceException)ex).getErrorCode())
+					.isEqualTo(ErrorCode.DOMAIN_INVALID_MENU_CATEGORY_ORDER);
 
 				softly.assertThat(menuCategory.getOrder()).isEqualTo(pastOrder);
 			});

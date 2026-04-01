@@ -29,7 +29,6 @@ class MenuCreateTest {
 		assertSoftly(softly -> {
 			softly.assertThat(menu.getOrder()).isEqualTo(VALID_ORDER_1);
 			softly.assertThat(menu.getStoreId()).isEqualTo(VALID_STORE_ID_1);
-			softly.assertThat(menu.getStoreId()).isEqualTo(VALID_STORE_ID_1);
 			softly.assertThat(menu.getMenuCategoryId()).isEqualTo(VALID_MENU_CATEGORY_ID_1);
 			softly.assertThat(menu.isSoldOut()).isFalse();
 			softly.assertThat(menu.isRecommended()).isFalse();
