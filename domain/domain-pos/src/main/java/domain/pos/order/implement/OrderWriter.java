@@ -72,17 +72,12 @@ public class OrderWriter {
 
 	private List<CartMenu> mergeCartMenus(List<CartMenu> cartMenus) {
 		Map<Long, CartMenu> mergedMap = new HashMap<>();
-
 		for (CartMenu cartMenu : cartMenus) {
-			Long menuId = cartMenu.getMenuInfo().getId();
-			if (mergedMap.containsKey(menuId)) {
-				CartMenu existing = mergedMap.get(menuId);
-				existing.addQuantity(cartMenu.getQuantity());
-			} else {
-				mergedMap.put(menuId, cartMenu);
-			}
+			mergedMap.merge(cartMenu.getMenuInfo().getId(), cartMenu, (existing, next) -> {
+				existing.addQuantity(next.getQuantity());
+				return existing;
+			});
 		}
-
 		return new ArrayList<>(mergedMap.values());
 	}
 }

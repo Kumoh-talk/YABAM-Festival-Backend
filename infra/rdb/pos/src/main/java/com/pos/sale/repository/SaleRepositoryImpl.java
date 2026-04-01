@@ -84,9 +84,8 @@ public class SaleRepositoryImpl implements SaleRepository {
 			.orderBy(qSaleEntity.id.desc())
 			.limit(size + 1)
 			.fetch();
-		boolean hasNext = false;
-		if (fetch.size() > size) {
-			hasNext = true;
+		boolean hasNext = fetch.size() > size;
+		if (hasNext) {
 			fetch.remove(size);
 		}
 		List<Sale> list = fetch.stream()

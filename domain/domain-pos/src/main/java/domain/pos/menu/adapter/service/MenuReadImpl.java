@@ -49,17 +49,13 @@ public class MenuReadImpl implements MenuRead {
 		if (!menuList.isEmpty()) {
 			return menuList;
 		}
-
-		// 메뉴 리스트가 비었으면, 카테고리 존재 여부 확인
 		if (!menuCategoryRepository.existsMenuCategory(storeId, menuCategoryId)) {
 			throw new ServiceException(ErrorCode.MENU_CATEGORY_NOT_FOUND);
-		} else {
-			return menuList;
 		}
+		return menuList;
 	}
 
 	private void validateVersion(Menu lastMenu, Long version) {
-		// 버전 확인
 		if (lastMenu != null) {
 			Long lastVersion = menuCategoryRepository.readVersion(lastMenu.getMenuCategoryId());
 			if (!lastVersion.equals(version)) {

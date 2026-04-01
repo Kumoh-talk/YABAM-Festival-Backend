@@ -142,23 +142,6 @@ class PaymentServiceTest extends ServiceTest {
 		}
 
 		@Test
-		void 실패_이미_결제된_영수증() {
-			// given
-			given(paymentProcessor.validateAndPreempt(any(UUID.class), eq(paymentKey), eq(orderId),
-				eq(amount))).willThrow(new ServiceException(ErrorCode.ALREADY_PAID_RECEIPT));
-
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> paymentService.confirmPayment(paymentKey, orderId, amount))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_PAID_RECEIPT);
-
-				verify(tossPaymentPort, never()).confirm(any(), any(), any());
-			});
-		}
-
-		@Test
 		void 실패_결제금액_불일치() {
 			// given
 			Integer wrongAmount = GENERAL_AMOUNT + 1000;

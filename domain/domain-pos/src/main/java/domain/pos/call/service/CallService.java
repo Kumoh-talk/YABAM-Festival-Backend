@@ -28,9 +28,7 @@ public class CallService {
 
 	public void postCall(final UUID receiptId, final CallMessage callMessage) {
 		Receipt receipt = receiptReader.getReceiptWithTableAndStore(receiptId)
-			.orElseThrow(() -> {
-				throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
-			});
+			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
 		if (isCloseStoreAssociationReceipt(receipt)) {
 			throw new ServiceException(ErrorCode.CONFLICT_CLOSE_STORE);
 		}

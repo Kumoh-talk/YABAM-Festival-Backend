@@ -49,7 +49,6 @@ public class ReceiptService {
 	private final ReceiptWriter receiptWriter;
 	private final ReceiptReader receiptReader;
 
-	// TODO : 이것도 SSE로 전송해야하지 않을까..?
 	@Transactional
 	public Receipt registerReceipt(final Long storeId, final UUID tableId) {
 		final Sale savedSale = saleReader.getOpenSaleByStoreId(storeId)
@@ -100,7 +99,6 @@ public class ReceiptService {
 			.toList();
 	}
 
-	// Owner api
 	public Page<Receipt> getAdjustedReceiptPageBySale(Pageable pageable, UserPassport userPassport, Long saleId) {
 		Sale sale = saleReader.readSingleSale(saleId)
 			.orElseThrow(() -> {
@@ -154,7 +152,6 @@ public class ReceiptService {
 		receiptWriter.restartReceipts(receipts);
 	}
 
-	// Owner api
 	@Transactional
 	public void adjustReceipts(List<UUID> receiptIds, UserPassport userPassport) {
 		List<Receipt> receipts = receiptReader.getStopReceiptsWithTableAndStore(receiptIds);
@@ -175,7 +172,6 @@ public class ReceiptService {
 		receiptWriter.adjustReceipts(receipts);
 	}
 
-	// Owner api
 	@Transactional
 	public void deleteReceipt(UUID receiptId, UserPassport userPassport) {
 		Receipt receipt = receiptReader.getReceiptWithTableAndStore(receiptId)
@@ -207,7 +203,6 @@ public class ReceiptService {
 		return receiptReader.getCustomerReceiptSlice(pageSize, lastReceiptId, customerId);
 	}
 
-	//TODO : 코드 리팩터링 필요 너무 대충 짬
 	@Transactional
 	public void moveReceiptTable(
 		final UserPassport ownerPassport,
@@ -221,10 +216,7 @@ public class ReceiptService {
 			});
 		Table table = receipt.getTable();
 		Store store = receipt.getSale().getStore();
-		if (!store.getOwnerPassport().getUserId().equals(ownerPassport.getUserId())) {
-			log.warn("Store 의 Owner 가 아닙니다. storeId: {}, userId: {}", store.getId(), ownerPassport.getUserId());
-			throw new ServiceException(ErrorCode.NOT_VALID_OWNER);
-		}
+		storeValidator.validateStoreOwner(ownerPassport, store);
 		Table moveTable = tableReader.findLockTableById(moveTableId, store.getId())
 			.orElseThrow(() -> {
 				log.warn("Table 을 찾을 수 없습니다. tableId: {}", moveTableId);

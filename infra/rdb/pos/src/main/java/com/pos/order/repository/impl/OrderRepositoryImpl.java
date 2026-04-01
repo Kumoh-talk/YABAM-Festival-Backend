@@ -43,19 +43,13 @@ public class OrderRepositoryImpl implements OrderRepository {
 	@Override
 	@Transactional
 	public Order postOrderWithCart(Receipt receipt, List<CartMenu> cartMenus) {
-		// 최초 주문 시 영수증 시작시간 기록
-		if (!orderJpaRepository.existsOrderByReceiptId(receipt.getReceiptInfo().getReceiptId())) {
-			LocalDateTime startTime = receiptJpaRepository.startReceiptUsage(receipt.getReceiptInfo().getReceiptId());
-			receipt.getReceiptInfo().setStartUsageTime(startTime);
-		}
+		recordFirstOrderStartTime(receipt);
 
-		// 주문 총 금액 계산
 		int totalPrice = cartMenus.stream()
 			.mapToInt(cartMenu -> cartMenu.getMenuInfo().getPrice() * cartMenu.getQuantity())
 			.sum();
 		OrderEntity orderEntity = OrderMapper.toOrderEntity(OrderStatus.ORDERED, totalPrice, receipt);
 
-		// CartMenu -> OrderMenuEntity 변환
 		List<OrderMenuEntity> orderMenuEntities = cartMenus.stream()
 			.map(cartMenu -> OrderMenuMapper.toOrderMenuEntity(
 				cartMenu,
@@ -80,19 +74,13 @@ public class OrderRepositoryImpl implements OrderRepository {
 	@Override
 	@Transactional
 	public Order postOrderWithoutCart(Receipt receipt, List<OrderMenu> orderMenus) {
-		// 최초 주문 시 영수증 시작시간 기록
-		if (!orderJpaRepository.existsOrderByReceiptId(receipt.getReceiptInfo().getReceiptId())) {
-			LocalDateTime startTime = receiptJpaRepository.startReceiptUsage(receipt.getReceiptInfo().getReceiptId());
-			receipt.getReceiptInfo().setStartUsageTime(startTime);
-		}
+		recordFirstOrderStartTime(receipt);
 
-		// 주문 총 금액 계산
 		int totalPrice = orderMenus.stream()
 			.mapToInt(orderMenu -> orderMenu.getMenu().getMenuInfo().getPrice() * orderMenu.getQuantity())
 			.sum();
 		OrderEntity orderEntity = OrderMapper.toOrderEntity(OrderStatus.ORDERED, totalPrice, receipt);
 
-		// orderMenu -> OrderMenuEntity 변환
 		List<OrderMenuEntity> orderMenuEntities = orderMenus.stream()
 			.map(orderMenu -> OrderMenuMapper.toOrderMenuEntity(
 				orderMenu.getMenu().getMenuInfo(),
@@ -116,10 +104,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
 	@Override
 	public Order postCustomOrder(Receipt receipt, Order order) {
-		if (!orderJpaRepository.existsOrderByReceiptId(receipt.getReceiptInfo().getReceiptId())) {
-			LocalDateTime startTime = receiptJpaRepository.startReceiptUsage(receipt.getReceiptInfo().getReceiptId());
-			receipt.getReceiptInfo().setStartUsageTime(startTime);
-		}
+		recordFirstOrderStartTime(receipt);
 
 		OrderEntity orderEntity = OrderMapper.toOrderEntity(order, receipt);
 		OrderEntity savedOrderEntity = orderJpaRepository.save(orderEntity);
@@ -214,5 +199,13 @@ public class OrderRepositoryImpl implements OrderRepository {
 	@Override
 	public void retryReceiveOrderStatus(Order order, UserRole userRole) {
 		orderJpaRepository.updateOrderStatus(order.getOrderId(), OrderStatus.RECEIVED);
+	}
+
+	private void recordFirstOrderStartTime(Receipt receipt) {
+		if (!orderJpaRepository.existsOrderByReceiptId(receipt.getReceiptInfo().getReceiptId())) {
+			LocalDateTime startTime = receiptJpaRepository.startReceiptUsage(
+				receipt.getReceiptInfo().getReceiptId());
+			receipt.getReceiptInfo().setStartUsageTime(startTime);
+		}
 	}
 }

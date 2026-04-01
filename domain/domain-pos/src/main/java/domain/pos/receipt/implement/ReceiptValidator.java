@@ -27,11 +27,7 @@ public class ReceiptValidator {
 	}
 
 	public UserRole validateRole(Receipt receipt, UserPassport userPassport) {
-		if (isStoreOwner(receipt, userPassport)) {
-			return UserRole.ROLE_OWNER;
-		} else {
-			return UserRole.ROLE_ANONYMOUS;
-		}
+		return isStoreOwner(receipt, userPassport) ? UserRole.ROLE_OWNER : UserRole.ROLE_ANONYMOUS;
 	}
 
 	public void validateIsOwner(Receipt receipt, UserPassport userPassport) {

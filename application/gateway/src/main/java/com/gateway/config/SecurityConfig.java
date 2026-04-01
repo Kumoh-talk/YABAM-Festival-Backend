@@ -78,11 +78,10 @@ public class SecurityConfig {
 			.httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
 			.formLogin(ServerHttpSecurity.FormLoginSpec::disable)
 			.securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
-			.addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION) // JWT 인증 필터 추가
-			// .addFilterBefore(new ExceptionHandlerFilter(), SecurityWebFiltersOrder.AUTHENTICATION) // 예외 처리 필터 추가
+			.addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
 			.addFilterAfter(
 				new AuthenticationToHeaderFilter(authenticationFailureHandler, jwtHandler),
-				SecurityWebFiltersOrder.AUTHENTICATION) // 사용자 정보 헤더 추가 필터 추가
+				SecurityWebFiltersOrder.AUTHENTICATION)
 			.authorizeExchange(exchange -> exchange
 				.anyExchange().authenticated())
 			.exceptionHandling(exceptionHandling ->

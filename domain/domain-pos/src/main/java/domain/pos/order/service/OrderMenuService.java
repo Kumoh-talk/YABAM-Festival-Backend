@@ -126,11 +126,7 @@ public class OrderMenuService {
 	}
 
 	private UserRole validateRole(Store store, UserPassport userPassport) {
-		if (isStoreOwner(store, userPassport)) {
-			return UserRole.ROLE_OWNER;
-		} else {
-			return UserRole.ROLE_ANONYMOUS;
-		}
+		return isStoreOwner(store, userPassport) ? UserRole.ROLE_OWNER : UserRole.ROLE_ANONYMOUS;
 	}
 
 	private boolean isStoreOwner(Store store, UserPassport userPassport) {

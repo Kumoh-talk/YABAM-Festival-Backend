@@ -48,10 +48,10 @@ public class ApiErrorResponseHandler {
 	private ExampleHolder createExampleHolder(ApiErrorResponseExplanation apiErrorResponseExample) {
 		ErrorCode errorCode = apiErrorResponseExample.errorCode();
 		return ExampleHolder.builder()
-			.httpStatusCode(errorCode.getStatus().value()) // HTTP 상태 코드
-			.name(errorCode.name()) // enum 이름
-			.errorCode(errorCode.getCode()) // 커스텀 에러 코드
-			.description(errorCode.getMessage()) // 에러 메시지
+			.httpStatusCode(errorCode.getStatus().value())
+			.name(errorCode.name())
+			.errorCode(errorCode.getCode())
+			.description(errorCode.getMessage())
 			.holder(createSwaggerExample(errorCode, errorCode.getMessage()))
 			.build();
 	}
@@ -64,7 +64,7 @@ public class ApiErrorResponseHandler {
 
 		Example example = new Example();
 		example.setValue(failedResponseBodyExample);
-		example.setDescription(description); // 설명을 예제에 추가
+		example.setDescription(description);
 
 		return example;
 	}
