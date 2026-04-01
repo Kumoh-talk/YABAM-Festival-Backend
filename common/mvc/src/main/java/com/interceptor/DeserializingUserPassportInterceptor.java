@@ -15,8 +15,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 public class DeserializingUserPassportInterceptor implements HandlerInterceptor {
 
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper;
 	public static final String USER_INFO_ATTRIBUTE = "userInfo";
+
+	public DeserializingUserPassportInterceptor(ObjectMapper objectMapper) {
+		this.objectMapper = objectMapper;
+	}
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {

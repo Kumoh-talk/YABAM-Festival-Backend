@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.aop.AssignUserPassportAspect;
 import com.interceptor.AuthorizationInterceptor;
 import com.interceptor.DeserializingUserPassportInterceptor;
@@ -20,9 +22,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {
 
+	private final ObjectMapper objectMapper;
+
 	@Bean
 	public DeserializingUserPassportInterceptor deserializingUserPassportInterceptor() {
-		return new DeserializingUserPassportInterceptor();
+		return new DeserializingUserPassportInterceptor(objectMapper);
 	}
 
 	@Bean
