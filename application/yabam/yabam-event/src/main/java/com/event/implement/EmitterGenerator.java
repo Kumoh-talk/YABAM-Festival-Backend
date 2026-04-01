@@ -18,7 +18,7 @@ public class EmitterGenerator {
 	private final MqChannelHandler mqChannelHandler;
 
 	public SseEmitter setUpSseEmitter(String channelName, Map<Long, SseEmitter> emitterMap, Long storeId) {
-		SseEmitter emitter = createEmitter();
+		SseEmitter emitter = new SseEmitter(TIMEOUT);
 		emitter.onTimeout(() -> {
 			log.info("[{}] server sent event timed out : key={}", channelName, storeId);
 			emitter.complete();
@@ -38,7 +38,4 @@ public class EmitterGenerator {
 		return emitter;
 	}
 
-	private SseEmitter createEmitter() {
-		return new SseEmitter(TIMEOUT);
-	}
 }

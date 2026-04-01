@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @RequiredArgsConstructor
 @Import({KafkaStoreOrderProperties.class, KafkaStoreOrderProducer.class})
-public class KafkaProcuerConfig {
+public class KafkaProducerConfig {
 	private final KafkaStoreOrderProperties kafkaStoreOrderProperties;
 
 	@Bean

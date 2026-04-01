@@ -17,7 +17,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import com.pos.consumer.SseEventHandler;
 import com.pos.consumer.store.order.config.KafkaConsumerConfig;
 import com.pos.producer.store.order.KafkaStoreOrderProducer;
-import com.pos.producer.store.order.config.KafkaProcuerConfig;
+import com.pos.producer.store.order.config.KafkaProducerConfig;
 
 import domain.pos.order.entity.Order;
 import domain.pos.store.entity.Store;
@@ -25,7 +25,7 @@ import domain.pos.table.entity.Table;
 import fixtures.order.OrderFixture;
 
 @SpringBootTest
-@Import(value = {KafkaProcuerConfig.class,
+@Import(value = {KafkaProducerConfig.class,
 	KafkaConsumerConfig.class,
 	KafkaStoreOrderEventListener.class
 })
