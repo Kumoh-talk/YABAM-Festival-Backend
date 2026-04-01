@@ -68,11 +68,10 @@ public class SaleService {
 	}
 
 	private static void validateOpenedSaleOrStore(UserPassport ownerPassport, Long saleId, Sale savedSale) {
-		savedSale.getCloseDateTime()
-			.ifPresent((dateTime) -> {
-				log.warn("이미 종료된 Sale.: userId={}, saleId={}", ownerPassport.getUserId(), saleId);
-				throw new ServiceException(ErrorCode.CONFLICT_CLOSE_STORE);
-			});
+		if (savedSale.getCloseDateTime().isPresent()) {
+			log.warn("이미 종료된 Sale.: userId={}, saleId={}", ownerPassport.getUserId(), saleId);
+			throw new ServiceException(ErrorCode.CONFLICT_CLOSE_STORE);
+		}
 		if (!savedSale.getStore().getIsOpen()) {
 			log.warn("이미 종료된 가게 상태: userId={}, storeId={}", ownerPassport.getUserId(),
 				savedSale.getStore().getId());
