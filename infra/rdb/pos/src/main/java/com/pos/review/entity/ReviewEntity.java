@@ -36,7 +36,7 @@ public class ReviewEntity extends BaseEntity {
 	@Embedded
 	private ReviewUser reviewUser;
 
-	@Column(nullable = true)
+	@Column
 	private String content;
 
 	@Column(nullable = false)

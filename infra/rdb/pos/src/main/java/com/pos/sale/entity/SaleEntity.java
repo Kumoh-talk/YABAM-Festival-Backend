@@ -36,7 +36,7 @@ public class SaleEntity {
 	@Column(nullable = false)
 	private LocalDateTime openDateTime;
 
-	@Column(nullable = true)
+	@Column
 	private LocalDateTime closeDateTime;
 
 	@ManyToOne(fetch = FetchType.LAZY)
