@@ -4,9 +4,8 @@ import static com.response.ResponseUtil.*;
 import static com.vo.UserRole.*;
 
 import java.io.IOException;
-import java.util.UUID;
-
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -98,19 +97,15 @@ public class PaymentController {
         @RequestBody String rawBody) {
         tossPaymentPort.verifyWebhookSignature(rawBody, signature);
 
-        TossWebhookRequest request = parseWebhookRequest(rawBody);
-        if ("PAYMENT_STATUS_CHANGED".equals(request.eventType()) && request.data() != null) {
-            paymentService.processWebhook(request.data().paymentKey(), request.data().status());
-        }
-        return ResponseEntity.ok().build();
-    }
-
-    private TossWebhookRequest parseWebhookRequest(String rawBody) {
         try {
-            return objectMapper.readValue(rawBody, TossWebhookRequest.class);
+            TossWebhookRequest request = objectMapper.readValue(rawBody, TossWebhookRequest.class);
+            if ("PAYMENT_STATUS_CHANGED".equals(request.eventType()) && request.data() != null) {
+                paymentService.processWebhook(request.data().paymentKey(), request.data().status());
+            }
         } catch (IOException e) {
             log.warn("웹훅 요청 본문 파싱 실패. body={}", rawBody);
             throw new ServiceException(ErrorCode.INVALID_INPUT_VALUE);
         }
+        return ResponseEntity.ok().build();
     }
 }
