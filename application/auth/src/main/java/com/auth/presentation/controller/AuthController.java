@@ -39,7 +39,6 @@ public class AuthController implements AuthApi {
 	public ResponseEntity<ResponseBody<Void>> login(
 		HttpServletResponse response,
 		@RequestBody @Valid OidcLoginRequest request) throws JsonProcessingException {
-		// 1. ID Token에서 페이로드 추출
 		OidcPayload payload = oAuthOidcHelper.getPayload(
 			request.provider(),
 			request.oauthId(),
@@ -47,18 +46,15 @@ public class AuthController implements AuthApi {
 			request.nonce()
 		);
 
-		// 2. 로그인 / 회원가입
 		UserPassport userPassport = userService.findOrCreateUser(
 			payload.sub(),
 			payload.email(),
 			request.provider()
 		);
 
-		// 직렬화 및 인코딩
 		String userPassportJson = objectMapper.writeValueAsString(userPassport);
 		String encodedPassport = URLEncoder.encode(userPassportJson, StandardCharsets.UTF_8);
 
-		// 헤더에 추가
 		response.setHeader(HttpHeaderName.RESPONSE_USER_INFO_HEADER, encodedPassport);
 
 		return ResponseEntity.ok(createSuccessResponse());

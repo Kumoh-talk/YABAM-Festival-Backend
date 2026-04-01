@@ -50,11 +50,8 @@ public class FakeAuthController {
 
 	private void serializeUserPassport(HttpServletResponse response, UserPassport userPassport) throws
 		JsonProcessingException {
-		// 직렬화 및 인코딩
 		String userPassportJson = objectMapper.writeValueAsString(userPassport);
 		String encodedPassport = URLEncoder.encode(userPassportJson, StandardCharsets.UTF_8);
-
-		// 헤더에 추가
 		response.setHeader(HttpHeaderName.RESPONSE_USER_INFO_HEADER, encodedPassport);
 	}
 }
