@@ -20,10 +20,7 @@ import lombok.NoArgsConstructor;
 public class CallMapper {
 
 	public static CallEntity toCallEntity(UUID receiptId, Long saleId, CallMessage callMessage) {
-		ReceiptEntity receiptEntity = ReceiptEntity.from(receiptId);
-		SaleEntity saleEntity = SaleEntity.from(saleId);
-		return CallEntity
-			.of(receiptEntity, saleEntity, callMessage);
+		return CallEntity.of(ReceiptEntity.from(receiptId), SaleEntity.from(saleId), callMessage);
 	}
 
 	public static Slice<Call> toCallSlice(Slice<CallEntity> nonCompleteCalls) {

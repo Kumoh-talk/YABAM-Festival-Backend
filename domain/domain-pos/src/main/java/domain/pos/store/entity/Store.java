@@ -39,7 +39,7 @@ public class Store {
 	}
 
 	public static Store create(UserPassport ownerPassport, StoreInfo requestStoreInfo) {
-		state(isOwner(ownerPassport), NOT_OWNER_STORE_CREATE);
+		state(ownerPassport.getUserRole().equals(ROLE_OWNER), NOT_OWNER_STORE_CREATE);
 
 		var store = new Store();
 		store.isOpen = false;
@@ -47,10 +47,6 @@ public class Store {
 		store.storeInfo = requireNonNull(requestStoreInfo);
 
 		return store;
-	}
-
-	private static boolean isOwner(UserPassport ownerPassport) {
-		return ownerPassport.getUserRole().equals(ROLE_OWNER);
 	}
 
 	public Store open() {
@@ -62,13 +58,9 @@ public class Store {
 	}
 
 	public void update(UserPassport ownerPassport, StoreInfo modifyStoreInfo) {
-		state(isOwnerStore(ownerPassport), NOT_EQUAL_STORE_OWNER);
+		state(ownerPassport.getUserId().equals(this.ownerPassport.getUserId()), NOT_EQUAL_STORE_OWNER);
 
 		this.storeInfo = requireNonNull(modifyStoreInfo);
-	}
-
-	private boolean isOwnerStore(UserPassport ownerPassport) {
-		return ownerPassport.getUserId().equals(this.ownerPassport.getUserId());
 	}
 
 	public void openStore() { // TODO : 네이밍 추후에 open으로 변경해야 함

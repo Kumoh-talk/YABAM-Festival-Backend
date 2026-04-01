@@ -1,7 +1,7 @@
 package com.pos.table.mapper;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import com.pos.store.entity.StoreEntity;
 import com.pos.store.mapper.StoreMapper;
@@ -19,17 +19,9 @@ import lombok.NoArgsConstructor;
 public class TableMapper {
 	public static List<TableEntity> toTableEntities(StoreEntity storeEntity, Integer queryTableNumber,
 		Integer tableCapacity) {
-		List<TableEntity> tableEntities = new ArrayList<>();
-		for (int i = 1; i <= queryTableNumber; i++) {
-			tableEntities.add(TableEntity.of(
-				TableNumber.from(i),
-				TablePointVo.of(0, 0),
-				false,
-				tableCapacity,
-				storeEntity
-			));
-		}
-		return tableEntities;
+		return IntStream.rangeClosed(1, queryTableNumber)
+			.mapToObj(i -> TableEntity.of(TableNumber.from(i), TablePointVo.of(0, 0), false, tableCapacity, storeEntity))
+			.toList();
 	}
 
 	public static Table toTable(TableEntity tableEntity, Store responStore) {
