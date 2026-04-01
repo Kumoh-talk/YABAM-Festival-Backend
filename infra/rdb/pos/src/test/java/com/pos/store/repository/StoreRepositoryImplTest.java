@@ -106,10 +106,8 @@ class StoreRepositoryImplTest extends RepositoryTest {
 		testEntityManager.clear();
 		System.out.println("===StoreRepositoryImplTest.Store엔티티_논리_삭제_테스트 쿼리===");
 
-		assertSoftly(softly -> {
-			StoreEntity findStoreEntity = testEntityManager.find(StoreEntity.class, savedStoreEntity.getId());
-			softly.assertThat(findStoreEntity).isNull();
-		});
+		StoreEntity findStoreEntity = testEntityManager.find(StoreEntity.class, savedStoreEntity.getId());
+		assertThat(findStoreEntity).isNull();
 	}
 
 	@Test
@@ -124,10 +122,8 @@ class StoreRepositoryImplTest extends RepositoryTest {
 		storeRepository.changeStoreOpenStatus(opendStore);
 		System.out.println("===StoreRepositoryImplTest.Store_오픈_상태_변경_테스트 쿼리===");
 
-		assertSoftly(softly -> {
-			StoreEntity findStoreEntity = testEntityManager.find(StoreEntity.class, savedStoreEntity.getId());
-			softly.assertThat(findStoreEntity.isOpen()).isFalse();
-		});
+		StoreEntity findStoreEntity = testEntityManager.find(StoreEntity.class, savedStoreEntity.getId());
+		assertThat(findStoreEntity.isOpen()).isFalse();
 	}
 
 	@Test

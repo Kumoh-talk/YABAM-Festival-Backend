@@ -3,6 +3,7 @@ package com.pos.table.repository;
 import static com.pos.fixtures.store.StoreEntityFixture.*;
 import static com.pos.fixtures.table.TableEntityFixture.*;
 import static fixtures.store.StoreFixture.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.SoftAssertions.*;
 
 import java.util.List;
@@ -70,7 +71,7 @@ class TableRepositoryImplTest extends RepositoryTest {
 			System.out.println("===TableRepositoryImplTest.existsTableByStoreAndTableNumWithLock 쿼리===");
 			boolean exists = tableRepository.existsTableByStoreAndTableNumWithLock(savedStore, 1);
 			System.out.println("===TableRepositoryImplTest.existsTableByStoreAndTableNumWithLock 쿼리===");
-			assertSoftly(softly -> softly.assertThat(exists).isFalse());
+			assertThat(exists).isFalse();
 		}
 
 		@Test
@@ -81,7 +82,7 @@ class TableRepositoryImplTest extends RepositoryTest {
 			System.out.println("===TableRepositoryImplTest.existsTableByStoreAndTableNumWithLock 쿼리===");
 			boolean exists = tableRepository.existsTableByStoreAndTableNumWithLock(savedStore, 2);
 			System.out.println("===TableRepositoryImplTest.existsTableByStoreAndTableNumWithLock 쿼리===");
-			assertSoftly(softly -> softly.assertThat(exists).isTrue());
+			assertThat(exists).isTrue();
 		}
 	}
 

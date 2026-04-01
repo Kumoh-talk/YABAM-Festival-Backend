@@ -6,6 +6,7 @@ import static com.pos.fixtures.store.StoreEntityFixture.*;
 import static com.pos.fixtures.table.TableEntityFixture.*;
 import static com.pos.receipt.ReceiptEntityFixture.*;
 import static fixtures.store.StoreFixture.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.SoftAssertions.*;
 
 import java.util.List;
@@ -117,7 +118,7 @@ class PaymentRepositoryImplTest extends RepositoryTest {
 
 			Optional<Payment> result = paymentRepository.findByReceiptId(nonExistentReceiptId);
 
-			assertSoftly(softly -> softly.assertThat(result).isEmpty());
+			assertThat(result).isEmpty();
 		}
 	}
 
@@ -143,7 +144,7 @@ class PaymentRepositoryImplTest extends RepositoryTest {
 
 			Optional<Payment> result = paymentRepository.findByTossPaymentKey(nonExistentKey);
 
-			assertSoftly(softly -> softly.assertThat(result).isEmpty());
+			assertThat(result).isEmpty();
 		}
 	}
 
@@ -170,7 +171,7 @@ class PaymentRepositoryImplTest extends RepositoryTest {
 
 			List<Payment> result = paymentRepository.findBySaleId(nonExistentSaleId);
 
-			assertSoftly(softly -> softly.assertThat(result).isEmpty());
+			assertThat(result).isEmpty();
 		}
 	}
 
@@ -199,13 +200,9 @@ class PaymentRepositoryImplTest extends RepositoryTest {
 		void 실패_존재하지_않는_결제() {
 			Long invalidPaymentId = 999L;
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> paymentRepository.updateStatus(invalidPaymentId, PaymentStatus.CANCELED))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_NOT_FOUND);
-			});
+			assertThatThrownBy(() -> paymentRepository.updateStatus(invalidPaymentId, PaymentStatus.CANCELED))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_NOT_FOUND);
 		}
 	}
 }

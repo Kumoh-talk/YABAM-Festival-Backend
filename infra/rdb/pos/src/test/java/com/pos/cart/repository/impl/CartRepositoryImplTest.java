@@ -5,6 +5,7 @@ import static com.pos.fixtures.store.StoreEntityFixture.*;
 import static com.pos.fixtures.table.TableEntityFixture.*;
 import static com.pos.receipt.ReceiptEntityFixture.*;
 import static fixtures.store.StoreFixture.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.SoftAssertions.*;
 
 import java.time.LocalDateTime;
@@ -79,12 +80,9 @@ class CartRepositoryImplTest extends RepositoryTest {
 		void 장바구니_없으면_CART_NOT_FOUND() {
 			UUID unknownReceiptId = UUID.randomUUID();
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> cartRepository.enterOrderSession(unknownReceiptId))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_NOT_FOUND);
-			});
+			assertThatThrownBy(() -> cartRepository.enterOrderSession(unknownReceiptId))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_NOT_FOUND);
 		}
 
 		@Test
@@ -95,13 +93,9 @@ class CartRepositoryImplTest extends RepositoryTest {
 			testEntityManager.flush();
 			testEntityManager.clear();
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> cartRepository.enterOrderSession(savedReceiptEntity.getId()))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_ORDER_SESSION_ACTIVE);
-			});
+			assertThatThrownBy(() -> cartRepository.enterOrderSession(savedReceiptEntity.getId()))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_ORDER_SESSION_ACTIVE);
 		}
 	}
 
@@ -138,13 +132,9 @@ class CartRepositoryImplTest extends RepositoryTest {
 		void 잘못된_토큰으로_취소_CART_ORDER_SESSION_INVALID() {
 			UUID wrongToken = UUID.randomUUID();
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> cartRepository.cancelOrderSession(savedReceiptEntity.getId(), wrongToken))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_ORDER_SESSION_INVALID);
-			});
+			assertThatThrownBy(() -> cartRepository.cancelOrderSession(savedReceiptEntity.getId(), wrongToken))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_ORDER_SESSION_INVALID);
 		}
 	}
 
@@ -161,14 +151,14 @@ class CartRepositoryImplTest extends RepositoryTest {
 
 			boolean result = cartRepository.isCartPending(savedReceiptEntity.getId());
 
-			assertSoftly(softly -> softly.assertThat(result).isTrue());
+			assertThat(result).isTrue();
 		}
 
 		@Test
 		void 세션_없으면_false() {
 			boolean result = cartRepository.isCartPending(savedReceiptEntity.getId());
 
-			assertSoftly(softly -> softly.assertThat(result).isFalse());
+			assertThat(result).isFalse();
 		}
 
 		@Test
@@ -189,7 +179,7 @@ class CartRepositoryImplTest extends RepositoryTest {
 
 			boolean result = cartRepository.isCartPending(savedReceiptEntity.getId());
 
-			assertSoftly(softly -> softly.assertThat(result).isFalse());
+			assertThat(result).isFalse();
 		}
 	}
 
@@ -203,7 +193,7 @@ class CartRepositoryImplTest extends RepositoryTest {
 
 			Optional<Cart> result = cartRepository.getCartWithLock(unknownReceiptId);
 
-			assertSoftly(softly -> softly.assertThat(result).isEmpty());
+			assertThat(result).isEmpty();
 		}
 
 		@Test
