@@ -19,21 +19,20 @@ public class FakeUserService {
 	public static final String fakeUserEmail = "fake-user-email";
 	public static final String fakeOwnerEmail = "fake-owner-email";
 
-	private final OidcProvider fakeProvider = OidcProvider.KAKAO;
-
-	private final String fakeProviderId = "fake-user-provider-id";
+	private static final OidcProvider FAKE_PROVIDER = OidcProvider.KAKAO;
+	private static final String FAKE_PROVIDER_ID = "fake-user-provider-id";
 
 	private final UserHandler userHandler;
 
 	public UserPassport fakeUserLogin() {
 		if (fakeUserPassport == null) {
-			UserPassport userPassport = userHandler.findByEmailAndProviderAndProviderId(fakeUserEmail, fakeProvider,
-				fakeProviderId);
+			UserPassport userPassport = userHandler.findByEmailAndProviderAndProviderId(fakeUserEmail, FAKE_PROVIDER,
+				FAKE_PROVIDER_ID);
 
 			if (userPassport != null) {
 				fakeUserPassport = userPassport;
 			} else {
-				fakeUserPassport = userHandler.createUser(fakeProviderId, fakeUserEmail, fakeProvider);
+				fakeUserPassport = userHandler.createUser(FAKE_PROVIDER_ID, fakeUserEmail, FAKE_PROVIDER);
 			}
 		}
 
@@ -42,13 +41,13 @@ public class FakeUserService {
 
 	public UserPassport fakeOwnerLogin() {
 		if (fakeOwnerPassport == null) {
-			UserPassport userPassport = userHandler.findByEmailAndProviderAndProviderId(fakeOwnerEmail, fakeProvider,
-				fakeProviderId);
+			UserPassport userPassport = userHandler.findByEmailAndProviderAndProviderId(fakeOwnerEmail, FAKE_PROVIDER,
+				FAKE_PROVIDER_ID);
 
 			if (userPassport != null) {
 				fakeOwnerPassport = userPassport;
 			} else {
-				fakeOwnerPassport = userHandler.createOwner(fakeProviderId, fakeOwnerEmail, fakeProvider);
+				fakeOwnerPassport = userHandler.createOwner(FAKE_PROVIDER_ID, fakeOwnerEmail, FAKE_PROVIDER);
 			}
 		}
 

@@ -20,9 +20,9 @@ public class ImageService {
 		final ImageProperty imageProperty) {
 		storeValidator.validateStoreOwner(ownerPassport, storeId);
 
-		String url = UrlHandleUtil.generatreDetailUrl(storeId);
+		String url = UrlHandleUtil.generateDetailUrl(storeId);
 		if (imageProperty.equals(ImageProperty.STORE_HEAD)) {
-			url = UrlHandleUtil.generatreHeadUrl(storeId);
+			url = UrlHandleUtil.generateHeadUrl(storeId);
 		}
 		if (imageProperty.equals(ImageProperty.MENU_IMAGE)) {
 			url = UrlHandleUtil.generateStoreMenuUrl(storeId);
