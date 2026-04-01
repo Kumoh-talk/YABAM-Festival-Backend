@@ -78,10 +78,8 @@ public class OrderService {
 			throw new ServiceException(ErrorCode.MENU_NOT_FOUND);
 		}
 
-		for (CartMenu cartMenu : cart.getCartMenus()) {
-			if (cartMenu.getMenuInfo().isSoldOut()) {
-				throw new ServiceException(ErrorCode.MENU_SOLD_OUT);
-			}
+		if (cart.getCartMenus().stream().anyMatch(cartMenu -> cartMenu.getMenuInfo().isSoldOut())) {
+			throw new ServiceException(ErrorCode.MENU_SOLD_OUT);
 		}
 
 		if (userPassport.getUserRole().isHigherOrEqual(UserRole.ROLE_USER)
