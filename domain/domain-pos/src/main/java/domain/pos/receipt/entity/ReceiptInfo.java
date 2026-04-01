@@ -16,9 +16,9 @@ public class ReceiptInfo {
 	private LocalDateTime stopUsageTime;
 	private Integer occupancyFee;
 
-	public static final int UNIT_MINUTES = 60;
-	public static final int FOUR_TABLE_COST = 4000;
-	public static final int SIX_TABLE_COST = 6000;
+	private static final int UNIT_MINUTES = 60;
+	private static final int FOUR_TABLE_COST = 4000;
+	private static final int SIX_TABLE_COST = 6000;
 
 	@Builder
 	public ReceiptInfo(UUID receiptId, boolean isAdjustment, LocalDateTime startUsageTime,
