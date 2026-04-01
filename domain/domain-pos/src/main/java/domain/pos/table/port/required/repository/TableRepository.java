@@ -15,20 +15,20 @@ public interface TableRepository {
 
 	Optional<Table> findByIdWithLock(UUID queryTableId, Long storeId);
 
-	// deprecated 예정
+	@Deprecated
 	Table changeTableActiveStatus(boolean isActive, Table savedInActiveTable);
 
 	List<Table> findTablesByStoreId(Long storeId);
 
 	boolean existsTableByStoreAndTableNumWithLock(Store store, Integer tableNumber);
 
-	// deprecated 예정
+	@Deprecated
 	UUID saveTable(Store store, Integer tableNumber, TablePoint tablePoint, Integer tableCapacity);
 
-	// deprecated 예정
+	@Deprecated
 	Optional<Table> findTableWithStoreByTableId(UUID qureyTableId);
 
-	// deprecated 예정
+	@Deprecated
 	void updateTableInfo(Table table, Integer updateTableNumber, TablePoint updateTablePoint, Integer tableCapacity);
 
 	void deleteTable(Table table);

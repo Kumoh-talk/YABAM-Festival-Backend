@@ -29,7 +29,6 @@ public interface MenuCategoryRepository {
 
 	void deleteMenuCategory(Long storeId, Long categoryId);
 
-	// v2
 	void lock(Long menuCategoryId);
 
 	Long readVersion(Long menuCategoryId);

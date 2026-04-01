@@ -41,7 +41,6 @@ public interface MenuRepository {
 
 	Optional<MenuInfo> getMenuInfoById(Long menuId);
 
-	// v2
 	domain.pos.menu.entity.v2.domain.Menu create(domain.pos.menu.entity.v2.domain.Menu menu);
 
 	Optional<domain.pos.menu.entity.v2.domain.Menu> readMenu(Long storeId, Long menuId);
