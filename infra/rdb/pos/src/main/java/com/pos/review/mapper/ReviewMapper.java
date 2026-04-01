@@ -16,15 +16,12 @@ public class ReviewMapper {
 
 	public static ReviewEntity toReviewEntity(UserPassport userPassport, Long storeId, ReceiptInfo receiptInfo,
 		ReviewInfo reviewInfo) {
-		ReviewUser reviewUser = ReviewUser.of(userPassport.getUserId(), userPassport.getUserNickname());
-		StoreEntity storeEntity = StoreEntity.from(storeId);
-		ReceiptEntity receiptEntity = ReceiptEntity.from(receiptInfo.getReceiptId());
 		return ReviewEntity.of(
-			reviewUser,
+			ReviewUser.of(userPassport.getUserId(), userPassport.getUserNickname()),
 			reviewInfo.getContent(),
 			reviewInfo.getRating(),
-			storeEntity,
-			receiptEntity
+			StoreEntity.from(storeId),
+			ReceiptEntity.from(receiptInfo.getReceiptId())
 		);
 	}
 
