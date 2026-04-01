@@ -36,7 +36,7 @@ public class MenuEntity extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "menu_order", nullable = true)
+	@Column(name = "menu_order")
 	private Integer order;
 
 	@Column(name = "name", nullable = false)

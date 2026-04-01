@@ -31,14 +31,11 @@ class OrderAllocatorTest {
 
 	@Test
 	void success() {
-		// given
 		Long menuCategoryId = VALID_MENU_CATEGORY_ID_1;
 		given(orderingOps.readGuardMaxOrder(menuCategoryId)).willReturn(5);
 
-		// when
 		Integer newOrder = orderAllocator.allocateNewOrder(menuCategoryId);
 
-		// then
 		assertThat(newOrder).isEqualTo(6);
 		verify(orderingOps).lockGuard(menuCategoryId);
 		verify(orderingOps).readGuardMaxOrder(menuCategoryId);
@@ -50,7 +47,6 @@ class OrderAllocatorTest {
 		@Test
 		@DisplayName("updatedOrder가 previousOrder보다 클 때")
 		void updatedOrder_is_bigger_than_previousOrder() {
-			// given
 			Long userId = 1L;
 			Long storeId = 2L;
 			Long menuId = 3L;
@@ -64,11 +60,9 @@ class OrderAllocatorTest {
 			given(orderingOps.updateOrder(userId, storeId, menuId, updatedOrder)).willReturn(
 				Optional.of(updateMenu));
 
-			// when
 			Menu result = orderAllocator.relocationOrders(userId, storeId, menuCategoryId, menuId, updatedOrder,
 				previousOrder).get();
 
-			// then
 			verify(orderingOps).lockGuard(menuCategoryId);
 			verify(orderingOps).updateToTemporaryOrder(menuId);
 			verify(orderingOps).decrementOrdersInRange(menuCategoryId, previousOrder + 1, updatedOrder);
@@ -80,7 +74,6 @@ class OrderAllocatorTest {
 		@Test
 		@DisplayName("updateOrder가 currentOrder보다 작을 때")
 		void updateOrder_is_smaller_than_currentOrder() {
-			// given
 			Long userId = 1L;
 			Long storeId = 2L;
 			Long menuId = 3L;
@@ -94,11 +87,9 @@ class OrderAllocatorTest {
 			given(orderingOps.updateOrder(userId, storeId, menuId, updatedOrder)).willReturn(
 				Optional.of(updateMenu));
 
-			// when
 			Menu result = orderAllocator.relocationOrders(userId, storeId, menuCategoryId, menuId, updatedOrder,
 				previousOrder).get();
 
-			// then
 			verify(orderingOps).lockGuard(menuCategoryId);
 			verify(orderingOps).updateToTemporaryOrder(menuId);
 			verify(orderingOps).incrementOrdersInRange(menuCategoryId, updatedOrder, previousOrder - 1);
@@ -110,7 +101,6 @@ class OrderAllocatorTest {
 		@Test
 		@DisplayName("updateOrder가 현재 최댓값 이상이면 ServiceException(DOMAIN_INVALID_MENU_ORDER)")
 		void updateOrder_is_bigger_than_max() {
-			// given
 			Long userId = 1L;
 			Long storeId = 2L;
 			Long menuId = 3L;
@@ -134,7 +124,6 @@ class OrderAllocatorTest {
 
 	@Test
 	void deleteMenu_success() {
-		// given
 		Long userId = 1L;
 		Long storeId = 2L;
 		Menu menu = VALID_MENU();
@@ -144,10 +133,8 @@ class OrderAllocatorTest {
 
 		given(orderingOps.refreshOrder(menuId)).willReturn(deletedOrder);
 
-		// when
 		orderAllocator.deleteOrder(userId, storeId, menuCategoryId, menuId);
 
-		// then
 		verify(orderingOps).lockGuard(menuCategoryId);
 		verify(orderingOps).updateOrder(userId, storeId, menuId, null);
 		verify(orderingOps).decrementOrdersInRange(menuCategoryId, deletedOrder + 1, Integer.MAX_VALUE);

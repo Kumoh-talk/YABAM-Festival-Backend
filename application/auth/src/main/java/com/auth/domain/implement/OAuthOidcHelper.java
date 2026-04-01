@@ -52,8 +52,9 @@ public class OAuthOidcHelper {
 	 * @return OIDCDecodePayload : ID Token의 payload
 	 */
 	public OidcPayload getPayload(OidcProvider provider, String oauthId, String idToken, String nonce) {
-		OidcClient client = oauthOidcClients.get(provider).keySet().iterator().next();
-		OidcClientProperties properties = oauthOidcClients.get(provider).values().iterator().next();
+		Map<OidcClient, OidcClientProperties> providerMap = oauthOidcClients.get(provider);
+		OidcClient client = providerMap.keySet().iterator().next();
+		OidcClientProperties properties = providerMap.values().iterator().next();
 		OidcPublicKeyResponse response = client.getOidcPublicKey();
 		return getPayloadFromIdToken(idToken, properties.getIssuer(), oauthId, properties.getSecrets(), nonce,
 			response);

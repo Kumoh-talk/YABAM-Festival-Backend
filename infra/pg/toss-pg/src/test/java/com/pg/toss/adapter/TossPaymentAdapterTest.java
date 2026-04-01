@@ -57,7 +57,6 @@ class TossPaymentAdapterTest {
 
         @Test
         void ALREADY_PROCESSED_PAYMENT_수신시_getPayment로_복구하여_반환() {
-            // given
             TossConfirmResult recoveredResult = TossConfirmResult.builder()
                 .tossPaymentKey(PAYMENT_KEY)
                 .tossOrderId(ORDER_ID)
@@ -72,10 +71,8 @@ class TossPaymentAdapterTest {
             given(tossPaymentClient.getPayment(PAYMENT_KEY))
                 .willReturn(recoveredResult);
 
-            // when
             TossConfirmResult result = adapter.confirm(PAYMENT_KEY, ORDER_ID, AMOUNT);
 
-            // then
             assertThat(result.getStatus()).isEqualTo(PaymentStatus.DONE);
             assertThat(result.getTossPaymentKey()).isEqualTo(PAYMENT_KEY);
             then(tossPaymentClient).should().getPayment(PAYMENT_KEY);
@@ -83,7 +80,6 @@ class TossPaymentAdapterTest {
 
         @Test
         void ALREADY_PROCESSED_PAYMENT_후_getPayment_실패시_예외_전파() {
-            // given
             given(tossPaymentClient.confirm(PAYMENT_KEY, ORDER_ID, AMOUNT))
                 .willThrow(new AlreadyProcessedAtTossException(PAYMENT_KEY));
             given(tossPaymentClient.getPayment(PAYMENT_KEY))
@@ -107,21 +103,17 @@ class TossPaymentAdapterTest {
 
         @Test
         void 성공_유효한_서명() throws Exception {
-            // given
             given(properties.getSecretKey()).willReturn(TEST_SECRET_KEY);
             String validSignature = computeHmac(TEST_SECRET_KEY, RAW_BODY);
 
-            // when & then
             assertThatNoException().isThrownBy(
                 () -> adapter.verifyWebhookSignature(RAW_BODY, validSignature));
         }
 
         @Test
         void 실패_서명_불일치() {
-            // given
             given(properties.getSecretKey()).willReturn(TEST_SECRET_KEY);
 
-            // when & then
             assertThatThrownBy(() -> adapter.verifyWebhookSignature(RAW_BODY, "wrong-signature"))
                 .isInstanceOf(ServiceException.class)
                 .hasFieldOrPropertyWithValue("errorCode",
@@ -130,7 +122,6 @@ class TossPaymentAdapterTest {
 
         @Test
         void 실패_서명_헤더_누락() {
-            // when & then
             assertThatThrownBy(() -> adapter.verifyWebhookSignature(RAW_BODY, null))
                 .isInstanceOf(ServiceException.class)
                 .hasFieldOrPropertyWithValue("errorCode",
@@ -139,11 +130,9 @@ class TossPaymentAdapterTest {
 
         @Test
         void 실패_다른_시크릿키로_생성된_서명() throws Exception {
-            // given
             given(properties.getSecretKey()).willReturn(TEST_SECRET_KEY);
             String signatureFromDifferentKey = computeHmac("different_secret_key", RAW_BODY);
 
-            // when & then
             assertThatThrownBy(
                 () -> adapter.verifyWebhookSignature(RAW_BODY, signatureFromDifferentKey))
                 .isInstanceOf(ServiceException.class)
@@ -153,12 +142,10 @@ class TossPaymentAdapterTest {
 
         @Test
         void 실패_변조된_바디() throws Exception {
-            // given
             given(properties.getSecretKey()).willReturn(TEST_SECRET_KEY);
             String validSignature = computeHmac(TEST_SECRET_KEY, RAW_BODY);
             String tamperedBody = RAW_BODY.replace("CANCELED", "DONE");
 
-            // when & then
             assertThatThrownBy(() -> adapter.verifyWebhookSignature(tamperedBody, validSignature))
                 .isInstanceOf(ServiceException.class)
                 .hasFieldOrPropertyWithValue("errorCode",

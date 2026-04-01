@@ -12,10 +12,8 @@ import domain.pos.store.port.provided.StoreCommand;
 import domain.pos.store.port.required.DetailImageRepository;
 import domain.pos.store.port.required.StoreRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class StoreCommandImpl implements StoreCommand {
 	private final StoreValidator storeValidator;

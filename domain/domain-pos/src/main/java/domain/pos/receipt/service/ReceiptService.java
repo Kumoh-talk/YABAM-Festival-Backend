@@ -54,13 +54,13 @@ public class ReceiptService {
 		final Sale savedSale = saleReader.getOpenSaleByStoreId(storeId)
 			.orElseThrow(() -> {
 				log.warn("Open된 Sale 을 찾을 수 없습니다. tableId: {}", tableId);
-				throw new ServiceException(ErrorCode.NOT_FOUND_SALE);
+				return new ServiceException(ErrorCode.NOT_FOUND_SALE);
 			});
 
 		final Table savedTable = tableReader.findLockTableById(tableId, storeId)
 			.orElseThrow(() -> {
 				log.warn("Table 을 찾을 수 없습니다. tableId: {}", tableId);
-				throw new ServiceException(ErrorCode.NOT_FOUND_TABLE);
+				return new ServiceException(ErrorCode.NOT_FOUND_TABLE);
 			});
 
 		if (savedTable.getIsActive()) {
@@ -220,7 +220,7 @@ public class ReceiptService {
 		Table moveTable = tableReader.findLockTableById(moveTableId, store.getId())
 			.orElseThrow(() -> {
 				log.warn("Table 을 찾을 수 없습니다. tableId: {}", moveTableId);
-				throw new ServiceException(ErrorCode.NOT_FOUND_TABLE);
+				return new ServiceException(ErrorCode.NOT_FOUND_TABLE);
 			});
 		if (moveTable.getIsActive()) {
 			log.warn("Table 이 이미 활성화 되어 있습니다. tableId: {}", moveTableId);

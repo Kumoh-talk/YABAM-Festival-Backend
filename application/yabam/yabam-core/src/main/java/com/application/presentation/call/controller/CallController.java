@@ -22,10 +22,8 @@ import com.vo.UserRole;
 import domain.pos.call.service.CallService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@Slf4j
 @RequiredArgsConstructor
 public class CallController implements CallApi {
 	private final CallService callService;

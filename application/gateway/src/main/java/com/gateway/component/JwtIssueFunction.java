@@ -19,15 +19,13 @@ import com.response.ResponseBody;
 import com.vo.Token;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtIssueFunction implements RewriteFunction<String, String> {
 
-	private ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	private final JwtHandler jwtHandler;
 

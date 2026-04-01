@@ -41,13 +41,10 @@ class CartServiceTest extends ServiceTest {
 
 		@Test
 		void 성공() {
-			// given
 			given(cartWriter.isCartPending(receiptId)).willReturn(false);
 
-			// when
 			cartService.upsertCart(receiptId, menuId, quantity);
 
-			// then
 			assertSoftly(softly -> {
 				verify(cartWriter).upsertCart(receiptId, menuId, quantity);
 			});
@@ -55,7 +52,6 @@ class CartServiceTest extends ServiceTest {
 
 		@Test
 		void menuId가_유효하지_않은_경우() {
-			// given
 			given(cartWriter.isCartPending(receiptId)).willReturn(false);
 			doThrow(IllegalArgumentException.class)
 				.when(cartWriter).upsertCart(receiptId, menuId, quantity);
@@ -71,7 +67,6 @@ class CartServiceTest extends ServiceTest {
 
 		@Test
 		void 활성_세션_중_메뉴_추가_차단() {
-			// given
 			UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 			given(cartWriter.isCartPending(receiptId)).willReturn(true);
 
@@ -86,14 +81,11 @@ class CartServiceTest extends ServiceTest {
 
 		@Test
 		void 세션_만료_후_메뉴_추가_성공() {
-			// given
 			UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 			given(cartWriter.isCartPending(receiptId)).willReturn(false);
 
-			// when
 			cartService.upsertCart(receiptId, 1L, 1);
 
-			// then
 			assertSoftly(softly -> {
 				verify(cartWriter).upsertCart(receiptId, 1L, 1);
 			});
@@ -106,15 +98,12 @@ class CartServiceTest extends ServiceTest {
 
 		@Test
 		void 성공() {
-			// given
 			UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 			Long menuId = 10L;
 			given(cartWriter.isCartPending(receiptId)).willReturn(false);
 
-			// when
 			cartService.deleteCartMenu(receiptId, menuId);
 
-			// then
 			assertSoftly(softly -> {
 				verify(cartWriter).deleteCartMenu(receiptId, menuId);
 			});
@@ -122,7 +111,6 @@ class CartServiceTest extends ServiceTest {
 
 		@Test
 		void 활성_세션_중_메뉴_삭제_차단() {
-			// given
 			UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 			Long menuId = 10L;
 			given(cartWriter.isCartPending(receiptId)).willReturn(true);
@@ -143,17 +131,14 @@ class CartServiceTest extends ServiceTest {
 
 		@Test
 		void 성공_장바구니존재() {
-			// given
 			Cart expected = CartFixture.GENERAL_CART_SINGLE();
 			UUID receiptId = expected.getReceiptId();
 
 			doReturn(Optional.of(expected))
 				.when(cartWriter).getCart(receiptId);
 
-			// when
 			Optional<Cart> result = cartService.getCart(receiptId);
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(result).isPresent()
 					.contains(expected);
@@ -163,15 +148,12 @@ class CartServiceTest extends ServiceTest {
 
 		@Test
 		void 빈옵션_장바구니없음() {
-			// given
 			UUID receiptId = UUID.fromString("445e4567-e89b-12d3-a456-426614174000");
 			doReturn(Optional.empty())
 				.when(cartWriter).getCart(receiptId);
 
-			// when
 			Optional<Cart> result = cartService.getCart(receiptId);
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(result).isEmpty();
 				verify(cartWriter).getCart(receiptId);
@@ -185,15 +167,12 @@ class CartServiceTest extends ServiceTest {
 
 		@Test
 		void 성공_세션_없을때_진입() {
-			// given
 			Cart expected = CartFixture.CART_WITH_SESSION();
 			UUID receiptId = expected.getReceiptId();
 			given(cartWriter.enterOrderSession(receiptId)).willReturn(expected);
 
-			// when
 			Cart result = cartService.enterOrderSession(receiptId);
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(result.getSessionToken()).isNotNull();
 				softly.assertThat(result.getPendingAt()).isNotNull();
@@ -203,7 +182,6 @@ class CartServiceTest extends ServiceTest {
 
 		@Test
 		void 장바구니_없을때_CART_NOT_FOUND() {
-			// given
 			UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 			given(cartWriter.enterOrderSession(receiptId))
 				.willThrow(new ServiceException(ErrorCode.CART_NOT_FOUND));
@@ -218,7 +196,6 @@ class CartServiceTest extends ServiceTest {
 
 		@Test
 		void 이미_활성_세션이_있을때_CART_ORDER_SESSION_ACTIVE() {
-			// given
 			UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 			given(cartWriter.enterOrderSession(receiptId))
 				.willThrow(new ServiceException(ErrorCode.CART_ORDER_SESSION_ACTIVE));
@@ -238,15 +215,12 @@ class CartServiceTest extends ServiceTest {
 
 		@Test
 		void 유효한_토큰으로_세션_취소_성공() {
-			// given
 			UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 			UUID sessionToken = CartFixture.SESSION_TOKEN;
 			willDoNothing().given(cartWriter).cancelOrderSession(receiptId, sessionToken);
 
-			// when
 			cartService.cancelOrderSession(receiptId, sessionToken);
 
-			// then
 			assertSoftly(softly -> {
 				verify(cartWriter).cancelOrderSession(receiptId, sessionToken);
 			});
@@ -254,7 +228,6 @@ class CartServiceTest extends ServiceTest {
 
 		@Test
 		void 잘못된_토큰으로_세션_취소_CART_ORDER_SESSION_INVALID() {
-			// given
 			UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 			UUID wrongToken = UUID.randomUUID();
 			doThrow(new ServiceException(ErrorCode.CART_ORDER_SESSION_INVALID))
@@ -270,7 +243,6 @@ class CartServiceTest extends ServiceTest {
 
 		@Test
 		void 세션_없는_상태에서_취소_CART_ORDER_SESSION_INVALID() {
-			// given
 			UUID receiptId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
 			UUID token = UUID.randomUUID();
 			doThrow(new ServiceException(ErrorCode.CART_ORDER_SESSION_INVALID))

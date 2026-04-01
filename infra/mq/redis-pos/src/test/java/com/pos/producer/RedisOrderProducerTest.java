@@ -36,15 +36,12 @@ class RedisOrderProducerTest {
 
 	@Test
 	void produce_consume_통합테스트() throws InterruptedException {
-		// given
 		Order order = OrderFixture.GENERAL_ORDER();
 		Store store = order.getReceipt().getSale().getStore();
 		Table table = order.getReceipt().getTable();
 		redisConsumerHandler.subscribe(store.getId());
 
-		// when
 		redisOrderProducer.produceStoreOrder(store, table, order);
-		// then
 		verify(sseEventHandler, timeout(1000))
 			.handleEventWithSSE(any(), any(), any(), any());
 	}

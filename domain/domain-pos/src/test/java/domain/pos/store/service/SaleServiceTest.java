@@ -51,7 +51,6 @@ class SaleServiceTest extends ServiceTest {
 	class openStore {
 		@Test
 		void 성공() {
-			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store savedStore = GENERAL_CLOSE_STORE();
 			Store opendStore = GENERAL_OPEN_STORE();
@@ -64,10 +63,8 @@ class SaleServiceTest extends ServiceTest {
 				.when(storeWriter).modifyStoreOpenStatus(savedStore);
 			doReturn(createdSale)
 				.when(saleWriter).createSale(opendStore);
-			// when
 			Sale result = saleService.openStore(queryUserPassport, queryStoreId);
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(result).isEqualTo(createdSale);
 				softly.assertThat(result.getStore().getIsOpen()).isTrue();
@@ -83,7 +80,6 @@ class SaleServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_유효하지_않는_STORE_일때() {
-			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Long queryStoreId = GENERAL_USER_PASSPORT().getUserId();
 
@@ -106,7 +102,6 @@ class SaleServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_가게주인과_요청유저가_다를때() {
-			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Long queryStoreId = GENERAL_USER_PASSPORT().getUserId();
 
@@ -129,7 +124,6 @@ class SaleServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_이미_가게가_활성화되어있을때() {
-			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store savedStore = GENERAL_OPEN_STORE();
 			Long queryStoreId = savedStore.getId();
@@ -157,7 +151,6 @@ class SaleServiceTest extends ServiceTest {
 	class closeStore {
 		@Test
 		void 성공() {
-			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store savedStore = GENERAL_OPEN_STORE();
 			Sale savedOpenedSale = GENERAL_OPEN_SALE(savedStore);
@@ -173,10 +166,8 @@ class SaleServiceTest extends ServiceTest {
 			doReturn(closedSale)
 				.when(saleWriter).closeSale(savedOpenedSale, closedStore);
 
-			// when
 			Sale result = saleService.closeStore(queryUserPassport, querySaleId);
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(result).isEqualTo(closedSale);
 				softly.assertThat(result.getStore().getIsOpen()).isFalse();
@@ -193,7 +184,6 @@ class SaleServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_유효하지_않는_SALE_ID() {
-			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Long queryDifferentSaleId = 999L;
 
@@ -216,7 +206,6 @@ class SaleServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_이미_종료된_SALE() {
-			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Sale savedClosedSale = GENERAL_CLOSE_SALE(GENERAL_CLOSE_STORE());
 
@@ -239,7 +228,6 @@ class SaleServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_이미_종료된_가게_상태() {
-			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store savedStore = GENERAL_CLOSE_SALE(GENERAL_CLOSE_STORE()).getStore();
 			Sale savedOpenedSale = GENERAL_OPEN_SALE(savedStore);

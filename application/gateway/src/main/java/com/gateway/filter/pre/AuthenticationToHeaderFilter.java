@@ -31,9 +31,9 @@ public class AuthenticationToHeaderFilter implements WebFilter {
 	private final ServerAuthenticationFailureHandler authenticationFailureHandler;
 	private final JwtHandler jwtHandler;
 
-	private final String USER_ID = "userId";
-	private final String USER_NICKNAME = "userNickname";
-	private final String USER_ROLE = "userRole";
+	private static final String USER_ID = "userId";
+	private static final String USER_NICKNAME = "userNickname";
+	private static final String USER_ROLE = "userRole";
 
 	public AuthenticationToHeaderFilter(
 		ServerAuthenticationFailureHandler authenticationFailureHandler,

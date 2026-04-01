@@ -50,7 +50,6 @@ class TableServiceTest extends ServiceTest {
 
 		@Test
 		void 성공() {
-			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 
@@ -63,12 +62,10 @@ class TableServiceTest extends ServiceTest {
 				.when(tableReader).isExistsTableByStoreAndTableNumWithLock(any(Store.class), anyInt());
 			doReturn(createdTable.getId())
 				.when(tableWriter).createTable(any(Store.class), anyInt(), any(TablePoint.class), anyInt());
-			// when
 			UUID createdTableId = tableService.createTable(queryUserPassport, queryStoreId,
 				createdTable.getTableNumber().value(), createdTable.getTablePoint(),
 				createdTable.getTableCapacity().value());
 
-			// then
 			assertSoftly(softly -> {
 
 				verify(storeValidator)
@@ -83,7 +80,6 @@ class TableServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("실패 – 가게가 운영 중이면 STORE_IS_OPEN_TABLE_WRITE")
 		void 실패_가게_운영중() {
-			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store responStore = GENERAL_OPEN_STORE();
 			Long queryStoreId = responStore.getId();
@@ -115,7 +111,6 @@ class TableServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("실패 – 이미 존재하는 테이블이면 EXIST_TABLE")
 		void 실패_이미_존재하는_테이블() {
-			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store responStore = GENERAL_CLOSE_STORE();  // isOpen = false
 			Long queryStoreId = responStore.getId();
@@ -149,7 +144,6 @@ class TableServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("실패 – 유효하지 않은 가게 ID면 NOT_FOUND_STORE")
 		void 실패_유효하지_않은_가게_ID() {
-			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store responStore = GENERAL_CLOSE_STORE();  // isOpen = false
 			Long queryStoreId = responStore.getId();
@@ -181,7 +175,6 @@ class TableServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("실패 – 점주 ID 불일치면 NOT_EQUAL_STORE_OWNER")
 		void 실패_점주_ID_불일치() {
-			// given
 			UserPassport diffOwnerPassport = DIFF_OWNER_PASSPORT();
 			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 
@@ -217,7 +210,6 @@ class TableServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("성공")
 		void 성공() {
-			// given
 			UserPassport ownerPassport = OWNER_USER_PASSPORT();
 			Store responStore = GENERAL_CLOSE_STORE();
 			Table savedTable = GENERAL_IN_ACTIVE_TABLE(responStore);
@@ -231,7 +223,6 @@ class TableServiceTest extends ServiceTest {
 			doReturn(IS_NOT_EXISTS_TABLE)
 				.when(tableReader).isExistsTableByStoreAndTableNumWithLock(responStore, updateTableNumber);
 
-			// when
 			tableService.updateTable(
 				ownerPassport,
 				queryTableId,
@@ -239,7 +230,6 @@ class TableServiceTest extends ServiceTest {
 				updateTablePoint,
 				updateTableCapacity);
 
-			// then
 			assertSoftly(softly -> {
 				verify(tableReader).findTableWithStoreByTableId(queryTableId);
 				verify(tableReader).isExistsTableByStoreAndTableNumWithLock(responStore, updateTableNumber);
@@ -250,7 +240,6 @@ class TableServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("실패 – 테이블이 없으면 NOT_FOUND_TABLE")
 		void 실패_테이블_없음() {
-			// given
 			UUID invalidTableId = UUID.randomUUID();
 			UserPassport ownerPassport = OWNER_USER_PASSPORT();
 			doReturn(Optional.empty())
@@ -275,7 +264,6 @@ class TableServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("실패 – 점주 ID 불일치면 NOT_EQUAL_STORE_OWNER")
 		void 실패_점주_ID_불일치() {
-			// given
 			UserPassport diffOwnerPassport = DIFF_OWNER_PASSPORT();
 			Store responStore = GENERAL_CLOSE_STORE();
 			Table savedTable = GENERAL_IN_ACTIVE_TABLE(responStore);
@@ -302,7 +290,6 @@ class TableServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("실패 – 가게가 운영 중이면 STORE_IS_OPEN_TABLE_WRITE")
 		void 실패_가게_운영중() {
-			// given
 			UserPassport ownerPassport = OWNER_USER_PASSPORT();
 			Store openStore = GENERAL_OPEN_STORE();
 			Table savedTable = GENERAL_IN_ACTIVE_TABLE(openStore);
@@ -329,7 +316,6 @@ class TableServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("실패 – 수정하려는 번호가 기존과 다르고 이미 존재하면 EXIST_TABLE")
 		void 실패_이미_존재하는_테이블번호() {
-			// given
 			UserPassport ownerPassport = OWNER_USER_PASSPORT();
 			Store responStore = GENERAL_CLOSE_STORE();
 			Table savedTable = GENERAL_IN_ACTIVE_TABLE(responStore);
@@ -367,7 +353,6 @@ class TableServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("성공")
 		void 성공() {
-			// given
 			UserPassport ownerPassport = OWNER_USER_PASSPORT();
 			Store responStore = GENERAL_CLOSE_STORE();
 			Table savedTable = GENERAL_IN_ACTIVE_TABLE(responStore);
@@ -375,10 +360,8 @@ class TableServiceTest extends ServiceTest {
 			doReturn(Optional.of(savedTable))
 				.when(tableReader).findTableWithStoreByTableId(queryTableId);
 
-			// when
 			tableService.deleteTable(ownerPassport, queryTableId);
 
-			// then
 			assertSoftly(softly -> {
 				verify(tableReader).findTableWithStoreByTableId(queryTableId);
 				verify(tableWriter).deleteTable(savedTable);
@@ -388,7 +371,6 @@ class TableServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("실패 – 테이블이 없으면 NOT_FOUND_TABLE")
 		void 실패_테이블_없음() {
-			// given
 			UUID invalidTableId = UUID.randomUUID();
 			UserPassport ownerPassport = OWNER_USER_PASSPORT();
 			doReturn(Optional.empty())
@@ -407,7 +389,6 @@ class TableServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("실패 – 점주 ID 불일치면 NOT_EQUAL_STORE_OWNER")
 		void 실패_점주_ID_불일치() {
-			// given
 			UserPassport diffOwnerPassport = DIFF_OWNER_PASSPORT();
 			Store responStore = GENERAL_CLOSE_STORE();
 			Table savedTable = GENERAL_IN_ACTIVE_TABLE(responStore);
@@ -428,7 +409,6 @@ class TableServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("실패 – 가게가 운영 중이면 STORE_IS_OPEN_TABLE_WRITE")
 		void 실패_가게_운영중() {
-			// given
 			UserPassport ownerPassport = OWNER_USER_PASSPORT();
 			Store openStore = GENERAL_OPEN_STORE();
 			Table savedTable = GENERAL_IN_ACTIVE_TABLE(openStore);
@@ -452,7 +432,6 @@ class TableServiceTest extends ServiceTest {
 	class findTables {
 		@Test
 		void 성공() {
-			// given
 			Long queryStoreId = GENERAL_OPEN_STORE().getId();
 
 			Store responStore = GENERAL_OPEN_STORE();
@@ -465,10 +444,8 @@ class TableServiceTest extends ServiceTest {
 			doReturn(savedTables)
 				.when(tableReader).findTables(queryStoreId);
 
-			// when
 			List<Table> resultTables = tableService.findTables(queryStoreId);
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(resultTables).hasSize(2);
 				softly.assertThat(resultTables).contains(savedTable1, savedTable2);

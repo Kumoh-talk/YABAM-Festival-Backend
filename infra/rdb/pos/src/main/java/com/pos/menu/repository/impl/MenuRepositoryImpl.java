@@ -3,8 +3,6 @@ package com.pos.menu.repository.impl;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +32,7 @@ public class MenuRepositoryImpl implements MenuRepository {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	private final Integer TEMPORARY_ORDER = -1;
+	private static final int TEMPORARY_ORDER = -1;
 
 	@Override
 	@Transactional
@@ -71,9 +69,8 @@ public class MenuRepositoryImpl implements MenuRepository {
 	public List<Menu> getAllByStoreIdWithCategoryAndLock(Long storeId) {
 		return menuJpaRepository.findAllByStoreIdWithCategoryAndLock(storeId)
 			.stream()
-			.map(menuEntity -> MenuMapper.toMenu(menuEntity, null,
-				MenuCategoryMapper.toMenuCategory(menuEntity.getMenuCategory(), null)))
-			.collect(Collectors.toList());
+			.map(MenuRepositoryImpl::toMenuWithCategory)
+			.toList();
 	}
 
 	@Override
@@ -85,8 +82,7 @@ public class MenuRepositoryImpl implements MenuRepository {
 				lastMenuInfo == null ? null : lastMenuInfo.getOrder(),
 				lastMenuCategoryInfo
 			)
-			.map(menuEntity -> MenuMapper.toMenu(menuEntity, null,
-				MenuCategoryMapper.toMenuCategory(menuEntity.getMenuCategory(), null)));
+			.map(MenuRepositoryImpl::toMenuWithCategory);
 	}
 
 	@Override
@@ -94,7 +90,7 @@ public class MenuRepositoryImpl implements MenuRepository {
 		return menuJpaRepository.findAllByStoreIdAndMenuCategoryId(storeId, menuCategoryId)
 			.stream()
 			.map(MenuMapper::toMenuInfo)
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	@Override
@@ -227,5 +223,10 @@ public class MenuRepositoryImpl implements MenuRepository {
 	@Override
 	public void incrementOrdersInRange(Long menuCategoryId, Integer startOrder, Integer endOrder) {
 
+	}
+
+	private static Menu toMenuWithCategory(MenuEntity menuEntity) {
+		return MenuMapper.toMenu(menuEntity, null,
+			MenuCategoryMapper.toMenuCategory(menuEntity.getMenuCategory(), null));
 	}
 }

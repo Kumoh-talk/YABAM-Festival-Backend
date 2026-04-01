@@ -16,10 +16,8 @@ import domain.pos.call.implement.CallWriter;
 import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.implement.ReceiptReader;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class CallService {
 	private final ReceiptReader receiptReader;

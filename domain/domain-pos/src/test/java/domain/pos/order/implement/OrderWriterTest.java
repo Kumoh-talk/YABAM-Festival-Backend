@@ -38,7 +38,6 @@ public class OrderWriterTest {
 		@ParameterizedTest
 		@EnumSource(OrderStatus.class)
 		void ALL_TO_ORDERED_실패(OrderStatus initialStatus) {
-			// given
 			Order order = OrderFixture.CREATE_ORDER_WITH_STATUS(initialStatus);
 			UserPassport userPassport = UserFixture.GENERAL_USER_PASSPORT();
 
@@ -59,20 +58,16 @@ public class OrderWriterTest {
 
 		@Test
 		void ORDERED_TO_RECEIVED_성공() {
-			// given
 			Order order = OrderFixture.ORDERED_ORDER();
 			UserPassport userPassport = UserFixture.OWNER_USER_PASSPORT();
 
-			// when
 			orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole());
 
-			// then
 			verify(orderRepository).patchOrderStatus(order, orderStatus);
 		}
 
 		@Test
 		void ORDERED_TO_RECEIVED_권한_실패() {
-			// given
 			Order order = OrderFixture.ORDERED_ORDER();
 			UserPassport userPassport = UserFixture.GENERAL_USER_PASSPORT();
 
@@ -89,7 +84,6 @@ public class OrderWriterTest {
 
 		@Test
 		void RECEIVED_TO_RECEIVED_실패() {
-			// given
 			Order order = OrderFixture.RECEIVED_ORDER();
 			UserPassport userPassport = UserFixture.OWNER_USER_PASSPORT();
 
@@ -106,27 +100,21 @@ public class OrderWriterTest {
 
 		@Test
 		void CANCELLED_TO_RECEIVED_성공() {
-			// given
 			Order order = OrderFixture.CANCELLED_ORDER();
 			UserPassport userPassport = UserFixture.OWNER_USER_PASSPORT();
 
-			// when
 			orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole());
 
-			// then
 			verify(orderRepository).patchOrderStatus(order, orderStatus);
 		}
 
 		@Test
 		void COMPLETED_TO_RECEIVED_성공() {
-			// given
 			Order order = OrderFixture.COMPLETED_ORDER();
 			UserPassport userPassport = UserFixture.OWNER_USER_PASSPORT();
 
-			// when
 			orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole());
 
-			// then
 			verify(orderRepository).patchOrderStatus(order, orderStatus);
 		}
 	}
@@ -138,46 +126,36 @@ public class OrderWriterTest {
 
 		@Test
 		void ORDERED_TO_CANCELLED_점주_성공() {
-			// given
 			Order order = OrderFixture.ORDERED_ORDER();
 			UserPassport userPassport = UserFixture.OWNER_USER_PASSPORT();
 
-			// when
 			orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole());
 
-			// then
 			verify(orderRepository).patchOrderStatus(order, orderStatus);
 		}
 
 		@Test
 		void ORDERED_TO_CANCELLED_고객_성공() {
-			// given
 			Order order = OrderFixture.ORDERED_ORDER();
 			UserPassport userPassport = UserFixture.GENERAL_USER_PASSPORT();
 
-			// when
 			orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole());
 
-			// then
 			verify(orderRepository).patchOrderStatus(order, orderStatus);
 		}
 
 		@Test
 		void RECEIVED_TO_CANCELLED_점주_성공() {
-			// given
 			Order order = OrderFixture.RECEIVED_ORDER();
 			UserPassport userPassport = UserFixture.OWNER_USER_PASSPORT();
 
-			// when
 			orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole());
 
-			// then
 			verify(orderRepository).patchOrderStatus(order, orderStatus);
 		}
 
 		@Test
 		void RECEIVED_TO_CANCELLED_고객_실패() {
-			// given
 			Order order = OrderFixture.RECEIVED_ORDER();
 			UserPassport userPassport = UserFixture.GENERAL_USER_PASSPORT();
 
@@ -194,7 +172,6 @@ public class OrderWriterTest {
 
 		@Test
 		void CANCELLED_TO_CANCELLED_실패() {
-			// given
 			Order order = OrderFixture.CANCELLED_ORDER();
 			UserPassport userPassport = UserFixture.OWNER_USER_PASSPORT();
 
@@ -211,20 +188,16 @@ public class OrderWriterTest {
 
 		@Test
 		void COMPLETED_TO_CANCELLED_점주_성공() {
-			// given
 			Order order = OrderFixture.COMPLETED_ORDER();
 			UserPassport userPassport = UserFixture.OWNER_USER_PASSPORT();
 
-			// when
 			orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole());
 
-			// then
 			verify(orderRepository).patchOrderStatus(order, orderStatus);
 		}
 
 		@Test
 		void COMPLETED_TO_CANCELLED_고객_실패() {
-			// given
 			Order order = OrderFixture.COMPLETED_ORDER();
 			UserPassport userPassport = UserFixture.GENERAL_USER_PASSPORT();
 

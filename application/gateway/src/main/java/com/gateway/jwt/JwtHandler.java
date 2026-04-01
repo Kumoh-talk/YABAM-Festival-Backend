@@ -18,10 +18,8 @@ import com.vo.Token;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
-@Slf4j
 public class JwtHandler {
 
 	public static final String USER_ID = "USER_ID";

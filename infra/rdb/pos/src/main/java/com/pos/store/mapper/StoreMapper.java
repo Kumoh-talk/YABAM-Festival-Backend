@@ -73,7 +73,7 @@ public class StoreMapper {
 			toStoreInfo(storeEntity),
 			UserPassport.of(storeEntity.getOwnerId(), null, null),
 			storeEntity.getStoreDetailImageEntity().stream()
-				.map(storeDetailImageEntity -> storeDetailImageEntity.getImageUrl())
+				.map(StoreDetailImageEntity::getImageUrl)
 				.toList()
 		);
 	}
@@ -96,18 +96,7 @@ public class StoreMapper {
 	}
 
 	public static Optional<Store> toStoreWithStoreDetailImages(StoreEntity storeEntity) {
-		if (storeEntity == null) {
-			return Optional.empty();
-		}
-		return Optional.of(Store.of(
-			storeEntity.getId(),
-			storeEntity.isOpen(),
-			toStoreInfo(storeEntity),
-			UserPassport.of(storeEntity.getOwnerId(), null, null),
-			storeEntity.getStoreDetailImageEntity().stream()
-				.map(StoreDetailImageEntity::getImageUrl)
-				.toList()
-		));
+		return Optional.ofNullable(toStoreWithDetailImages(storeEntity));
 	}
 
 	public static StoreHeadDto toStoreHeadDto(StoreEntity store) {

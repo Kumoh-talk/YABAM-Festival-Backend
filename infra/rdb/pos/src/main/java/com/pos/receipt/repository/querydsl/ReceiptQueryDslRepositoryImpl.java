@@ -28,14 +28,12 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 
 	@Override
 	public Optional<ReceiptEntity> findByIdWithTableAndStore(UUID receiptId) {
-		ReceiptEntity receiptEntity = jpaQueryFactory.selectFrom(qReceiptEntity)
+		return Optional.ofNullable(jpaQueryFactory.selectFrom(qReceiptEntity)
 			.join(qReceiptEntity.table).fetchJoin()
 			.join(qReceiptEntity.sale).fetchJoin()
 			.join(qReceiptEntity.sale.store).fetchJoin()
 			.where(qReceiptEntity.id.eq(receiptId))
-			.fetchOne();
-
-		return Optional.ofNullable(receiptEntity);
+			.fetchOne());
 	}
 
 	@Override
@@ -65,41 +63,35 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 
 	@Override
 	public Optional<ReceiptEntity> findByIdWithTableAndStoreAndLock(UUID receiptId) {
-		ReceiptEntity receiptEntity = jpaQueryFactory.selectFrom(qReceiptEntity)
+		return Optional.ofNullable(jpaQueryFactory.selectFrom(qReceiptEntity)
 			.join(qReceiptEntity.table).fetchJoin()
 			.join(qReceiptEntity.sale).fetchJoin()
 			.join(qReceiptEntity.sale.store).fetchJoin()
 			.where(qReceiptEntity.id.eq(receiptId))
 			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
-			.fetchOne();
-
-		return Optional.ofNullable(receiptEntity);
+			.fetchOne());
 	}
 
 	@Override
 	public Optional<ReceiptEntity> findNonStopReceiptsByIdWithTableAndStoreAndLock(UUID receiptId) {
-		ReceiptEntity receiptEntity = jpaQueryFactory.selectFrom(qReceiptEntity)
+		return Optional.ofNullable(jpaQueryFactory.selectFrom(qReceiptEntity)
 			.join(qReceiptEntity.table).fetchJoin()
 			.join(qReceiptEntity.sale).fetchJoin()
 			.join(qReceiptEntity.sale.store).fetchJoin()
 			.where(qReceiptEntity.id.eq(receiptId)
 				.and(qReceiptEntity.stopUsageTime.isNull()))
 			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
-			.fetchOne();
-
-		return Optional.ofNullable(receiptEntity);
+			.fetchOne());
 	}
 
 	@Override
 	public Optional<ReceiptEntity> findReceiptsByIdWithStoreAndLock(UUID receiptId) {
-		ReceiptEntity receiptEntity = jpaQueryFactory.selectFrom(qReceiptEntity)
+		return Optional.ofNullable(jpaQueryFactory.selectFrom(qReceiptEntity)
 			.join(qReceiptEntity.sale).fetchJoin()
 			.join(qReceiptEntity.sale.store).fetchJoin()
 			.where(qReceiptEntity.id.eq(receiptId))
 			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
-			.fetchOne();
-
-		return Optional.ofNullable(receiptEntity);
+			.fetchOne());
 	}
 
 	@Override
@@ -187,14 +179,12 @@ public class ReceiptQueryDslRepositoryImpl implements ReceiptQueryDslRepository 
 
 	@Override
 	public Optional<ReceiptEntity> findByIdWithOrders(UUID receiptId) {
-		ReceiptEntity receiptEntity = jpaQueryFactory
+		return Optional.ofNullable(jpaQueryFactory
 			.selectFrom(qReceiptEntity).distinct()
 			.join(qReceiptEntity.table).fetchJoin()
 			.leftJoin(qReceiptEntity.orders).fetchJoin()
 			.where(qReceiptEntity.id.eq(receiptId))
-			.fetchOne();
-
-		return Optional.ofNullable(receiptEntity);
+			.fetchOne());
 	}
 
 	@Override

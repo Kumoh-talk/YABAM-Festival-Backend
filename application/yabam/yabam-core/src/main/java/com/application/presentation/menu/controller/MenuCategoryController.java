@@ -4,8 +4,6 @@ import static com.response.ResponseUtil.*;
 import static com.vo.UserRole.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -60,7 +58,7 @@ public class MenuCategoryController implements MenuCategoryApi {
 		@PathVariable Long storeId) {
 		return ResponseEntity.ok(createSuccessResponse(
 			menuCategoryService.getMenuCategoryList(storeId).stream()
-				.map(MenuCategoryInfoResponse::from).collect(Collectors.toList())));
+				.map(MenuCategoryInfoResponse::from).toList()));
 	}
 
 	@PatchMapping("/api/v1/stores/{storeId}/menu-categories/{menuCategoryId}/info")

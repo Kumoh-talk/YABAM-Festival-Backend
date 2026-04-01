@@ -34,7 +34,7 @@ public class StoreValidator {
 		Store store = optionalStore
 			.orElseThrow(() -> {
 				log.warn("해당 Store 존재하지 않음: storeId={}", queryStoreId);
-				throw new ServiceException(ErrorCode.NOT_FOUND_STORE);
+				return new ServiceException(ErrorCode.NOT_FOUND_STORE);
 			});
 
 		if (!isEqualSavedStoreOwnerAndQueryOwner(ownerPassport.getUserId(), store)) {

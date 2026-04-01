@@ -26,9 +26,7 @@ import com.vo.UserPassport;
 import domain.pos.store.service.StoreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class StoreController implements StoreApi {

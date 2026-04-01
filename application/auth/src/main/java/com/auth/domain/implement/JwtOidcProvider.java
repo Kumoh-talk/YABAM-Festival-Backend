@@ -32,16 +32,10 @@ public class JwtOidcProvider {
 	private static final String RSA = "RSA";
 	private final ObjectMapper objectMapper;
 
-	/**
-	 * ID Token의 header 에서 KID 값을 추출하는 메서드
-	 */
 	public String getKidFromUnsignedTokenHeader(String token, String iss, String sub, List<String> auds, String nonce) {
 		return getUnsignedTokenClaims(token, iss, sub, auds, nonce).get("header").get(KID);
 	}
 
-	/**
-	 * ID Token의 body를 추출하는 메서드
-	 */
 	public OidcPayload getOidcTokenBody(String token, String modulus, String exponent) {
 		Claims body = getOidcTokenJws(token, modulus, exponent).getPayload();
 		String aud = body.getAudience().iterator().next(); // aud가 여러개일 경우 첫 번째 aud를 사용
@@ -53,9 +47,6 @@ public class JwtOidcProvider {
 			body.get("email", String.class));
 	}
 
-	/**
-	 * ID Token의 header 와 payload 만 추출하는 메서드
-	 */
 	private String getUnsignedToken(String token) {
 		String[] splitToken = token.split("\\.");
 		if (splitToken.length != 3) {
@@ -99,9 +90,6 @@ public class JwtOidcProvider {
 		}
 	}
 
-	/**
-	 * n과 e 의 조합으로 공개키를 생성하고 ID Token을 검증하는 메서드
-	 */
 	private Jws<Claims> getOidcTokenJws(String token, String modulus, String exponent) {
 		try {
 			return Jwts.parser()
@@ -115,15 +103,13 @@ public class JwtOidcProvider {
 		}
 	}
 
-	/**
-	 * 공개된 n, e 조합으로 공개키를 생성하는 메서드
-	 */
 	private PublicKey getRsaPublicKey(String modulus, String exponent) throws
 		NoSuchAlgorithmException,
 		InvalidKeySpecException {
 		KeyFactory keyFactory = KeyFactory.getInstance(RSA);
-		byte[] decodeN = Base64.getUrlDecoder().decode(modulus);
-		byte[] decodeE = Base64.getUrlDecoder().decode(exponent);
+		Base64.Decoder decoder = Base64.getUrlDecoder();
+		byte[] decodeN = decoder.decode(modulus);
+		byte[] decodeE = decoder.decode(exponent);
 		BigInteger nPublicKey = new BigInteger(1, decodeN);
 		BigInteger ePublicKey = new BigInteger(1, decodeE);
 

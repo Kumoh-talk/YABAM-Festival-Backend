@@ -25,25 +25,21 @@ public class MenuQueryDslRepositoryImpl implements MenuQueryDslRepository {
 
 	@Override
 	public Optional<MenuEntity> findByIdAndStoreId(Long menuId, Long storeId) {
-		MenuEntity menuEntity = jpaQueryFactory
+		return Optional.ofNullable(jpaQueryFactory
 			.selectFrom(qMenuEntity)
 			.where(qMenuEntity.id.eq(menuId)
 				.and(qMenuEntity.store.id.eq(storeId)))
-			.fetchOne();
-
-		return Optional.ofNullable(menuEntity);
+			.fetchOne());
 	}
 
 	@Override
 	public Optional<MenuEntity> findByIdAndStoreIdAndMenuCategoryId(Long menuId, Long storeId, Long menuCategoryId) {
-		MenuEntity menuEntity = jpaQueryFactory
+		return Optional.ofNullable(jpaQueryFactory
 			.selectFrom(qMenuEntity)
 			.where(qMenuEntity.id.eq(menuId)
 				.and(qMenuEntity.store.id.eq(storeId))
 				.and(qMenuEntity.menuCategory.id.eq(menuCategoryId)))
-			.fetchOne();
-
-		return Optional.ofNullable(menuEntity);
+			.fetchOne());
 	}
 
 	@Override
@@ -100,13 +96,11 @@ public class MenuQueryDslRepositoryImpl implements MenuQueryDslRepository {
 
 	@Override
 	public Optional<Integer> findMaxOrderByMenuCategoryId(Long menuCategoryId) {
-		Integer maxOrder = jpaQueryFactory
+		return Optional.ofNullable(jpaQueryFactory
 			.select(qMenuEntity.order.max())
 			.from(qMenuEntity)
 			.where(qMenuEntity.menuCategory.id.eq(menuCategoryId))
-			.fetchOne();
-
-		return Optional.ofNullable(maxOrder);
+			.fetchOne());
 	}
 
 	@Override

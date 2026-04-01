@@ -22,13 +22,10 @@ class MenuCreateTest {
 	@Test
 	@DisplayName("메뉴 생성 성공")
 	void create_success() {
-		// given
 		var validMenuInfo = VALID_STATE();
 
-		// when
 		Menu menu = Menu.create(validMenuInfo, VALID_ORDER_1, VALID_STORE_ID_1, VALID_MENU_CATEGORY_ID_1);
 
-		// then
 		assertSoftly(softly -> {
 			softly.assertThat(menu.getOrder()).isEqualTo(VALID_ORDER_1);
 			softly.assertThat(menu.getStoreId()).isEqualTo(VALID_STORE_ID_1);
@@ -79,7 +76,6 @@ class MenuCreateTest {
 	@ValueSource(strings = {" ", "   ", "\t", "\n"})
 	@DisplayName("이름이 Null 또는 공백이면 ServiceException(DOMAIN_INVALID_MENU_NAME)")
 	void name_null_or_blank(String menuName) {
-		// given
 		var menuInfoState = custom(s -> s.customName(menuName));
 
 		// when -> then
@@ -95,7 +91,6 @@ class MenuCreateTest {
 	@ValueSource(ints = {-100, -1})
 	@DisplayName("가격이 음수면 ServiceException(DOMAIN_INVALID_MENU_PRICE)")
 	void price_negative(Integer price) {
-		// given
 		var menuInfoState = custom(s -> s.customPrice(price));
 
 		// when -> then
@@ -109,7 +104,6 @@ class MenuCreateTest {
 	@Test
 	@DisplayName("이미지 URL 형식이 잘못되면 ServiceException(DOMAIN_INVALID_MENU_IMAGE_URL)")
 	void image_url_invalid() {
-		// given
 		var menuInfoState = custom(s -> s.customImageUrl("ftp://bad"));
 
 		// when -> then
@@ -123,16 +117,13 @@ class MenuCreateTest {
 	@Test
 	@DisplayName("메뉴 설명, 이미지 URL null은 허용된다")
 	void image_url_nullable() {
-		// given
 		var menuInfoState = custom(s -> {
 			s.customDescription(null);
 			s.customImageUrl(null);
 		});
 
-		// when
 		Menu menu = Menu.create(menuInfoState, VALID_ORDER_1, VALID_STORE_ID_1, VALID_MENU_CATEGORY_ID_1);
 
-		// then
 		assertSoftly(softly -> {
 			softly.assertThat(menu.getMenuInfo().getDescription()).isNull();
 			softly.assertThat(menu.getMenuInfo().getImageUrl()).isNull();

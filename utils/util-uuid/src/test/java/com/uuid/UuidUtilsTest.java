@@ -10,10 +10,8 @@ class UuidUtilsTest {
 
 	@Test
 	void randomV7() {
-		// when
 		UUID uuid = UuidUtils.randomV7();
 
-		// then
 		assertEquals(36, uuid.toString().length());
 		assertEquals(7, uuid.version());
 	}

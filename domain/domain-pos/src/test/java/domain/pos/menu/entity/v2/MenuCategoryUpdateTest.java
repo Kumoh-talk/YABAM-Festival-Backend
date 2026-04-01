@@ -20,14 +20,11 @@ class MenuCategoryUpdateTest {
 		@Test
 		@DisplayName("메뉴 카테고리 이름 수정 성공")
 		void updateNameTest_success() {
-			// given
 			MenuCategory menuCategory = VALID_CATEGORY();
 			String updateName = "디저트";
 
-			// when
 			boolean isChanged = menuCategory.updateName(updateName);
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(isChanged).isTrue();
 				softly.assertThat(menuCategory.getName()).isEqualTo(updateName);
@@ -37,14 +34,11 @@ class MenuCategoryUpdateTest {
 		@Test
 		@DisplayName("동일한 이름으로 수정 시도하면 수정되지 않음")
 		void updateName_same_name() {
-			// given
 			MenuCategory menuCategory = VALID_CATEGORY();
 			String pastName = menuCategory.getName();
 
-			// when
 			boolean isChanged = menuCategory.updateName(pastName);
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(isChanged).isFalse();
 				softly.assertThat(menuCategory.getName()).isEqualTo(pastName);
@@ -56,7 +50,6 @@ class MenuCategoryUpdateTest {
 		@ValueSource(strings = {" ", "   ", "\t", "\n"})
 		@DisplayName("Null 또는 공백으로 수정 시도하면 예외 발생")
 		void updateName_null_or_blank(String invalidName) {
-			// given
 			MenuCategory menuCategory = VALID_CATEGORY();
 			String pastName = menuCategory.getName();
 
@@ -78,14 +71,11 @@ class MenuCategoryUpdateTest {
 		@Test
 		@DisplayName("메뉴 카테고리 순서 수정 성공")
 		void updateOrder_success() {
-			// given
 			MenuCategory menuCategory = VALID_CATEGORY();
 			Integer updateOrder = 2;
 
-			// when
 			boolean isChanged = menuCategory.updateOrder(updateOrder);
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(isChanged).isTrue();
 				softly.assertThat(menuCategory.getOrder()).isEqualTo(updateOrder);
@@ -95,14 +85,11 @@ class MenuCategoryUpdateTest {
 		@Test
 		@DisplayName("동일한 순서로 수정 시도하면 수정되지 않음")
 		void updateOrder_same_order() {
-			// given
 			MenuCategory menuCategory = VALID_CATEGORY();
 			Integer pastOrder = menuCategory.getOrder();
 
-			// when
 			boolean isChanged = menuCategory.updateOrder(pastOrder);
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(isChanged).isFalse();
 				softly.assertThat(menuCategory.getOrder()).isEqualTo(pastOrder);
@@ -114,7 +101,6 @@ class MenuCategoryUpdateTest {
 		@ValueSource(ints = {0, -1, -100})
 		@DisplayName("메뉴 카테고리 순서가 Null 또는 1보다 작으면 ServiceException(DOMAIN_INVALID_MENU_CATEGORY_ORDER)")
 		void order_must_be_positive(Integer invalidOrder) {
-			// given
 			MenuCategory menuCategory = VALID_CATEGORY();
 			Integer pastOrder = menuCategory.getOrder();
 

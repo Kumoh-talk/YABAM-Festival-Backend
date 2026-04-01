@@ -64,7 +64,6 @@ class PaymentRepositoryImplTest extends RepositoryTest {
 
 		@Test
 		void 성공() {
-			// given
 			ReceiptEntity anotherReceipt = testFixtureBuilder.buildReceiptEntity(
 				GENERAL_ADJUSTMENT_RECEIPT(savedSaleEntity, savedTableEntity));
 			testEntityManager.flush();
@@ -73,7 +72,6 @@ class PaymentRepositoryImplTest extends RepositoryTest {
 			Payment payment = paymentRepository.findByReceiptId(anotherReceipt.getId())
 				.orElse(null);
 
-			// when
 			Payment newPayment = Payment.builder()
 				.receiptId(anotherReceipt.getId())
 				.tossPaymentKey("another_key_xyz")
@@ -87,7 +85,6 @@ class PaymentRepositoryImplTest extends RepositoryTest {
 			testEntityManager.flush();
 			testEntityManager.clear();
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(payment).isNull();
 				softly.assertThat(saved.getPaymentId()).isNotNull();
@@ -103,13 +100,10 @@ class PaymentRepositoryImplTest extends RepositoryTest {
 
 		@Test
 		void 성공() {
-			// given
 			UUID receiptId = savedReceiptEntity.getId();
 
-			// when
 			Optional<Payment> result = paymentRepository.findByReceiptId(receiptId);
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(result).isPresent();
 				softly.assertThat(result.get().getReceiptId()).isEqualTo(receiptId);
@@ -119,13 +113,10 @@ class PaymentRepositoryImplTest extends RepositoryTest {
 
 		@Test
 		void 없으면_빈값_반환() {
-			// given
 			UUID nonExistentReceiptId = UUID.randomUUID();
 
-			// when
 			Optional<Payment> result = paymentRepository.findByReceiptId(nonExistentReceiptId);
 
-			// then
 			assertSoftly(softly -> softly.assertThat(result).isEmpty());
 		}
 	}
@@ -136,13 +127,10 @@ class PaymentRepositoryImplTest extends RepositoryTest {
 
 		@Test
 		void 성공() {
-			// given
 			String paymentKey = savedPaymentEntity.getTossPaymentKey();
 
-			// when
 			Optional<Payment> result = paymentRepository.findByTossPaymentKey(paymentKey);
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(result).isPresent();
 				softly.assertThat(result.get().getTossPaymentKey()).isEqualTo(paymentKey);
@@ -151,13 +139,10 @@ class PaymentRepositoryImplTest extends RepositoryTest {
 
 		@Test
 		void 없으면_빈값_반환() {
-			// given
 			String nonExistentKey = "non_existent_key_xyz";
 
-			// when
 			Optional<Payment> result = paymentRepository.findByTossPaymentKey(nonExistentKey);
 
-			// then
 			assertSoftly(softly -> softly.assertThat(result).isEmpty());
 		}
 	}
@@ -168,13 +153,10 @@ class PaymentRepositoryImplTest extends RepositoryTest {
 
 		@Test
 		void 성공() {
-			// given
 			Long saleId = savedSaleEntity.getId();
 
-			// when
 			List<Payment> result = paymentRepository.findBySaleId(saleId);
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(result).hasSize(1);
 				softly.assertThat(result.get(0).getStatus()).isEqualTo(PaymentStatus.DONE);
@@ -184,13 +166,10 @@ class PaymentRepositoryImplTest extends RepositoryTest {
 
 		@Test
 		void 성공_결제_없음() {
-			// given
 			Long nonExistentSaleId = 999L;
 
-			// when
 			List<Payment> result = paymentRepository.findBySaleId(nonExistentSaleId);
 
-			// then
 			assertSoftly(softly -> softly.assertThat(result).isEmpty());
 		}
 	}
@@ -201,15 +180,12 @@ class PaymentRepositoryImplTest extends RepositoryTest {
 
 		@Test
 		void 성공_DONE에서_CANCELED로() {
-			// given
 			Long paymentId = savedPaymentEntity.getId();
 
-			// when
 			Payment updated = paymentRepository.updateStatus(paymentId, PaymentStatus.CANCELED);
 			testEntityManager.flush();
 			testEntityManager.clear();
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(updated.getPaymentId()).isEqualTo(paymentId);
 				softly.assertThat(updated.getStatus()).isEqualTo(PaymentStatus.CANCELED);
@@ -221,7 +197,6 @@ class PaymentRepositoryImplTest extends RepositoryTest {
 
 		@Test
 		void 실패_존재하지_않는_결제() {
-			// given
 			Long invalidPaymentId = 999L;
 
 			// when -> then

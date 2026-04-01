@@ -16,7 +16,6 @@ import domain.pos.menu.entity.MenuInfo;
 import domain.pos.menu.implement.MenuCategoryReader;
 import domain.pos.menu.implement.MenuCategoryValidator;
 import domain.pos.menu.implement.MenuReader;
-import domain.pos.menu.implement.MenuValidator;
 import domain.pos.menu.implement.MenuWriter;
 import domain.pos.store.entity.Store;
 import domain.pos.store.implement.StoreReader;
@@ -29,7 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MenuService {
 	private final StoreValidator storeValidator;
-	private final MenuValidator menuValidator;
 	private final MenuCategoryValidator menuCategoryValidator;
 
 	private final StoreReader storeReader;

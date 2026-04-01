@@ -145,7 +145,7 @@ public interface OrderApi {
 			@ApiErrorResponseExplanation(errorCode = ErrorCode.RECEIPT_ACCESS_DENIED)
 		}
 	)
-	public ResponseEntity<ResponseBody<Void>> deleteOrder(
+	ResponseEntity<ResponseBody<Void>> deleteOrder(
 		@Parameter(hidden = true) UserPassport userPassport, @PathVariable Long orderId);
 
 	@Operation(

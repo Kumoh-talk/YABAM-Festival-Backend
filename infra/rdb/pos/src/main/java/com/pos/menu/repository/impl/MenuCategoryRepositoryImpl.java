@@ -27,7 +27,7 @@ public class MenuCategoryRepositoryImpl implements MenuCategoryRepository {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	private final Integer TEMPORARY_ORDER = -1;
+	private static final int TEMPORARY_ORDER = -1;
 
 	@Override
 	public MenuCategory postMenuCategory(Store store, MenuCategoryInfo menuCategoryInfo) {

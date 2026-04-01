@@ -70,7 +70,6 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 성공() {
-			// given
 			Payment preemptionPayment = GENERAL_IN_PROGRESS_PAYMENT();
 			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
 			PreemptionResult preemptionResult = new PreemptionResult(preemptionPayment, receipt);
@@ -91,10 +90,8 @@ class PaymentServiceTest extends ServiceTest {
 			given(paymentProcessor.finalizeAndSettle(eq(preemptionPayment.getPaymentId()),
 				any(TossConfirmResult.class), eq(receipt))).willReturn(savedPayment);
 
-			// when
 			Payment result = paymentService.confirmPayment(paymentKey, orderId, amount);
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(result.getStatus()).isEqualTo(PaymentStatus.DONE);
 				softly.assertThat(result.getTossPaymentKey()).isEqualTo(paymentKey);
@@ -108,7 +105,6 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_영수증_없음() {
-			// given
 			given(paymentProcessor.validateAndPreempt(any(UUID.class), eq(paymentKey), eq(orderId),
 				eq(amount))).willThrow(new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
 
@@ -126,7 +122,6 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_이미_정산된_영수증() {
-			// given
 			given(paymentProcessor.validateAndPreempt(any(UUID.class), eq(paymentKey), eq(orderId),
 				eq(amount))).willThrow(new ServiceException(ErrorCode.ALREADY_PAID_RECEIPT));
 
@@ -143,7 +138,6 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_결제금액_불일치() {
-			// given
 			Integer wrongAmount = GENERAL_AMOUNT + 1000;
 			given(paymentProcessor.validateAndPreempt(any(UUID.class), eq(paymentKey), eq(orderId),
 				eq(wrongAmount))).willThrow(new ServiceException(ErrorCode.PAYMENT_AMOUNT_MISMATCH));
@@ -161,7 +155,6 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_유효하지_않은_orderId() {
-			// given
 			String invalidOrderId = "not-a-uuid";
 
 			// when -> then
@@ -178,7 +171,6 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 성공_가상계좌_입금대기_영수증_정산_안함() {
-			// given
 			Payment preemptionPayment = GENERAL_IN_PROGRESS_PAYMENT();
 			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
 			PreemptionResult preemptionResult = new PreemptionResult(preemptionPayment, receipt);
@@ -199,17 +191,14 @@ class PaymentServiceTest extends ServiceTest {
 			given(paymentProcessor.finalizeAndSettle(eq(preemptionPayment.getPaymentId()),
 				any(TossConfirmResult.class), eq(receipt))).willReturn(savedPayment);
 
-			// when
 			paymentService.confirmPayment(paymentKey, orderId, amount);
 
-			// then
 			verify(paymentProcessor).finalizeAndSettle(eq(preemptionPayment.getPaymentId()),
 				any(TossConfirmResult.class), eq(receipt));
 		}
 
 		@Test
 		void 실패_PG_호출_실패시_선점_레코드_ABORTED_처리() {
-			// given
 			Payment preemptionPayment = GENERAL_IN_PROGRESS_PAYMENT();
 			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
 			PreemptionResult preemptionResult = new PreemptionResult(preemptionPayment, receipt);
@@ -234,7 +223,6 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_타임아웃_재전송_소진시_선점_레코드_IN_PROGRESS_유지_스케줄러_복구_대기() {
-			// given
 			Payment preemptionPayment = GENERAL_IN_PROGRESS_PAYMENT();
 			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
 			PreemptionResult preemptionResult = new PreemptionResult(preemptionPayment, receipt);
@@ -259,7 +247,6 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_저장_실패시_DONE_결제_보상_취소_및_선점_레코드_ABORTED_처리() {
-			// given
 			Payment preemptionPayment = GENERAL_IN_PROGRESS_PAYMENT();
 			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
 			PreemptionResult preemptionResult = new PreemptionResult(preemptionPayment, receipt);
@@ -298,7 +285,6 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_저장_실패_보상_취소도_실패해도_PAYMENT_CONFIRM_FAILED_반환() {
-			// given
 			Payment preemptionPayment = GENERAL_IN_PROGRESS_PAYMENT();
 			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
 			PreemptionResult preemptionResult = new PreemptionResult(preemptionPayment, receipt);
@@ -340,7 +326,6 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 성공_전액취소() {
-			// given
 			UserPassport ownerPassport = OWNER_USER_PASSPORT();
 			Payment payment = GENERAL_DONE_PAYMENT();
 			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
@@ -354,10 +339,8 @@ class PaymentServiceTest extends ServiceTest {
 			given(paymentWriter.updateStatus(payment.getPaymentId(), PaymentStatus.CANCELED))
 				.willReturn(GENERAL_CANCELED_PAYMENT());
 
-			// when
 			paymentService.cancelPayment(paymentKey, cancelReason, null, ownerPassport);
 
-			// then
 			assertSoftly(softly -> {
 				verify(tossPaymentPort).cancel(paymentKey, cancelReason, null);
 				verify(paymentWriter).updateStatus(payment.getPaymentId(), PaymentStatus.CANCELED);
@@ -367,7 +350,6 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 성공_부분취소() {
-			// given
 			UserPassport ownerPassport = OWNER_USER_PASSPORT();
 			Payment payment = GENERAL_DONE_PAYMENT();
 			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
@@ -386,10 +368,8 @@ class PaymentServiceTest extends ServiceTest {
 					.amount(GENERAL_AMOUNT).status(PaymentStatus.PARTIAL_CANCELED)
 					.paymentMethod(GENERAL_PAYMENT_METHOD).approvedAt(GENERAL_APPROVED_AT).build());
 
-			// when
 			paymentService.cancelPayment(paymentKey, cancelReason, cancelAmount, ownerPassport);
 
-			// then
 			assertSoftly(softly -> {
 				verify(tossPaymentPort).cancel(paymentKey, cancelReason, cancelAmount);
 				verify(paymentWriter).updateStatus(payment.getPaymentId(), PaymentStatus.PARTIAL_CANCELED);
@@ -398,7 +378,6 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_이미_취소된_결제() {
-			// given
 			UserPassport ownerPassport = OWNER_USER_PASSPORT();
 			Payment canceledPayment = GENERAL_CANCELED_PAYMENT();
 
@@ -419,7 +398,6 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_결제_없음() {
-			// given
 			UserPassport ownerPassport = OWNER_USER_PASSPORT();
 
 			given(paymentReader.getByTossPaymentKey(paymentKey))
@@ -439,7 +417,6 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_점주_권한_불일치() {
-			// given
 			UserPassport diffOwnerPassport = DIFF_OWNER_PASSPORT();
 			Payment payment = GENERAL_DONE_PAYMENT();
 			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
@@ -472,80 +449,64 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 성공_DONE_상태_이미_일치_업데이트_없음() {
-			// given
 			Payment payment = GENERAL_DONE_PAYMENT();
 			given(paymentReader.findByTossPaymentKey(paymentKey))
 				.willReturn(Optional.of(payment));
 
-			// when
 			paymentService.processWebhook(paymentKey, "DONE");
 
-			// then
 			verify(paymentWriter, never()).updateStatus(any(), any());
 		}
 
 		@Test
 		void 성공_CANCELED_상태_업데이트() {
-			// given
 			Payment payment = GENERAL_DONE_PAYMENT();
 			given(paymentReader.findByTossPaymentKey(paymentKey))
 				.willReturn(Optional.of(payment));
 			given(paymentWriter.updateStatus(payment.getPaymentId(), PaymentStatus.CANCELED))
 				.willReturn(GENERAL_CANCELED_PAYMENT());
 
-			// when
 			paymentService.processWebhook(paymentKey, "CANCELED");
 
-			// then
 			verify(paymentWriter).updateStatus(payment.getPaymentId(), PaymentStatus.CANCELED);
 		}
 
 		@Test
 		void 성공_PARTIAL_CANCELED_상태_업데이트() {
-			// given
 			Payment payment = GENERAL_DONE_PAYMENT();
 			given(paymentReader.findByTossPaymentKey(paymentKey))
 				.willReturn(Optional.of(payment));
 			given(paymentWriter.updateStatus(payment.getPaymentId(), PaymentStatus.PARTIAL_CANCELED))
 				.willReturn(GENERAL_PARTIAL_CANCELED_PAYMENT());
 
-			// when
 			paymentService.processWebhook(paymentKey, "PARTIAL_CANCELED");
 
-			// then
 			verify(paymentWriter).updateStatus(payment.getPaymentId(), PaymentStatus.PARTIAL_CANCELED);
 		}
 
 		@Test
 		void 성공_로컬에_없는_결제키_무시() {
-			// given
 			given(paymentReader.findByTossPaymentKey(paymentKey))
 				.willReturn(Optional.empty());
 
-			// when
 			paymentService.processWebhook(paymentKey, "CANCELED");
 
-			// then
 			verify(paymentWriter, never()).updateStatus(any(), any());
 		}
 
 		@Test
 		void 성공_알수없는_상태값_무시() {
-			// given
 			Payment payment = GENERAL_DONE_PAYMENT();
 			given(paymentReader.findByTossPaymentKey(paymentKey))
 				.willReturn(Optional.of(payment));
 
-			// when
 			paymentService.processWebhook(paymentKey, "ABORTED");
 
-			// then
 			verify(paymentWriter, never()).updateStatus(any(), any());
 		}
 
 		@Test
 		void 성공_가상계좌_입금완료_DONE_영수증_정산() {
-			// given
 			Payment waitingPayment = GENERAL_WAITING_FOR_DEPOSIT_PAYMENT();
 			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
 
@@ -556,10 +517,8 @@ class PaymentServiceTest extends ServiceTest {
 			given(receiptReader.getReceiptWithTableAndStore(waitingPayment.getReceiptId()))
 				.willReturn(Optional.of(receipt));
 
-			// when
 			paymentService.processWebhook(paymentKey, "DONE");
 
-			// then
 			verify(paymentWriter).updateStatus(waitingPayment.getPaymentId(), PaymentStatus.DONE);
 			verify(tableWriter).changeTableActiveStatus(eq(false), any());
 			verify(receiptWriter).adjustReceipts(anyList());
@@ -567,7 +526,6 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 성공_가상계좌_입금완료_이미_정산된_영수증_스킵() {
-			// given
 			Payment waitingPayment = GENERAL_WAITING_FOR_DEPOSIT_PAYMENT();
 			Receipt alreadyAdjustedReceipt = GENERAL_ADJUSTMENT_RECEIPT();
 
@@ -578,10 +536,8 @@ class PaymentServiceTest extends ServiceTest {
 			given(receiptReader.getReceiptWithTableAndStore(waitingPayment.getReceiptId()))
 				.willReturn(Optional.of(alreadyAdjustedReceipt));
 
-			// when
 			paymentService.processWebhook(paymentKey, "DONE");
 
-			// then
 			verify(paymentWriter).updateStatus(waitingPayment.getPaymentId(), PaymentStatus.DONE);
 			verify(tableWriter, never()).changeTableActiveStatus(anyBoolean(), any());
 			verify(receiptWriter, never()).adjustReceipts(anyList());
@@ -594,15 +550,12 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 성공_결제_있음() {
-			// given
 			Long saleId = 1L;
 			List<Payment> payments = List.of(GENERAL_DONE_PAYMENT(), GENERAL_CANCELED_PAYMENT());
 			given(paymentReader.findBySaleId(saleId)).willReturn(payments);
 
-			// when
 			List<Payment> result = paymentService.findPaymentsBySaleId(saleId);
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(result).hasSize(2);
 				softly.assertThat(result.get(0).getStatus()).isEqualTo(PaymentStatus.DONE);
@@ -613,14 +566,11 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 성공_결제_없음() {
-			// given
 			Long saleId = 999L;
 			given(paymentReader.findBySaleId(saleId)).willReturn(List.of());
 
-			// when
 			List<Payment> result = paymentService.findPaymentsBySaleId(saleId);
 
-			// then
 			assertSoftly(softly -> softly.assertThat(result).isEmpty());
 		}
 	}
@@ -633,7 +583,6 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 성공() {
-			// given
 			TossConfirmResult tossResult = TossConfirmResult.builder()
 				.tossPaymentKey(paymentKey)
 				.tossOrderId(GENERAL_RECEIPT_ID.toString())
@@ -645,10 +594,8 @@ class PaymentServiceTest extends ServiceTest {
 
 			given(tossPaymentPort.getPayment(paymentKey)).willReturn(tossResult);
 
-			// when
 			TossConfirmResult result = paymentService.getPaymentFromToss(paymentKey);
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(result.getTossPaymentKey()).isEqualTo(paymentKey);
 				softly.assertThat(result.getStatus()).isEqualTo(PaymentStatus.DONE);
@@ -659,7 +606,6 @@ class PaymentServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_토스에서_결제_없음() {
-			// given
 			given(tossPaymentPort.getPayment(paymentKey))
 				.willThrow(new ServiceException(ErrorCode.PAYMENT_NOT_FOUND));
 

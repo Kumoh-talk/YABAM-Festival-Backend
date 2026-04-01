@@ -46,7 +46,6 @@ class DetailImageRepositoryImplTest extends RepositoryTest {
 
 		var changedDetailImage = DIFF_IMAGE_FIXTURE(storeEntity.getId());
 
-		// when
 		detailImageRepository.save(changedDetailImage);
 		em.flush();
 		em.clear();

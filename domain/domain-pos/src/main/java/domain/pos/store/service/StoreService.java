@@ -37,7 +37,7 @@ public class StoreService {
 		return storeReader.readSingleStore(storeId)
 			.orElseThrow(() -> {
 				log.warn("가게 조회 실패: storeId={}", storeId);
-				throw new ServiceException(ErrorCode.NOT_FOUND_STORE);
+				return new ServiceException(ErrorCode.NOT_FOUND_STORE);
 			});
 	}
 

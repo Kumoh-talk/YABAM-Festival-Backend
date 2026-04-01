@@ -70,7 +70,6 @@ class ReceiptServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("성공")
 		void 성공() {
-			// given
 			Store store = GENERAL_OPEN_STORE();
 			Sale sale = GENERAL_OPEN_SALE(store);
 			Table currentTable = GENERAL_ACTIVE_TABLE(store);
@@ -82,10 +81,8 @@ class ReceiptServiceTest extends ServiceTest {
 			doReturn(Optional.of(moveTable))
 				.when(tableReader).findLockTableById(moveTableId, store.getId());
 
-			// when
 			receiptService.moveReceiptTable(ownerPassport, receiptId, moveTableId);
 
-			// then
 			assertSoftly(softly -> {
 				verify(storeValidator).validateStoreOwner(ownerPassport, store);
 				verify(receiptWriter).moveReceiptTable(receipt, moveTable);
@@ -97,7 +94,6 @@ class ReceiptServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("영수증이 존재하지 않으면 RECEIPT_NOT_FOUND")
 		void 실패_영수증_없음() {
-			// given
 			doReturn(Optional.empty())
 				.when(receiptReader).getReceiptWithTableAndStore(receiptId);
 
@@ -116,7 +112,6 @@ class ReceiptServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("가게 점주가 아니면 NOT_EQUAL_STORE_OWNER")
 		void 실패_점주_불일치() {
-			// given
 			Store store = GENERAL_OPEN_STORE();
 			Sale sale = GENERAL_OPEN_SALE(store);
 			Table currentTable = GENERAL_ACTIVE_TABLE(store);
@@ -141,7 +136,6 @@ class ReceiptServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("이동할 테이블이 이미 활성화돼 있으면 ALREADY_ACTIVE_TABLE")
 		void 실패_이동_테이블_이미_활성() {
-			// given
 			Store store = GENERAL_OPEN_STORE();
 			Sale sale = GENERAL_OPEN_SALE(store);
 			Table currentTable = GENERAL_ACTIVE_TABLE(store);
@@ -168,7 +162,6 @@ class ReceiptServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("이동할 테이블을 찾을 수 없으면 NOT_FOUND_TABLE")
 		void 실패_이동_테이블_없음() {
-			// given
 			Store store = GENERAL_OPEN_STORE();
 			Sale sale = GENERAL_OPEN_SALE(store);
 			Table currentTable = GENERAL_ACTIVE_TABLE(store);
@@ -202,17 +195,14 @@ class ReceiptServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("성공")
 		void 성공() {
-			// given
 			Receipt receipt = GENERAL_NON_ADJUSTMENT_RECEIPT();
 			List<Receipt> receipts = List.of(receipt);
 
 			doReturn(receipts)
 				.when(receiptReader).getStopReceiptsWithTableAndStore(receiptIds);
 
-			// when
 			receiptService.adjustReceipts(receiptIds, ownerPassport);
 
-			// then
 			assertSoftly(softly -> {
 				verify(receiptValidator).validateIsOwner(receipt, ownerPassport);
 				verify(tableWriter).changeTableActiveStatus(false, receipt.getTable());
@@ -223,7 +213,6 @@ class ReceiptServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("영수증 조회 결과가 요청 개수와 다르면 RECEIPT_NOT_FOUND")
 		void 실패_영수증_없음() {
-			// given
 			doReturn(List.of())
 				.when(receiptReader).getStopReceiptsWithTableAndStore(receiptIds);
 
@@ -249,7 +238,6 @@ class ReceiptServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("미정산 영수증 삭제 시 테이블 비활성화")
 		void 성공_미정산_영수증() {
-			// given
 			Store store = GENERAL_OPEN_STORE();
 			Sale sale = GENERAL_OPEN_SALE(store);
 			Table table = GENERAL_ACTIVE_TABLE(store);
@@ -258,10 +246,8 @@ class ReceiptServiceTest extends ServiceTest {
 			doReturn(Optional.of(receipt))
 				.when(receiptReader).getReceiptWithTableAndStore(receiptId);
 
-			// when
 			receiptService.deleteReceipt(receiptId, ownerPassport);
 
-			// then
 			assertSoftly(softly -> {
 				verify(receiptValidator).validateIsOwner(receipt, ownerPassport);
 				verify(tableWriter).changeTableActiveStatus(false, receipt.getTable());
@@ -272,7 +258,6 @@ class ReceiptServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("영수증이 존재하지 않으면 RECEIPT_NOT_FOUND")
 		void 실패_영수증_없음() {
-			// given
 			doReturn(Optional.empty())
 				.when(receiptReader).getReceiptWithTableAndStore(receiptId);
 

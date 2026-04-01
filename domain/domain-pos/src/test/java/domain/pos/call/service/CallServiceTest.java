@@ -52,7 +52,6 @@ class CallServiceTest extends ServiceTest {
 
 		@Test
 		void 성공() {
-			// given
 			Store store = GENERAL_OPEN_STORE();
 			Table table = GENERAL_ACTIVE_TABLE(store);
 			Sale sale = SaleFixture.GENERAL_OPEN_SALE(store);
@@ -63,10 +62,8 @@ class CallServiceTest extends ServiceTest {
 			doReturn(Optional.of(receipt))
 				.when(receiptReader).getReceiptWithTableAndStore(any(UUID.class));
 
-			// when
 			callService.postCall(receiptId, queryCallMessage);
 
-			// then
 			assertSoftly(softly -> {
 				verify(receiptReader)
 					.getReceiptWithTableAndStore(any(UUID.class));
@@ -84,7 +81,6 @@ class CallServiceTest extends ServiceTest {
 			@Test
 			@DisplayName("영수증이 존재하지 않으면 RECEIPT_NOT_FOUND")
 			void 실패_영수증_없음() {
-				// given
 				UUID queryReceiptId = UUID.randomUUID();
 
 				doReturn(Optional.empty())
@@ -105,7 +101,6 @@ class CallServiceTest extends ServiceTest {
 			@Test
 			@DisplayName("영수증이 닫힌 가게와 연결돼 있으면 CONFLICT_CLOSE_STORE")
 			void 실패_가게_종료() {
-				// given
 				Store store = GENERAL_CLOSE_STORE();           // isOpen = false
 				Table table = GENERAL_ACTIVE_TABLE(store);
 				Sale sale = SaleFixture.GENERAL_OPEN_SALE(store);
@@ -130,7 +125,6 @@ class CallServiceTest extends ServiceTest {
 			@Test
 			@DisplayName("비활성 테이블이면 TABLE_NOT_ACTIVE")
 			void 실패_테이블_비활성() {
-				// given
 				Store store = GENERAL_OPEN_STORE();
 				Table table = GENERAL_IN_ACTIVE_TABLE(store);  // isActive = false
 				Sale sale = SaleFixture.GENERAL_OPEN_SALE(store);
@@ -164,10 +158,8 @@ class CallServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("성공")
 		void 성공() {
-			// when
 			callService.completeCall(ownerPass, callId);
 
-			// then
 			assertSoftly(softly -> {
 				verify(callReader).validateCallOwner(callId, ownerPass);
 				verify(callWriter).completeCall(callId);
@@ -177,7 +169,6 @@ class CallServiceTest extends ServiceTest {
 		@Test
 		@DisplayName("호출 소유자가 아니면 NOT_VALID_CALL_OWNER")
 		void 실패_유효하지_않은_OWNER() {
-			// given
 			doThrow(new ServiceException(ErrorCode.NOT_VALID_CALL_OWNER))
 				.when(callReader).validateCallOwner(callId, ownerPass);
 

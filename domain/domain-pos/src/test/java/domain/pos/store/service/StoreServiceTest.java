@@ -46,16 +46,13 @@ class StoreServiceTest extends ServiceTest {
 
 		@Test
 		void 성공() {
-			// given
 			StoreInfo requestStoreInfo = GENERAL_STORE_INFO();
 			UserPassport userPassport = OWNER_USER_PASSPORT();
 
 			doReturn(SAVED_STORE_ID)
 				.when(storeWriter).createStore(userPassport, requestStoreInfo);
 
-			// when
 			Long storeId = storeService.createStore(userPassport, requestStoreInfo);
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(storeId).isEqualTo(SAVED_STORE_ID);
 
@@ -71,17 +68,14 @@ class StoreServiceTest extends ServiceTest {
 	class singleSearchStore {
 		@Test
 		void 성공() {
-			// given
 			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			Store responseStore = GENERAL_CLOSE_STORE();
 
 			doReturn(Optional.of(responseStore))
 				.when(storeReader).readSingleStore(queryStoreId);
 
-			// when
 			Store savedStore = storeService.findStore(queryStoreId);
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(responseStore).isEqualTo(savedStore);
 
@@ -92,7 +86,6 @@ class StoreServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_유효하지_않은_가게_ID() {
-			// given
 			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 
 			doReturn(Optional.empty())
@@ -115,7 +108,6 @@ class StoreServiceTest extends ServiceTest {
 	class updateStore {
 		@Test
 		void 성공() {
-			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			Store nonChangedStore = GENERAL_CLOSE_STORE();
@@ -127,13 +119,11 @@ class StoreServiceTest extends ServiceTest {
 			doReturn(changedStore)
 				.when(storeWriter).updateStoreInfo(nonChangedStore, requestChangeStoreInfo);
 
-			// when
 			Store result = storeService.updateStoreInfo(
 				queryUserPassport,
 				queryStoreId,
 				requestChangeStoreInfo);
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(result.getId()).isEqualTo(changedStore.getId());
 
@@ -144,7 +134,6 @@ class StoreServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_수정_요청자가_가게_OWNER와_다를시() {
-			// given
 			UserPassport diffOwnerUserPassport = DIFF_OWNER_PASSPORT();
 			Store previousStore = GENERAL_CLOSE_STORE();
 			Long queryStoreId = previousStore.getId();
@@ -171,7 +160,6 @@ class StoreServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_유효하지_않는_가게_ID() {
-			// given
 			UserPassport queryOwnerPassport = OWNER_USER_PASSPORT();
 			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			StoreInfo requestChangeStoreInfo = CHANGED_GENERAL_STORE().getStoreInfo();
@@ -202,7 +190,6 @@ class StoreServiceTest extends ServiceTest {
 	class deleteStore {
 		@Test
 		void 성공() {
-			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			Store savedStore = GENERAL_CLOSE_STORE();
@@ -210,10 +197,8 @@ class StoreServiceTest extends ServiceTest {
 			doReturn(savedStore)
 				.when(storeValidator).validateStoreOwner(queryUserPassport, queryStoreId);
 
-			// when
 			storeService.deleteStore(queryUserPassport, queryStoreId);
 
-			// then
 			assertSoftly(softly -> {
 				verify(storeValidator)
 					.validateStoreOwner(any(UserPassport.class), any(Long.class));
@@ -224,7 +209,6 @@ class StoreServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_유효하지_않는_가게_ID() {
-			// given
 			UserPassport queryOwnerPassport = OWNER_USER_PASSPORT();
 			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 
@@ -246,7 +230,6 @@ class StoreServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_가게ID와_점주ID가_다를시() {
-			// given
 			UserPassport queryDiffOwnerPassport = DIFF_OWNER_PASSPORT();
 			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 
@@ -272,7 +255,6 @@ class StoreServiceTest extends ServiceTest {
 	class postDetailImage {
 		@Test
 		void 성공() {
-			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			Store savedStore = GENERAL_CLOSE_STORE();
@@ -281,10 +263,8 @@ class StoreServiceTest extends ServiceTest {
 			doReturn(savedStore)
 				.when(storeValidator).validateStoreOwner(queryUserPassport, queryStoreId);
 
-			// when
 			storeService.postDetailImage(queryUserPassport, queryStoreId, imageUrl);
 
-			// then
 			assertSoftly(softly -> {
 				verify(storeValidator)
 					.validateStoreOwner(any(UserPassport.class), any(Long.class));
@@ -295,7 +275,6 @@ class StoreServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_유효하지_않는_가게_ID() {
-			// given
 			UserPassport queryOwnerPassport = OWNER_USER_PASSPORT();
 			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			String imageUrl = "https://example.com/image.jpg";
@@ -319,7 +298,6 @@ class StoreServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_가게ID와_점주ID가_다를시() {
-			// given
 			UserPassport queryDiffOwnerPassport = DIFF_OWNER_PASSPORT();
 			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			String imageUrl = "https://example.com/image.jpg";
@@ -347,7 +325,6 @@ class StoreServiceTest extends ServiceTest {
 	class deleteDetailImage {
 		@Test
 		void 성공() {
-			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			Store savedStore = GENERAL_CLOSE_STORE();
@@ -359,10 +336,8 @@ class StoreServiceTest extends ServiceTest {
 			doNothing()
 				.when(storeValidator).validateExistDetailImage(savedStore, imageUrl);
 
-			// when
 			storeService.deleteDetailImage(queryUserPassport, queryStoreId, imageUrl);
 
-			// then
 			assertSoftly(softly -> {
 				verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
 				verify(storeValidator).validateExistDetailImage(any(Store.class), eq(imageUrl));
@@ -372,7 +347,6 @@ class StoreServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_유효하지_않는_가게_ID() {
-			// given
 			UserPassport queryOwnerPassport = OWNER_USER_PASSPORT();
 			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			String imageUrl = "https://example.com/image.jpg";
@@ -395,7 +369,6 @@ class StoreServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_가게ID와_점주ID가_다를시() {
-			// given
 			UserPassport queryDiffOwnerPassport = DIFF_OWNER_PASSPORT();
 			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			String imageUrl = "https://example.com/image.jpg";
@@ -418,7 +391,6 @@ class StoreServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_존재하지_않는_이미지_URL() {
-			// given
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
 			Store savedStore = GENERAL_CLOSE_STORE();

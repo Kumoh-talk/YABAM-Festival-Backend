@@ -112,9 +112,6 @@ public class PaymentService {
 		}
 	}
 
-	/**
-	 * 결제 취소 (점주). cancelAmount가 null이면 전액 취소.
-	 */
 	@Transactional
 	public void cancelPayment(String paymentKey, String cancelReason, Integer cancelAmount,
 		UserPassport ownerPassport) {
@@ -136,9 +133,6 @@ public class PaymentService {
 		log.info("토스페이먼츠 결제 취소 완료. paymentKey={}, status={}", paymentKey, resultStatus);
 	}
 
-	/**
-	 * 토스페이먼츠 웹훅 처리 (비동기 상태 동기화)
-	 */
 	@Transactional
 	public void processWebhook(String paymentKey, String tossStatus) {
 		paymentReader.findByTossPaymentKey(paymentKey).ifPresentOrElse(
@@ -147,23 +141,14 @@ public class PaymentService {
 		);
 	}
 
-	/**
-	 * 영수증 결제 정보 조회
-	 */
 	public Optional<Payment> findPaymentByReceiptId(UUID receiptId) {
 		return paymentReader.findByReceiptId(receiptId);
 	}
 
-	/**
-	 * 영업별 결제 목록 조회 (점주 정산 확인 용)
-	 */
 	public List<Payment> findPaymentsBySaleId(Long saleId) {
 		return paymentReader.findBySaleId(saleId);
 	}
 
-	/**
-	 * 토스페이먼츠 실시간 결제 상태 조회 (점주 reconciliation 용)
-	 */
 	public TossConfirmResult getPaymentFromToss(String paymentKey) {
 		return tossPaymentPort.getPayment(paymentKey);
 	}

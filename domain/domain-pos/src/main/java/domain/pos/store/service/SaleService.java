@@ -50,7 +50,7 @@ public class SaleService {
 		final Sale savedSale = saleReader.readSingleSale(saleId)
 			.orElseThrow(() -> {
 				log.warn("판매 내역 조회 실패: saleId={}", saleId);
-				throw new ServiceException(ErrorCode.NOT_FOUND_STORE);
+				return new ServiceException(ErrorCode.NOT_FOUND_STORE);
 			});
 
 		validateOpendSaleOrStore(ownerPassport, saleId, savedSale);

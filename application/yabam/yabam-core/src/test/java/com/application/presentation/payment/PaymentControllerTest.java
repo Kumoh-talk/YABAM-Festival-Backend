@@ -95,7 +95,6 @@ class PaymentControllerTest {
 
         @Test
         void 성공() throws Exception {
-            // given
             given(paymentService.confirmPayment(PAYMENT_KEY, ORDER_ID, AMOUNT))
                 .willReturn(samplePayment());
 
@@ -107,7 +106,6 @@ class PaymentControllerTest {
                 }
                 """.formatted(PAYMENT_KEY, ORDER_ID, AMOUNT);
 
-            // when & then
             mockMvc.perform(post("/api/v1/payments/toss/confirm")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(body))
@@ -119,7 +117,6 @@ class PaymentControllerTest {
 
         @Test
         void 실패_필수값_누락() throws Exception {
-            // given - paymentKey 없음
             String body = """
                 {
                     "orderId": "%s",
@@ -127,7 +124,6 @@ class PaymentControllerTest {
                 }
                 """.formatted(ORDER_ID, AMOUNT);
 
-            // when & then
             mockMvc.perform(post("/api/v1/payments/toss/confirm")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(body))
@@ -136,7 +132,6 @@ class PaymentControllerTest {
 
         @Test
         void 실패_금액_0원() throws Exception {
-            // given
             String body = """
                 {
                     "paymentKey": "%s",
@@ -145,7 +140,6 @@ class PaymentControllerTest {
                 }
                 """.formatted(PAYMENT_KEY, ORDER_ID);
 
-            // when & then
             mockMvc.perform(post("/api/v1/payments/toss/confirm")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(body))
@@ -154,7 +148,6 @@ class PaymentControllerTest {
 
         @Test
         void 실패_이미_결제된_영수증() throws Exception {
-            // given
             given(paymentService.confirmPayment(any(), any(), any()))
                 .willThrow(new ServiceException(ErrorCode.ALREADY_PAID_RECEIPT));
 
@@ -166,7 +159,6 @@ class PaymentControllerTest {
                 }
                 """.formatted(PAYMENT_KEY, ORDER_ID, AMOUNT);
 
-            // when & then
             mockMvc.perform(post("/api/v1/payments/toss/confirm")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(body))
@@ -180,14 +172,12 @@ class PaymentControllerTest {
 
         @Test
         void 성공_전액취소() throws Exception {
-            // given
             willDoNothing().given(paymentService).cancelPayment(eq(PAYMENT_KEY), any(), isNull(), any());
 
             String body = """
                 {"cancelReason": "고객 요청"}
                 """;
 
-            // when & then
             mockMvc.perform(post("/api/v1/payments/{paymentKey}/cancel", PAYMENT_KEY)
                     .header("X-User-Info", ownerPassportHeader())
                     .contentType(MediaType.APPLICATION_JSON)
@@ -197,14 +187,12 @@ class PaymentControllerTest {
 
         @Test
         void 성공_부분취소() throws Exception {
-            // given
             willDoNothing().given(paymentService).cancelPayment(eq(PAYMENT_KEY), any(), eq(3000), any());
 
             String body = """
                 {"cancelReason": "부분 환불", "cancelAmount": 3000}
                 """;
 
-            // when & then
             mockMvc.perform(post("/api/v1/payments/{paymentKey}/cancel", PAYMENT_KEY)
                     .header("X-User-Info", ownerPassportHeader())
                     .contentType(MediaType.APPLICATION_JSON)
@@ -214,7 +202,6 @@ class PaymentControllerTest {
 
         @Test
         void 실패_권한_없음() throws Exception {
-            // given
             UserPassport userPassport = UserPassport.of(1L, "일반유저", UserRole.ROLE_USER);
             String json = objectMapper.writeValueAsString(userPassport);
             String encodedHeader = URLEncoder.encode(json, StandardCharsets.UTF_8);
@@ -223,7 +210,6 @@ class PaymentControllerTest {
                 {"cancelReason": "고객 요청"}
                 """;
 
-            // when & then
             mockMvc.perform(post("/api/v1/payments/{paymentKey}/cancel", PAYMENT_KEY)
                     .header("X-User-Info", encodedHeader)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -238,11 +224,9 @@ class PaymentControllerTest {
 
         @Test
         void 결제_있을때_반환() throws Exception {
-            // given
             given(paymentService.findPaymentByReceiptId(RECEIPT_ID))
                 .willReturn(Optional.of(samplePayment()));
 
-            // when & then
             mockMvc.perform(get("/api/v1/payments/receipts/{receiptId}", RECEIPT_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.tossPaymentKey").value(PAYMENT_KEY));
@@ -250,11 +234,9 @@ class PaymentControllerTest {
 
         @Test
         void 결제_없을때_null_반환() throws Exception {
-            // given
             given(paymentService.findPaymentByReceiptId(RECEIPT_ID))
                 .willReturn(Optional.empty());
 
-            // when & then
             mockMvc.perform(get("/api/v1/payments/receipts/{receiptId}", RECEIPT_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").doesNotExist());
@@ -267,11 +249,9 @@ class PaymentControllerTest {
 
         @Test
         void 성공() throws Exception {
-            // given
             given(paymentService.getPaymentFromToss(PAYMENT_KEY))
                 .willReturn(sampleTossResult());
 
-            // when & then
             mockMvc.perform(get("/api/v1/payments/toss/{paymentKey}", PAYMENT_KEY)
                     .header("X-User-Info", ownerPassportHeader()))
                 .andExpect(status().isOk())
@@ -282,12 +262,10 @@ class PaymentControllerTest {
 
         @Test
         void 실패_권한_없음() throws Exception {
-            // given
             UserPassport userPassport = UserPassport.of(1L, "일반유저", UserRole.ROLE_USER);
             String json = objectMapper.writeValueAsString(userPassport);
             String encodedHeader = URLEncoder.encode(json, StandardCharsets.UTF_8);
 
-            // when & then
             mockMvc.perform(get("/api/v1/payments/toss/{paymentKey}", PAYMENT_KEY)
                     .header("X-User-Info", encodedHeader))
                 .andExpect(status().isForbidden());
@@ -295,11 +273,9 @@ class PaymentControllerTest {
 
         @Test
         void 실패_결제키_없음() throws Exception {
-            // given
             given(paymentService.getPaymentFromToss(PAYMENT_KEY))
                 .willThrow(new ServiceException(ErrorCode.PAYMENT_NOT_FOUND));
 
-            // when & then
             mockMvc.perform(get("/api/v1/payments/toss/{paymentKey}", PAYMENT_KEY)
                     .header("X-User-Info", ownerPassportHeader()))
                 .andExpect(status().isNotFound());
@@ -312,12 +288,10 @@ class PaymentControllerTest {
 
         @Test
         void 성공_결제_목록_반환() throws Exception {
-            // given
             Long saleId = 1L;
             given(paymentService.findPaymentsBySaleId(saleId))
                 .willReturn(List.of(samplePayment()));
 
-            // when & then
             mockMvc.perform(get("/api/v1/payments")
                     .header("X-User-Info", ownerPassportHeader())
                     .param("saleId", String.valueOf(saleId)))
@@ -329,12 +303,10 @@ class PaymentControllerTest {
 
         @Test
         void 성공_결제_없음() throws Exception {
-            // given
             Long saleId = 99L;
             given(paymentService.findPaymentsBySaleId(saleId))
                 .willReturn(List.of());
 
-            // when & then
             mockMvc.perform(get("/api/v1/payments")
                     .header("X-User-Info", ownerPassportHeader())
                     .param("saleId", String.valueOf(saleId)))
@@ -345,12 +317,10 @@ class PaymentControllerTest {
 
         @Test
         void 실패_권한_없음() throws Exception {
-            // given
             UserPassport userPassport = UserPassport.of(1L, "일반유저", UserRole.ROLE_USER);
             String json = objectMapper.writeValueAsString(userPassport);
             String encodedHeader = URLEncoder.encode(json, StandardCharsets.UTF_8);
 
-            // when & then
             mockMvc.perform(get("/api/v1/payments")
                     .header("X-User-Info", encodedHeader)
                     .param("saleId", "1"))
@@ -366,7 +336,6 @@ class PaymentControllerTest {
 
         @Test
         void 성공_서명_유효_PAYMENT_STATUS_CHANGED() throws Exception {
-            // given
             willDoNothing().given(tossPaymentPort).verifyWebhookSignature(any(), eq(VALID_SIGNATURE));
             willDoNothing().given(paymentService).processWebhook(any(), any());
 
@@ -382,7 +351,6 @@ class PaymentControllerTest {
                 }
                 """.formatted(PAYMENT_KEY, ORDER_ID);
 
-            // when & then
             mockMvc.perform(post("/api/v1/payments/toss/webhook")
                     .header("TossPayments-Signature", VALID_SIGNATURE)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -394,7 +362,6 @@ class PaymentControllerTest {
 
         @Test
         void 실패_서명_불일치() throws Exception {
-            // given
             willThrow(new ServiceException(ErrorCode.PAYMENT_WEBHOOK_INVALID_SIGNATURE))
                 .given(tossPaymentPort).verifyWebhookSignature(any(), any());
 
@@ -410,7 +377,6 @@ class PaymentControllerTest {
                 }
                 """.formatted(PAYMENT_KEY, ORDER_ID);
 
-            // when & then
             mockMvc.perform(post("/api/v1/payments/toss/webhook")
                     .header("TossPayments-Signature", "wrong-signature")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -422,7 +388,6 @@ class PaymentControllerTest {
 
         @Test
         void 성공_가상계좌_입금완료_DONE_이벤트() throws Exception {
-            // given
             willDoNothing().given(tossPaymentPort).verifyWebhookSignature(any(), eq(VALID_SIGNATURE));
             willDoNothing().given(paymentService).processWebhook(any(), any());
 
@@ -438,7 +403,6 @@ class PaymentControllerTest {
                 }
                 """.formatted(PAYMENT_KEY, ORDER_ID);
 
-            // when & then
             mockMvc.perform(post("/api/v1/payments/toss/webhook")
                     .header("TossPayments-Signature", VALID_SIGNATURE)
                     .contentType(MediaType.APPLICATION_JSON)
@@ -450,7 +414,6 @@ class PaymentControllerTest {
 
         @Test
         void 무시_알수없는_eventType() throws Exception {
-            // given
             willDoNothing().given(tossPaymentPort).verifyWebhookSignature(any(), any());
 
             String body = """
@@ -465,7 +428,6 @@ class PaymentControllerTest {
                 }
                 """.formatted(PAYMENT_KEY, ORDER_ID);
 
-            // when & then
             mockMvc.perform(post("/api/v1/payments/toss/webhook")
                     .header("TossPayments-Signature", VALID_SIGNATURE)
                     .contentType(MediaType.APPLICATION_JSON)

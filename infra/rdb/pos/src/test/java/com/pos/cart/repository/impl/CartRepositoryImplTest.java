@@ -61,13 +61,11 @@ class CartRepositoryImplTest extends RepositoryTest {
 
 		@Test
 		void 세션_진입_성공_DB에_sessionToken과_pendingAt_저장() {
-			// when
 			Cart result = cartRepository.enterOrderSession(savedReceiptEntity.getId());
 
 			testEntityManager.flush();
 			testEntityManager.clear();
 
-			// then
 			CartEntity updated = testEntityManager.find(CartEntity.class, savedCartEntity.getId());
 			assertSoftly(softly -> {
 				softly.assertThat(result.getSessionToken()).isNotNull();
@@ -79,7 +77,6 @@ class CartRepositoryImplTest extends RepositoryTest {
 
 		@Test
 		void 장바구니_없으면_CART_NOT_FOUND() {
-			// given
 			UUID unknownReceiptId = UUID.randomUUID();
 
 			// when -> then
@@ -125,13 +122,11 @@ class CartRepositoryImplTest extends RepositoryTest {
 
 		@Test
 		void 세션_취소_성공_DB에서_sessionToken과_pendingAt_null() {
-			// when
 			cartRepository.cancelOrderSession(savedReceiptEntity.getId(), activeToken);
 
 			testEntityManager.flush();
 			testEntityManager.clear();
 
-			// then
 			CartEntity updated = testEntityManager.find(CartEntity.class, savedCartEntity.getId());
 			assertSoftly(softly -> {
 				softly.assertThat(updated.getSessionToken()).isNull();
@@ -141,7 +136,6 @@ class CartRepositoryImplTest extends RepositoryTest {
 
 		@Test
 		void 잘못된_토큰으로_취소_CART_ORDER_SESSION_INVALID() {
-			// given
 			UUID wrongToken = UUID.randomUUID();
 
 			// when -> then
@@ -160,25 +154,20 @@ class CartRepositoryImplTest extends RepositoryTest {
 
 		@Test
 		void 활성_세션_있으면_true() {
-			// given
 			testEntityManager.find(CartEntity.class, savedCartEntity.getId())
 				.startSession(UUID.randomUUID());
 			testEntityManager.flush();
 			testEntityManager.clear();
 
-			// when
 			boolean result = cartRepository.isCartPending(savedReceiptEntity.getId());
 
-			// then
 			assertSoftly(softly -> softly.assertThat(result).isTrue());
 		}
 
 		@Test
 		void 세션_없으면_false() {
-			// when
 			boolean result = cartRepository.isCartPending(savedReceiptEntity.getId());
 
-			// then
 			assertSoftly(softly -> softly.assertThat(result).isFalse());
 		}
 
@@ -198,10 +187,8 @@ class CartRepositoryImplTest extends RepositoryTest {
 			testEntityManager.flush();
 			testEntityManager.clear();
 
-			// when
 			boolean result = cartRepository.isCartPending(savedReceiptEntity.getId());
 
-			// then
 			assertSoftly(softly -> softly.assertThat(result).isFalse());
 		}
 	}
@@ -212,22 +199,17 @@ class CartRepositoryImplTest extends RepositoryTest {
 
 		@Test
 		void 장바구니_없으면_빈_Optional() {
-			// given
 			UUID unknownReceiptId = UUID.randomUUID();
 
-			// when
 			Optional<Cart> result = cartRepository.getCartWithLock(unknownReceiptId);
 
-			// then
 			assertSoftly(softly -> softly.assertThat(result).isEmpty());
 		}
 
 		@Test
 		void 장바구니_있으면_Cart_반환() {
-			// when
 			Optional<Cart> result = cartRepository.getCartWithLock(savedReceiptEntity.getId());
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(result).isPresent();
 				softly.assertThat(result.get().getReceiptId()).isEqualTo(savedReceiptEntity.getId());

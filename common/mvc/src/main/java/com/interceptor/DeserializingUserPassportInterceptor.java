@@ -13,9 +13,6 @@ import com.vo.UserPassport;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class DeserializingUserPassportInterceptor implements HandlerInterceptor {
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
@@ -28,8 +25,6 @@ public class DeserializingUserPassportInterceptor implements HandlerInterceptor 
 		if (StringUtils.hasText(userInfoHeader)) {
 			try {
 				String decodedUserInfoHeader = URLDecoder.decode(userInfoHeader, StandardCharsets.UTF_8);
-
-				// 역직렬화
 				UserPassport userPassport = objectMapper.readValue(decodedUserInfoHeader, UserPassport.class);
 				request.setAttribute(USER_INFO_ATTRIBUTE, userPassport);
 			} catch (IOException e) {

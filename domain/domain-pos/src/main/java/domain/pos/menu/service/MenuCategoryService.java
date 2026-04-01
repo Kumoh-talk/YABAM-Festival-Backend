@@ -12,7 +12,6 @@ import com.vo.UserPassport;
 import domain.pos.menu.entity.MenuCategory;
 import domain.pos.menu.entity.MenuCategoryInfo;
 import domain.pos.menu.implement.MenuCategoryReader;
-import domain.pos.menu.implement.MenuCategoryValidator;
 import domain.pos.menu.implement.MenuCategoryWriter;
 import domain.pos.store.entity.Store;
 import domain.pos.store.implement.StoreReader;
@@ -25,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MenuCategoryService {
 	private final StoreValidator storeValidator;
-	private final MenuCategoryValidator menuCategoryValidator;
 	private final StoreReader storeReader;
 	private final MenuCategoryWriter menuCategoryWriter;
 	private final MenuCategoryReader menuCategoryReader;

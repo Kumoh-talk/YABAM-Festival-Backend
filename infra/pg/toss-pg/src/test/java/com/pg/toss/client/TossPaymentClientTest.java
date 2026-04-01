@@ -46,25 +46,19 @@ class TossPaymentClientTest {
 
 		@Test
 		void ALREADY_PROCESSED_PAYMENT는_AlreadyProcessedAtTossException() throws Exception {
-			// given
 			String body = "{\"code\":\"ALREADY_PROCESSED_PAYMENT\",\"message\":\"" + PAYMENT_KEY + "\"}";
 
-			// when
 			RuntimeException result = invokeResolveConfirmError(body);
 
-			// then
 			assertThat(result).isInstanceOf(AlreadyProcessedAtTossException.class);
 		}
 
 		@Test
 		void AMOUNT_MISMATCH는_PAYMENT_AMOUNT_MISMATCH_ServiceException() throws Exception {
-			// given
 			String body = "{\"code\":\"AMOUNT_MISMATCH\",\"message\":\"금액 불일치\"}";
 
-			// when
 			RuntimeException result = invokeResolveConfirmError(body);
 
-			// then
 			assertThat(result).isInstanceOf(ServiceException.class);
 			assertThat(((ServiceException)result).getErrorCode())
 				.isEqualTo(ErrorCode.PAYMENT_AMOUNT_MISMATCH);
@@ -72,13 +66,10 @@ class TossPaymentClientTest {
 
 		@Test
 		void 알수없는_에러코드는_PAYMENT_CONFIRM_FAILED_ServiceException() throws Exception {
-			// given
 			String body = "{\"code\":\"UNKNOWN_ERROR\",\"message\":\"알 수 없는 오류\"}";
 
-			// when
 			RuntimeException result = invokeResolveConfirmError(body);
 
-			// then
 			assertThat(result).isInstanceOf(ServiceException.class);
 			assertThat(((ServiceException)result).getErrorCode())
 				.isEqualTo(ErrorCode.PAYMENT_CONFIRM_FAILED);
@@ -86,13 +77,10 @@ class TossPaymentClientTest {
 
 		@Test
 		void JSON_파싱_불가시_PAYMENT_CONFIRM_FAILED_ServiceException() throws Exception {
-			// given
 			String body = "invalid json";
 
-			// when
 			RuntimeException result = invokeResolveConfirmError(body);
 
-			// then
 			assertThat(result).isInstanceOf(ServiceException.class);
 			assertThat(((ServiceException)result).getErrorCode())
 				.isEqualTo(ErrorCode.PAYMENT_CONFIRM_FAILED);
@@ -112,7 +100,6 @@ class TossPaymentClientTest {
 
 		@Test
 		void 재전송_소진시_PAYMENT_CONFIRM_TIMEOUT_예외() {
-			// given
 			ResourceAccessException timeoutEx = new ResourceAccessException("timeout");
 
 			// when / then

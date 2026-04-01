@@ -69,7 +69,6 @@ public class OrderServiceTest extends ServiceTest {
 
 		@Test
 		void 유효한_세션_토큰으로_주문_생성_성공() {
-			// given
 			Cart cart = CartFixture.CART_WITH_SESSION();
 			given(receiptReader.getNonStopReceiptsWithTableAndStoreAndLock(receiptId))
 				.willReturn(Optional.of(receipt));
@@ -77,10 +76,8 @@ public class OrderServiceTest extends ServiceTest {
 			given(menuReader.countByIdIn(anyLong(), any())).willReturn(1L);
 			given(orderWriter.postOrderWithCart(any(), any())).willReturn(expectedOrder);
 
-			// when
 			Order result = orderService.postOrderWithCart(receiptId, userPassport, sessionToken);
 
-			// then
 			assertSoftly(softly -> {
 				softly.assertThat(result).isEqualTo(expectedOrder);
 				verify(orderWriter).postOrderWithCart(any(), any());
@@ -90,7 +87,6 @@ public class OrderServiceTest extends ServiceTest {
 
 		@Test
 		void 잘못된_세션_토큰으로_주문_CART_ORDER_SESSION_INVALID() {
-			// given
 			Cart cart = CartFixture.CART_WITH_SESSION();
 			UUID wrongToken = UUID.randomUUID();
 			given(receiptReader.getNonStopReceiptsWithTableAndStoreAndLock(receiptId))
@@ -109,7 +105,6 @@ public class OrderServiceTest extends ServiceTest {
 
 		@Test
 		void 세션_토큰_null로_주문_CART_ORDER_SESSION_INVALID() {
-			// given
 			Cart cart = CartFixture.CART_WITH_SESSION();
 			given(receiptReader.getNonStopReceiptsWithTableAndStoreAndLock(receiptId))
 				.willReturn(Optional.of(receipt));
@@ -127,7 +122,6 @@ public class OrderServiceTest extends ServiceTest {
 
 		@Test
 		void 세션_만료_후_주문_CART_ORDER_SESSION_EXPIRED() {
-			// given
 			Cart expiredCart = CartFixture.CART_WITH_EXPIRED_SESSION();
 			given(receiptReader.getNonStopReceiptsWithTableAndStoreAndLock(receiptId))
 				.willReturn(Optional.of(receipt));
@@ -145,7 +139,6 @@ public class OrderServiceTest extends ServiceTest {
 
 		@Test
 		void 세션_없는_장바구니로_주문_CART_ORDER_SESSION_INVALID() {
-			// given
 			Cart cartWithoutSession = CartFixture.GENERAL_CART_SINGLE();
 			given(receiptReader.getNonStopReceiptsWithTableAndStoreAndLock(receiptId))
 				.willReturn(Optional.of(receipt));
@@ -163,7 +156,6 @@ public class OrderServiceTest extends ServiceTest {
 
 		@Test
 		void 유효한_세션_빈_장바구니로_주문_CART_EMPTY() {
-			// given
 			Cart emptyCart = CartFixture.EMPTY_CART_WITH_SESSION();
 			given(receiptReader.getNonStopReceiptsWithTableAndStoreAndLock(receiptId))
 				.willReturn(Optional.of(receipt));

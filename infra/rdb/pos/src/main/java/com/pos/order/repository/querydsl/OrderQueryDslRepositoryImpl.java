@@ -29,37 +29,30 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 	@Override
 	public Optional<OrderEntity> findByIdWithMenus(Long orderId) {
 		QOrderMenuEntity qOrderMenu = QOrderMenuEntity.orderMenuEntity;
-
-		OrderEntity orderEntity = jpaQueryFactory
+		return Optional.ofNullable(jpaQueryFactory
 			.selectFrom(qOrderEntity).distinct()
 			.leftJoin(qOrderEntity.orderMenus, qOrderMenu).fetchJoin()
 			.leftJoin(qOrderMenu.menu).fetchJoin()
 			.where(qOrderEntity.id.eq(orderId))
-			.fetchOne();
-
-		return Optional.ofNullable(orderEntity);
+			.fetchOne());
 	}
 
 	@Override
 	public Optional<OrderEntity> findByIdWithStore(Long orderId) {
 		QSaleEntity qSaleEntity = QSaleEntity.saleEntity;
-
-		OrderEntity orderEntity = jpaQueryFactory
+		return Optional.ofNullable(jpaQueryFactory
 			.selectFrom(qOrderEntity)
 			.join(qOrderEntity.receipt).fetchJoin()
 			.join(qOrderEntity.receipt.sale, qSaleEntity).fetchJoin()
 			.join(qSaleEntity.store).fetchJoin()
 			.where(qOrderEntity.id.eq(orderId))
-			.fetchOne();
-
-		return Optional.ofNullable(orderEntity);
+			.fetchOne());
 	}
 
 	@Override
 	public Optional<OrderEntity> findByIdWithStoreAndMenusAndLock(Long orderId) {
 		QSaleEntity qSaleEntity = QSaleEntity.saleEntity;
-
-		OrderEntity orderEntity = jpaQueryFactory
+		return Optional.ofNullable(jpaQueryFactory
 			.selectFrom(qOrderEntity).distinct()
 			.join(qOrderEntity.receipt).fetchJoin()
 			.join(qOrderEntity.receipt.sale, qSaleEntity).fetchJoin()
@@ -67,9 +60,7 @@ public class OrderQueryDslRepositoryImpl implements OrderQueryDslRepository {
 			.leftJoin(qOrderEntity.orderMenus).fetchJoin()
 			.where(qOrderEntity.id.eq(orderId))
 			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
-			.fetchOne();
-
-		return Optional.ofNullable(orderEntity);
+			.fetchOne());
 	}
 
 	@Override

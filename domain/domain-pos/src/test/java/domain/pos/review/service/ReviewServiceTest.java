@@ -51,7 +51,6 @@ class ReviewServiceTest extends ServiceTest {
 	class CreateReview {
 		@Test
 		void 성공() {
-			// given
 			ReceiptInfo savedReceiptInfo = GENERAL_ADJUSTMENT_RECEIPT().getReceiptInfo();
 			Review responReview = GENERAL_REVIEW(GENERAL_ADJUSTMENT_RECEIPT());
 			Long queryStoreId = responReview.getStore().getId();
@@ -67,10 +66,8 @@ class ReviewServiceTest extends ServiceTest {
 				.postReview(any(UserPassport.class), anyLong(), any(ReceiptInfo.class), any(ReviewInfo.class));
 			doReturn(isNonExistReceipt)
 				.when(reviewReader).isExistsReview(any(), any(UserPassport.class));
-			// when
 			Review review = reviewService.postReview(queryUserPassport, queryStoreId, queryReceiptId, queryReviewInfo);
 
-			// then
 			assertSoftly(softly -> {
 				verify(storeValidator)
 					.validateStore(anyLong());
@@ -86,7 +83,6 @@ class ReviewServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_유효하지않은_가게() {
-			// given
 			Receipt responReceipt = GENERAL_ADJUSTMENT_RECEIPT();
 			Review responReview = GENERAL_REVIEW(responReceipt);
 			Long queryStoreId = responReview.getStore().getId();
@@ -116,7 +112,6 @@ class ReviewServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_유효하지않은_영수증() {
-			// given
 			Review responReview = GENERAL_REVIEW(GENERAL_ADJUSTMENT_RECEIPT());
 			Long queryStoreId = responReview.getStore().getId();
 			UUID queryReceiptId = GENERAL_ADJUSTMENT_RECEIPT().getReceiptInfo().getReceiptId();
@@ -144,7 +139,6 @@ class ReviewServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_이미_영수증이_있음() {
-			// given
 			Receipt savedReceipt = GENERAL_ADJUSTMENT_RECEIPT();
 			ReceiptInfo savedReceiptInfo = savedReceipt.getReceiptInfo();
 			Review responReview = GENERAL_REVIEW(savedReceipt);
@@ -183,7 +177,6 @@ class ReviewServiceTest extends ServiceTest {
 	class updateReview {
 		@Test
 		void 성공() {
-			// given
 			Review savedReview = GENERAL_REVIEW(GENERAL_ADJUSTMENT_RECEIPT());
 			ReviewInfo updateReviewInfo = GENERAL_REVIEW_INFO();
 			Long queryReviewId = savedReview.getReviewId();
@@ -194,10 +187,8 @@ class ReviewServiceTest extends ServiceTest {
 			doReturn(savedReview)
 				.when(reviewWriter).updateReview(any(Review.class), any(ReviewInfo.class));
 
-			// when
 			Review review = reviewService.updateReview(queryUserPassport, queryReviewId, updateReviewInfo);
 
-			// then
 			assertSoftly(softly -> {
 				verify(reviewReader)
 					.getReview(anyLong());
@@ -209,7 +200,6 @@ class ReviewServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_없는_리뷰_수정_시도() {
-			// given
 			Review savedReview = GENERAL_REVIEW(GENERAL_ADJUSTMENT_RECEIPT());
 			ReviewInfo updateReviewInfo = GENERAL_REVIEW_INFO();
 			Long queryReviewId = savedReview.getReviewId();
@@ -233,7 +223,6 @@ class ReviewServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_리뷰_소유자가_아닌_요청() {
-			// given
 			Review savedReview = GENERAL_REVIEW(GENERAL_ADJUSTMENT_RECEIPT());
 			ReviewInfo updateReviewInfo = GENERAL_REVIEW_INFO();
 			Long queryReviewId = savedReview.getReviewId();
@@ -261,7 +250,6 @@ class ReviewServiceTest extends ServiceTest {
 	class deleteReview {
 		@Test
 		void 성공() {
-			// given
 			Review savedReview = GENERAL_REVIEW(GENERAL_ADJUSTMENT_RECEIPT());
 			Long queryReviewId = savedReview.getReviewId();
 			UserPassport queryUserPassport = savedReview.getUserPassport();
@@ -269,10 +257,8 @@ class ReviewServiceTest extends ServiceTest {
 			doReturn(Optional.ofNullable(savedReview))
 				.when(reviewReader).getReview(anyLong());
 
-			// when
 			reviewService.deleteReview(queryUserPassport, queryReviewId);
 
-			// then
 			assertSoftly(softly -> {
 				verify(reviewReader)
 					.getReview(anyLong());
@@ -283,7 +269,6 @@ class ReviewServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_없는_리뷰_삭제_시도() {
-			// given
 			Review savedReview = GENERAL_REVIEW(GENERAL_ADJUSTMENT_RECEIPT());
 			Long queryReviewId = savedReview.getReviewId();
 			UserPassport queryUserPassport = savedReview.getUserPassport();
@@ -306,7 +291,6 @@ class ReviewServiceTest extends ServiceTest {
 
 		@Test
 		void 실패_리뷰_소유자가_아닌_요청() {
-			// given
 			Review savedReview = GENERAL_REVIEW(GENERAL_ADJUSTMENT_RECEIPT());
 			Long queryReviewId = savedReview.getReviewId();
 			UserPassport queryUserPassport = DIFF_USER_PASSPORT();

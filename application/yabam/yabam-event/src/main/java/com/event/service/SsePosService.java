@@ -10,9 +10,7 @@ import com.pos.consumer.SseEventHandler;
 import com.pos.event.SseChannelProvider;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 public class SsePosService implements SseEventHandler {
 	private final OwnerStoreValidator ownerStoreValidator;
@@ -21,8 +19,7 @@ public class SsePosService implements SseEventHandler {
 	public SseEmitter subscribeByOwner(Long ownerId, Long storeId) {
 		ownerStoreValidator.validate(ownerId, storeId);
 		SseChannel sseChannel = sseChannelMap.get(SseChannelProvider.OWNER_STORE);
-		SseEmitter emitter = sseChannel.subscribe(storeId);
-		return emitter;
+		return sseChannel.subscribe(storeId);
 	}
 
 	@Override

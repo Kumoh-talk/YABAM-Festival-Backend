@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -54,52 +53,41 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	@Override
 	public Optional<Receipt> getReceiptWithTableAndStore(UUID receiptId) {
 		return receiptJpaRepository.findByIdWithTableAndStore(receiptId)
-			.map(receiptEntity -> ReceiptMapper.toReceipt(receiptEntity,
-				TableMapper.toTable(receiptEntity.getTable(), (Store)null),
-				SaleMapper.toSale(receiptEntity.getSale(), StoreMapper.toStore(receiptEntity.getSale().getStore()))));
+			.map(ReceiptRepositoryImpl::toReceiptWithTableAndSale);
 	}
 
 	@Override
 	public List<Receipt> getStopReceiptsWithTableAndStore(List<UUID> receiptIds) {
 		return receiptJpaRepository.findStopReceiptsByIdWithTableAndStore(receiptIds)
 			.stream()
-			.map(receiptEntity -> ReceiptMapper.toReceipt(receiptEntity,
-				TableMapper.toTable(receiptEntity.getTable(), (Store)null),
-				SaleMapper.toSale(receiptEntity.getSale(), StoreMapper.toStore(receiptEntity.getSale().getStore()))))
-			.collect(Collectors.toList());
+			.map(ReceiptRepositoryImpl::toReceiptWithTableAndSale)
+			.toList();
 	}
 
 	@Override
 	public List<Receipt> getStopReceiptsWithStore(List<UUID> receiptIds) {
 		return receiptJpaRepository.findStopReceiptsByIdWithStore(receiptIds)
 			.stream()
-			.map(receiptEntity -> ReceiptMapper.toReceipt(receiptEntity, null,
-				SaleMapper.toSale(receiptEntity.getSale(), StoreMapper.toStore(receiptEntity.getSale().getStore()))))
-			.collect(Collectors.toList());
+			.map(ReceiptRepositoryImpl::toReceiptWithSaleOnly)
+			.toList();
 	}
 
 	@Override
 	public Optional<Receipt> getReceiptWithTableAndStoreAndLock(UUID receiptId) {
 		return receiptJpaRepository.findByIdWithTableAndStoreAndLock(receiptId)
-			.map(receiptEntity -> ReceiptMapper.toReceipt(receiptEntity,
-				TableMapper.toTable(receiptEntity.getTable(), (Store)null),
-				SaleMapper.toSale(receiptEntity.getSale(),
-					StoreMapper.toStore(receiptEntity.getSale().getStore()))));
+			.map(ReceiptRepositoryImpl::toReceiptWithTableAndSale);
 	}
 
 	@Override
 	public Optional<Receipt> getNonStopReceiptsWithTableAndStoreAndLock(UUID receiptId) {
 		return receiptJpaRepository.findNonStopReceiptsByIdWithTableAndStoreAndLock(receiptId)
-			.map(receiptEntity -> ReceiptMapper.toReceipt(receiptEntity,
-				TableMapper.toTable(receiptEntity.getTable(), (Store)null),
-				SaleMapper.toSale(receiptEntity.getSale(), StoreMapper.toStore(receiptEntity.getSale().getStore()))));
+			.map(ReceiptRepositoryImpl::toReceiptWithTableAndSale);
 	}
 
 	@Override
 	public Optional<Receipt> getReceiptsWithStoreAndLock(UUID receiptId) {
 		return receiptJpaRepository.findReceiptsByIdWithStoreAndLock(receiptId)
-			.map(receiptEntity -> ReceiptMapper.toReceipt(receiptEntity, null,
-				SaleMapper.toSale(receiptEntity.getSale(), StoreMapper.toStore(receiptEntity.getSale().getStore()))));
+			.map(ReceiptRepositoryImpl::toReceiptWithSaleOnly);
 	}
 
 	@Override
@@ -109,7 +97,7 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 			.map(receiptEntity -> ReceiptMapper.toReceipt(receiptEntity,
 				TableMapper.toTable(receiptEntity.getTable(), StoreMapper.toStore(receiptEntity.getTable().getStore())),
 				null))
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	@Override
@@ -140,18 +128,16 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 					null);
 				receipt.getOrders().addAll(receiptEntity.getOrders().stream()
 					.map(orderEntity -> OrderMapper.toOrder(orderEntity, null, null))
-					.collect(Collectors.toList()));
+					.toList());
 				return receipt;
 			})
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	@Override
 	public Slice<Receipt> getCustomerReceiptSlice(int pageSize, UUID lastReceiptId, Long customerId) {
 		return receiptJpaRepository.findCustomerReceiptSliceWithStore(pageSize, lastReceiptId, customerId)
-			.map(receiptEntity -> ReceiptMapper.toReceipt(receiptEntity,
-				TableMapper.toTable(receiptEntity.getTable(), (Store)null),
-				SaleMapper.toSale(receiptEntity.getSale(), StoreMapper.toStore(receiptEntity.getSale().getStore()))));
+			.map(ReceiptRepositoryImpl::toReceiptWithTableAndSale);
 	}
 
 	@Override
@@ -204,5 +190,16 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 	@Override
 	public Optional<Receipt> getReceiptById(UUID receiptId) {
 		return Optional.empty();
+	}
+
+	private static Receipt toReceiptWithTableAndSale(ReceiptEntity receiptEntity) {
+		return ReceiptMapper.toReceipt(receiptEntity,
+			TableMapper.toTable(receiptEntity.getTable(), (Store)null),
+			SaleMapper.toSale(receiptEntity.getSale(), StoreMapper.toStore(receiptEntity.getSale().getStore())));
+	}
+
+	private static Receipt toReceiptWithSaleOnly(ReceiptEntity receiptEntity) {
+		return ReceiptMapper.toReceipt(receiptEntity, null,
+			SaleMapper.toSale(receiptEntity.getSale(), StoreMapper.toStore(receiptEntity.getSale().getStore())));
 	}
 }

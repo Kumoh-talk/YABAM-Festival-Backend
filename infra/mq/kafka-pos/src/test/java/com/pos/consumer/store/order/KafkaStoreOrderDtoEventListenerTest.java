@@ -46,16 +46,13 @@ class KafkaStoreOrderDtoEventListenerTest {
 
 	@Test
 	void kafkaListenerTest() throws Exception {
-		// given
 		Order order = OrderFixture.GENERAL_ORDER();
 		Store store = order.getReceipt().getSale().getStore();
 		Table table = order.getReceipt().getTable();
 		TimeUnit.SECONDS.sleep(1);
-		// when
 		kafkaStoreOrderProducer.produceStoreOrder(store, table, order);
 		kafkaTemplate.flush();
 
-		// then
 		verify(sseEventHandler, timeout(1000))
 			.handleEventWithSSE(any(), anyString(), anyString(), any());
 	}

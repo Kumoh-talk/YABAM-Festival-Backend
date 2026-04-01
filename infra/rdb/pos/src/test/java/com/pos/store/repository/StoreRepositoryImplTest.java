@@ -52,13 +52,11 @@ class StoreRepositoryImplTest extends RepositoryTest {
 		Store changed = DIFF_STORE_FIXTURE();
 		ReflectionTestUtils.setField(changed, "id", entity.getId());
 
-		// when
 		storeRepository.save(changed);
 
 		testEntityManager.flush();
 		testEntityManager.clear();
 
-		// then
 		var findEntity = testEntityManager.find(StoreEntity.class, entity.getId());
 		var findStore = StoreMapper.toStore(findEntity);
 
@@ -68,21 +66,18 @@ class StoreRepositoryImplTest extends RepositoryTest {
 
 	@Test
 	void StoreInfo_변경_테스트() {
-		// given
 		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(GENERAL_CLOSE_STORE()));
 		Store savedStore = StoreMapper.toStore(savedStoreEntity);
 		testEntityManager.flush();
 		testEntityManager.clear();
 
 		StoreInfo changedStoreInfo = CHANGED_GENERAL_STORE().getStoreInfo();
-		// when
 		System.out.println("===StoreRepositoryImplTest.StoreInfo_변경_테스트 쿼리===");
 		storeRepository.changeStoreInfo(savedStore, changedStoreInfo);
 		testEntityManager.flush();
 		testEntityManager.clear();
 		System.out.println("===StoreRepositoryImplTest.StoreInfo_변경_테스트 쿼리===");
 
-		// then
 		assertSoftly(softly -> {
 			StoreEntity findStoreEntity = testEntityManager.find(StoreEntity.class, savedStoreEntity.getId());
 			softly.assertThat(findStoreEntity.getName()).isEqualTo(changedStoreInfo.getStoreName());
@@ -99,21 +94,18 @@ class StoreRepositoryImplTest extends RepositoryTest {
 
 	@Test
 	void Store엔티티_논리_삭제_테스트() {
-		// given
 		Store savedStore = GENERAL_CLOSE_STORE();
 		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(savedStore));
 		testEntityManager.flush();
 		testEntityManager.clear();
 		Store queryStore = StoreMapper.toStore(savedStoreEntity);
 
-		// when
 		System.out.println("===StoreRepositoryImplTest.Store엔티티_논리_삭제_테스트 쿼리===");
 		storeRepository.deleteStore(queryStore);
 		testEntityManager.flush();
 		testEntityManager.clear();
 		System.out.println("===StoreRepositoryImplTest.Store엔티티_논리_삭제_테스트 쿼리===");
 
-		// then
 		assertSoftly(softly -> {
 			StoreEntity findStoreEntity = testEntityManager.find(StoreEntity.class, savedStoreEntity.getId());
 			softly.assertThat(findStoreEntity).isNull();
@@ -122,19 +114,16 @@ class StoreRepositoryImplTest extends RepositoryTest {
 
 	@Test
 	void Store_오픈_상태_변경_테스트() {
-		// given
 		Store savedStore = GENERAL_CLOSE_STORE();
 		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(savedStore));
 		testEntityManager.flush();
 		testEntityManager.clear();
 
 		Store opendStore = StoreMapper.toStore(savedStoreEntity).open();
-		// when
 		System.out.println("===StoreRepositoryImplTest.Store_오픈_상태_변경_테스트 쿼리===");
 		storeRepository.changeStoreOpenStatus(opendStore);
 		System.out.println("===StoreRepositoryImplTest.Store_오픈_상태_변경_테스트 쿼리===");
 
-		// then
 		assertSoftly(softly -> {
 			StoreEntity findStoreEntity = testEntityManager.find(StoreEntity.class, savedStoreEntity.getId());
 			softly.assertThat(findStoreEntity.isOpen()).isFalse();
@@ -143,19 +132,16 @@ class StoreRepositoryImplTest extends RepositoryTest {
 
 	@Test
 	void store_존재여부_테스트() {
-		// given
 		Store savedStore = GENERAL_CLOSE_STORE();
 		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(savedStore));
 		testEntityManager.flush();
 		testEntityManager.clear();
 
-		// when
 		System.out.println("===StoreRepositoryImplTest.store_존재여부_테스트 쿼리===");
 		boolean exists = storeRepository.isExistsById(savedStoreEntity.getId());
 		boolean exists2 = storeRepository.isExistsById(savedStoreEntity.getId() + 1);
 		System.out.println("===StoreRepositoryImplTest.store_존재여부_테스트 쿼리===");
 
-		// then
 		assertSoftly(softly -> {
 			softly.assertThat(exists).isTrue();
 			softly.assertThat(exists2).isFalse();
@@ -164,7 +150,6 @@ class StoreRepositoryImplTest extends RepositoryTest {
 
 	@Test
 	void 가게조회_테스트() {
-		// given
 		Store savedStore = GENERAL_CLOSE_STORE();
 		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(savedStore));
 		List<StoreDetailImageEntity> storeDetailImageEntities = testFixtureBuilder.buildStoreDetailImageEntities(
@@ -172,12 +157,10 @@ class StoreRepositoryImplTest extends RepositoryTest {
 		testEntityManager.flush();
 		testEntityManager.clear();
 
-		// when
 		System.out.println("===StoreRepositoryImplTest.가게조회_테스트 쿼리===");
 		Store store = storeRepository.findStoreByStoreId(savedStoreEntity.getId()).get();
 		System.out.println("===StoreRepositoryImplTest.가게조회_테스트 쿼리===");
 
-		// then
 		assertSoftly(softly -> {
 			softly.assertThat(store.getId()).isEqualTo(savedStoreEntity.getId());
 			softly.assertThat(store.getStoreInfo().getStoreName()).isEqualTo(savedStoreEntity.getName());
@@ -202,18 +185,15 @@ class StoreRepositoryImplTest extends RepositoryTest {
 
 	@Test
 	void 상세이미지_없을시_가게조회_테스트() {
-		// given
 		Store savedStore = GENERAL_CLOSE_STORE();
 		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(savedStore));
 		testEntityManager.flush();
 		testEntityManager.clear();
 
-		// when
 		System.out.println("===StoreRepositoryImplTest.가게조회_테스트 쿼리===");
 		Store store = storeRepository.findStoreByStoreId(savedStoreEntity.getId()).get();
 		System.out.println("===StoreRepositoryImplTest.가게조회_테스트 쿼리===");
 
-		// then
 		assertSoftly(softly -> {
 			softly.assertThat(store.getId()).isEqualTo(savedStoreEntity.getId());
 			softly.assertThat(store.getStoreInfo().getStoreName()).isEqualTo(savedStoreEntity.getName());

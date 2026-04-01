@@ -37,9 +37,7 @@ public class CartRepositoryImpl implements CartRepository {
 		CartEntity cartEntity = cartJpaRepository.findCartByReceiptWithLock(receiptId)
 			.orElseGet(() -> cartJpaRepository.save(CartEntity.from(ReceiptEntity.from(receiptId))));
 		cartJpaRepository.findCartMenuByCartIdAndCartMenuWithLock(cartEntity, menuId)
-			.ifPresentOrElse(cartMenuEntity -> {
-				cartMenuEntity.plusQuantity(quantity);
-			}, () -> {
+			.ifPresentOrElse(cartMenuEntity -> cartMenuEntity.plusQuantity(quantity), () -> {
 				CartMenuEntity cartMenuEntity = CartMenuEntity.of(cartEntity, menuEntity, quantity);
 				cartEntity.getCartMenus().add(cartMenuEntity);
 				cartMenuJpaRepository.save(cartMenuEntity);
@@ -55,9 +53,7 @@ public class CartRepositoryImpl implements CartRepository {
 	@Override
 	public Optional<Cart> getCart(UUID receiptId) {
 		return cartJpaRepository.findCartByReceiptId(receiptId)
-			.map(cartEntity -> {
-				return CartMapper.toCart(receiptId, cartEntity);
-			});
+			.map(cartEntity -> CartMapper.toCart(receiptId, cartEntity));
 	}
 
 	@Override

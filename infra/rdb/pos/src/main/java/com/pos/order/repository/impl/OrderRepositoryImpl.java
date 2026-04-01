@@ -60,15 +60,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 		orderEntity.getOrderMenus().addAll(orderMenuEntities);
 
 		OrderEntity savedOrderEntity = orderJpaRepository.save(orderEntity);
-
-		List<OrderMenu> savedOrderMenus = savedOrderEntity.getOrderMenus().stream()
-			.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
-				MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
-			.toList();
-		return OrderMapper.toOrder(
-			savedOrderEntity,
-			receipt,
-			savedOrderMenus);
+		return OrderMapper.toOrder(savedOrderEntity, receipt, toOrderMenus(savedOrderEntity));
 	}
 
 	@Override
@@ -91,15 +83,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 		orderEntity.getOrderMenus().addAll(orderMenuEntities);
 
 		OrderEntity savedOrderEntity = orderJpaRepository.save(orderEntity);
-
-		List<OrderMenu> savedOrderMenus = savedOrderEntity.getOrderMenus().stream()
-			.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
-				MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
-			.toList();
-		return OrderMapper.toOrder(
-			savedOrderEntity,
-			receipt,
-			savedOrderMenus);
+		return OrderMapper.toOrder(savedOrderEntity, receipt, toOrderMenus(savedOrderEntity));
 	}
 
 	@Override
@@ -117,33 +101,21 @@ public class OrderRepositoryImpl implements OrderRepository {
 	@Override
 	public Optional<Order> getOrderWithMenu(Long orderId) {
 		return orderJpaRepository.findByIdWithMenus(orderId)
-			.map(orderEntity -> OrderMapper.toOrder(orderEntity, null, orderEntity.getOrderMenus().stream().map(
-				orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
-					MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null))).toList()));
+			.map(orderEntity -> OrderMapper.toOrder(orderEntity, null, toOrderMenus(orderEntity)));
 	}
 
 	@Override
 	public Optional<Order> getOrderWithStore(Long orderId) {
 		return orderJpaRepository.findByIdWithStore(orderId)
-			.map(orderEntity -> OrderMapper.toOrder(orderEntity, ReceiptMapper.toReceipt(orderEntity.getReceipt(), null,
-					SaleMapper.toSale(orderEntity.getReceipt().getSale(),
-						StoreMapper.toStore(orderEntity.getReceipt().getSale().getStore()))),
-				null));
+			.map(orderEntity -> OrderMapper.toOrder(orderEntity, toReceiptWithStore(orderEntity), null));
 	}
 
 	@Override
 	@Transactional
 	public Optional<Order> getOrderWithStoreAndMenusAndLock(Long orderId) {
 		return orderJpaRepository.findByIdWithStoreAndMenusAndLock(orderId)
-			.map(orderEntity -> OrderMapper.toOrder(
-				orderEntity,
-				ReceiptMapper.toReceipt(orderEntity.getReceipt(), null,
-					SaleMapper.toSale(orderEntity.getReceipt().getSale(),
-						StoreMapper.toStore(orderEntity.getReceipt().getSale().getStore()))),
-				orderEntity.getOrderMenus().stream()
-					.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
-						MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
-					.toList()));
+			.map(orderEntity -> OrderMapper.toOrder(orderEntity, toReceiptWithStore(orderEntity),
+				toOrderMenus(orderEntity)));
 	}
 
 	@Override
@@ -174,25 +146,16 @@ public class OrderRepositoryImpl implements OrderRepository {
 		return orderJpaRepository.findSaleOrdersWithMenuAndTable(saleId, orderStatuses, pageSize, lastOrderId)
 			.map(orderEntity -> OrderMapper.toOrder(
 				orderEntity,
-				ReceiptMapper.toReceipt(
-					orderEntity.getReceipt(),
-					TableMapper.toTable(orderEntity.getReceipt().getTable(), (Store)null),
-					null),
-				orderEntity.getOrderMenus().stream()
-					.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
-						MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
-					.toList()));
+				ReceiptMapper.toReceipt(orderEntity.getReceipt(),
+					TableMapper.toTable(orderEntity.getReceipt().getTable(), (Store)null), null),
+				toOrderMenus(orderEntity)));
 	}
 
 	@Override
 	public List<Order> getReceiptOrdersWithMenu(UUID receiptId) {
 		return orderJpaRepository.findReceiptOrdersWithMenu(receiptId)
 			.stream()
-			.map(orderEntity -> OrderMapper.toOrder(orderEntity, null,
-				orderEntity.getOrderMenus().stream()
-					.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
-						MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
-					.toList()))
+			.map(orderEntity -> OrderMapper.toOrder(orderEntity, null, toOrderMenus(orderEntity)))
 			.toList();
 	}
 
@@ -207,5 +170,18 @@ public class OrderRepositoryImpl implements OrderRepository {
 				receipt.getReceiptInfo().getReceiptId());
 			receipt.getReceiptInfo().setStartUsageTime(startTime);
 		}
+	}
+
+	private static List<OrderMenu> toOrderMenus(OrderEntity orderEntity) {
+		return orderEntity.getOrderMenus().stream()
+			.map(orderMenuEntity -> OrderMenuMapper.toOrderMenu(orderMenuEntity, null,
+				MenuMapper.toMenu(orderMenuEntity.getMenu(), null, null)))
+			.toList();
+	}
+
+	private static Receipt toReceiptWithStore(OrderEntity orderEntity) {
+		return ReceiptMapper.toReceipt(orderEntity.getReceipt(), null,
+			SaleMapper.toSale(orderEntity.getReceipt().getSale(),
+				StoreMapper.toStore(orderEntity.getReceipt().getSale().getStore())));
 	}
 }

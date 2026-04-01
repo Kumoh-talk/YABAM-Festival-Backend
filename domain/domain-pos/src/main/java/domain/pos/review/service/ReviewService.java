@@ -17,10 +17,8 @@ import domain.pos.review.implement.ReviewReader;
 import domain.pos.review.implement.ReviewWriter;
 import domain.pos.store.implement.StoreValidator;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class ReviewService {
 	private final ReceiptReader receiptReader;

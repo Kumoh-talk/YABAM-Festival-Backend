@@ -44,24 +44,22 @@ public class SaleRepositoryImpl implements SaleRepository {
 
 	@Override
 	public Optional<Sale> findSaleWithStoreBySaleId(Long saleId) {
-		Optional<SaleEntity> saleEntity = Optional.ofNullable(queryFactory
-			.selectFrom(qSaleEntity)
-			.join(qSaleEntity.store, qStoreEntity).fetchJoin()
-			.where(qSaleEntity.id.eq(saleId))
-			.fetchOne());
-		return saleEntity
+		return Optional.ofNullable(queryFactory
+				.selectFrom(qSaleEntity)
+				.join(qSaleEntity.store, qStoreEntity).fetchJoin()
+				.where(qSaleEntity.id.eq(saleId))
+				.fetchOne())
 			.map(SaleMapper::toSaleWithStore);
 	}
 
 	@Override
 	public Optional<Sale> getOpenSaleByStoreId(Long storeId) {
-		Optional<SaleEntity> saleEntity = Optional.ofNullable(queryFactory
-			.selectFrom(qSaleEntity)
-			.join(qSaleEntity.store, qStoreEntity).fetchJoin()
-			.where(qSaleEntity.store.id.eq(storeId)
-				.and(qSaleEntity.closeDateTime.isNull()))
-			.fetchOne());
-		return saleEntity
+		return Optional.ofNullable(queryFactory
+				.selectFrom(qSaleEntity)
+				.join(qSaleEntity.store, qStoreEntity).fetchJoin()
+				.where(qSaleEntity.store.id.eq(storeId)
+					.and(qSaleEntity.closeDateTime.isNull()))
+				.fetchOne())
 			.map(SaleMapper::toSaleWithStore);
 	}
 

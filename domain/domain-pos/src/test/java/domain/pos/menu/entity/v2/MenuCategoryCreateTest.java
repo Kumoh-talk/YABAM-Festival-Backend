@@ -16,15 +16,12 @@ class MenuCategoryCreateTest {
 	@Test
 	@DisplayName("메뉴 카테고리 생성 성공")
 	void create_success() {
-		// given
 		String name = "음료";
 		Integer order = 1;
 		Long storeId = 2L;
 
-		// when
 		MenuCategory menuCategory = MenuCategory.create(name, order, storeId);
 
-		// then
 		assertSoftly(softly -> {
 			softly.assertThat(menuCategory.getId()).isNull();
 			softly.assertThat(menuCategory.getName()).isEqualTo(name);

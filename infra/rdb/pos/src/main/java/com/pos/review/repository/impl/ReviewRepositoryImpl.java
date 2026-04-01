@@ -43,7 +43,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 	@Override
 	public Optional<Review> findById(Long reviewId) {
 		return reviewJpaRepository.findById(reviewId)
-			.map(reviewEntity -> ReviewMapper.toReview(reviewEntity));
+			.map(ReviewMapper::toReview);
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 	public Slice<Review> getReviewsWithUser(Long storeId, Long lastReviewId, int size) {
 		Slice<ReviewEntity> reviewsWithUser = reviewJpaRepository.findReviewsWithUser(storeId, lastReviewId, size);
 		List<Review> reviews = reviewsWithUser.getContent().stream()
-			.map(reviewEntity -> ReviewMapper.toReview(reviewEntity))
+			.map(ReviewMapper::toReview)
 			.toList();
 		return new SliceImpl<>(reviews, reviewsWithUser.getPageable(), reviewsWithUser.hasNext());
 	}

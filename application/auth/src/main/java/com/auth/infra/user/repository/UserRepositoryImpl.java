@@ -27,38 +27,30 @@ public class UserRepositoryImpl implements UserRepository {
 	@Override
 	@Transactional
 	public UserPassport createUser(String email, OidcProvider provider, String providerId) {
-		UserEntity userEntity = UserEntity.builder()
-			.email(email)
-			.role(UserRole.ROLE_USER)
-			.provider(provider)
-			.providerId(providerId)
-			.build();
-
-		UserEntity savedUserEntity = userJpaRepository.save(userEntity);
-		if (email.equals(FakeUserService.fakeUserEmail)) {
-			savedUserEntity.setNickname("fakeUser" + savedUserEntity.getId());
-		} else {
-			savedUserEntity.setNickname("금붕이" + savedUserEntity.getId());
-		}
-		return UserPassport.of(savedUserEntity.getId(), savedUserEntity.getNickname(), savedUserEntity.getRole());
+		return createAndSave(email, provider, providerId, UserRole.ROLE_USER,
+			FakeUserService.fakeUserEmail, "fakeUser");
 	}
 
 	@Override
 	@Transactional
 	public UserPassport createOwner(String email, OidcProvider provider, String providerId) {
+		return createAndSave(email, provider, providerId, UserRole.ROLE_OWNER,
+			FakeUserService.fakeOwnerEmail, "fakeOwner");
+	}
+
+	private UserPassport createAndSave(String email, OidcProvider provider, String providerId,
+		UserRole role, String fakeEmail, String fakeNicknamePrefix) {
 		UserEntity userEntity = UserEntity.builder()
 			.email(email)
-			.role(UserRole.ROLE_OWNER)
+			.role(role)
 			.provider(provider)
 			.providerId(providerId)
 			.build();
-
 		UserEntity savedUserEntity = userJpaRepository.save(userEntity);
-		if (email.equals(FakeUserService.fakeOwnerEmail)) {
-			savedUserEntity.setNickname("fakeOwner" + savedUserEntity.getId());
-		} else {
-			savedUserEntity.setNickname("금붕이" + savedUserEntity.getId());
-		}
+		String nickname = email.equals(fakeEmail)
+			? fakeNicknamePrefix + savedUserEntity.getId()
+			: "금붕이" + savedUserEntity.getId();
+		savedUserEntity.setNickname(nickname);
 		return UserPassport.of(savedUserEntity.getId(), savedUserEntity.getNickname(), savedUserEntity.getRole());
 	}
 

@@ -17,12 +17,10 @@ public class MenuCategoryQueryDslRepositoryImpl implements MenuCategoryQueryDslR
 
 	@Override
 	public Optional<MenuCategoryEntity> findByIdAndStoreId(Long menuCategoryId, Long storeId) {
-		MenuCategoryEntity menuCategoryEntity = jpaQueryFactory.selectFrom(qMenuCategoryEntity)
+		return Optional.ofNullable(jpaQueryFactory.selectFrom(qMenuCategoryEntity)
 			.where(qMenuCategoryEntity.id.eq(menuCategoryId)
 				.and(qMenuCategoryEntity.store.id.eq(storeId)))
-			.fetchOne();
-
-		return Optional.ofNullable(menuCategoryEntity);
+			.fetchOne());
 	}
 
 	@Override
@@ -45,13 +43,11 @@ public class MenuCategoryQueryDslRepositoryImpl implements MenuCategoryQueryDslR
 
 	@Override
 	public Optional<Integer> findMaxOrderByStoreId(Long storeId) {
-		Integer maxOrder = jpaQueryFactory
+		return Optional.ofNullable(jpaQueryFactory
 			.select(qMenuCategoryEntity.order.max())
 			.from(qMenuCategoryEntity)
 			.where(qMenuCategoryEntity.store.id.eq(storeId))
-			.fetchOne();
-
-		return Optional.ofNullable(maxOrder);
+			.fetchOne());
 	}
 
 	@Override
