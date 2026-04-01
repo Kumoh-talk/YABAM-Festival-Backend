@@ -28,56 +28,56 @@ import lombok.NoArgsConstructor;
 @Getter
 public class PaymentEntity extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "receipt_id", nullable = false, unique = true)
-    private ReceiptEntity receipt;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "receipt_id", nullable = false, unique = true)
+	private ReceiptEntity receipt;
 
-    @Column(name = "receipt_id", insertable = false, updatable = false)
-    private UUID receiptId;
+	@Column(name = "receipt_id", insertable = false, updatable = false)
+	private UUID receiptId;
 
-    @Column(name = "toss_payment_key", nullable = false, unique = true)
-    private String tossPaymentKey;
+	@Column(name = "toss_payment_key", nullable = false, unique = true)
+	private String tossPaymentKey;
 
-    @Column(name = "toss_order_id", nullable = false)
-    private String tossOrderId;
+	@Column(name = "toss_order_id", nullable = false)
+	private String tossOrderId;
 
-    @Column(name = "amount", nullable = false)
-    private Integer amount;
+	@Column(name = "amount", nullable = false)
+	private Integer amount;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private PaymentStatus status;
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status", nullable = false)
+	private PaymentStatus status;
 
-    @Column(name = "payment_method")
-    private String paymentMethod;
+	@Column(name = "payment_method")
+	private String paymentMethod;
 
-    @Column(name = "approved_at")
-    private LocalDateTime approvedAt;
+	@Column(name = "approved_at")
+	private LocalDateTime approvedAt;
 
-    @Builder
-    private PaymentEntity(ReceiptEntity receipt, String tossPaymentKey, String tossOrderId,
-        Integer amount, PaymentStatus status, String paymentMethod, LocalDateTime approvedAt) {
-        this.receipt = receipt;
-        this.tossPaymentKey = tossPaymentKey;
-        this.tossOrderId = tossOrderId;
-        this.amount = amount;
-        this.status = status;
-        this.paymentMethod = paymentMethod;
-        this.approvedAt = approvedAt;
-    }
+	@Builder
+	private PaymentEntity(ReceiptEntity receipt, String tossPaymentKey, String tossOrderId,
+		Integer amount, PaymentStatus status, String paymentMethod, LocalDateTime approvedAt) {
+		this.receipt = receipt;
+		this.tossPaymentKey = tossPaymentKey;
+		this.tossOrderId = tossOrderId;
+		this.amount = amount;
+		this.status = status;
+		this.paymentMethod = paymentMethod;
+		this.approvedAt = approvedAt;
+	}
 
-    public void updateStatus(PaymentStatus status) {
-        this.status = status;
-    }
+	public void updateStatus(PaymentStatus status) {
+		this.status = status;
+	}
 
-    public void updateConfirmResult(PaymentStatus status, String paymentMethod,
-        LocalDateTime approvedAt) {
-        this.status = status;
-        this.paymentMethod = paymentMethod;
-        this.approvedAt = approvedAt;
-    }
+	public void updateConfirmResult(PaymentStatus status, String paymentMethod,
+		LocalDateTime approvedAt) {
+		this.status = status;
+		this.paymentMethod = paymentMethod;
+		this.approvedAt = approvedAt;
+	}
 }

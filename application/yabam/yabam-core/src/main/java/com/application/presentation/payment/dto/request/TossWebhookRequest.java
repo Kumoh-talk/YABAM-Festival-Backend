@@ -4,14 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record TossWebhookRequest(
-    String eventType,
-    WebhookData data
+	String eventType,
+	WebhookData data
 ) {
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public record WebhookData(
-        String paymentKey,
-        String orderId,
-        String status
-    ) {
-    }
+	@JsonIgnoreProperties(ignoreUnknown = true)
+	public record WebhookData(
+		String paymentKey,
+		String orderId,
+		String status
+	) {
+	}
 }

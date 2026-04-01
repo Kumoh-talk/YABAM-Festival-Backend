@@ -13,22 +13,22 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PaymentWriter {
 
-    private final PaymentRepository paymentRepository;
+	private final PaymentRepository paymentRepository;
 
-    public Payment save(Payment payment) {
-        return paymentRepository.save(payment);
-    }
+	public Payment save(Payment payment) {
+		return paymentRepository.save(payment);
+	}
 
-    public Payment updateStatus(Long paymentId, PaymentStatus status) {
-        return paymentRepository.updateStatus(paymentId, status);
-    }
+	public Payment updateStatus(Long paymentId, PaymentStatus status) {
+		return paymentRepository.updateStatus(paymentId, status);
+	}
 
-    public Payment updateConfirmResult(Long paymentId, PaymentStatus status, String paymentMethod,
-        LocalDateTime approvedAt) {
-        return paymentRepository.updateConfirmResult(paymentId, status, paymentMethod, approvedAt);
-    }
+	public Payment updateConfirmResult(Long paymentId, PaymentStatus status, String paymentMethod,
+		LocalDateTime approvedAt) {
+		return paymentRepository.updateConfirmResult(paymentId, status, paymentMethod, approvedAt);
+	}
 
-    public void delete(Long paymentId) {
-        paymentRepository.delete(paymentId);
-    }
+	public void delete(Long paymentId) {
+		paymentRepository.delete(paymentId);
+	}
 }

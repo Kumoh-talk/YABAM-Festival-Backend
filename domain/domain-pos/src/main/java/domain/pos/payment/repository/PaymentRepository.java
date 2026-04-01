@@ -10,20 +10,20 @@ import domain.pos.payment.entity.PaymentStatus;
 
 public interface PaymentRepository {
 
-    Payment save(Payment payment);
+	Payment save(Payment payment);
 
-    Optional<Payment> findByReceiptId(UUID receiptId);
+	Optional<Payment> findByReceiptId(UUID receiptId);
 
-    Optional<Payment> findByTossPaymentKey(String tossPaymentKey);
+	Optional<Payment> findByTossPaymentKey(String tossPaymentKey);
 
-    Payment updateStatus(Long paymentId, PaymentStatus status);
+	Payment updateStatus(Long paymentId, PaymentStatus status);
 
-    Payment updateConfirmResult(Long paymentId, PaymentStatus status, String paymentMethod,
-        LocalDateTime approvedAt);
+	Payment updateConfirmResult(Long paymentId, PaymentStatus status, String paymentMethod,
+		LocalDateTime approvedAt);
 
-    void delete(Long paymentId);
+	void delete(Long paymentId);
 
-    List<Payment> findBySaleId(Long saleId);
+	List<Payment> findBySaleId(Long saleId);
 
-    List<Payment> findInProgressOlderThan(LocalDateTime threshold);
+	List<Payment> findInProgressOlderThan(LocalDateTime threshold);
 }

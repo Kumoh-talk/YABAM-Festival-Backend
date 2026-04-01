@@ -27,53 +27,53 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class TossPaymentAdapter implements TossPaymentPort {
 
-    private static final String HMAC_ALGORITHM = "HmacSHA256";
+	private static final String HMAC_ALGORITHM = "HmacSHA256";
 
-    private final TossPaymentClient tossPaymentClient;
-    private final TossPaymentProperties properties;
+	private final TossPaymentClient tossPaymentClient;
+	private final TossPaymentProperties properties;
 
-    @Override
-    public TossConfirmResult confirm(String paymentKey, String orderId, Integer amount) {
-        try {
-            return tossPaymentClient.confirm(paymentKey, orderId, amount);
-        } catch (AlreadyProcessedAtTossException e) {
-            // 토스에서 이미 처리됐지만 로컬에 없는 경우 — 현재 결제 상태를 조회해서 반환
-            log.warn("토스페이먼츠 ALREADY_PROCESSED_PAYMENT 수신. 결제 상태 조회로 복구. paymentKey={}", paymentKey);
-            return tossPaymentClient.getPayment(paymentKey);
-        }
-    }
+	@Override
+	public TossConfirmResult confirm(String paymentKey, String orderId, Integer amount) {
+		try {
+			return tossPaymentClient.confirm(paymentKey, orderId, amount);
+		} catch (AlreadyProcessedAtTossException e) {
+			// 토스에서 이미 처리됐지만 로컬에 없는 경우 — 현재 결제 상태를 조회해서 반환
+			log.warn("토스페이먼츠 ALREADY_PROCESSED_PAYMENT 수신. 결제 상태 조회로 복구. paymentKey={}", paymentKey);
+			return tossPaymentClient.getPayment(paymentKey);
+		}
+	}
 
-    @Override
-    public PaymentStatus cancel(String paymentKey, String cancelReason, Integer cancelAmount) {
-        return tossPaymentClient.cancel(paymentKey, cancelReason, cancelAmount);
-    }
+	@Override
+	public PaymentStatus cancel(String paymentKey, String cancelReason, Integer cancelAmount) {
+		return tossPaymentClient.cancel(paymentKey, cancelReason, cancelAmount);
+	}
 
-    @Override
-    public TossConfirmResult getPayment(String paymentKey) {
-        return tossPaymentClient.getPayment(paymentKey);
-    }
+	@Override
+	public TossConfirmResult getPayment(String paymentKey) {
+		return tossPaymentClient.getPayment(paymentKey);
+	}
 
-    @Override
-    public void verifyWebhookSignature(String rawBody, String signature) {
-        if (signature == null) {
-            log.warn("토스페이먼츠 웹훅 서명 헤더 누락");
-            throw new ServiceException(ErrorCode.PAYMENT_WEBHOOK_INVALID_SIGNATURE);
-        }
+	@Override
+	public void verifyWebhookSignature(String rawBody, String signature) {
+		if (signature == null) {
+			log.warn("토스페이먼츠 웹훅 서명 헤더 누락");
+			throw new ServiceException(ErrorCode.PAYMENT_WEBHOOK_INVALID_SIGNATURE);
+		}
 
-        try {
-            Mac mac = Mac.getInstance(HMAC_ALGORITHM);
-            byte[] keyBytes = properties.getSecretKey().getBytes(StandardCharsets.UTF_8);
-            mac.init(new SecretKeySpec(keyBytes, HMAC_ALGORITHM));
-            byte[] hmacBytes = mac.doFinal(rawBody.getBytes(StandardCharsets.UTF_8));
-            String computed = Base64.getEncoder().encodeToString(hmacBytes);
+		try {
+			Mac mac = Mac.getInstance(HMAC_ALGORITHM);
+			byte[] keyBytes = properties.getSecretKey().getBytes(StandardCharsets.UTF_8);
+			mac.init(new SecretKeySpec(keyBytes, HMAC_ALGORITHM));
+			byte[] hmacBytes = mac.doFinal(rawBody.getBytes(StandardCharsets.UTF_8));
+			String computed = Base64.getEncoder().encodeToString(hmacBytes);
 
-            if (!computed.equals(signature)) {
-                log.warn("토스페이먼츠 웹훅 서명 불일치");
-                throw new ServiceException(ErrorCode.PAYMENT_WEBHOOK_INVALID_SIGNATURE);
-            }
-        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-            log.error("토스페이먼츠 웹훅 서명 검증 중 오류 발생", e);
-            throw new ServiceException(ErrorCode.PAYMENT_WEBHOOK_INVALID_SIGNATURE);
-        }
-    }
+			if (!computed.equals(signature)) {
+				log.warn("토스페이먼츠 웹훅 서명 불일치");
+				throw new ServiceException(ErrorCode.PAYMENT_WEBHOOK_INVALID_SIGNATURE);
+			}
+		} catch (NoSuchAlgorithmException | InvalidKeyException e) {
+			log.error("토스페이먼츠 웹훅 서명 검증 중 오류 발생", e);
+			throw new ServiceException(ErrorCode.PAYMENT_WEBHOOK_INVALID_SIGNATURE);
+		}
+	}
 }

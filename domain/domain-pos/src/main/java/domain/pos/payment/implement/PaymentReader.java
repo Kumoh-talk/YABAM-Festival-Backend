@@ -20,29 +20,29 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class PaymentReader {
 
-    private final PaymentRepository paymentRepository;
+	private final PaymentRepository paymentRepository;
 
-    public Optional<Payment> findByReceiptId(UUID receiptId) {
-        return paymentRepository.findByReceiptId(receiptId);
-    }
+	public Optional<Payment> findByReceiptId(UUID receiptId) {
+		return paymentRepository.findByReceiptId(receiptId);
+	}
 
-    public Optional<Payment> findByTossPaymentKey(String tossPaymentKey) {
-        return paymentRepository.findByTossPaymentKey(tossPaymentKey);
-    }
+	public Optional<Payment> findByTossPaymentKey(String tossPaymentKey) {
+		return paymentRepository.findByTossPaymentKey(tossPaymentKey);
+	}
 
-    public Payment getByTossPaymentKey(String tossPaymentKey) {
-        return paymentRepository.findByTossPaymentKey(tossPaymentKey)
-            .orElseThrow(() -> {
-                log.warn("결제 정보를 찾을 수 없습니다. tossPaymentKey={}", tossPaymentKey);
-                return new ServiceException(ErrorCode.PAYMENT_NOT_FOUND);
-            });
-    }
+	public Payment getByTossPaymentKey(String tossPaymentKey) {
+		return paymentRepository.findByTossPaymentKey(tossPaymentKey)
+			.orElseThrow(() -> {
+				log.warn("결제 정보를 찾을 수 없습니다. tossPaymentKey={}", tossPaymentKey);
+				return new ServiceException(ErrorCode.PAYMENT_NOT_FOUND);
+			});
+	}
 
-    public List<Payment> findBySaleId(Long saleId) {
-        return paymentRepository.findBySaleId(saleId);
-    }
+	public List<Payment> findBySaleId(Long saleId) {
+		return paymentRepository.findBySaleId(saleId);
+	}
 
-    public List<Payment> findInProgressOlderThan(LocalDateTime threshold) {
-        return paymentRepository.findInProgressOlderThan(threshold);
-    }
+	public List<Payment> findInProgressOlderThan(LocalDateTime threshold) {
+		return paymentRepository.findInProgressOlderThan(threshold);
+	}
 }

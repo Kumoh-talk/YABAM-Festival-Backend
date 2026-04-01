@@ -6,14 +6,14 @@ package com.pg.toss.client;
  */
 public class AlreadyProcessedAtTossException extends RuntimeException {
 
-    private final String paymentKey;
+	private final String paymentKey;
 
-    public AlreadyProcessedAtTossException(String paymentKey) {
-        super("ALREADY_PROCESSED_PAYMENT: paymentKey=" + paymentKey);
-        this.paymentKey = paymentKey;
-    }
+	public AlreadyProcessedAtTossException(String paymentKey) {
+		super("ALREADY_PROCESSED_PAYMENT: paymentKey=" + paymentKey);
+		this.paymentKey = paymentKey;
+	}
 
-    public String getPaymentKey() {
-        return paymentKey;
-    }
+	public String getPaymentKey() {
+		return paymentKey;
+	}
 }
