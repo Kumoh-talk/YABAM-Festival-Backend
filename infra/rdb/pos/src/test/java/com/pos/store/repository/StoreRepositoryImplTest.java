@@ -113,8 +113,8 @@ class StoreRepositoryImplTest extends RepositoryTest {
 		testEntityManager.flush();
 		testEntityManager.clear();
 
-		Store opendStore = StoreMapper.toStore(savedStoreEntity).open();
-		storeRepository.changeStoreOpenStatus(opendStore);
+		Store openedStore = StoreMapper.toStore(savedStoreEntity).open();
+		storeRepository.changeStoreOpenStatus(openedStore);
 
 		StoreEntity findStoreEntity = testEntityManager.find(StoreEntity.class, savedStoreEntity.getId());
 		assertThat(findStoreEntity.isOpen()).isFalse();

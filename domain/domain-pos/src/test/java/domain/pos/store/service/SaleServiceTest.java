@@ -54,16 +54,16 @@ class SaleServiceTest extends ServiceTest {
 		void 성공() {
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store savedStore = GENERAL_CLOSE_STORE();
-			Store opendStore = GENERAL_OPEN_STORE();
+			Store openedStore = GENERAL_OPEN_STORE();
 			Long queryStoreId = savedStore.getId();
-			Sale createdSale = GENERAL_OPEN_SALE(opendStore);
+			Sale createdSale = GENERAL_OPEN_SALE(openedStore);
 
 			doReturn(savedStore)
 				.when(storeValidator).validateStoreOwnerWithLock(queryUserPassport, queryStoreId);
-			doReturn(opendStore)
+			doReturn(openedStore)
 				.when(storeWriter).modifyStoreOpenStatus(savedStore);
 			doReturn(createdSale)
-				.when(saleWriter).createSale(opendStore);
+				.when(saleWriter).createSale(openedStore);
 			Sale result = saleService.openStore(queryUserPassport, queryStoreId);
 
 			assertSoftly(softly -> {
