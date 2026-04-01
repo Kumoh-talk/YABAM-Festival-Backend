@@ -22,17 +22,16 @@ public class OrderMenuWriter {
 
 	public OrderMenu patchOrderMenuStatus(OrderMenu orderMenu, OrderMenuStatus orderMenuStatus,
 		UserRole requesterRole) {
-		if (orderMenuStatus == OrderMenuStatus.COOKING) {
-			orderMenu.getOrderMenuStatus().reCookingOrderMenu(orderMenu.getOrderMenuId(), requesterRole);
-		} else if (orderMenuStatus == OrderMenuStatus.CANCELED) {
-			orderMenu.getOrderMenuStatus().cancelOrderMenu(orderMenu.getOrderMenuId(), requesterRole);
-		} else if (orderMenuStatus == OrderMenuStatus.COMPLETED) {
-			orderMenu.getOrderMenuStatus().completeOrderMenu(orderMenu.getOrderMenuId(), requesterRole);
-		} else {
-			log.warn("올바른 변경 요청이 아닙니다 : orderMenuStatus={}", orderMenuStatus);
-			throw new ServiceException(ErrorCode.INVALID_STATE_TRANSITION);
+		switch (orderMenuStatus) {
+			case COOKING -> orderMenu.getOrderMenuStatus().reCookingOrderMenu(orderMenu.getOrderMenuId(), requesterRole);
+			case CANCELED -> orderMenu.getOrderMenuStatus().cancelOrderMenu(orderMenu.getOrderMenuId(), requesterRole);
+			case COMPLETED ->
+				orderMenu.getOrderMenuStatus().completeOrderMenu(orderMenu.getOrderMenuId(), requesterRole);
+			default -> {
+				log.warn("올바른 변경 요청이 아닙니다 : orderMenuStatus={}", orderMenuStatus);
+				throw new ServiceException(ErrorCode.INVALID_STATE_TRANSITION);
+			}
 		}
-
 		return orderMenuRepository.patchOrderMenuStatus(orderMenu, orderMenuStatus);
 	}
 
