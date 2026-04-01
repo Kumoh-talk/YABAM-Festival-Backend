@@ -41,19 +41,6 @@ public class PaymentService {
 	private final StoreValidator storeValidator;
 	private final TableWriter tableWriter;
 
-	/**
-	 * 토스페이먼츠 결제 승인 및 영수증 자동 정산.
-	 *
-	 * <p>비관적 잠금과 선점 레코드 패턴으로 동시 결제 요청을 방지하며,
-	 * 트랜잭션 범위를 외부 API 호출 전후로 분리해 DB 커넥션 점유 시간을 최소화한다.
-	 * <ol>
-	 *   <li>검증·잠금·선점 레코드 저장 (write 트랜잭션 → 커밋 후 잠금·커넥션 해제)</li>
-	 *   <li>외부 API 호출 (트랜잭션 없음)</li>
-	 *   <li>최종 저장·정산 (REQUIRES_NEW 트랜잭션)</li>
-	 * </ol>
-	 * PG 호출 또는 저장 실패 시 선점 레코드를 ABORTED로 마킹하고,
-	 * Toss 결제가 DONE 상태라면 즉시 보상 취소를 시도한다.
-	 */
 	public Payment confirmPayment(String paymentKey, String orderId, Integer amount) {
 		UUID receiptId = parseReceiptId(orderId);
 
