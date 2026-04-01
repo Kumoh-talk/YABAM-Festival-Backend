@@ -50,7 +50,7 @@ public class SaleHandler implements SaleCommand, SaleRead {
 
 		storeRepository.save(store);
 
-		sale.close(isNotExistsNonAdjustReceipt(sale));
+		sale.close(!saleRepository.isExistsNonAdjustReceiptBySaleId(sale.getId()));
 
 		return saleRepository.save(sale);
 	}
@@ -58,9 +58,5 @@ public class SaleHandler implements SaleCommand, SaleRead {
 	@Override
 	public Slice<Sale> getSingleSalesByStore(final Long storeId, final Long lastSaleId, final int size) {
 		return saleRepository.getSaleSliceByStoreId(storeId, lastSaleId, size);
-	}
-
-	private boolean isNotExistsNonAdjustReceipt(Sale sale) {
-		return !saleRepository.isExistsNonAdjustReceiptBySaleId(sale.getId());
 	}
 }

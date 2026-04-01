@@ -40,11 +40,10 @@ public class Menu {
 
 	public static Menu create(MenuInfoState createMenuInfoState, Integer order,
 		Long storeId, Long menuCategoryId) {
-		MenuInfoState menuInfo = MenuInfo.of(createMenuInfoState);
 		checkOrderRule(order);
 		return Menu.builder()
 			.id(null)
-			.menuInfo(menuInfo)
+			.menuInfo(MenuInfo.of(createMenuInfoState))
 			.order(order)
 			.isSoldOut(false)
 			.isRecommended(false)

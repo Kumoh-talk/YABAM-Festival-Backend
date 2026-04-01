@@ -28,7 +28,8 @@ public class MenuCategory {
 	}
 
 	public static MenuCategory create(String name, Integer order, Long storeId) {
-		checkStates(name, order);
+		checkNameRule(name);
+		checkOrderRule(order);
 		return MenuCategory.builder()
 			.id(null)
 			.name(name)
@@ -52,11 +53,6 @@ public class MenuCategory {
 		}
 		this.order = updateOrder;
 		return true;
-	}
-
-	private static void checkStates(String name, Integer order) {
-		checkNameRule(name);
-		checkOrderRule(order);
 	}
 
 	private static void checkNameRule(String name) {

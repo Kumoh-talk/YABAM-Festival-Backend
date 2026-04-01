@@ -17,7 +17,6 @@ import domain.pos.call.entity.dto.CallInfoDto;
 import domain.pos.call.port.provided.CallCommand;
 import domain.pos.call.port.provided.CallRead;
 import domain.pos.call.port.required.repository.CallRepository;
-import domain.pos.receipt.entity.Receipt;
 import domain.pos.receipt.repository.ReceiptRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -33,20 +32,16 @@ public class CallHandler implements CallCommand, CallRead {
 		var receipt = receiptRepository.getReceiptById(receiptId)
 			.orElseThrow(() -> new ServiceException(RECEIPT_NOT_FOUND));
 
-		ifState(isAdjustment(receipt), ALREADY_ADJUSTMENT_RECEIPT);
+		ifState(receipt.getReceiptInfo().isAdjustment(), ALREADY_ADJUSTMENT_RECEIPT);
 
 		var call = Call.create(receipt.getSale().getId(), receiptId, message);
 
 		return callRepository.save(call);
 	}
 
-	private static boolean isAdjustment(Receipt receipt) {
-		return receipt.getReceiptInfo().isAdjustment();
-	}
-
 	@Override
 	public Call completeCall(UserPassport passport, final Long callId) {
-		ifState(isNotCallOwner(passport, callId), NOT_VALID_CALL_OWNER);
+		ifState(!callRepository.isExistsCallOwner(callId, passport), NOT_VALID_CALL_OWNER);
 
 		var call = callRepository.findById(callId)
 			.orElseThrow(() -> new ServiceException(NOT_FOUND_CALL));
@@ -54,10 +49,6 @@ public class CallHandler implements CallCommand, CallRead {
 		call.complete();
 
 		return callRepository.save(call);
-	}
-
-	private boolean isNotCallOwner(UserPassport passport, Long callId) {
-		return !callRepository.isExistsCallOwner(callId, passport);
 	}
 
 	@Override
