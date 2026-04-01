@@ -1,7 +1,6 @@
 package domain.pos.receipt.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -90,8 +89,9 @@ public class ReceiptService {
 
 		storeValidator.validateStoreOwner(ownerPassport, sale.getStore());
 
-		List<Table> tables = new ArrayList<>(tableReader.findTables(sale.getStore().getId()));
-		tables.sort(Comparator.comparingInt((table) -> table.getTableNumber().value()));
+		List<Table> tables = tableReader.findTables(sale.getStore().getId()).stream()
+			.sorted(Comparator.comparingInt(table -> table.getTableNumber().value()))
+			.toList();
 		List<Receipt> receipts = receiptReader.getAllNonAdjustReceiptWithTableAndOrders(saleId);
 
 		return tables.stream()
@@ -194,11 +194,9 @@ public class ReceiptService {
 	public Slice<Receipt> getCustomerReceiptSlice(int pageSize, UserPassport userPassport, Long customerId,
 		UUID lastReceiptId) {
 		userPassportValidator.validateUserPassport(userPassport, customerId);
-		if (lastReceiptId != null) {
-			if (!receiptReader.existsReceipt(lastReceiptId)) {
-				log.warn("lastReceipt 을 찾을 수 없습니다. receiptId: {}", lastReceiptId);
-				throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
-			}
+		if (lastReceiptId != null && !receiptReader.existsReceipt(lastReceiptId)) {
+			log.warn("lastReceipt 을 찾을 수 없습니다. receiptId: {}", lastReceiptId);
+			throw new ServiceException(ErrorCode.RECEIPT_NOT_FOUND);
 		}
 		return receiptReader.getCustomerReceiptSlice(pageSize, lastReceiptId, customerId);
 	}
