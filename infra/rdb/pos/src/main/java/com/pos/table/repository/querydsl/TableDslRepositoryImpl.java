@@ -11,6 +11,8 @@ import com.pos.store.entity.QStoreEntity;
 import com.pos.table.entity.QTableEntity;
 import com.pos.table.entity.TableEntity;
 import com.pos.table.vo.TablePointVo;
+import com.exception.ErrorCode;
+import com.exception.ServiceException;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import domain.pos.table.entity.Table;
@@ -85,7 +87,7 @@ public class TableDslRepositoryImpl implements TableDslRepository {
 			.where(qTableEntity.id.eq(tableId))
 			.execute();
 		if (success == 0) {
-			throw new IllegalArgumentException("테이블 정보 수정에 실패했습니다.");
+			throw new ServiceException(ErrorCode.NOT_FOUND_TABLE);
 		}
 	}
 }

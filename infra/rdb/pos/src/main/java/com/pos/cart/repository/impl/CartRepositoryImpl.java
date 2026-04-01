@@ -33,7 +33,7 @@ public class CartRepositoryImpl implements CartRepository {
 	@Transactional
 	public void upsertCart(final UUID receiptId, final Long menuId, final Integer quantity) {
 		MenuEntity menuEntity = menuJpaRepository.findById(menuId)
-			.orElseThrow(() -> new IllegalArgumentException("해당 메뉴 id는 유효하지 않습니다." + menuId));
+			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
 		CartEntity cartEntity = cartJpaRepository.findCartByReceiptWithLock(receiptId)
 			.orElseGet(() -> cartJpaRepository.save(CartEntity.from(ReceiptEntity.from(receiptId))));
 		cartJpaRepository.findCartMenuByCartIdAndCartMenuWithLock(cartEntity, menuId)
@@ -64,8 +64,8 @@ public class CartRepositoryImpl implements CartRepository {
 
 	@Override
 	public void deleteCartAndCartMenuByReceiptId(UUID receiptId) {
-		CartEntity cartEntity = cartJpaRepository.findCartByReceiptId(receiptId).orElseThrow(
-			() -> new IllegalArgumentException("해당 영수증 id에 해당하는 장바구니 내역이 없습니다." + receiptId));
+		CartEntity cartEntity = cartJpaRepository.findCartByReceiptId(receiptId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.CART_NOT_FOUND));
 		cartMenuJpaRepository.deleteAll(cartEntity.getCartMenus());
 		cartEntity.getCartMenus().clear();
 		cartJpaRepository.delete(cartEntity);

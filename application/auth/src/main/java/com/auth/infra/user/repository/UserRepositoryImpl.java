@@ -7,6 +7,8 @@ import com.auth.domain.repository.UserRepository;
 import com.auth.domain.service.FakeUserService;
 import com.auth.domain.vo.OidcProvider;
 import com.auth.infra.user.entity.UserEntity;
+import com.exception.ErrorCode;
+import com.exception.ServiceException;
 import com.vo.UserPassport;
 import com.vo.UserRole;
 
@@ -57,7 +59,7 @@ public class UserRepositoryImpl implements UserRepository {
 	@Override
 	public UserPassport getUserInfo(Long userId) {
 		UserEntity userEntity = userJpaRepository.findById(userId)
-			.orElseThrow(() -> new IllegalArgumentException("User not found"));
+			.orElseThrow(() -> new ServiceException(ErrorCode.USERID_NOT_FOUND));
 		return UserPassport.of(userEntity.getId(), userEntity.getNickname(), userEntity.getRole());
 	}
 }
