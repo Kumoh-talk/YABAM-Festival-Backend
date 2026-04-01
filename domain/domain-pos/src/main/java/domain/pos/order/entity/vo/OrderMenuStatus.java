@@ -11,12 +11,7 @@ public enum OrderMenuStatus {
 	ORDERED {
 		@Override
 		public void reCookingOrderMenu(Long orderMenuId, UserRole requesterRole) {
-			if (requesterRole.equals(UserRole.ROLE_OWNER)) {
-				log.info("점주에 의해 주문 메뉴가 조리중이 되었습니다 : orderMenuId={}", orderMenuId);
-			} else {
-				log.warn("주문 메뉴를 조리 상태로 만들 권한이 없습니다 : orderMenuId={}", orderMenuId);
-				throw new ServiceException(ErrorCode.TRANSFER_INVALID_ROLE);
-			}
+			requireOwnerForCooking(orderMenuId, requesterRole);
 		}
 
 		@Override
@@ -30,12 +25,7 @@ public enum OrderMenuStatus {
 
 		@Override
 		public void completeOrderMenu(Long orderMenuId, UserRole requesterRole) {
-			if (requesterRole.equals(UserRole.ROLE_OWNER)) {
-				log.info("점주에 의해 주문 메뉴가 완료되었습니다 : orderMenuId={}", orderMenuId);
-			} else {
-				log.warn("주문 메뉴를 완료 상태로 만들 권한이 없습니다 : orderMenuId={}", orderMenuId);
-				throw new ServiceException(ErrorCode.TRANSFER_INVALID_ROLE);
-			}
+			requireOwnerForComplete(orderMenuId, requesterRole);
 		}
 	},
 	COOKING {
@@ -57,23 +47,13 @@ public enum OrderMenuStatus {
 
 		@Override
 		public void completeOrderMenu(Long orderMenuId, UserRole requesterRole) {
-			if (requesterRole.equals(UserRole.ROLE_OWNER)) {
-				log.info("점주에 의해 주문 메뉴가 완료되었습니다 : orderMenuId={}", orderMenuId);
-			} else {
-				log.warn("주문 메뉴를 완료 상태로 만들 권한이 없습니다 : orderMenuId={}", orderMenuId);
-				throw new ServiceException(ErrorCode.TRANSFER_INVALID_ROLE);
-			}
+			requireOwnerForComplete(orderMenuId, requesterRole);
 		}
 	},
 	CANCELED {
 		@Override
 		public void reCookingOrderMenu(Long orderMenuId, UserRole requesterRole) {
-			if (requesterRole.equals(UserRole.ROLE_OWNER)) {
-				log.info("점주에 의해 주문 메뉴가 조리중이 되었습니다 : orderMenuId={}", orderMenuId);
-			} else {
-				log.warn("주문 메뉴를 조리 상태로 만들 권한이 없습니다 : orderMenuId={}", orderMenuId);
-				throw new ServiceException(ErrorCode.TRANSFER_INVALID_ROLE);
-			}
+			requireOwnerForCooking(orderMenuId, requesterRole);
 		}
 
 		@Override
@@ -91,12 +71,7 @@ public enum OrderMenuStatus {
 	COMPLETED {
 		@Override
 		public void reCookingOrderMenu(Long orderMenuId, UserRole requesterRole) {
-			if (requesterRole.equals(UserRole.ROLE_OWNER)) {
-				log.info("점주에 의해 주문 메뉴가 조리중이 되었습니다 : orderMenuId={}", orderMenuId);
-			} else {
-				log.warn("주문 메뉴를 조리 상태로 만들 권한이 없습니다 : orderMenuId={}", orderMenuId);
-				throw new ServiceException(ErrorCode.TRANSFER_INVALID_ROLE);
-			}
+			requireOwnerForCooking(orderMenuId, requesterRole);
 		}
 
 		@Override
@@ -118,4 +93,19 @@ public enum OrderMenuStatus {
 
 	public abstract void completeOrderMenu(Long orderMenuId, UserRole requesterRole);
 
+	private static void requireOwnerForCooking(Long orderMenuId, UserRole requesterRole) {
+		if (!requesterRole.equals(UserRole.ROLE_OWNER)) {
+			log.warn("주문 메뉴를 조리 상태로 만들 권한이 없습니다 : orderMenuId={}", orderMenuId);
+			throw new ServiceException(ErrorCode.TRANSFER_INVALID_ROLE);
+		}
+		log.info("점주에 의해 주문 메뉴가 조리중이 되었습니다 : orderMenuId={}", orderMenuId);
+	}
+
+	private static void requireOwnerForComplete(Long orderMenuId, UserRole requesterRole) {
+		if (!requesterRole.equals(UserRole.ROLE_OWNER)) {
+			log.warn("주문 메뉴를 완료 상태로 만들 권한이 없습니다 : orderMenuId={}", orderMenuId);
+			throw new ServiceException(ErrorCode.TRANSFER_INVALID_ROLE);
+		}
+		log.info("점주에 의해 주문 메뉴가 완료되었습니다 : orderMenuId={}", orderMenuId);
+	}
 }
