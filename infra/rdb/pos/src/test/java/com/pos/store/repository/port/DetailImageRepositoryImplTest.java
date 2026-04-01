@@ -24,7 +24,7 @@ class DetailImageRepositoryImplTest extends RepositoryTest {
 
 	@Test
 	void findByStoreIdTest() {
-		var storeEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(GENERAL_CLOSE_STORE()));
+		var storeEntity = testFixtureBuilder.buildStoreEntity(CUSTOM_STORE_ENTITY(GENERAL_CLOSE_STORE()));
 		var storeDetailImageEntities = testFixtureBuilder.buildStoreDetailImageEntities(
 			CUSTOM_STORE_DETAIL_IMAGES(storeEntity));
 		em.flush();
@@ -38,7 +38,7 @@ class DetailImageRepositoryImplTest extends RepositoryTest {
 
 	@Test
 	void saveTest() {
-		var storeEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(GENERAL_CLOSE_STORE()));
+		var storeEntity = testFixtureBuilder.buildStoreEntity(CUSTOM_STORE_ENTITY(GENERAL_CLOSE_STORE()));
 		var storeDetailImageEntities = testFixtureBuilder.buildStoreDetailImageEntities(
 			CUSTOM_STORE_DETAIL_IMAGES(storeEntity));
 		em.flush();

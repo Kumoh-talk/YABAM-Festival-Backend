@@ -48,7 +48,7 @@ class StoreRepositoryImplTest extends RepositoryTest {
 
 	@Test
 	void saveForUpdateTest() {
-		var entity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(GENERAL_CLOSE_STORE()));
+		var entity = testFixtureBuilder.buildStoreEntity(CUSTOM_STORE_ENTITY(GENERAL_CLOSE_STORE()));
 		Store changed = DIFF_STORE_FIXTURE();
 		ReflectionTestUtils.setField(changed, "id", entity.getId());
 
@@ -66,7 +66,7 @@ class StoreRepositoryImplTest extends RepositoryTest {
 
 	@Test
 	void StoreInfo_변경_테스트() {
-		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(GENERAL_CLOSE_STORE()));
+		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOM_STORE_ENTITY(GENERAL_CLOSE_STORE()));
 		Store savedStore = StoreMapper.toStore(savedStoreEntity);
 		testEntityManager.flush();
 		testEntityManager.clear();
@@ -93,7 +93,7 @@ class StoreRepositoryImplTest extends RepositoryTest {
 	@Test
 	void Store엔티티_논리_삭제_테스트() {
 		Store savedStore = GENERAL_CLOSE_STORE();
-		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(savedStore));
+		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOM_STORE_ENTITY(savedStore));
 		testEntityManager.flush();
 		testEntityManager.clear();
 		Store queryStore = StoreMapper.toStore(savedStoreEntity);
@@ -109,7 +109,7 @@ class StoreRepositoryImplTest extends RepositoryTest {
 	@Test
 	void Store_오픈_상태_변경_테스트() {
 		Store savedStore = GENERAL_CLOSE_STORE();
-		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(savedStore));
+		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOM_STORE_ENTITY(savedStore));
 		testEntityManager.flush();
 		testEntityManager.clear();
 
@@ -123,7 +123,7 @@ class StoreRepositoryImplTest extends RepositoryTest {
 	@Test
 	void store_존재여부_테스트() {
 		Store savedStore = GENERAL_CLOSE_STORE();
-		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(savedStore));
+		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOM_STORE_ENTITY(savedStore));
 		testEntityManager.flush();
 		testEntityManager.clear();
 
@@ -139,7 +139,7 @@ class StoreRepositoryImplTest extends RepositoryTest {
 	@Test
 	void 가게조회_테스트() {
 		Store savedStore = GENERAL_CLOSE_STORE();
-		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(savedStore));
+		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOM_STORE_ENTITY(savedStore));
 		List<StoreDetailImageEntity> storeDetailImageEntities = testFixtureBuilder.buildStoreDetailImageEntities(
 			CUSTOM_STORE_DETAIL_IMAGES(savedStoreEntity));
 		testEntityManager.flush();
@@ -172,7 +172,7 @@ class StoreRepositoryImplTest extends RepositoryTest {
 	@Test
 	void 상세이미지_없을시_가게조회_테스트() {
 		Store savedStore = GENERAL_CLOSE_STORE();
-		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(savedStore));
+		StoreEntity savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOM_STORE_ENTITY(savedStore));
 		testEntityManager.flush();
 		testEntityManager.clear();
 
@@ -204,13 +204,13 @@ class StoreRepositoryImplTest extends RepositoryTest {
 
 		@BeforeEach
 		void setUp() {
-			savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(GENERAL_OPEN_STORE()));
+			savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOM_STORE_ENTITY(GENERAL_OPEN_STORE()));
 			savedTableEntity = testFixtureBuilder.buildTableEntityList(
 				TableEntityFixture.TABLEENTITY_LIST(1, savedStoreEntity)).get(0);
 			savedSaleEntity = testFixtureBuilder.buildSaleEntity(GENERAL_SALE(savedStoreEntity));
 			savedReceiptEntity = testFixtureBuilder.buildReceiptEntity(
 				ReceiptEntityFixture.GENERAL_ADJUSTMENT_RECEIPT(savedSaleEntity, savedTableEntity));
-			StoreEntity storeEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(GENERAL_CLOSE_STORE()));
+			StoreEntity storeEntity = testFixtureBuilder.buildStoreEntity(CUSTOM_STORE_ENTITY(GENERAL_CLOSE_STORE()));
 			savedStoreEntityList = List.of(
 				storeEntity, savedStoreEntity
 			);

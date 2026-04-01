@@ -48,7 +48,7 @@ class MenuRepositoryImplTest extends RepositoryTest {
 	@BeforeEach
 	void setUp() {
 		StoreEntity storeEntity = testFixtureBuilder.buildStoreEntity(
-			StoreEntityFixture.CUSTOME_STORE_ENTITY(StoreFixture.GENERAL_CLOSE_STORE()));
+			StoreEntityFixture.CUSTOM_STORE_ENTITY(StoreFixture.GENERAL_CLOSE_STORE()));
 		savedStore = StoreMapper.toStore(storeEntity);
 
 		MenuCategoryEntity menuCategoryEntity = testFixtureBuilder.buildMenuCategoryEntity(

@@ -7,7 +7,7 @@ import domain.pos.store.entity.Store;
 
 public class StoreEntityFixture {
 
-	public static StoreEntity CUSTOME_STORE_ENTITY(Store store) {
+	public static StoreEntity CUSTOM_STORE_ENTITY(Store store) {
 		return StoreMapper.toStoreEntity(
 			store.getOwnerPassport(),
 			store.getStoreInfo(),

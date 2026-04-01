@@ -46,7 +46,7 @@ class PaymentRepositoryImplTest extends RepositoryTest {
 
 	@BeforeEach
 	void setUp() {
-		savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(GENERAL_OPEN_STORE()));
+		savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOM_STORE_ENTITY(GENERAL_OPEN_STORE()));
 		savedTableEntity = testFixtureBuilder.buildTableEntityList(TABLEENTITY_LIST(1, savedStoreEntity)).get(0);
 		savedSaleEntity = testFixtureBuilder.buildSaleEntity(GENERAL_SALE(savedStoreEntity));
 		savedReceiptEntity = testFixtureBuilder.buildReceiptEntity(

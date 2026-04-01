@@ -37,7 +37,7 @@ class TableRepositoryImplTest extends RepositoryTest {
 
 	@BeforeEach
 	void setUp() {
-		savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(GENERAL_CLOSE_STORE()));
+		savedStoreEntity = testFixtureBuilder.buildStoreEntity(CUSTOM_STORE_ENTITY(GENERAL_CLOSE_STORE()));
 		savedStore = StoreMapper.toStore(savedStoreEntity);
 		testEntityManager.flush();
 		testEntityManager.clear();

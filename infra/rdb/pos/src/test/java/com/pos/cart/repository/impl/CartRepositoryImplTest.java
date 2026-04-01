@@ -45,7 +45,7 @@ class CartRepositoryImplTest extends RepositoryTest {
 
 	@BeforeEach
 	void setUp() {
-		StoreEntity storeEntity = testFixtureBuilder.buildStoreEntity(CUSTOME_STORE_ENTITY(GENERAL_OPEN_STORE()));
+		StoreEntity storeEntity = testFixtureBuilder.buildStoreEntity(CUSTOM_STORE_ENTITY(GENERAL_OPEN_STORE()));
 		TableEntity tableEntity = testFixtureBuilder.buildTableEntityList(TABLEENTITY_LIST(1, storeEntity)).get(0);
 		SaleEntity saleEntity = testFixtureBuilder.buildSaleEntity(GENERAL_SALE(storeEntity));
 		savedReceiptEntity = testFixtureBuilder.buildReceiptEntity(
