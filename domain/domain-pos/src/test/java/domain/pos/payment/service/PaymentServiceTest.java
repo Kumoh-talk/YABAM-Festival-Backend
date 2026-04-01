@@ -3,6 +3,7 @@ package domain.pos.payment.service;
 import static fixtures.member.UserFixture.*;
 import static fixtures.payment.PaymentFixture.*;
 import static fixtures.receipt.ReceiptFixture.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.SoftAssertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
@@ -95,12 +96,10 @@ class PaymentServiceTest extends ServiceTest {
 			assertSoftly(softly -> {
 				softly.assertThat(result.getStatus()).isEqualTo(PaymentStatus.DONE);
 				softly.assertThat(result.getTossPaymentKey()).isEqualTo(paymentKey);
-				verify(paymentProcessor).validateAndPreempt(any(UUID.class), eq(paymentKey),
-					eq(orderId), eq(amount));
-				verify(tossPaymentPort).confirm(paymentKey, orderId, amount);
-				verify(paymentProcessor).finalizeAndSettle(eq(preemptionPayment.getPaymentId()),
-					any(TossConfirmResult.class), eq(receipt));
 			});
+			verify(paymentProcessor).validateAndPreempt(any(UUID.class), eq(paymentKey), eq(orderId), eq(amount));
+			verify(tossPaymentPort).confirm(paymentKey, orderId, amount);
+			verify(paymentProcessor).finalizeAndSettle(eq(preemptionPayment.getPaymentId()), any(TossConfirmResult.class), eq(receipt));
 		}
 
 		@Test
@@ -108,16 +107,11 @@ class PaymentServiceTest extends ServiceTest {
 			given(paymentProcessor.validateAndPreempt(any(UUID.class), eq(paymentKey), eq(orderId),
 				eq(amount))).willThrow(new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> paymentService.confirmPayment(paymentKey, orderId, amount))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
-
-				verify(tossPaymentPort, never()).confirm(any(), any(), any());
-				verify(paymentProcessor, never()).finalizeAndSettle(any(), any(), any());
-			});
+			assertThatThrownBy(() -> paymentService.confirmPayment(paymentKey, orderId, amount))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
+			verify(tossPaymentPort, never()).confirm(any(), any(), any());
+			verify(paymentProcessor, never()).finalizeAndSettle(any(), any(), any());
 		}
 
 		@Test
@@ -125,15 +119,10 @@ class PaymentServiceTest extends ServiceTest {
 			given(paymentProcessor.validateAndPreempt(any(UUID.class), eq(paymentKey), eq(orderId),
 				eq(amount))).willThrow(new ServiceException(ErrorCode.ALREADY_PAID_RECEIPT));
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> paymentService.confirmPayment(paymentKey, orderId, amount))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_PAID_RECEIPT);
-
-				verify(tossPaymentPort, never()).confirm(any(), any(), any());
-			});
+			assertThatThrownBy(() -> paymentService.confirmPayment(paymentKey, orderId, amount))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_PAID_RECEIPT);
+			verify(tossPaymentPort, never()).confirm(any(), any(), any());
 		}
 
 		@Test
@@ -142,31 +131,21 @@ class PaymentServiceTest extends ServiceTest {
 			given(paymentProcessor.validateAndPreempt(any(UUID.class), eq(paymentKey), eq(orderId),
 				eq(wrongAmount))).willThrow(new ServiceException(ErrorCode.PAYMENT_AMOUNT_MISMATCH));
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> paymentService.confirmPayment(paymentKey, orderId, wrongAmount))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_AMOUNT_MISMATCH);
-
-				verify(tossPaymentPort, never()).confirm(any(), any(), any());
-			});
+			assertThatThrownBy(() -> paymentService.confirmPayment(paymentKey, orderId, wrongAmount))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_AMOUNT_MISMATCH);
+			verify(tossPaymentPort, never()).confirm(any(), any(), any());
 		}
 
 		@Test
 		void 실패_유효하지_않은_orderId() {
 			String invalidOrderId = "not-a-uuid";
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> paymentService.confirmPayment(paymentKey, invalidOrderId, amount))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.INVALID_INPUT_VALUE);
-
-				verify(paymentProcessor, never()).validateAndPreempt(any(), any(), any(), any());
-				verify(tossPaymentPort, never()).confirm(any(), any(), any());
-			});
+			assertThatThrownBy(() -> paymentService.confirmPayment(paymentKey, invalidOrderId, amount))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.INVALID_INPUT_VALUE);
+			verify(paymentProcessor, never()).validateAndPreempt(any(), any(), any(), any());
+			verify(tossPaymentPort, never()).confirm(any(), any(), any());
 		}
 
 		@Test
@@ -208,17 +187,11 @@ class PaymentServiceTest extends ServiceTest {
 			given(tossPaymentPort.confirm(paymentKey, orderId, amount))
 				.willThrow(new ServiceException(ErrorCode.PAYMENT_CONFIRM_FAILED));
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> paymentService.confirmPayment(paymentKey, orderId, amount))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_CONFIRM_FAILED);
-
-				verify(paymentWriter).updateStatus(preemptionPayment.getPaymentId(),
-					PaymentStatus.ABORTED);
-				verify(paymentProcessor, never()).finalizeAndSettle(any(), any(), any());
-			});
+			assertThatThrownBy(() -> paymentService.confirmPayment(paymentKey, orderId, amount))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_CONFIRM_FAILED);
+			verify(paymentWriter).updateStatus(preemptionPayment.getPaymentId(), PaymentStatus.ABORTED);
+			verify(paymentProcessor, never()).finalizeAndSettle(any(), any(), any());
 		}
 
 		@Test
@@ -232,17 +205,12 @@ class PaymentServiceTest extends ServiceTest {
 			given(tossPaymentPort.confirm(paymentKey, orderId, amount))
 				.willThrow(new ServiceException(ErrorCode.PAYMENT_CONFIRM_TIMEOUT));
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> paymentService.confirmPayment(paymentKey, orderId, amount))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_IN_PROGRESS);
-
-				// 타임아웃 소진 — ABORTED 마킹 없이 IN_PROGRESS 유지 (스케줄러가 복구)
-				verify(paymentWriter, never()).updateStatus(any(), eq(PaymentStatus.ABORTED));
-				verify(paymentProcessor, never()).finalizeAndSettle(any(), any(), any());
-			});
+			assertThatThrownBy(() -> paymentService.confirmPayment(paymentKey, orderId, amount))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_IN_PROGRESS);
+			// 타임아웃 소진 — ABORTED 마킹 없이 IN_PROGRESS 유지 (스케줄러가 복구)
+			verify(paymentWriter, never()).updateStatus(any(), eq(PaymentStatus.ABORTED));
+			verify(paymentProcessor, never()).finalizeAndSettle(any(), any(), any());
 		}
 
 		@Test
@@ -269,18 +237,11 @@ class PaymentServiceTest extends ServiceTest {
 			given(tossPaymentPort.cancel(paymentKey, "결제 데이터 저장 실패로 인한 자동 취소", null))
 				.willReturn(PaymentStatus.CANCELED);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> paymentService.confirmPayment(paymentKey, orderId, amount))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_CONFIRM_FAILED);
-
-				verify(tossPaymentPort).cancel(eq(paymentKey),
-					eq("결제 데이터 저장 실패로 인한 자동 취소"), isNull());
-				verify(paymentWriter).updateStatus(preemptionPayment.getPaymentId(),
-					PaymentStatus.ABORTED);
-			});
+			assertThatThrownBy(() -> paymentService.confirmPayment(paymentKey, orderId, amount))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_CONFIRM_FAILED);
+			verify(tossPaymentPort).cancel(eq(paymentKey), eq("결제 데이터 저장 실패로 인한 자동 취소"), isNull());
+			verify(paymentWriter).updateStatus(preemptionPayment.getPaymentId(), PaymentStatus.ABORTED);
 		}
 
 		@Test
@@ -307,13 +268,9 @@ class PaymentServiceTest extends ServiceTest {
 			given(tossPaymentPort.cancel(anyString(), anyString(), isNull()))
 				.willThrow(new ServiceException(ErrorCode.PAYMENT_CANCEL_FAILED));
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> paymentService.confirmPayment(paymentKey, orderId, amount))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_CONFIRM_FAILED);
-			});
+			assertThatThrownBy(() -> paymentService.confirmPayment(paymentKey, orderId, amount))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_CONFIRM_FAILED);
 		}
 	}
 
@@ -380,16 +337,11 @@ class PaymentServiceTest extends ServiceTest {
 			given(paymentReader.getByTossPaymentKey(paymentKey))
 				.willReturn(canceledPayment);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> paymentService.cancelPayment(paymentKey, cancelReason, null, ownerPassport))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_CANCEL_FAILED);
-
-				verify(tossPaymentPort, never()).cancel(any(), any(), any());
-				verify(paymentWriter, never()).updateStatus(any(), any());
-			});
+			assertThatThrownBy(() -> paymentService.cancelPayment(paymentKey, cancelReason, null, ownerPassport))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_CANCEL_FAILED);
+			verify(tossPaymentPort, never()).cancel(any(), any(), any());
+			verify(paymentWriter, never()).updateStatus(any(), any());
 		}
 
 		@Test
@@ -399,16 +351,11 @@ class PaymentServiceTest extends ServiceTest {
 			given(paymentReader.getByTossPaymentKey(paymentKey))
 				.willThrow(new ServiceException(ErrorCode.PAYMENT_NOT_FOUND));
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> paymentService.cancelPayment(paymentKey, cancelReason, null, ownerPassport))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_NOT_FOUND);
-
-				verify(tossPaymentPort, never()).cancel(any(), any(), any());
-				verify(paymentWriter, never()).updateStatus(any(), any());
-			});
+			assertThatThrownBy(() -> paymentService.cancelPayment(paymentKey, cancelReason, null, ownerPassport))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_NOT_FOUND);
+			verify(tossPaymentPort, never()).cancel(any(), any(), any());
+			verify(paymentWriter, never()).updateStatus(any(), any());
 		}
 
 		@Test
@@ -424,16 +371,11 @@ class PaymentServiceTest extends ServiceTest {
 			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
 				.when(storeValidator).validateStoreOwner(eq(diffOwnerPassport), any(Store.class));
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> paymentService.cancelPayment(paymentKey, cancelReason, null, diffOwnerPassport))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
-
-				verify(tossPaymentPort, never()).cancel(any(), any(), any());
-				verify(paymentWriter, never()).updateStatus(any(), any());
-			});
+			assertThatThrownBy(() -> paymentService.cancelPayment(paymentKey, cancelReason, null, diffOwnerPassport))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
+			verify(tossPaymentPort, never()).cancel(any(), any(), any());
+			verify(paymentWriter, never()).updateStatus(any(), any());
 		}
 	}
 
@@ -556,8 +498,8 @@ class PaymentServiceTest extends ServiceTest {
 				softly.assertThat(result).hasSize(2);
 				softly.assertThat(result.get(0).getStatus()).isEqualTo(PaymentStatus.DONE);
 				softly.assertThat(result.get(1).getStatus()).isEqualTo(PaymentStatus.CANCELED);
-				verify(paymentReader).findBySaleId(saleId);
 			});
+			verify(paymentReader).findBySaleId(saleId);
 		}
 
 		@Test
@@ -567,7 +509,7 @@ class PaymentServiceTest extends ServiceTest {
 
 			List<Payment> result = paymentService.findPaymentsBySaleId(saleId);
 
-			assertSoftly(softly -> softly.assertThat(result).isEmpty());
+			assertThat(result).isEmpty();
 		}
 	}
 
@@ -596,8 +538,8 @@ class PaymentServiceTest extends ServiceTest {
 				softly.assertThat(result.getTossPaymentKey()).isEqualTo(paymentKey);
 				softly.assertThat(result.getStatus()).isEqualTo(PaymentStatus.DONE);
 				softly.assertThat(result.getAmount()).isEqualTo(GENERAL_AMOUNT);
-				verify(tossPaymentPort).getPayment(paymentKey);
 			});
+			verify(tossPaymentPort).getPayment(paymentKey);
 		}
 
 		@Test
@@ -605,11 +547,9 @@ class PaymentServiceTest extends ServiceTest {
 			given(tossPaymentPort.getPayment(paymentKey))
 				.willThrow(new ServiceException(ErrorCode.PAYMENT_NOT_FOUND));
 
-			// when -> then
-			assertSoftly(softly -> softly.assertThatThrownBy(
-					() -> paymentService.getPaymentFromToss(paymentKey))
+			assertThatThrownBy(() -> paymentService.getPaymentFromToss(paymentKey))
 				.isInstanceOf(ServiceException.class)
-				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_NOT_FOUND));
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_NOT_FOUND);
 		}
 	}
 }
