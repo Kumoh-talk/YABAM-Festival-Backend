@@ -2,7 +2,6 @@ package com.event.channel;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -83,22 +82,25 @@ public class OwnerStoreChannel implements SseChannel {
 	}
 
 	public void unicast(String eventName, Long storeId, Object eventData) {
-		Optional.ofNullable(emitterMap.get(storeId))
-			.ifPresentOrElse(
-				emitter -> {
-					try {
-						emitter.send(SseEmitter.event()
-							.name(eventName)
-							.id(String.valueOf(storeId))
-							.reconnectTime(RECONNECTION_TIMEOUT)
-							.data(eventData, MediaType.APPLICATION_JSON));
-						log.info("[store-order-event] sent notification, id={}", storeId);
-					} catch (IOException e) {
-						log.warn("[store-order-event] fail to send emitter id={}, {}", storeId, e.getMessage());
-					}
-				},
-				() -> log.info("[{}] emitter not found, id={}", CHANNEL.getChannelName(), storeId)
-			);
+		SseEmitter emitter = emitterMap.get(storeId);
+		if (emitter == null) {
+			log.info("[{}] emitter not found, id={}", CHANNEL.getChannelName(), storeId);
+			return;
+		}
+		sendEvent(emitter, eventName, storeId, eventData);
+	}
+
+	private void sendEvent(SseEmitter emitter, String eventName, Long storeId, Object eventData) {
+		try {
+			emitter.send(SseEmitter.event()
+				.name(eventName)
+				.id(String.valueOf(storeId))
+				.reconnectTime(RECONNECTION_TIMEOUT)
+				.data(eventData, MediaType.APPLICATION_JSON));
+			log.info("[store-order-event] sent notification, id={}", storeId);
+		} catch (IOException e) {
+			log.warn("[store-order-event] fail to send emitter id={}, {}", storeId, e.getMessage());
+		}
 	}
 
 }
