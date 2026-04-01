@@ -128,7 +128,7 @@ public class SaleRepositoryImpl implements SaleRepository {
 		return queryFactory
 			.select(qReceiptEntity.id)
 			.from(qReceiptEntity)
-			.where(qReceiptEntity.isAdjustment.eq(Boolean.FALSE)
+			.where(qReceiptEntity.isAdjustment.isFalse()
 				.and(qReceiptEntity.sale.id.eq(saleId)))
 			.fetchOne() != null;
 	}
