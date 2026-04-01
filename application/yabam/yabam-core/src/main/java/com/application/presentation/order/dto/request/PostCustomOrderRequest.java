@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "커스텀 메뉴 생성 DTO")
 public record PostCustomOrderRequest(
-	// 음수 가능
 	@Schema(description = "커스텀 주문 가격(음수 가능)", example = "2000")
 	Integer totalPrice,
 

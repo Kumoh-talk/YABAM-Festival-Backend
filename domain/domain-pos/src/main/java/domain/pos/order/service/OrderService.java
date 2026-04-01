@@ -146,7 +146,6 @@ public class OrderService {
 		orderWriter.deleteOrder(order);
 	}
 
-	// 주문 취소, 주문 접수만 가능
 	public Order patchOrderStatus(Long orderId, UserPassport userPassport, OrderStatus orderStatus) {
 		Order order = orderReader.getOrderWithStore(orderId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_NOT_FOUND));

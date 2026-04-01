@@ -15,7 +15,7 @@ public class EnumValidator implements ConstraintValidator<ValidEnum, Enum> {
 	public boolean isValid(Enum value, ConstraintValidatorContext context) {
 
 		if (value == null) {
-			return false;  // null 값 허용 시 true 반환, 허용하지 않을 경우 false 반환
+			return false;
 		}
 
 		Object[] enumValues = this.annotation.enumClass().getEnumConstants();

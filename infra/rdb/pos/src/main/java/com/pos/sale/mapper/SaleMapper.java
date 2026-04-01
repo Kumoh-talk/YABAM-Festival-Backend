@@ -12,13 +12,11 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class SaleMapper {
-	// SaleEntity -> Sale
 	public static SaleEntity toSaleEntity(Store store) {
 		StoreEntity storeEntity = StoreEntity.from(store.getId());
 		return SaleEntity.from(storeEntity);
 	}
 
-	// 곧 없엘듯
 	public static Sale toSale(SaleEntity saveSaleEntity, Store previousStore) {
 		return Sale.of(
 			saveSaleEntity.getId(),

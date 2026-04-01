@@ -102,7 +102,7 @@ public class ReceiptService {
 	public Page<Receipt> getAdjustedReceiptPageBySale(Pageable pageable, UserPassport userPassport, Long saleId) {
 		Sale sale = saleReader.readSingleSale(saleId)
 			.orElseThrow(() -> {
-				log.warn("Sale 을 찾을 수 없습니다. saleId: {}, userId: {}", saleId, null);
+				log.warn("Sale 을 찾을 수 없습니다. saleId: {}", saleId);
 				return new ServiceException(ErrorCode.NOT_FOUND_SALE);
 			});
 
