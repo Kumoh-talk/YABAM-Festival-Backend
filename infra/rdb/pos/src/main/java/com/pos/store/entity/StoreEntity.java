@@ -109,10 +109,6 @@ public class StoreEntity extends BaseEntity {
 			return null;
 		}
 
-		return mappingToEntity(store);
-	}
-
-	private static StoreEntity mappingToEntity(Store store) {
 		var entity = new StoreEntity();
 
 		entity.id = store.getId();

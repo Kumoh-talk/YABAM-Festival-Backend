@@ -159,7 +159,6 @@ public class MenuRepositoryImpl implements MenuRepository {
 			.map(MenuMapper::toMenuInfo);
 	}
 
-	// v2
 	@Override
 	public domain.pos.menu.entity.v2.domain.Menu create(domain.pos.menu.entity.v2.domain.Menu menu) {
 		return null;
