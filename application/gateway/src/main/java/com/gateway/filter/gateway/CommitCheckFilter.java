@@ -16,7 +16,7 @@ public class CommitCheckFilter implements GatewayFilter {
 	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 		if (exchange.getResponse().isCommitted()) {
 			log.warn("Response already committed. Skipping filter chain.");
-			return exchange.getResponse().setComplete(); // 필터 체인 종료
+			return exchange.getResponse().setComplete();
 		}
 		return chain.filter(exchange);
 	}
