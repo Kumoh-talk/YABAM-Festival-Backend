@@ -18,11 +18,11 @@ public class DetailImageRepositoryImpl implements DetailImageRepository {
 
 	@Override
 	public DetailImages findByStoreId(Long queryStoreId) {
-		var list = detailImageJpaRepository.findByStoreId(queryStoreId)
-			.stream()
-			.map(StoreDetailImageEntity::getImageUrl)
-			.toList();
-		return DetailImages.of(queryStoreId, list);
+		return DetailImages.of(queryStoreId,
+			detailImageJpaRepository.findByStoreId(queryStoreId)
+				.stream()
+				.map(StoreDetailImageEntity::getImageUrl)
+				.toList());
 	}
 
 	@Override
@@ -36,10 +36,9 @@ public class DetailImageRepositoryImpl implements DetailImageRepository {
 			.forEach(detailImageJpaRepository::delete);
 
 		// 요청에 있는 이미지 중에서 기존에 없던 이미지는 추가
-		var list = detailImages.getImageUrls().stream()
-			.map(url -> StoreMapper.toDetailImageEntity(url, detailImages.getStoreId()))
-			.toList();
-
-		detailImageJpaRepository.saveAll(list);
+		detailImageJpaRepository.saveAll(
+			detailImages.getImageUrls().stream()
+				.map(url -> StoreMapper.toDetailImageEntity(url, detailImages.getStoreId()))
+				.toList());
 	}
 }
