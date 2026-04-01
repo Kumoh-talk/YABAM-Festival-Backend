@@ -37,8 +37,8 @@ public class SaleService {
 			throw new ServiceException(ErrorCode.CONFLICT_OPEN_STORE);
 		}
 
-		final Store opendStore = storeWriter.modifyStoreOpenStatus(previousStore);
-		final Sale createdSale = saleWriter.createSale(opendStore);
+		final Store openedStore = storeWriter.modifyStoreOpenStatus(previousStore);
+		final Sale createdSale = saleWriter.createSale(openedStore);
 
 		log.info("가게 활성화 성공 : userId={}, storeId={}, saleId={}", ownerPassport.getUserId(), storeId,
 			createdSale.getId());
@@ -53,7 +53,7 @@ public class SaleService {
 				return new ServiceException(ErrorCode.NOT_FOUND_STORE);
 			});
 
-		validateOpendSaleOrStore(ownerPassport, saleId, savedSale);
+		validateOpenedSaleOrStore(ownerPassport, saleId, savedSale);
 
 		if (receiptReader.isExistsNonAdjustReceiptBySaleId(savedSale.getId())) {
 			log.warn("판매 종료 실패: userId={}, saleId={}", ownerPassport.getUserId(), saleId);
@@ -67,7 +67,7 @@ public class SaleService {
 		return closedSale;
 	}
 
-	private static void validateOpendSaleOrStore(UserPassport ownerPassport, Long saleId, Sale savedSale) {
+	private static void validateOpenedSaleOrStore(UserPassport ownerPassport, Long saleId, Sale savedSale) {
 		savedSale.getCloseDateTime()
 			.ifPresent((dateTime) -> {
 				log.warn("이미 종료된 Sale.: userId={}, saleId={}", ownerPassport.getUserId(), saleId);
