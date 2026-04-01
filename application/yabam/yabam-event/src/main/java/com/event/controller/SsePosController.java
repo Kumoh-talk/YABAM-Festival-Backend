@@ -21,8 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 public class SsePosController {
 	private final SsePosService ssePosService;
 
-	// @HasRole(userRole = domain.pos.member.entity.UserRole.ROLE_OWNER)
-	// @AssignUserPassport
 	@PostMapping(path = "/api/v1/owner/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public ResponseEntity<SseEmitter> subscribe(
 		// TODO : 이거는 나중에 UserPassport 로 바꿔야함

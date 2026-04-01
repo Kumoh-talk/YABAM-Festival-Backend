@@ -77,7 +77,6 @@ public class JwtHandler {
 		);
 	}
 
-	// 필터에서 토큰의 상태를 검증하기 위한 메서드 exception은 사용하는 곳에서 처리
 	public JwtUserClaim parseToken(String token) {
 		Claims claims = Jwts.parser()
 			.verifyWith(secretKey)

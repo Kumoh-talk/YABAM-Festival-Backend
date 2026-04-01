@@ -67,7 +67,6 @@ public class SaleService {
 		return closedSale;
 	}
 
-	// 판매 종료 시점에 가게가 종료된 상태인지 확인
 	private static void validateOpendSaleOrStore(UserPassport ownerPassport, Long saleId, Sale savedSale) {
 		savedSale.getCloseDateTime()
 			.ifPresent((dateTime) -> {
