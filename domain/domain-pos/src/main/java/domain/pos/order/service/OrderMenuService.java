@@ -21,7 +21,6 @@ import domain.pos.order.implement.OrderMenuWriter;
 import domain.pos.order.implement.OrderReader;
 import domain.pos.order.implement.OrderWriter;
 import domain.pos.receipt.implement.ReceiptValidator;
-import domain.pos.store.entity.Store;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -41,7 +40,10 @@ public class OrderMenuService {
 		OrderMenuStatus orderMenuStatus) {
 		OrderMenu orderMenu = orderMenuReader.getOrderMenuWithOrderAndStoreAndOrderLock(orderMenuId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_MENU_NOT_FOUND));
-		UserRole userRole = validateRole(orderMenu.getMenu().getStore(), userPassport);
+		Long storeOwnerId = orderMenu.getMenu().getStore().getOwnerPassport().getUserId();
+		UserRole userRole = storeOwnerId.equals(userPassport.getUserId())
+			&& userPassport.getUserRole() == UserRole.ROLE_OWNER
+			? UserRole.ROLE_OWNER : UserRole.ROLE_ANONYMOUS;
 		OrderMenu patchOrderMenu = orderMenuWriter.patchOrderMenuStatus(orderMenu, orderMenuStatus, userRole);
 
 		if (orderMenuStatus == OrderMenuStatus.CANCELED || orderMenuStatus == OrderMenuStatus.COMPLETED) {
@@ -60,7 +62,9 @@ public class OrderMenuService {
 	public OrderMenu postOrderMenu(Long orderId, UserPassport userPassport, Long menuId, Integer quantity) {
 		Order order = orderReader.getOrderWithStoreAndMenusAndLock(orderId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_NOT_FOUND));
-		validateOrderStatusForPost(order);
+		if (order.getOrderStatus() != OrderStatus.RECEIVED) {
+			throw new ServiceException(ErrorCode.ORDER_STATUS_NOT_RECEIVED);
+		}
 		receiptValidator.validateIsOwner(order.getReceipt(), userPassport);
 		MenuInfo menuInfo = menuReader.getMenuInfo(order.getReceipt().getSale().getStore().getId(), menuId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
@@ -71,7 +75,11 @@ public class OrderMenuService {
 	public void deleteOrderMenu(Long orderMenuId, UserPassport userPassport) {
 		OrderMenu orderMenu = orderMenuReader.getOrderMenuWithOrderAndStoreAndOrderLock(orderMenuId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.ORDER_MENU_NOT_FOUND));
-		validateOrderStatusForDelete(orderMenu.getOrder());
+		Order deletingOrder = orderMenu.getOrder();
+		if (deletingOrder.getOrderStatus() != OrderStatus.RECEIVED
+			&& deletingOrder.getOrderStatus() != OrderStatus.COMPLETED) {
+			throw new ServiceException(ErrorCode.ORDER_STATUS_NOT_RECEIVED);
+		}
 		validateIsOwner(orderMenu, userPassport);
 		orderMenuWriter.deleteOrderMenu(orderMenu);
 		eventPublisher.publishEvent(OrderMenuStatusChangedEvent.from(orderMenu.getOrder()));
@@ -105,19 +113,6 @@ public class OrderMenuService {
 		}
 	}
 
-	private void validateOrderStatusForPost(Order order) {
-		if (order.getOrderStatus() != OrderStatus.RECEIVED) {
-			throw new ServiceException(ErrorCode.ORDER_STATUS_NOT_RECEIVED);
-		}
-	}
-
-	private void validateOrderStatusForDelete(Order order) {
-		if (order.getOrderStatus() != OrderStatus.RECEIVED
-			&& order.getOrderStatus() != OrderStatus.COMPLETED) {
-			throw new ServiceException(ErrorCode.ORDER_STATUS_NOT_RECEIVED);
-		}
-	}
-
 	private void validateOrderMenuStatus(OrderMenu orderMenu) {
 		if (orderMenu.getOrderMenuStatus() == OrderMenuStatus.ORDERED
 			|| orderMenu.getOrderMenuStatus() == OrderMenuStatus.CANCELED) {
@@ -125,12 +120,4 @@ public class OrderMenuService {
 		}
 	}
 
-	private UserRole validateRole(Store store, UserPassport userPassport) {
-		return isStoreOwner(store, userPassport) ? UserRole.ROLE_OWNER : UserRole.ROLE_ANONYMOUS;
-	}
-
-	private boolean isStoreOwner(Store store, UserPassport userPassport) {
-		Long storeOwnerId = store.getOwnerPassport().getUserId();
-		return storeOwnerId.equals(userPassport.getUserId()) && userPassport.getUserRole() == UserRole.ROLE_OWNER;
-	}
 }

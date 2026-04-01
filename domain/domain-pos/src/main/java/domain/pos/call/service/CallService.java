@@ -27,23 +27,14 @@ public class CallService {
 	public void postCall(final UUID receiptId, final CallMessage callMessage) {
 		Receipt receipt = receiptReader.getReceiptWithTableAndStore(receiptId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
-		if (isCloseStoreAssociationReceipt(receipt)) {
+		if (!receipt.getSale().getCloseDateTime().isEmpty() || !receipt.getSale().getStore().getIsOpen()) {
 			throw new ServiceException(ErrorCode.CONFLICT_CLOSE_STORE);
 		}
-		if (isNonActiveTable(receipt)) {
+		if (!receipt.getTable().getIsActive()) {
 			throw new ServiceException(ErrorCode.TABLE_NOT_ACTIVE);
 		}
 
 		callWriter.createCall(receiptId, receipt.getSale().getId(), callMessage);
-
-	}
-
-	private static boolean isNonActiveTable(Receipt receipt) {
-		return !receipt.getTable().getIsActive();
-	}
-
-	private static boolean isCloseStoreAssociationReceipt(Receipt receipt) {
-		return !receipt.getSale().getCloseDateTime().isEmpty() || !receipt.getSale().getStore().getIsOpen();
 	}
 
 	// TODO : 해당 사장 권한 validation 코드를 추가해야할듯한데 어디 범위까지 해야할지 고민(ex. store table...)
