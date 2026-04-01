@@ -41,11 +41,10 @@ public class CustomAccessDeniedHandler implements ServerAccessDeniedHandler {
 				DataBuffer dataBuffer = response.bufferFactory().wrap(bytes);
 				return response.writeWith(Mono.just(dataBuffer));
 			})
-			.flatMap(mono -> mono)  // Mono<Void> 반환
+			.flatMap(mono -> mono)
 			.onErrorResume(JsonProcessingException.class, e -> {
-				// JSON 처리 중 오류 발생 시 처리 (예: 로그 기록)
 				response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
-				return response.writeWith(Mono.empty()); // 빈 응답 반환
+				return response.writeWith(Mono.empty());
 			});
 	}
 }
