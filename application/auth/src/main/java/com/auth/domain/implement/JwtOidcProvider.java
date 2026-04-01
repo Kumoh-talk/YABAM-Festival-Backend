@@ -86,7 +86,7 @@ public class JwtOidcProvider {
 		} catch (IllegalArgumentException e) {
 			throw new ServiceException(ErrorCode.INVALID_ID_TOKEN);
 		} catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
+			throw new ServiceException(ErrorCode.ABNORMAL_ID_TOKEN);
 		}
 	}
 

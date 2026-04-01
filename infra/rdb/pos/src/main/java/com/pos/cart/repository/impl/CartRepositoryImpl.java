@@ -78,7 +78,7 @@ public class CartRepositoryImpl implements CartRepository {
 			.orElseThrow(() -> new ServiceException(ErrorCode.CART_NOT_FOUND));
 
 		if (cartEntity.getSessionToken() != null && cartEntity.getPendingAt() != null
-			&& cartEntity.getPendingAt().plusSeconds(60).isAfter(LocalDateTime.now())) {
+			&& cartEntity.getPendingAt().plusSeconds(CartEntity.SESSION_TIMEOUT_SECONDS).isAfter(LocalDateTime.now())) {
 			throw new ServiceException(ErrorCode.CART_ORDER_SESSION_ACTIVE);
 		}
 
@@ -96,7 +96,7 @@ public class CartRepositoryImpl implements CartRepository {
 		if (cartEntity.getSessionToken() == null
 			|| !cartEntity.getSessionToken().equals(token)
 			|| cartEntity.getPendingAt() == null
-			|| !cartEntity.getPendingAt().plusSeconds(60).isAfter(LocalDateTime.now())) {
+			|| !cartEntity.getPendingAt().plusSeconds(CartEntity.SESSION_TIMEOUT_SECONDS).isAfter(LocalDateTime.now())) {
 			throw new ServiceException(ErrorCode.CART_ORDER_SESSION_INVALID);
 		}
 

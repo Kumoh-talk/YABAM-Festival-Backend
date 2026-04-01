@@ -75,7 +75,7 @@ public class CartDslRepositoryImpl implements CartDslRepository {
 			.from(qCartEntity)
 			.where(qCartEntity.receipt.id.eq(receiptId)
 				.and(qCartEntity.sessionToken.isNotNull())
-				.and(qCartEntity.pendingAt.after(LocalDateTime.now().minusSeconds(60))))
+				.and(qCartEntity.pendingAt.after(LocalDateTime.now().minusSeconds(CartEntity.SESSION_TIMEOUT_SECONDS))))
 			.fetchFirst() != null;
 	}
 
