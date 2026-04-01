@@ -26,11 +26,8 @@ public class TableRepositoryImpl implements TableRepository {
 
 	@Override
 	public Optional<Table> findByIdWithLock(UUID queryTableId, Long storeId) {
-		TableEntity tableEntity = tableJpaRepository.findByIdAndStoreIdForUpdate(queryTableId, storeId);
-		if (tableEntity == null) {
-			return Optional.empty();
-		}
-		return Optional.ofNullable(TableMapper.toTable(tableEntity, tableEntity.getStore().getId()));
+		return Optional.ofNullable(tableJpaRepository.findByIdAndStoreIdForUpdate(queryTableId, storeId))
+			.map(entity -> TableMapper.toTable(entity, entity.getStore().getId()));
 	}
 
 	@Override
