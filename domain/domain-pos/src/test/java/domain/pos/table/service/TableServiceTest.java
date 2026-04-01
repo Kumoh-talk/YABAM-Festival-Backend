@@ -66,15 +66,9 @@ class TableServiceTest extends ServiceTest {
 				createdTable.getTableNumber().value(), createdTable.getTablePoint(),
 				createdTable.getTableCapacity().value());
 
-			assertSoftly(softly -> {
-
-				verify(storeValidator)
-					.validateStoreOwner(any(UserPassport.class), anyLong());
-				verify(tableReader)
-					.isExistsTableByStoreAndTableNumWithLock(any(Store.class), anyInt());
-				verify(tableWriter)
-					.createTable(any(Store.class), anyInt(), any(TablePoint.class), anyInt());
-			});
+			verify(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
+			verify(tableReader).isExistsTableByStoreAndTableNumWithLock(any(Store.class), anyInt());
+			verify(tableWriter).createTable(any(Store.class), anyInt(), any(TablePoint.class), anyInt());
 		}
 
 		@Test
@@ -83,9 +77,10 @@ class TableServiceTest extends ServiceTest {
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store responStore = GENERAL_OPEN_STORE();
 			Long queryStoreId = responStore.getId();
-			Integer queryTableNum = GENERAL_ACTIVE_TABLE(responStore).getTableNumber().value();
-			TablePoint queryTablePoint = GENERAL_ACTIVE_TABLE(responStore).getTablePoint();
-			Integer queryTableCapacity = GENERAL_ACTIVE_TABLE(responStore).getTableCapacity().value();
+			Table queryTable = GENERAL_ACTIVE_TABLE(responStore);
+			Integer queryTableNum = queryTable.getTableNumber().value();
+			TablePoint queryTablePoint = queryTable.getTablePoint();
+			Integer queryTableCapacity = queryTable.getTableCapacity().value();
 
 			doReturn(responStore)
 				.when(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
@@ -114,9 +109,10 @@ class TableServiceTest extends ServiceTest {
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store responStore = GENERAL_CLOSE_STORE();  // isOpen = false
 			Long queryStoreId = responStore.getId();
-			Integer queryTableNum = GENERAL_ACTIVE_TABLE(responStore).getTableNumber().value();
-			TablePoint queryTablePoint = GENERAL_ACTIVE_TABLE(responStore).getTablePoint();
-			Integer queryTableCapacity = GENERAL_ACTIVE_TABLE(responStore).getTableCapacity().value();
+			Table queryTable = GENERAL_ACTIVE_TABLE(responStore);
+			Integer queryTableNum = queryTable.getTableNumber().value();
+			TablePoint queryTablePoint = queryTable.getTablePoint();
+			Integer queryTableCapacity = queryTable.getTableCapacity().value();
 
 			doReturn(responStore)
 				.when(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
@@ -147,9 +143,10 @@ class TableServiceTest extends ServiceTest {
 			UserPassport queryUserPassport = OWNER_USER_PASSPORT();
 			Store responStore = GENERAL_CLOSE_STORE();  // isOpen = false
 			Long queryStoreId = responStore.getId();
-			Integer queryTableNum = GENERAL_ACTIVE_TABLE(responStore).getTableNumber().value();
-			TablePoint queryTablePoint = GENERAL_ACTIVE_TABLE(responStore).getTablePoint();
-			Integer queryTableCapacity = GENERAL_ACTIVE_TABLE(responStore).getTableCapacity().value();
+			Table queryTable = GENERAL_ACTIVE_TABLE(responStore);
+			Integer queryTableNum = queryTable.getTableNumber().value();
+			TablePoint queryTablePoint = queryTable.getTablePoint();
+			Integer queryTableCapacity = queryTable.getTableCapacity().value();
 
 			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE))
 				.when(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
@@ -176,7 +173,9 @@ class TableServiceTest extends ServiceTest {
 		@DisplayName("실패 – 점주 ID 불일치면 NOT_EQUAL_STORE_OWNER")
 		void 실패_점주_ID_불일치() {
 			UserPassport diffOwnerPassport = DIFF_OWNER_PASSPORT();
-			Long queryStoreId = GENERAL_CLOSE_STORE().getId();
+			Store closeStore = GENERAL_CLOSE_STORE();
+			Long queryStoreId = closeStore.getId();
+			Table queryTable = GENERAL_ACTIVE_TABLE(closeStore);
 
 			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
 				.when(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
@@ -187,9 +186,9 @@ class TableServiceTest extends ServiceTest {
 						() -> tableService.createTable(
 							diffOwnerPassport,
 							queryStoreId,
-							GENERAL_ACTIVE_TABLE(GENERAL_CLOSE_STORE()).getTableNumber().value(),
-							GENERAL_ACTIVE_TABLE(GENERAL_CLOSE_STORE()).getTablePoint(),
-							GENERAL_ACTIVE_TABLE(GENERAL_CLOSE_STORE()).getTableCapacity().value()))
+							queryTable.getTableNumber().value(),
+							queryTable.getTablePoint(),
+							queryTable.getTableCapacity().value()))
 					.isInstanceOf(ServiceException.class)
 					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
 
@@ -230,11 +229,9 @@ class TableServiceTest extends ServiceTest {
 				updateTablePoint,
 				updateTableCapacity);
 
-			assertSoftly(softly -> {
-				verify(tableReader).findTableWithStoreByTableId(queryTableId);
-				verify(tableReader).isExistsTableByStoreAndTableNumWithLock(responStore, updateTableNumber);
-				verify(tableWriter).updateTable(savedTable, updateTableNumber, updateTablePoint, updateTableCapacity);
-			});
+			verify(tableReader).findTableWithStoreByTableId(queryTableId);
+			verify(tableReader).isExistsTableByStoreAndTableNumWithLock(responStore, updateTableNumber);
+			verify(tableWriter).updateTable(savedTable, updateTableNumber, updateTablePoint, updateTableCapacity);
 		}
 
 		@Test
@@ -362,10 +359,8 @@ class TableServiceTest extends ServiceTest {
 
 			tableService.deleteTable(ownerPassport, queryTableId);
 
-			assertSoftly(softly -> {
-				verify(tableReader).findTableWithStoreByTableId(queryTableId);
-				verify(tableWriter).deleteTable(savedTable);
-			});
+			verify(tableReader).findTableWithStoreByTableId(queryTableId);
+			verify(tableWriter).deleteTable(savedTable);
 		}
 
 		@Test

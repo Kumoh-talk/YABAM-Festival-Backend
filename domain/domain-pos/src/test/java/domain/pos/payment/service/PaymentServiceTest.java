@@ -341,11 +341,9 @@ class PaymentServiceTest extends ServiceTest {
 
 			paymentService.cancelPayment(paymentKey, cancelReason, null, ownerPassport);
 
-			assertSoftly(softly -> {
-				verify(tossPaymentPort).cancel(paymentKey, cancelReason, null);
-				verify(paymentWriter).updateStatus(payment.getPaymentId(), PaymentStatus.CANCELED);
-				verify(paymentWriter, never()).save(any());
-			});
+			verify(tossPaymentPort).cancel(paymentKey, cancelReason, null);
+			verify(paymentWriter).updateStatus(payment.getPaymentId(), PaymentStatus.CANCELED);
+			verify(paymentWriter, never()).save(any());
 		}
 
 		@Test
@@ -370,10 +368,8 @@ class PaymentServiceTest extends ServiceTest {
 
 			paymentService.cancelPayment(paymentKey, cancelReason, cancelAmount, ownerPassport);
 
-			assertSoftly(softly -> {
-				verify(tossPaymentPort).cancel(paymentKey, cancelReason, cancelAmount);
-				verify(paymentWriter).updateStatus(payment.getPaymentId(), PaymentStatus.PARTIAL_CANCELED);
-			});
+			verify(tossPaymentPort).cancel(paymentKey, cancelReason, cancelAmount);
+			verify(paymentWriter).updateStatus(payment.getPaymentId(), PaymentStatus.PARTIAL_CANCELED);
 		}
 
 		@Test

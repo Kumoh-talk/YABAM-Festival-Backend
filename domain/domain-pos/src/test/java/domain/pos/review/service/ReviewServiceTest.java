@@ -259,12 +259,10 @@ class ReviewServiceTest extends ServiceTest {
 
 			reviewService.deleteReview(queryUserPassport, queryReviewId);
 
-			assertSoftly(softly -> {
-				verify(reviewReader)
-					.getReview(anyLong());
-				verify(reviewWriter)
-					.deleteReview(any(Review.class));
-			});
+			verify(reviewReader)
+				.getReview(anyLong());
+			verify(reviewWriter)
+				.deleteReview(any(Review.class));
 		}
 
 		@Test

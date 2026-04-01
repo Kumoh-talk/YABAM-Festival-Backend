@@ -64,12 +64,10 @@ class CallServiceTest extends ServiceTest {
 
 			callService.postCall(receiptId, queryCallMessage);
 
-			assertSoftly(softly -> {
-				verify(receiptReader)
-					.getReceiptWithTableAndStore(any(UUID.class));
-				verify(callWriter)
-					.createCall(any(UUID.class), anyLong(), any(CallMessage.class));
-			});
+			verify(receiptReader)
+				.getReceiptWithTableAndStore(any(UUID.class));
+			verify(callWriter)
+				.createCall(any(UUID.class), anyLong(), any(CallMessage.class));
 		}
 
 		@Nested
@@ -160,10 +158,8 @@ class CallServiceTest extends ServiceTest {
 		void 성공() {
 			callService.completeCall(ownerPass, callId);
 
-			assertSoftly(softly -> {
-				verify(callReader).validateCallOwner(callId, ownerPass);
-				verify(callWriter).completeCall(callId);
-			});
+			verify(callReader).validateCallOwner(callId, ownerPass);
+			verify(callWriter).completeCall(callId);
 		}
 
 		@Test

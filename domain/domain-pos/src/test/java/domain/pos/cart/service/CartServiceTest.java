@@ -45,9 +45,7 @@ class CartServiceTest extends ServiceTest {
 
 			cartService.upsertCart(receiptId, menuId, quantity);
 
-			assertSoftly(softly -> {
-				verify(cartWriter).upsertCart(receiptId, menuId, quantity);
-			});
+			verify(cartWriter).upsertCart(receiptId, menuId, quantity);
 		}
 
 		@Test
@@ -86,9 +84,7 @@ class CartServiceTest extends ServiceTest {
 
 			cartService.upsertCart(receiptId, 1L, 1);
 
-			assertSoftly(softly -> {
-				verify(cartWriter).upsertCart(receiptId, 1L, 1);
-			});
+			verify(cartWriter).upsertCart(receiptId, 1L, 1);
 		}
 	}
 
@@ -104,9 +100,7 @@ class CartServiceTest extends ServiceTest {
 
 			cartService.deleteCartMenu(receiptId, menuId);
 
-			assertSoftly(softly -> {
-				verify(cartWriter).deleteCartMenu(receiptId, menuId);
-			});
+			verify(cartWriter).deleteCartMenu(receiptId, menuId);
 		}
 
 		@Test
@@ -221,9 +215,7 @@ class CartServiceTest extends ServiceTest {
 
 			cartService.cancelOrderSession(receiptId, sessionToken);
 
-			assertSoftly(softly -> {
-				verify(cartWriter).cancelOrderSession(receiptId, sessionToken);
-			});
+			verify(cartWriter).cancelOrderSession(receiptId, sessionToken);
 		}
 
 		@Test

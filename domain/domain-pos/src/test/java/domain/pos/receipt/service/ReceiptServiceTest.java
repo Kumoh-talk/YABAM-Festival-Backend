@@ -83,12 +83,10 @@ class ReceiptServiceTest extends ServiceTest {
 
 			receiptService.moveReceiptTable(ownerPassport, receiptId, moveTableId);
 
-			assertSoftly(softly -> {
-				verify(storeValidator).validateStoreOwner(ownerPassport, store);
-				verify(receiptWriter).moveReceiptTable(receipt, moveTable);
-				verify(tableWriter).changeTableActiveStatus(true, moveTable);
-				verify(tableWriter).changeTableActiveStatus(false, currentTable);
-			});
+			verify(storeValidator).validateStoreOwner(ownerPassport, store);
+			verify(receiptWriter).moveReceiptTable(receipt, moveTable);
+			verify(tableWriter).changeTableActiveStatus(true, moveTable);
+			verify(tableWriter).changeTableActiveStatus(false, currentTable);
 		}
 
 		@Test
@@ -203,11 +201,9 @@ class ReceiptServiceTest extends ServiceTest {
 
 			receiptService.adjustReceipts(receiptIds, ownerPassport);
 
-			assertSoftly(softly -> {
-				verify(receiptValidator).validateIsOwner(receipt, ownerPassport);
-				verify(tableWriter).changeTableActiveStatus(false, receipt.getTable());
-				verify(receiptWriter).adjustReceipts(receipts);
-			});
+			verify(receiptValidator).validateIsOwner(receipt, ownerPassport);
+			verify(tableWriter).changeTableActiveStatus(false, receipt.getTable());
+			verify(receiptWriter).adjustReceipts(receipts);
 		}
 
 		@Test
@@ -248,11 +244,9 @@ class ReceiptServiceTest extends ServiceTest {
 
 			receiptService.deleteReceipt(receiptId, ownerPassport);
 
-			assertSoftly(softly -> {
-				verify(receiptValidator).validateIsOwner(receipt, ownerPassport);
-				verify(tableWriter).changeTableActiveStatus(false, receipt.getTable());
-				verify(receiptWriter).deleteReceipt(receiptId);
-			});
+			verify(receiptValidator).validateIsOwner(receipt, ownerPassport);
+			verify(tableWriter).changeTableActiveStatus(false, receipt.getTable());
+			verify(receiptWriter).deleteReceipt(receiptId);
 		}
 
 		@Test

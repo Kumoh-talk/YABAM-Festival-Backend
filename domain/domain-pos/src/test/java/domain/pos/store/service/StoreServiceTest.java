@@ -199,12 +199,10 @@ class StoreServiceTest extends ServiceTest {
 
 			storeService.deleteStore(queryUserPassport, queryStoreId);
 
-			assertSoftly(softly -> {
-				verify(storeValidator)
-					.validateStoreOwner(any(UserPassport.class), any(Long.class));
-				verify(storeWriter)
-					.deleteStore(any(Store.class));
-			});
+			verify(storeValidator)
+				.validateStoreOwner(any(UserPassport.class), any(Long.class));
+			verify(storeWriter)
+				.deleteStore(any(Store.class));
 		}
 
 		@Test
@@ -265,12 +263,10 @@ class StoreServiceTest extends ServiceTest {
 
 			storeService.postDetailImage(queryUserPassport, queryStoreId, imageUrl);
 
-			assertSoftly(softly -> {
-				verify(storeValidator)
-					.validateStoreOwner(any(UserPassport.class), any(Long.class));
-				verify(storeWriter)
-					.postDetailImage(any(Store.class), eq(imageUrl));
-			});
+			verify(storeValidator)
+				.validateStoreOwner(any(UserPassport.class), any(Long.class));
+			verify(storeWriter)
+				.postDetailImage(any(Store.class), eq(imageUrl));
 		}
 
 		@Test
@@ -338,11 +334,9 @@ class StoreServiceTest extends ServiceTest {
 
 			storeService.deleteDetailImage(queryUserPassport, queryStoreId, imageUrl);
 
-			assertSoftly(softly -> {
-				verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
-				verify(storeValidator).validateExistDetailImage(any(Store.class), eq(imageUrl));
-				verify(storeWriter).deleteDetailImage(any(Store.class), eq(imageUrl));
-			});
+			verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
+			verify(storeValidator).validateExistDetailImage(any(Store.class), eq(imageUrl));
+			verify(storeWriter).deleteDetailImage(any(Store.class), eq(imageUrl));
 		}
 
 		@Test
