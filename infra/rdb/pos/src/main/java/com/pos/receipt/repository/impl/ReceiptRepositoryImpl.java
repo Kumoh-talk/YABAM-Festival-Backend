@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
+import com.exception.ErrorCode;
+import com.exception.ServiceException;
 import com.pos.order.mapper.OrderMapper;
 import com.pos.receipt.entity.ReceiptEntity;
 import com.pos.receipt.mapper.ReceiptMapper;
@@ -150,7 +152,8 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 		List<Receipt> responseReceipts = new ArrayList<>();
 		for (Receipt patchReceipt : patchReceipts) {
 			ReceiptEntity receiptEntity = receiptJpaRepository.findByIdWithOrders(
-				patchReceipt.getReceiptInfo().getReceiptId()).get();
+					patchReceipt.getReceiptInfo().getReceiptId())
+				.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
 			receiptEntity.updateInfo(patchReceipt.getReceiptInfo());
 
 			Receipt receipt = ReceiptMapper.toReceiptWithMenus(receiptEntity);
@@ -172,7 +175,8 @@ public class ReceiptRepositoryImpl implements ReceiptRepository {
 
 	@Override
 	public void deleteReceipt(UUID receiptId) {
-		ReceiptEntity receiptEntity = receiptJpaRepository.findById(receiptId).get();
+		ReceiptEntity receiptEntity = receiptJpaRepository.findById(receiptId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
 		receiptJpaRepository.delete(receiptEntity);
 	}
 

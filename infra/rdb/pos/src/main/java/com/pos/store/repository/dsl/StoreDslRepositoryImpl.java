@@ -29,13 +29,12 @@ public class StoreDslRepositoryImpl implements StoreDslRepository {
 
 	@Override
 	public Optional<StoreEntity> findStoreWithDetailImageByStoreId(Long storeId) {
-		StoreEntity storeEntity = queryFactory
+		return Optional.ofNullable(queryFactory
 			.select(store)
 			.from(store)
 			.leftJoin(store.storeDetailImageEntity, storeDetailImage).fetchJoin()
 			.where(store.id.eq(storeId))
-			.fetchOne();
-		return Optional.ofNullable(storeEntity);
+			.fetchOne());
 	}
 
 	@Override

@@ -65,12 +65,11 @@ public class TableDslRepositoryImpl implements TableDslRepository {
 
 	@Override
 	public Optional<TableEntity> findTableJoinStoreByTableId(UUID qureyTableId) {
-		TableEntity tableEntity = queryFactory
+		return Optional.ofNullable(queryFactory
 			.selectFrom(qTableEntity)
 			.join(qTableEntity.store, qStoreEntity).fetchJoin()
 			.where(qTableEntity.id.eq(qureyTableId))
-			.fetchOne();
-		return Optional.ofNullable(tableEntity);
+			.fetchOne());
 	}
 
 	@Override

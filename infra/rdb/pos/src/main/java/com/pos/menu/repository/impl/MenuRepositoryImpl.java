@@ -105,7 +105,8 @@ public class MenuRepositoryImpl implements MenuRepository {
 
 	@Override
 	public MenuInfo patchMenuInfo(MenuInfo patchMenuInfo) {
-		MenuEntity menuEntity = menuJpaRepository.findById(patchMenuInfo.getId()).get();
+		MenuEntity menuEntity = menuJpaRepository.findById(patchMenuInfo.getId())
+			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
 		menuEntity.updateWithoutOrder(patchMenuInfo);
 		return MenuMapper.toMenuInfo(menuEntity);
 	}
@@ -115,7 +116,8 @@ public class MenuRepositoryImpl implements MenuRepository {
 		if (menu.getMenuInfo().getOrder().equals(patchOrder)) {
 			return menu.getMenuInfo();
 		}
-		MenuEntity menuEntity = menuJpaRepository.findById(menu.getMenuInfo().getId()).get();
+		MenuEntity menuEntity = menuJpaRepository.findById(menu.getMenuInfo().getId())
+			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
 		menuEntity.updateOrder(TEMPORARY_ORDER);
 		entityManager.flush();
 
@@ -135,7 +137,8 @@ public class MenuRepositoryImpl implements MenuRepository {
 	// TODO : 재정렬을 위한 카테고리 전 메뉴 잠금
 	@Override
 	public void deleteMenu(Menu menu) {
-		MenuEntity menuEntity = menuJpaRepository.findById(menu.getMenuInfo().getId()).get();
+		MenuEntity menuEntity = menuJpaRepository.findById(menu.getMenuInfo().getId())
+			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_NOT_FOUND));
 		Integer periodOrder = menuEntity.getOrder();
 		menuEntity.updateOrder(null);
 		entityManager.flush();

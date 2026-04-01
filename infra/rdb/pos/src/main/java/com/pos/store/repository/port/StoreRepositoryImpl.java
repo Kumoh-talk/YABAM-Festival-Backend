@@ -137,15 +137,12 @@ public class StoreRepositoryImpl implements StoreRepository {
 
 	@Override
 	public Optional<Store> findStoreByStoreIdWithLock(Long queryStoreId) {
-		StoreEntity storeEntity = queryFactory
+		return Optional.ofNullable(queryFactory
 			.selectFrom(qStoreEntity)
 			.where(qStoreEntity.id.eq(queryStoreId))
 			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
-			.fetchOne();
-
-		return Optional.ofNullable(
-			StoreMapper.toStore(storeEntity)
-		);
+			.fetchOne())
+			.map(StoreMapper::toStore);
 	}
 
 	@Override

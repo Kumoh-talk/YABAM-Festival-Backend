@@ -5,8 +5,6 @@ import static com.pos.global.id.IdMapper.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -116,27 +114,22 @@ public class SaleRepositoryImpl implements SaleRepository {
 
 	@Override
 	public Optional<Sale> findOpenSaleByStoreId(Long storeId) {
-		var entity = queryFactory
+		return Optional.ofNullable(queryFactory
 			.selectFrom(qSaleEntity)
 			.where(qSaleEntity.store.id.eq(storeId)
 				.and(qSaleEntity.closeDateTime.isNull()))
-			.fetchOne();
-
-		return Optional.ofNullable(
-			SaleMapper.toSale(entity)
-		);
+			.fetchOne())
+			.map(SaleMapper::toSale);
 	}
 
 	// TODO :  추후에 ReceiptRepository로 이동해야함
 	@Override
 	public boolean isExistsNonAdjustReceiptBySaleId(Long saleId) {
-		UUID uuid = queryFactory
+		return queryFactory
 			.select(qReceiptEntity.id)
 			.from(qReceiptEntity)
 			.where(qReceiptEntity.isAdjustment.eq(Boolean.FALSE)
 				.and(qReceiptEntity.sale.id.eq(saleId)))
-			.fetchOne();
-
-		return uuid != null;
+			.fetchOne() != null;
 	}
 }

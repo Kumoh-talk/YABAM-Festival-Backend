@@ -81,7 +81,8 @@ public class MenuCategoryRepositoryImpl implements MenuCategoryRepository {
 
 	@Override
 	public MenuCategoryInfo patchMenuCategory(MenuCategoryInfo patchMenuCategoryInfo) {
-		MenuCategoryEntity menuCategoryEntity = menuCategoryJpaRepository.findById(patchMenuCategoryInfo.getId()).get();
+		MenuCategoryEntity menuCategoryEntity = menuCategoryJpaRepository.findById(patchMenuCategoryInfo.getId())
+			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_CATEGORY_NOT_FOUND));
 		menuCategoryEntity.updateWithoutOrder(patchMenuCategoryInfo);
 		return MenuCategoryMapper.toMenuCategoryInfo(menuCategoryEntity);
 	}
@@ -92,7 +93,8 @@ public class MenuCategoryRepositoryImpl implements MenuCategoryRepository {
 		if (menuCategoryInfo.getOrder().equals(patchOrder)) {
 			return menuCategoryInfo;
 		}
-		MenuCategoryEntity menuCategoryEntity = menuCategoryJpaRepository.findById(menuCategoryInfo.getId()).get();
+		MenuCategoryEntity menuCategoryEntity = menuCategoryJpaRepository.findById(menuCategoryInfo.getId())
+			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_CATEGORY_NOT_FOUND));
 		menuCategoryEntity.updateOrder(TEMPORARY_ORDER);
 		entityManager.flush();
 
@@ -108,7 +110,8 @@ public class MenuCategoryRepositoryImpl implements MenuCategoryRepository {
 
 	@Override
 	public void deleteMenuCategory(Long storeId, Long categoryId) {
-		MenuCategoryEntity menuCategoryEntity = menuCategoryJpaRepository.findById(categoryId).get();
+		MenuCategoryEntity menuCategoryEntity = menuCategoryJpaRepository.findById(categoryId)
+			.orElseThrow(() -> new ServiceException(ErrorCode.MENU_CATEGORY_NOT_FOUND));
 		Integer periodOrder = menuCategoryEntity.getOrder();
 		menuCategoryEntity.updateOrder(null);
 		entityManager.flush();
