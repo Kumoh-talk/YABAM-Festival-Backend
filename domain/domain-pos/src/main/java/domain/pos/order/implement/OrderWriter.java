@@ -48,15 +48,14 @@ public class OrderWriter {
 	}
 
 	public Order patchOrderStatus(Order order, OrderStatus orderStatus, UserRole userRole) {
-		if (orderStatus == OrderStatus.RECEIVED) {
-			order.getOrderStatus().receiveOrder(order.getOrderId(), userRole);
-		} else if (orderStatus == OrderStatus.CANCELED) {
-			order.getOrderStatus().cancelOrder(order.getOrderId(), userRole);
-		} else {
-			log.warn("올바른 변경 요청이 아닙니다 : orderStatus={}", orderStatus);
-			throw new ServiceException(ErrorCode.INVALID_STATE_TRANSITION);
+		switch (orderStatus) {
+			case RECEIVED -> order.getOrderStatus().receiveOrder(order.getOrderId(), userRole);
+			case CANCELED -> order.getOrderStatus().cancelOrder(order.getOrderId(), userRole);
+			default -> {
+				log.warn("올바른 변경 요청이 아닙니다 : orderStatus={}", orderStatus);
+				throw new ServiceException(ErrorCode.INVALID_STATE_TRANSITION);
+			}
 		}
-
 		return orderRepository.patchOrderStatus(order, orderStatus);
 	}
 
