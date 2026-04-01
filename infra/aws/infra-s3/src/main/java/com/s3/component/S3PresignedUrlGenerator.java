@@ -26,11 +26,7 @@ public class S3PresignedUrlGenerator implements PresignedUrlGenerator {
 	private final AmazonS3Client amazonS3Client;
 
 	public String generatePresignedUrl(String s3Path) {
-		GeneratePresignedUrlRequest generatePresignedUrlRequest = getGeneratePresignedUrlRequest(s3Path);
-
-		URL url = amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest);
-
-		return url.toString();
+		return amazonS3Client.generatePresignedUrl(getGeneratePresignedUrlRequest(s3Path)).toString();
 	}
 
 	private GeneratePresignedUrlRequest getGeneratePresignedUrlRequest(String s3Path) {
@@ -46,11 +42,6 @@ public class S3PresignedUrlGenerator implements PresignedUrlGenerator {
 	}
 
 	private Date getPresignedUrlExpiration() {
-		Date expiration = new Date();
-		long expTimeMillis = expiration.getTime();
-		expTimeMillis += EXPIRATION_TIME;
-		expiration.setTime(expTimeMillis);
-
-		return expiration;
+		return new Date(System.currentTimeMillis() + EXPIRATION_TIME);
 	}
 }
