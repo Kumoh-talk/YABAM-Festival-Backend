@@ -67,9 +67,8 @@ public class MenuReadImpl implements MenuRead {
 	private Long readNextVersion(Slice<Menu> menuSlice) {
 		if (menuSlice.getNumberOfElements() == 0) {
 			return null;
-		} else {
-			return menuCategoryRepository.readVersion(
-				menuSlice.getContent().get(menuSlice.getNumberOfElements() - 1).getMenuCategoryId());
 		}
+		return menuCategoryRepository.readVersion(
+			menuSlice.getContent().get(menuSlice.getNumberOfElements() - 1).getMenuCategoryId());
 	}
 }

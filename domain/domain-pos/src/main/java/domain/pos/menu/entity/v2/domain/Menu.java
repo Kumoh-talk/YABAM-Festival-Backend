@@ -57,40 +57,36 @@ public class Menu {
 		MenuInfoState newMenuInfo = MenuInfo.of(updateMenuInfoState);
 		if (this.menuInfo.equals(newMenuInfo)) {
 			return false;
-		} else {
-			this.menuInfo = newMenuInfo;
-			return true;
 		}
+		this.menuInfo = newMenuInfo;
+		return true;
 	}
 
 	public boolean updateOrder(Integer updateOrder) {
 		checkOrderRule(updateOrder);
 		if (Objects.equals(this.order, updateOrder)) {
 			return false;
-		} else {
-			this.order = updateOrder;
-			return true;
 		}
+		this.order = updateOrder;
+		return true;
 	}
 
 	public boolean updateIsSoldOut(Boolean isSoldOut) {
 		requireNonNull(isSoldOut);
 		if (this.isSoldOut == isSoldOut) {
 			return false;
-		} else {
-			this.isSoldOut = isSoldOut;
-			return true;
 		}
+		this.isSoldOut = isSoldOut;
+		return true;
 	}
 
 	public boolean updateIsRecommended(Boolean isRecommended) {
 		requireNonNull(isRecommended);
 		if (this.isRecommended == isRecommended) {
 			return false;
-		} else {
-			this.isRecommended = isRecommended;
-			return true;
 		}
+		this.isRecommended = isRecommended;
+		return true;
 	}
 
 	private static void checkOrderRule(Integer order) {
@@ -99,7 +95,6 @@ public class Menu {
 		}
 	}
 
-	// util
 	public static Menu fromInfra(Long id,
 		MenuInfoState menuInfoState,
 		Integer order, boolean isSoldOut, boolean isRecommended,

@@ -40,20 +40,18 @@ public class MenuCategory {
 		checkNameRule(updateName);
 		if (Objects.equals(this.name, updateName)) {
 			return false;
-		} else {
-			this.name = updateName;
-			return true;
 		}
+		this.name = updateName;
+		return true;
 	}
 
 	public boolean updateOrder(Integer updateOrder) {
 		checkOrderRule(updateOrder);
 		if (Objects.equals(this.order, updateOrder)) {
 			return false;
-		} else {
-			this.order = updateOrder;
-			return true;
 		}
+		this.order = updateOrder;
+		return true;
 	}
 
 	private static void checkStates(String name, Integer order) {

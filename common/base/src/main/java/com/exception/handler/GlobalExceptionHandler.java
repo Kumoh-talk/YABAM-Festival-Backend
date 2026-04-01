@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 @Hidden
 public class GlobalExceptionHandler {
-	@ExceptionHandler(ServiceException.class) // custom 에러
+	@ExceptionHandler(ServiceException.class)
 	public ResponseEntity<ResponseBody<Void>> handleServiceException(HttpServletRequest request,
 		ServiceException exception) {
 		ErrorCode errorCode = exception.getErrorCode();
@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
 			.body(createFailureResponse(NOT_VALID_VO, message));
 	}
 
-	@ExceptionHandler(MethodArgumentNotValidException.class) // Valid
+	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ResponseBody<Void>> handleMethodArgumentNotValidException(
 		MethodArgumentNotValidException exception) {
 		String errorMessage = exception.getBindingResult().getAllErrors().get(0).getDefaultMessage();

@@ -25,7 +25,7 @@ public class JpaConfig {
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder) {
 		return builder
 			.dataSource(dataSource)
-			.packages("com.pos") // 엔티티 클래스 패키지
+			.packages("com.pos")
 			.build();
 	}
 
