@@ -57,7 +57,7 @@ public class TableCommandImpl implements TableCommand, TableRead {
 
 		ifState(store.getIsOpen(), STORE_IS_OPEN_TABLE_WRITE);
 
-		if (isDiffTableNumAndReqNum(request.tableNumber(), table)) {
+		if (!table.getTableNumber().equals(request.tableNumber())) {
 			ifState(isExistsTableNum(request, store), EXIST_TABLE);
 		}
 
@@ -69,10 +69,6 @@ public class TableCommandImpl implements TableCommand, TableRead {
 	private Table validateTable(UUID tableId) {
 		return tableRepository.findById(tableId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.NOT_FOUND_TABLE));
-	}
-
-	private static boolean isDiffTableNumAndReqNum(Integer updateTableNumber, Table table) {
-		return !table.getTableNumber().equals(updateTableNumber);
 	}
 
 	@Transactional
