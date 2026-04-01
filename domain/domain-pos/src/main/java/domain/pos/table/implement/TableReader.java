@@ -28,7 +28,7 @@ public class TableReader {
 		return tableRepository.existsTableByStoreAndTableNumWithLock(store, tableNumber);
 	}
 
-	public Optional<Table> findTableWithStoreByTableId(UUID qureyTableId) {
-		return tableRepository.findTableWithStoreByTableId(qureyTableId);
+	public Optional<Table> findTableWithStoreByTableId(UUID queryTableId) {
+		return tableRepository.findTableWithStoreByTableId(queryTableId);
 	}
 }

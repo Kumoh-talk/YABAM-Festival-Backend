@@ -56,8 +56,8 @@ public class TableRepositoryImpl implements TableRepository {
 	}
 
 	@Override
-	public Optional<Table> findTableWithStoreByTableId(UUID qureyTableId) {
-		return tableJpaRepository.findTableJoinStoreByTableId(qureyTableId)
+	public Optional<Table> findTableWithStoreByTableId(UUID queryTableId) {
+		return tableJpaRepository.findTableJoinStoreByTableId(queryTableId)
 			.map(TableMapper::toTable);
 	}
 

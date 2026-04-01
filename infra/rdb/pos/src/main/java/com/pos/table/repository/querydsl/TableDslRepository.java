@@ -22,7 +22,7 @@ public interface TableDslRepository {
 
 	boolean existsTableByStoreIdAndTableNumberForUpdate(Long storeId, Integer tableNumberForUpdate);
 
-	Optional<TableEntity> findTableJoinStoreByTableId(UUID qureyTableId);
+	Optional<TableEntity> findTableJoinStoreByTableId(UUID queryTableId);
 
 	void updateTableInfoById(UUID tableId, Integer updateTableNumber, TablePointVo of, Integer tableCapacity);
 }

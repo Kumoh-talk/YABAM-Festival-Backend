@@ -51,17 +51,17 @@ public class TableService {
 	@Transactional
 	public void updateTable(
 		final UserPassport ownerPassport,
-		final UUID qureyTableId,
+		final UUID queryTableId,
 		final Integer updateTableNumber,
 		final TablePoint updateTablePoint,
 		final Integer tableCapacity) {
-		final Table table = tableReader.findTableWithStoreByTableId(qureyTableId)
+		final Table table = tableReader.findTableWithStoreByTableId(queryTableId)
 			.orElseThrow(() -> {
-				log.warn("해당 테이블 존재하지 않음 : tableId={}", qureyTableId);
+				log.warn("해당 테이블 존재하지 않음 : tableId={}", queryTableId);
 				return new ServiceException(ErrorCode.NOT_FOUND_TABLE);
 			});
 		if (isNotStoreOwnerOfTable(ownerPassport, table)) {
-			log.warn("요청 유저는 테이블 소유자와 다름 : userId={}, tableId={}", ownerPassport.getUserId(), qureyTableId);
+			log.warn("요청 유저는 테이블 소유자와 다름 : userId={}, tableId={}", ownerPassport.getUserId(), queryTableId);
 			throw new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER);
 		}
 		if (table.getStore().getIsOpen()) {

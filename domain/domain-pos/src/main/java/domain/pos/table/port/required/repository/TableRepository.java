@@ -26,7 +26,7 @@ public interface TableRepository {
 	UUID saveTable(Store store, Integer tableNumber, TablePoint tablePoint, Integer tableCapacity);
 
 	@Deprecated
-	Optional<Table> findTableWithStoreByTableId(UUID qureyTableId);
+	Optional<Table> findTableWithStoreByTableId(UUID queryTableId);
 
 	@Deprecated
 	void updateTableInfo(Table table, Integer updateTableNumber, TablePoint updateTablePoint, Integer tableCapacity);
