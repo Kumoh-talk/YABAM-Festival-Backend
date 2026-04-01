@@ -1,6 +1,5 @@
 package com.pos.review.repository.impl;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -63,9 +62,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 	@Override
 	public Slice<Review> getReviewsWithUser(Long storeId, Long lastReviewId, int size) {
 		Slice<ReviewEntity> reviewsWithUser = reviewJpaRepository.findReviewsWithUser(storeId, lastReviewId, size);
-		List<Review> reviews = reviewsWithUser.getContent().stream()
-			.map(ReviewMapper::toReview)
-			.toList();
-		return new SliceImpl<>(reviews, reviewsWithUser.getPageable(), reviewsWithUser.hasNext());
+		return new SliceImpl<>(reviewsWithUser.getContent().stream().map(ReviewMapper::toReview).toList(),
+			reviewsWithUser.getPageable(), reviewsWithUser.hasNext());
 	}
 }
