@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
 @Component
 @Slf4j
 public class CustomAccessDeniedHandler implements ServerAccessDeniedHandler {
-	ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper;
 
 	@Override
 	public Mono<Void> handle(ServerWebExchange exchange, AccessDeniedException denied) {

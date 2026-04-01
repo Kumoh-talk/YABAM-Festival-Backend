@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class FakeAuthController {
 
 	private final FakeUserService fakeUserService;
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper;
 
 	@PostMapping("/user")
 	public ResponseEntity<ResponseBody<Void>> fakeUserLogin(

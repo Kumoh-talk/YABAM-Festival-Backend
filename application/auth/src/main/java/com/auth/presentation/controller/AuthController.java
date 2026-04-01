@@ -33,7 +33,7 @@ public class AuthController implements AuthApi {
 	private final UserService userService;
 	private final OAuthOidcHelper oAuthOidcHelper;
 
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper;
 
 	@PostMapping()
 	public ResponseEntity<ResponseBody<Void>> login(

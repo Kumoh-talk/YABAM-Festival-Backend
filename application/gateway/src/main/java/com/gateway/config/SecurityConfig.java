@@ -22,6 +22,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gateway.exception.handler.CustomAccessDeniedHandler;
 import com.gateway.exception.handler.CustomAuthenticationEntryPoint;
 import com.gateway.exception.handler.CustomAuthenticationFailureHandler;
@@ -36,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 	// TODO : 익명 사용자도 필터 통과시키는 것이 확정되면, entryPoint, accessDeniedHandler 삭제해야함
+	private final ObjectMapper objectMapper;
 	private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 	private final CustomAccessDeniedHandler accessDeniedHandler;
 	private final CustomAuthenticationFailureHandler authenticationFailureHandler;
@@ -79,7 +81,7 @@ public class SecurityConfig {
 			.securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
 			.addFilterAt(authenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION)
 			.addFilterAfter(
-				new AuthenticationToHeaderFilter(authenticationFailureHandler, jwtHandler),
+				new AuthenticationToHeaderFilter(objectMapper, authenticationFailureHandler, jwtHandler),
 				SecurityWebFiltersOrder.AUTHENTICATION)
 			.authorizeExchange(exchange -> exchange
 				.anyExchange().authenticated())

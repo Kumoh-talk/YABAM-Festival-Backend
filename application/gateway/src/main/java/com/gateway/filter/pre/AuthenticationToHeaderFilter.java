@@ -27,7 +27,7 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 public class AuthenticationToHeaderFilter implements WebFilter {
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper;
 	private final ServerAuthenticationFailureHandler authenticationFailureHandler;
 	private final JwtHandler jwtHandler;
 
@@ -36,11 +36,12 @@ public class AuthenticationToHeaderFilter implements WebFilter {
 	private static final String USER_ROLE = "userRole";
 
 	public AuthenticationToHeaderFilter(
+		ObjectMapper objectMapper,
 		ServerAuthenticationFailureHandler authenticationFailureHandler,
 		JwtHandler jwtHandler) {
+		this.objectMapper = objectMapper;
 		this.authenticationFailureHandler = authenticationFailureHandler;
 		this.jwtHandler = jwtHandler;
-
 	}
 
 	@Override

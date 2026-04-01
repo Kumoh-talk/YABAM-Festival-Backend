@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
 @Component
 @Slf4j
 public class CustomAuthenticationEntryPoint implements ServerAuthenticationEntryPoint {
-	ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper;
 
 	@Override
 	public Mono<Void> commence(ServerWebExchange exchange, AuthenticationException ex) {

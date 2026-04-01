@@ -25,7 +25,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class JwtIssueFunction implements RewriteFunction<String, String> {
 
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper;
 
 	private final JwtHandler jwtHandler;
 

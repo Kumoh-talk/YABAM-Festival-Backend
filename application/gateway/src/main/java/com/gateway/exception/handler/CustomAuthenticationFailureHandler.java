@@ -18,13 +18,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gateway.exception.JwtAuthenticationException;
 import com.response.ResponseBody;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class CustomAuthenticationFailureHandler implements ServerAuthenticationFailureHandler {
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper;
 
 	@Override
 	public Mono<Void> onAuthenticationFailure(WebFilterExchange webFilterExchange, AuthenticationException exception) {
