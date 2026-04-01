@@ -5,7 +5,7 @@ import static fixtures.member.UserFixture.*;
 import static fixtures.receipt.ReceiptFixture.*;
 import static fixtures.store.StoreFixture.*;
 import static fixtures.table.TableFixture.*;
-import static org.assertj.core.api.SoftAssertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
@@ -84,16 +84,11 @@ class CallServiceTest extends ServiceTest {
 				doReturn(Optional.empty())
 					.when(receiptReader).getReceiptWithTableAndStore(any(UUID.class));
 
-				// when -> then
-				assertSoftly(softly -> {
-					softly.assertThatThrownBy(
-							() -> callService.postCall(queryReceiptId, queryCallMessage))
-						.isInstanceOf(ServiceException.class)
-						.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
-
-					verify(receiptReader).getReceiptWithTableAndStore(any(UUID.class));
-					verify(callWriter, never()).createCall(any(UUID.class), anyLong(), any(CallMessage.class));
-				});
+				assertThatThrownBy(() -> callService.postCall(queryReceiptId, queryCallMessage))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
+				verify(receiptReader).getReceiptWithTableAndStore(any(UUID.class));
+				verify(callWriter, never()).createCall(any(UUID.class), anyLong(), any(CallMessage.class));
 			}
 
 			@Test
@@ -109,15 +104,10 @@ class CallServiceTest extends ServiceTest {
 				doReturn(Optional.of(receipt))
 					.when(receiptReader).getReceiptWithTableAndStore(any(UUID.class));
 
-				// when -> then
-				assertSoftly(softly -> {
-					softly.assertThatThrownBy(
-							() -> callService.postCall(queryReceiptId, queryCallMessage))
-						.isInstanceOf(ServiceException.class)
-						.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CONFLICT_CLOSE_STORE);
-
-					verify(callWriter, never()).createCall(any(UUID.class), anyLong(), any(CallMessage.class));
-				});
+				assertThatThrownBy(() -> callService.postCall(queryReceiptId, queryCallMessage))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CONFLICT_CLOSE_STORE);
+				verify(callWriter, never()).createCall(any(UUID.class), anyLong(), any(CallMessage.class));
 			}
 
 			@Test
@@ -133,15 +123,10 @@ class CallServiceTest extends ServiceTest {
 				doReturn(Optional.of(receipt))
 					.when(receiptReader).getReceiptWithTableAndStore(any(UUID.class));
 
-				// when -> then
-				assertSoftly(softly -> {
-					softly.assertThatThrownBy(
-							() -> callService.postCall(queryReceiptId, queryCallMessage))
-						.isInstanceOf(ServiceException.class)
-						.hasFieldOrPropertyWithValue("errorCode", ErrorCode.TABLE_NOT_ACTIVE);
-
-					verify(callWriter, never()).createCall(any(UUID.class), anyLong(), any(CallMessage.class));
-				});
+				assertThatThrownBy(() -> callService.postCall(queryReceiptId, queryCallMessage))
+					.isInstanceOf(ServiceException.class)
+					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.TABLE_NOT_ACTIVE);
+				verify(callWriter, never()).createCall(any(UUID.class), anyLong(), any(CallMessage.class));
 			}
 		}
 	}
@@ -168,15 +153,11 @@ class CallServiceTest extends ServiceTest {
 			doThrow(new ServiceException(ErrorCode.NOT_VALID_CALL_OWNER))
 				.when(callReader).validateCallOwner(callId, ownerPass);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> callService.completeCall(ownerPass, callId))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_VALID_CALL_OWNER);
-
-				verify(callReader).validateCallOwner(callId, ownerPass);
-				verify(callWriter, never()).completeCall(anyLong());
-			});
+			assertThatThrownBy(() -> callService.completeCall(ownerPass, callId))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_VALID_CALL_OWNER);
+			verify(callReader).validateCallOwner(callId, ownerPass);
+			verify(callWriter, never()).completeCall(anyLong());
 		}
 	}
 }

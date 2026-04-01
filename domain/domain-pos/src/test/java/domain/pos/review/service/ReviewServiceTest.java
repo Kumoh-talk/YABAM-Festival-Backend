@@ -3,7 +3,7 @@ package domain.pos.review.service;
 import static fixtures.member.UserFixture.*;
 import static fixtures.receipt.ReceiptFixture.*;
 import static fixtures.review.ReviewFixture.*;
-import static org.assertj.core.api.SoftAssertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
@@ -68,17 +68,11 @@ class ReviewServiceTest extends ServiceTest {
 				.when(reviewReader).isExistsReview(any(), any(UserPassport.class));
 			Review review = reviewService.postReview(queryUserPassport, queryStoreId, queryReceiptId, queryReviewInfo);
 
-			assertSoftly(softly -> {
-				verify(storeValidator)
-					.validateStore(anyLong());
-				verify(receiptReader)
-					.getReceiptInfo(any());
-				verify(reviewReader)
-					.isExistsReview(any(), any(UserPassport.class));
-				verify(reviewWriter)
-					.postReview(any(UserPassport.class), anyLong(), any(ReceiptInfo.class), any(ReviewInfo.class));
-				softly.assertThat(review).isEqualTo(responReview);
-			});
+			verify(storeValidator).validateStore(anyLong());
+			verify(receiptReader).getReceiptInfo(any());
+			verify(reviewReader).isExistsReview(any(), any(UserPassport.class));
+			verify(reviewWriter).postReview(any(UserPassport.class), anyLong(), any(ReceiptInfo.class), any(ReviewInfo.class));
+			assertThat(review).isEqualTo(responReview);
 		}
 
 		@Test
@@ -93,21 +87,13 @@ class ReviewServiceTest extends ServiceTest {
 			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE))
 				.when(storeValidator).validateStore(anyLong());
 
-			// when->then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> reviewService.postReview(queryUserPassport, queryStoreId, queryReceiptId, queryReviewInfo))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
-				verify(storeValidator)
-					.validateStore(anyLong());
-				verify(receiptReader, never())
-					.getReceiptInfo(any());
-				verify(reviewReader, never())
-					.isExistsReview(any(), any(UserPassport.class));
-				verify(reviewWriter, never())
-					.postReview(any(UserPassport.class), anyLong(), any(ReceiptInfo.class), any(ReviewInfo.class));
-			});
+			assertThatThrownBy(() -> reviewService.postReview(queryUserPassport, queryStoreId, queryReceiptId, queryReviewInfo))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
+			verify(storeValidator).validateStore(anyLong());
+			verify(receiptReader, never()).getReceiptInfo(any());
+			verify(reviewReader, never()).isExistsReview(any(), any(UserPassport.class));
+			verify(reviewWriter, never()).postReview(any(UserPassport.class), anyLong(), any(ReceiptInfo.class), any(ReviewInfo.class));
 		}
 
 		@Test
@@ -120,21 +106,13 @@ class ReviewServiceTest extends ServiceTest {
 			doReturn(Optional.empty())
 				.when(receiptReader).getReceiptInfo(any());
 
-			// when->then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> reviewService.postReview(queryUserPassport, queryStoreId, queryReceiptId, queryReviewInfo))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
-				verify(storeValidator)
-					.validateStore(anyLong());
-				verify(receiptReader)
-					.getReceiptInfo(any());
-				verify(reviewReader, never())
-					.isExistsReview(any(), any(UserPassport.class));
-				verify(reviewWriter, never())
-					.postReview(any(UserPassport.class), anyLong(), any(ReceiptInfo.class), any(ReviewInfo.class));
-			});
+			assertThatThrownBy(() -> reviewService.postReview(queryUserPassport, queryStoreId, queryReceiptId, queryReviewInfo))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
+			verify(storeValidator).validateStore(anyLong());
+			verify(receiptReader).getReceiptInfo(any());
+			verify(reviewReader, never()).isExistsReview(any(), any(UserPassport.class));
+			verify(reviewWriter, never()).postReview(any(UserPassport.class), anyLong(), any(ReceiptInfo.class), any(ReviewInfo.class));
 		}
 
 		@Test
@@ -153,21 +131,13 @@ class ReviewServiceTest extends ServiceTest {
 			doReturn(isExistReceipt)
 				.when(reviewReader).isExistsReview(any(), any(UserPassport.class));
 
-			// when->then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> reviewService.postReview(queryUserPassport, queryStoreId, queryReceiptId, queryReviewInfo))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.REVIEW_ALREADY_EXISTS);
-				verify(storeValidator)
-					.validateStore(anyLong());
-				verify(receiptReader)
-					.getReceiptInfo(any());
-				verify(reviewReader)
-					.isExistsReview(any(), any(UserPassport.class));
-				verify(reviewWriter, never())
-					.postReview(any(UserPassport.class), anyLong(), any(ReceiptInfo.class), any(ReviewInfo.class));
-			});
+			assertThatThrownBy(() -> reviewService.postReview(queryUserPassport, queryStoreId, queryReceiptId, queryReviewInfo))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.REVIEW_ALREADY_EXISTS);
+			verify(storeValidator).validateStore(anyLong());
+			verify(receiptReader).getReceiptInfo(any());
+			verify(reviewReader).isExistsReview(any(), any(UserPassport.class));
+			verify(reviewWriter, never()).postReview(any(UserPassport.class), anyLong(), any(ReceiptInfo.class), any(ReviewInfo.class));
 		}
 
 	}
@@ -189,13 +159,9 @@ class ReviewServiceTest extends ServiceTest {
 
 			Review review = reviewService.updateReview(queryUserPassport, queryReviewId, updateReviewInfo);
 
-			assertSoftly(softly -> {
-				verify(reviewReader)
-					.getReview(anyLong());
-				verify(reviewWriter)
-					.updateReview(any(Review.class), any(ReviewInfo.class));
-				softly.assertThat(review).isEqualTo(savedReview);
-			});
+			verify(reviewReader).getReview(anyLong());
+			verify(reviewWriter).updateReview(any(Review.class), any(ReviewInfo.class));
+			assertThat(review).isEqualTo(savedReview);
 		}
 
 		@Test
@@ -208,17 +174,11 @@ class ReviewServiceTest extends ServiceTest {
 			doReturn(Optional.empty())
 				.when(reviewReader).getReview(anyLong());
 
-			// when->then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> reviewService.updateReview(queryUserPassport, queryReviewId, updateReviewInfo))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.REVIEW_NOT_FOUND);
-				verify(reviewReader)
-					.getReview(anyLong());
-				verify(reviewWriter, never())
-					.updateReview(any(Review.class), any(ReviewInfo.class));
-			});
+			assertThatThrownBy(() -> reviewService.updateReview(queryUserPassport, queryReviewId, updateReviewInfo))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.REVIEW_NOT_FOUND);
+			verify(reviewReader).getReview(anyLong());
+			verify(reviewWriter, never()).updateReview(any(Review.class), any(ReviewInfo.class));
 		}
 
 		@Test
@@ -231,17 +191,11 @@ class ReviewServiceTest extends ServiceTest {
 			doReturn(Optional.of(savedReview))
 				.when(reviewReader).getReview(anyLong());
 
-			// when->then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> reviewService.updateReview(queryUserPassport, queryReviewId, updateReviewInfo))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.REVIEW_NOT_USER);
-				verify(reviewReader)
-					.getReview(anyLong());
-				verify(reviewWriter, never())
-					.updateReview(any(Review.class), any(ReviewInfo.class));
-			});
+			assertThatThrownBy(() -> reviewService.updateReview(queryUserPassport, queryReviewId, updateReviewInfo))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.REVIEW_NOT_USER);
+			verify(reviewReader).getReview(anyLong());
+			verify(reviewWriter, never()).updateReview(any(Review.class), any(ReviewInfo.class));
 		}
 	}
 
@@ -259,10 +213,8 @@ class ReviewServiceTest extends ServiceTest {
 
 			reviewService.deleteReview(queryUserPassport, queryReviewId);
 
-			verify(reviewReader)
-				.getReview(anyLong());
-			verify(reviewWriter)
-				.deleteReview(any(Review.class));
+			verify(reviewReader).getReview(anyLong());
+			verify(reviewWriter).deleteReview(any(Review.class));
 		}
 
 		@Test
@@ -274,17 +226,11 @@ class ReviewServiceTest extends ServiceTest {
 			doReturn(Optional.empty())
 				.when(reviewReader).getReview(anyLong());
 
-			// when->then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> reviewService.deleteReview(queryUserPassport, queryReviewId))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.REVIEW_NOT_FOUND);
-				verify(reviewReader)
-					.getReview(anyLong());
-				verify(reviewWriter, never())
-					.deleteReview(any(Review.class));
-			});
+			assertThatThrownBy(() -> reviewService.deleteReview(queryUserPassport, queryReviewId))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.REVIEW_NOT_FOUND);
+			verify(reviewReader).getReview(anyLong());
+			verify(reviewWriter, never()).deleteReview(any(Review.class));
 		}
 
 		@Test
@@ -296,17 +242,11 @@ class ReviewServiceTest extends ServiceTest {
 			doReturn(Optional.of(savedReview))
 				.when(reviewReader).getReview(anyLong());
 
-			// when->then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> reviewService.deleteReview(queryUserPassport, queryReviewId))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.REVIEW_NOT_USER);
-				verify(reviewReader)
-					.getReview(anyLong());
-				verify(reviewWriter, never())
-					.deleteReview(any(Review.class));
-			});
+			assertThatThrownBy(() -> reviewService.deleteReview(queryUserPassport, queryReviewId))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.REVIEW_NOT_USER);
+			verify(reviewReader).getReview(anyLong());
+			verify(reviewWriter, never()).deleteReview(any(Review.class));
 		}
 	}
 

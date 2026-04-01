@@ -1,6 +1,6 @@
 package domain.pos.order.implement;
 
-import static org.assertj.core.api.SoftAssertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.DisplayName;
@@ -41,13 +41,9 @@ public class OrderWriterTest {
 			Order order = OrderFixture.CREATE_ORDER_WITH_STATUS(initialStatus);
 			UserPassport userPassport = UserFixture.GENERAL_USER_PASSPORT();
 
-			// when, then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole()))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.INVALID_STATE_TRANSITION);
-			});
+			assertThatThrownBy(() -> orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole()))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.INVALID_STATE_TRANSITION);
 		}
 	}
 
@@ -71,15 +67,10 @@ public class OrderWriterTest {
 			Order order = OrderFixture.ORDERED_ORDER();
 			UserPassport userPassport = UserFixture.GENERAL_USER_PASSPORT();
 
-			// when, then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole()))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ORDER_ACCESS_DENIED);
-
-				verify(orderRepository, never()).patchOrderStatus(order, orderStatus);
-			});
+			assertThatThrownBy(() -> orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole()))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ORDER_ACCESS_DENIED);
+			verify(orderRepository, never()).patchOrderStatus(order, orderStatus);
 		}
 
 		@Test
@@ -87,15 +78,10 @@ public class OrderWriterTest {
 			Order order = OrderFixture.RECEIVED_ORDER();
 			UserPassport userPassport = UserFixture.OWNER_USER_PASSPORT();
 
-			// when, then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole()))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_RECEIVED_ORDER);
-
-				verify(orderRepository, never()).patchOrderStatus(order, orderStatus);
-			});
+			assertThatThrownBy(() -> orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole()))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_RECEIVED_ORDER);
+			verify(orderRepository, never()).patchOrderStatus(order, orderStatus);
 		}
 
 		@Test
@@ -159,15 +145,10 @@ public class OrderWriterTest {
 			Order order = OrderFixture.RECEIVED_ORDER();
 			UserPassport userPassport = UserFixture.GENERAL_USER_PASSPORT();
 
-			// when, then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole()))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_RECEIVED_ORDER);
-
-				verify(orderRepository, never()).patchOrderStatus(order, orderStatus);
-			});
+			assertThatThrownBy(() -> orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole()))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_RECEIVED_ORDER);
+			verify(orderRepository, never()).patchOrderStatus(order, orderStatus);
 		}
 
 		@Test
@@ -175,15 +156,10 @@ public class OrderWriterTest {
 			Order order = OrderFixture.CANCELLED_ORDER();
 			UserPassport userPassport = UserFixture.OWNER_USER_PASSPORT();
 
-			// when, then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole()))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_CANCELED_ORDER);
-
-				verify(orderRepository, never()).patchOrderStatus(order, orderStatus);
-			});
+			assertThatThrownBy(() -> orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole()))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_CANCELED_ORDER);
+			verify(orderRepository, never()).patchOrderStatus(order, orderStatus);
 		}
 
 		@Test
@@ -201,13 +177,9 @@ public class OrderWriterTest {
 			Order order = OrderFixture.COMPLETED_ORDER();
 			UserPassport userPassport = UserFixture.GENERAL_USER_PASSPORT();
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> orderWriter.patchOrderStatus(order, orderStatus,
-						userPassport.getUserRole()))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_COMPLETED_ORDER);
-			});
+			assertThatThrownBy(() -> orderWriter.patchOrderStatus(order, orderStatus, userPassport.getUserRole()))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_COMPLETED_ORDER);
 		}
 	}
 }

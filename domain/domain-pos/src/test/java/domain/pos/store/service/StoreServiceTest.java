@@ -3,7 +3,7 @@ package domain.pos.store.service;
 import static fixtures.member.UserFixture.*;
 import static fixtures.store.StoreFixture.*;
 import static fixtures.store.StoreInfoFixture.*;
-import static org.assertj.core.api.SoftAssertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
@@ -53,12 +53,9 @@ class StoreServiceTest extends ServiceTest {
 				.when(storeWriter).createStore(userPassport, requestStoreInfo);
 
 			Long storeId = storeService.createStore(userPassport, requestStoreInfo);
-			assertSoftly(softly -> {
-				softly.assertThat(storeId).isEqualTo(SAVED_STORE_ID);
 
-				verify(storeWriter)
-					.createStore(any(UserPassport.class), any(StoreInfo.class));
-			});
+			assertThat(storeId).isEqualTo(SAVED_STORE_ID);
+			verify(storeWriter).createStore(any(UserPassport.class), any(StoreInfo.class));
 		}
 
 	}
@@ -76,12 +73,8 @@ class StoreServiceTest extends ServiceTest {
 
 			Store savedStore = storeService.findStore(queryStoreId);
 
-			assertSoftly(softly -> {
-				softly.assertThat(responseStore).isEqualTo(savedStore);
-
-				verify(storeReader)
-					.readSingleStore(queryStoreId);
-			});
+			assertThat(responseStore).isEqualTo(savedStore);
+			verify(storeReader).readSingleStore(queryStoreId);
 		}
 
 		@Test
@@ -91,15 +84,10 @@ class StoreServiceTest extends ServiceTest {
 			doReturn(Optional.empty())
 				.when(storeReader).readSingleStore(queryStoreId);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> storeService.findStore(queryStoreId))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
-
-				verify(storeReader)
-					.readSingleStore(queryStoreId);
-			});
+			assertThatThrownBy(() -> storeService.findStore(queryStoreId))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
+			verify(storeReader).readSingleStore(queryStoreId);
 		}
 	}
 
@@ -124,12 +112,9 @@ class StoreServiceTest extends ServiceTest {
 				queryStoreId,
 				requestChangeStoreInfo);
 
-			assertSoftly(softly -> {
-				softly.assertThat(result.getId()).isEqualTo(changedStore.getId());
-
-				verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
-				verify(storeWriter).updateStoreInfo(any(Store.class), any(StoreInfo.class));
-			});
+			assertThat(result.getId()).isEqualTo(changedStore.getId());
+			verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
+			verify(storeWriter).updateStoreInfo(any(Store.class), any(StoreInfo.class));
 		}
 
 		@Test
@@ -142,20 +127,11 @@ class StoreServiceTest extends ServiceTest {
 			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
 				.when(storeValidator).validateStoreOwner(diffOwnerUserPassport, queryStoreId);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> storeService.updateStoreInfo(
-						diffOwnerUserPassport,
-						queryStoreId,
-						requestChangeStoreInfo))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
-				verify(storeValidator)
-					.validateStoreOwner(any(UserPassport.class), any(Long.class));
-				verify(storeWriter, never())
-					.updateStoreInfo(any(Store.class), any(StoreInfo.class));
-			});
-
+			assertThatThrownBy(() -> storeService.updateStoreInfo(diffOwnerUserPassport, queryStoreId, requestChangeStoreInfo))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
+			verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
+			verify(storeWriter, never()).updateStoreInfo(any(Store.class), any(StoreInfo.class));
 		}
 
 		@Test
@@ -167,21 +143,11 @@ class StoreServiceTest extends ServiceTest {
 			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE))
 				.when(storeValidator).validateStoreOwner(queryOwnerPassport, queryStoreId);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> storeService.updateStoreInfo(
-						queryOwnerPassport,
-						queryStoreId,
-						requestChangeStoreInfo
-					))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
-
-				verify(storeValidator)
-					.validateStoreOwner(any(UserPassport.class), any(Long.class));
-				verify(storeWriter, never())
-					.updateStoreInfo(any(Store.class), any(StoreInfo.class));
-			});
+			assertThatThrownBy(() -> storeService.updateStoreInfo(queryOwnerPassport, queryStoreId, requestChangeStoreInfo))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
+			verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
+			verify(storeWriter, never()).updateStoreInfo(any(Store.class), any(StoreInfo.class));
 		}
 	}
 
@@ -199,10 +165,8 @@ class StoreServiceTest extends ServiceTest {
 
 			storeService.deleteStore(queryUserPassport, queryStoreId);
 
-			verify(storeValidator)
-				.validateStoreOwner(any(UserPassport.class), any(Long.class));
-			verify(storeWriter)
-				.deleteStore(any(Store.class));
+			verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
+			verify(storeWriter).deleteStore(any(Store.class));
 		}
 
 		@Test
@@ -213,17 +177,11 @@ class StoreServiceTest extends ServiceTest {
 			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE))
 				.when(storeValidator).validateStoreOwner(queryOwnerPassport, queryStoreId);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> storeService.deleteStore(queryOwnerPassport, queryStoreId))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
-
-				verify(storeValidator)
-					.validateStoreOwner(any(UserPassport.class), any(Long.class));
-				verify(storeWriter, never())
-					.deleteStore(any(Store.class));
-			});
+			assertThatThrownBy(() -> storeService.deleteStore(queryOwnerPassport, queryStoreId))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
+			verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
+			verify(storeWriter, never()).deleteStore(any(Store.class));
 		}
 
 		@Test
@@ -234,17 +192,11 @@ class StoreServiceTest extends ServiceTest {
 			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
 				.when(storeValidator).validateStoreOwner(queryDiffOwnerPassport, queryStoreId);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> storeService.deleteStore(queryDiffOwnerPassport, queryStoreId))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
-
-				verify(storeValidator)
-					.validateStoreOwner(any(UserPassport.class), any(Long.class));
-				verify(storeWriter, never())
-					.deleteStore(any(Store.class));
-			});
+			assertThatThrownBy(() -> storeService.deleteStore(queryDiffOwnerPassport, queryStoreId))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
+			verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
+			verify(storeWriter, never()).deleteStore(any(Store.class));
 		}
 	}
 
@@ -263,10 +215,8 @@ class StoreServiceTest extends ServiceTest {
 
 			storeService.postDetailImage(queryUserPassport, queryStoreId, imageUrl);
 
-			verify(storeValidator)
-				.validateStoreOwner(any(UserPassport.class), any(Long.class));
-			verify(storeWriter)
-				.postDetailImage(any(Store.class), eq(imageUrl));
+			verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
+			verify(storeWriter).postDetailImage(any(Store.class), eq(imageUrl));
 		}
 
 		@Test
@@ -278,18 +228,11 @@ class StoreServiceTest extends ServiceTest {
 			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE))
 				.when(storeValidator).validateStoreOwner(queryOwnerPassport, queryStoreId);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> storeService.postDetailImage(queryOwnerPassport, queryStoreId, imageUrl))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
-
-				verify(storeValidator)
-					.validateStoreOwner(any(UserPassport.class), any(Long.class));
-				verify(storeWriter, never())
-					.postDetailImage(any(Store.class), anyString());
-			});
+			assertThatThrownBy(() -> storeService.postDetailImage(queryOwnerPassport, queryStoreId, imageUrl))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
+			verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
+			verify(storeWriter, never()).postDetailImage(any(Store.class), anyString());
 		}
 
 		@Test
@@ -301,18 +244,11 @@ class StoreServiceTest extends ServiceTest {
 			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
 				.when(storeValidator).validateStoreOwner(queryDiffOwnerPassport, queryStoreId);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> storeService.postDetailImage(queryDiffOwnerPassport, queryStoreId, imageUrl))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
-
-				verify(storeValidator)
-					.validateStoreOwner(any(UserPassport.class), any(Long.class));
-				verify(storeWriter, never())
-					.postDetailImage(any(Store.class), anyString());
-			});
+			assertThatThrownBy(() -> storeService.postDetailImage(queryDiffOwnerPassport, queryStoreId, imageUrl))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
+			verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
+			verify(storeWriter, never()).postDetailImage(any(Store.class), anyString());
 		}
 	}
 
@@ -348,17 +284,12 @@ class StoreServiceTest extends ServiceTest {
 			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE))
 				.when(storeValidator).validateStoreOwner(queryOwnerPassport, queryStoreId);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> storeService.deleteDetailImage(queryOwnerPassport, queryStoreId, imageUrl))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
-
-				verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
-				verify(storeValidator, never()).validateExistDetailImage(any(Store.class), anyString());
-				verify(storeWriter, never()).deleteDetailImage(any(Store.class), anyString());
-			});
+			assertThatThrownBy(() -> storeService.deleteDetailImage(queryOwnerPassport, queryStoreId, imageUrl))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
+			verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
+			verify(storeValidator, never()).validateExistDetailImage(any(Store.class), anyString());
+			verify(storeWriter, never()).deleteDetailImage(any(Store.class), anyString());
 		}
 
 		@Test
@@ -370,17 +301,12 @@ class StoreServiceTest extends ServiceTest {
 			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
 				.when(storeValidator).validateStoreOwner(queryDiffOwnerPassport, queryStoreId);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> storeService.deleteDetailImage(queryDiffOwnerPassport, queryStoreId, imageUrl))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
-
-				verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
-				verify(storeValidator, never()).validateExistDetailImage(any(Store.class), anyString());
-				verify(storeWriter, never()).deleteDetailImage(any(Store.class), anyString());
-			});
+			assertThatThrownBy(() -> storeService.deleteDetailImage(queryDiffOwnerPassport, queryStoreId, imageUrl))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
+			verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
+			verify(storeValidator, never()).validateExistDetailImage(any(Store.class), anyString());
+			verify(storeWriter, never()).deleteDetailImage(any(Store.class), anyString());
 		}
 
 		@Test
@@ -396,17 +322,12 @@ class StoreServiceTest extends ServiceTest {
 			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE_IMAGE))
 				.when(storeValidator).validateExistDetailImage(savedStore, imageUrl);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> storeService.deleteDetailImage(queryUserPassport, queryStoreId, imageUrl))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE_IMAGE);
-
-				verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
-				verify(storeValidator).validateExistDetailImage(any(Store.class), anyString());
-				verify(storeWriter, never()).deleteDetailImage(any(Store.class), anyString());
-			});
+			assertThatThrownBy(() -> storeService.deleteDetailImage(queryUserPassport, queryStoreId, imageUrl))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE_IMAGE);
+			verify(storeValidator).validateStoreOwner(any(UserPassport.class), any(Long.class));
+			verify(storeValidator).validateExistDetailImage(any(Store.class), anyString());
+			verify(storeWriter, never()).deleteDetailImage(any(Store.class), anyString());
 		}
 	}
 }

@@ -3,6 +3,7 @@ package domain.pos.store.service;
 import static fixtures.member.UserFixture.*;
 import static fixtures.store.SaleFixture.*;
 import static fixtures.store.StoreFixture.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.SoftAssertions.*;
 import static org.mockito.Mockito.*;
 
@@ -68,14 +69,10 @@ class SaleServiceTest extends ServiceTest {
 			assertSoftly(softly -> {
 				softly.assertThat(result).isEqualTo(createdSale);
 				softly.assertThat(result.getStore().getIsOpen()).isTrue();
-
-				verify(storeValidator)
-					.validateStoreOwnerWithLock(any(UserPassport.class), anyLong());
-				verify(storeWriter)
-					.modifyStoreOpenStatus(any(Store.class));
-				verify(saleWriter)
-					.createSale(any(Store.class));
 			});
+			verify(storeValidator).validateStoreOwnerWithLock(any(UserPassport.class), anyLong());
+			verify(storeWriter).modifyStoreOpenStatus(any(Store.class));
+			verify(saleWriter).createSale(any(Store.class));
 		}
 
 		@Test
@@ -86,18 +83,12 @@ class SaleServiceTest extends ServiceTest {
 			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE))
 				.when(storeValidator).validateStoreOwnerWithLock(queryUserPassport, queryStoreId);
 
-			// when->then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> saleService.openStore(queryUserPassport, queryStoreId))
-					.isInstanceOf(ServiceException.class)
-					.hasMessage(ErrorCode.NOT_FOUND_STORE.getMessage());
-				verify(storeValidator)
-					.validateStoreOwnerWithLock(any(UserPassport.class), anyLong());
-				verify(storeWriter, never())
-					.modifyStoreOpenStatus(any(Store.class));
-				verify(saleWriter, never())
-					.createSale(any(Store.class));
-			});
+			assertThatThrownBy(() -> saleService.openStore(queryUserPassport, queryStoreId))
+				.isInstanceOf(ServiceException.class)
+				.hasMessage(ErrorCode.NOT_FOUND_STORE.getMessage());
+			verify(storeValidator).validateStoreOwnerWithLock(any(UserPassport.class), anyLong());
+			verify(storeWriter, never()).modifyStoreOpenStatus(any(Store.class));
+			verify(saleWriter, never()).createSale(any(Store.class));
 		}
 
 		@Test
@@ -108,18 +99,12 @@ class SaleServiceTest extends ServiceTest {
 			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
 				.when(storeValidator).validateStoreOwnerWithLock(queryUserPassport, queryStoreId);
 
-			// when->then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> saleService.openStore(queryUserPassport, queryStoreId))
-					.isInstanceOf(ServiceException.class)
-					.hasMessage(ErrorCode.NOT_EQUAL_STORE_OWNER.getMessage());
-				verify(storeValidator)
-					.validateStoreOwnerWithLock(any(UserPassport.class), anyLong());
-				verify(storeWriter, never())
-					.modifyStoreOpenStatus(any(Store.class));
-				verify(saleWriter, never())
-					.createSale(any(Store.class));
-			});
+			assertThatThrownBy(() -> saleService.openStore(queryUserPassport, queryStoreId))
+				.isInstanceOf(ServiceException.class)
+				.hasMessage(ErrorCode.NOT_EQUAL_STORE_OWNER.getMessage());
+			verify(storeValidator).validateStoreOwnerWithLock(any(UserPassport.class), anyLong());
+			verify(storeWriter, never()).modifyStoreOpenStatus(any(Store.class));
+			verify(saleWriter, never()).createSale(any(Store.class));
 		}
 
 		@Test
@@ -131,18 +116,12 @@ class SaleServiceTest extends ServiceTest {
 			doReturn(savedStore)
 				.when(storeValidator).validateStoreOwnerWithLock(queryUserPassport, queryStoreId);
 
-			// when->then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> saleService.openStore(queryUserPassport, queryStoreId))
-					.isInstanceOf(ServiceException.class)
-					.hasMessage(ErrorCode.CONFLICT_OPEN_STORE.getMessage());
-				verify(storeValidator)
-					.validateStoreOwnerWithLock(any(UserPassport.class), anyLong());
-				verify(storeWriter, never())
-					.modifyStoreOpenStatus(any(Store.class));
-				verify(saleWriter, never())
-					.createSale(any(Store.class));
-			});
+			assertThatThrownBy(() -> saleService.openStore(queryUserPassport, queryStoreId))
+				.isInstanceOf(ServiceException.class)
+				.hasMessage(ErrorCode.CONFLICT_OPEN_STORE.getMessage());
+			verify(storeValidator).validateStoreOwnerWithLock(any(UserPassport.class), anyLong());
+			verify(storeWriter, never()).modifyStoreOpenStatus(any(Store.class));
+			verify(saleWriter, never()).createSale(any(Store.class));
 		}
 	}
 
@@ -171,15 +150,10 @@ class SaleServiceTest extends ServiceTest {
 			assertSoftly(softly -> {
 				softly.assertThat(result).isEqualTo(closedSale);
 				softly.assertThat(result.getStore().getIsOpen()).isFalse();
-
-				verify(saleReader)
-					.readSingleSale(anyLong());
-				verify(storeWriter)
-					.modifyStoreOpenStatus(any(Store.class));
-				verify(saleWriter)
-					.closeSale(any(Sale.class), any(Store.class));
 			});
-
+			verify(saleReader).readSingleSale(anyLong());
+			verify(storeWriter).modifyStoreOpenStatus(any(Store.class));
+			verify(saleWriter).closeSale(any(Sale.class), any(Store.class));
 		}
 
 		@Test
@@ -190,18 +164,12 @@ class SaleServiceTest extends ServiceTest {
 			doReturn(Optional.empty())
 				.when(saleReader).readSingleSale(queryDifferentSaleId);
 
-			// when->then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> saleService.closeStore(queryUserPassport, queryDifferentSaleId))
-					.isInstanceOf(ServiceException.class)
-					.hasMessage(ErrorCode.NOT_FOUND_STORE.getMessage());
-				verify(saleReader)
-					.readSingleSale(anyLong());
-				verify(storeWriter, never())
-					.modifyStoreOpenStatus(any(Store.class));
-				verify(saleWriter, never())
-					.closeSale(any(Sale.class), any(Store.class));
-			});
+			assertThatThrownBy(() -> saleService.closeStore(queryUserPassport, queryDifferentSaleId))
+				.isInstanceOf(ServiceException.class)
+				.hasMessage(ErrorCode.NOT_FOUND_STORE.getMessage());
+			verify(saleReader).readSingleSale(anyLong());
+			verify(storeWriter, never()).modifyStoreOpenStatus(any(Store.class));
+			verify(saleWriter, never()).closeSale(any(Sale.class), any(Store.class));
 		}
 
 		@Test
@@ -212,18 +180,12 @@ class SaleServiceTest extends ServiceTest {
 			doReturn(Optional.of(savedClosedSale))
 				.when(saleReader).readSingleSale(savedClosedSale.getId());
 
-			// when->then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> saleService.closeStore(queryUserPassport, savedClosedSale.getId()))
-					.isInstanceOf(ServiceException.class)
-					.hasMessage(ErrorCode.CONFLICT_CLOSE_STORE.getMessage());
-				verify(saleReader)
-					.readSingleSale(anyLong());
-				verify(storeWriter, never())
-					.modifyStoreOpenStatus(any(Store.class));
-				verify(saleWriter, never())
-					.closeSale(any(Sale.class), any(Store.class));
-			});
+			assertThatThrownBy(() -> saleService.closeStore(queryUserPassport, savedClosedSale.getId()))
+				.isInstanceOf(ServiceException.class)
+				.hasMessage(ErrorCode.CONFLICT_CLOSE_STORE.getMessage());
+			verify(saleReader).readSingleSale(anyLong());
+			verify(storeWriter, never()).modifyStoreOpenStatus(any(Store.class));
+			verify(saleWriter, never()).closeSale(any(Sale.class), any(Store.class));
 		}
 
 		@Test
@@ -235,19 +197,12 @@ class SaleServiceTest extends ServiceTest {
 			doReturn(Optional.of(savedOpenedSale))
 				.when(saleReader).readSingleSale(querySaleId);
 
-			// when->then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> saleService.closeStore(queryUserPassport, querySaleId))
-					.isInstanceOf(ServiceException.class)
-					.hasMessage(ErrorCode.CONFLICT_CLOSE_STORE.getMessage());
-			});
-
-			verify(saleReader)
-				.readSingleSale(anyLong());
-			verify(storeWriter, never())
-				.modifyStoreOpenStatus(any(Store.class));
-			verify(saleWriter, never())
-				.closeSale(any(Sale.class), any(Store.class));
+			assertThatThrownBy(() -> saleService.closeStore(queryUserPassport, querySaleId))
+				.isInstanceOf(ServiceException.class)
+				.hasMessage(ErrorCode.CONFLICT_CLOSE_STORE.getMessage());
+			verify(saleReader).readSingleSale(anyLong());
+			verify(storeWriter, never()).modifyStoreOpenStatus(any(Store.class));
+			verify(saleWriter, never()).closeSale(any(Sale.class), any(Store.class));
 		}
 	}
 

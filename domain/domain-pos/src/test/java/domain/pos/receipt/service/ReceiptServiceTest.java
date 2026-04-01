@@ -5,7 +5,7 @@ import static fixtures.receipt.ReceiptFixture.*;
 import static fixtures.store.SaleFixture.*;
 import static fixtures.store.StoreFixture.*;
 import static fixtures.table.TableFixture.*;
-import static org.assertj.core.api.SoftAssertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -95,16 +95,11 @@ class ReceiptServiceTest extends ServiceTest {
 			doReturn(Optional.empty())
 				.when(receiptReader).getReceiptWithTableAndStore(receiptId);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> receiptService.moveReceiptTable(ownerPassport, receiptId, moveTableId))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
-
-				verify(storeValidator, never()).validateStoreOwner(any(), any(Store.class));
-				verify(receiptWriter, never()).moveReceiptTable(any(), any());
-			});
+			assertThatThrownBy(() -> receiptService.moveReceiptTable(ownerPassport, receiptId, moveTableId))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
+			verify(storeValidator, never()).validateStoreOwner(any(), any(Store.class));
+			verify(receiptWriter, never()).moveReceiptTable(any(), any());
 		}
 
 		@Test
@@ -120,15 +115,10 @@ class ReceiptServiceTest extends ServiceTest {
 			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
 				.when(storeValidator).validateStoreOwner(any(UserPassport.class), any(Store.class));
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> receiptService.moveReceiptTable(ownerPassport, receiptId, moveTableId))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
-
-				verify(receiptWriter, never()).moveReceiptTable(any(), any());
-			});
+			assertThatThrownBy(() -> receiptService.moveReceiptTable(ownerPassport, receiptId, moveTableId))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
+			verify(receiptWriter, never()).moveReceiptTable(any(), any());
 		}
 
 		@Test
@@ -145,16 +135,11 @@ class ReceiptServiceTest extends ServiceTest {
 			doReturn(Optional.of(alreadyActiveTable))
 				.when(tableReader).findLockTableById(moveTableId, store.getId());
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> receiptService.moveReceiptTable(ownerPassport, receiptId, moveTableId))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_ACTIVE_TABLE);
-
-				verify(storeValidator).validateStoreOwner(ownerPassport, store);
-				verify(receiptWriter, never()).moveReceiptTable(any(), any());
-			});
+			assertThatThrownBy(() -> receiptService.moveReceiptTable(ownerPassport, receiptId, moveTableId))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.ALREADY_ACTIVE_TABLE);
+			verify(storeValidator).validateStoreOwner(ownerPassport, store);
+			verify(receiptWriter, never()).moveReceiptTable(any(), any());
 		}
 
 		@Test
@@ -170,16 +155,11 @@ class ReceiptServiceTest extends ServiceTest {
 			doReturn(Optional.empty())
 				.when(tableReader).findLockTableById(moveTableId, store.getId());
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> receiptService.moveReceiptTable(ownerPassport, receiptId, moveTableId))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_TABLE);
-
-				verify(storeValidator).validateStoreOwner(ownerPassport, store);
-				verify(receiptWriter, never()).moveReceiptTable(any(), any());
-			});
+			assertThatThrownBy(() -> receiptService.moveReceiptTable(ownerPassport, receiptId, moveTableId))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_TABLE);
+			verify(storeValidator).validateStoreOwner(ownerPassport, store);
+			verify(receiptWriter, never()).moveReceiptTable(any(), any());
 		}
 	}
 
@@ -212,15 +192,10 @@ class ReceiptServiceTest extends ServiceTest {
 			doReturn(List.of())
 				.when(receiptReader).getStopReceiptsWithTableAndStore(receiptIds);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> receiptService.adjustReceipts(receiptIds, ownerPassport))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
-
-				verify(receiptWriter, never()).adjustReceipts(anyList());
-			});
+			assertThatThrownBy(() -> receiptService.adjustReceipts(receiptIds, ownerPassport))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
+			verify(receiptWriter, never()).adjustReceipts(anyList());
 		}
 	}
 
@@ -255,16 +230,11 @@ class ReceiptServiceTest extends ServiceTest {
 			doReturn(Optional.empty())
 				.when(receiptReader).getReceiptWithTableAndStore(receiptId);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> receiptService.deleteReceipt(receiptId, ownerPassport))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
-
-				verify(receiptValidator, never()).validateIsOwner(any(), any());
-				verify(receiptWriter, never()).deleteReceipt(any());
-			});
+			assertThatThrownBy(() -> receiptService.deleteReceipt(receiptId, ownerPassport))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.RECEIPT_NOT_FOUND);
+			verify(receiptValidator, never()).validateIsOwner(any(), any());
+			verify(receiptWriter, never()).deleteReceipt(any());
 		}
 	}
 }

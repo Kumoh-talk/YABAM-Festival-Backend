@@ -3,6 +3,7 @@ package domain.pos.table.service;
 import static fixtures.member.UserFixture.*;
 import static fixtures.store.StoreFixture.*;
 import static fixtures.table.TableFixture.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.SoftAssertions.*;
 import static org.mockito.Mockito.*;
 
@@ -85,22 +86,12 @@ class TableServiceTest extends ServiceTest {
 			doReturn(responStore)
 				.when(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> tableService.createTable(
-							queryUserPassport,
-							queryStoreId,
-							queryTableNum,
-							queryTablePoint,
-							queryTableCapacity))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.STORE_IS_OPEN_TABLE_WRITE);
-
-				verify(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
-				verify(tableReader, never()).isExistsTableByStoreAndTableNumWithLock(any(Store.class), anyInt());
-				verify(tableWriter, never()).createTable(any(), anyInt(), any(), anyInt());
-			});
+			assertThatThrownBy(() -> tableService.createTable(queryUserPassport, queryStoreId, queryTableNum, queryTablePoint, queryTableCapacity))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.STORE_IS_OPEN_TABLE_WRITE);
+			verify(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
+			verify(tableReader, never()).isExistsTableByStoreAndTableNumWithLock(any(Store.class), anyInt());
+			verify(tableWriter, never()).createTable(any(), anyInt(), any(), anyInt());
 		}
 
 		@Test
@@ -119,22 +110,12 @@ class TableServiceTest extends ServiceTest {
 			doReturn(IS_EXISTS_TABLE)
 				.when(tableReader).isExistsTableByStoreAndTableNumWithLock(any(Store.class), anyInt());
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> tableService.createTable(
-							queryUserPassport,
-							queryStoreId,
-							queryTableNum,
-							queryTablePoint,
-							queryTableCapacity))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.EXIST_TABLE);
-
-				verify(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
-				verify(tableReader).isExistsTableByStoreAndTableNumWithLock(any(Store.class), anyInt());
-				verify(tableWriter, never()).createTable(any(), anyInt(), any(), anyInt());
-			});
+			assertThatThrownBy(() -> tableService.createTable(queryUserPassport, queryStoreId, queryTableNum, queryTablePoint, queryTableCapacity))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.EXIST_TABLE);
+			verify(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
+			verify(tableReader).isExistsTableByStoreAndTableNumWithLock(any(Store.class), anyInt());
+			verify(tableWriter, never()).createTable(any(), anyInt(), any(), anyInt());
 		}
 
 		@Test
@@ -151,22 +132,12 @@ class TableServiceTest extends ServiceTest {
 			doThrow(new ServiceException(ErrorCode.NOT_FOUND_STORE))
 				.when(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> tableService.createTable(
-							queryUserPassport,
-							queryStoreId,
-							queryTableNum,
-							queryTablePoint,
-							queryTableCapacity))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
-
-				verify(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
-				verify(tableReader, never()).isExistsTableByStoreAndTableNumWithLock(any(), anyInt());
-				verify(tableWriter, never()).createTable(any(), anyInt(), any(), anyInt());
-			});
+			assertThatThrownBy(() -> tableService.createTable(queryUserPassport, queryStoreId, queryTableNum, queryTablePoint, queryTableCapacity))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_STORE);
+			verify(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
+			verify(tableReader, never()).isExistsTableByStoreAndTableNumWithLock(any(), anyInt());
+			verify(tableWriter, never()).createTable(any(), anyInt(), any(), anyInt());
 		}
 
 		@Test
@@ -180,22 +151,12 @@ class TableServiceTest extends ServiceTest {
 			doThrow(new ServiceException(ErrorCode.NOT_EQUAL_STORE_OWNER))
 				.when(storeValidator).validateStoreOwner(any(UserPassport.class), anyLong());
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> tableService.createTable(
-							diffOwnerPassport,
-							queryStoreId,
-							queryTable.getTableNumber().value(),
-							queryTable.getTablePoint(),
-							queryTable.getTableCapacity().value()))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
-
-				verify(storeValidator).validateStoreOwner(diffOwnerPassport, queryStoreId);
-				verify(tableReader, never()).isExistsTableByStoreAndTableNumWithLock(any(), anyInt());
-				verify(tableWriter, never()).createTable(any(), anyInt(), any(), anyInt());
-			});
+			assertThatThrownBy(() -> tableService.createTable(diffOwnerPassport, queryStoreId, queryTable.getTableNumber().value(), queryTable.getTablePoint(), queryTable.getTableCapacity().value()))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
+			verify(storeValidator).validateStoreOwner(diffOwnerPassport, queryStoreId);
+			verify(tableReader, never()).isExistsTableByStoreAndTableNumWithLock(any(), anyInt());
+			verify(tableWriter, never()).createTable(any(), anyInt(), any(), anyInt());
 		}
 	}
 
@@ -242,20 +203,12 @@ class TableServiceTest extends ServiceTest {
 			doReturn(Optional.empty())
 				.when(tableReader).findTableWithStoreByTableId(invalidTableId);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> tableService.updateTable(
-						ownerPassport,
-						invalidTableId,
-						1,
-						TablePoint.of(0, 0),
-						4))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_TABLE);
-				verify(tableReader).findTableWithStoreByTableId(invalidTableId);
-				verify(tableReader, never()).isExistsTableByStoreAndTableNumWithLock(any(), anyInt());
-				verify(tableWriter, never()).updateTable(any(), anyInt(), any(), anyInt());
-			});
+			assertThatThrownBy(() -> tableService.updateTable(ownerPassport, invalidTableId, 1, TablePoint.of(0, 0), 4))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_TABLE);
+			verify(tableReader).findTableWithStoreByTableId(invalidTableId);
+			verify(tableReader, never()).isExistsTableByStoreAndTableNumWithLock(any(), anyInt());
+			verify(tableWriter, never()).updateTable(any(), anyInt(), any(), anyInt());
 		}
 
 		@Test
@@ -268,20 +221,12 @@ class TableServiceTest extends ServiceTest {
 			doReturn(Optional.of(savedTable))
 				.when(tableReader).findTableWithStoreByTableId(queryTableId);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> tableService.updateTable(
-						diffOwnerPassport,
-						queryTableId,
-						savedTable.getTableNumber().value(),
-						savedTable.getTablePoint(),
-						savedTable.getTableCapacity().value()))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
-				verify(tableReader).findTableWithStoreByTableId(queryTableId);
-				verify(tableReader, never()).isExistsTableByStoreAndTableNumWithLock(any(), anyInt());
-				verify(tableWriter, never()).updateTable(any(), anyInt(), any(), anyInt());
-			});
+			assertThatThrownBy(() -> tableService.updateTable(diffOwnerPassport, queryTableId, savedTable.getTableNumber().value(), savedTable.getTablePoint(), savedTable.getTableCapacity().value()))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
+			verify(tableReader).findTableWithStoreByTableId(queryTableId);
+			verify(tableReader, never()).isExistsTableByStoreAndTableNumWithLock(any(), anyInt());
+			verify(tableWriter, never()).updateTable(any(), anyInt(), any(), anyInt());
 		}
 
 		@Test
@@ -294,20 +239,12 @@ class TableServiceTest extends ServiceTest {
 			doReturn(Optional.of(savedTable))
 				.when(tableReader).findTableWithStoreByTableId(queryTableId);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> tableService.updateTable(
-						ownerPassport,
-						queryTableId,
-						savedTable.getTableNumber().value(),
-						savedTable.getTablePoint(),
-						savedTable.getTableCapacity().value()))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.STORE_IS_OPEN_TABLE_WRITE);
-				verify(tableReader).findTableWithStoreByTableId(queryTableId);
-				verify(tableReader, never()).isExistsTableByStoreAndTableNumWithLock(any(), anyInt());
-				verify(tableWriter, never()).updateTable(any(), anyInt(), any(), anyInt());
-			});
+			assertThatThrownBy(() -> tableService.updateTable(ownerPassport, queryTableId, savedTable.getTableNumber().value(), savedTable.getTablePoint(), savedTable.getTableCapacity().value()))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.STORE_IS_OPEN_TABLE_WRITE);
+			verify(tableReader).findTableWithStoreByTableId(queryTableId);
+			verify(tableReader, never()).isExistsTableByStoreAndTableNumWithLock(any(), anyInt());
+			verify(tableWriter, never()).updateTable(any(), anyInt(), any(), anyInt());
 		}
 
 		@Test
@@ -326,20 +263,12 @@ class TableServiceTest extends ServiceTest {
 			doReturn(IS_EXISTS_TABLE)
 				.when(tableReader).isExistsTableByStoreAndTableNumWithLock(responStore, updateTableNumber);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> tableService.updateTable(
-						ownerPassport,
-						queryTableId,
-						updateTableNumber,
-						updatePoint,
-						updateTableCapacity))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.EXIST_TABLE);
-				verify(tableReader).findTableWithStoreByTableId(queryTableId);
-				verify(tableReader).isExistsTableByStoreAndTableNumWithLock(responStore, updateTableNumber);
-				verify(tableWriter, never()).updateTable(any(), anyInt(), any(), anyInt());
-			});
+			assertThatThrownBy(() -> tableService.updateTable(ownerPassport, queryTableId, updateTableNumber, updatePoint, updateTableCapacity))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.EXIST_TABLE);
+			verify(tableReader).findTableWithStoreByTableId(queryTableId);
+			verify(tableReader).isExistsTableByStoreAndTableNumWithLock(responStore, updateTableNumber);
+			verify(tableWriter, never()).updateTable(any(), anyInt(), any(), anyInt());
 		}
 	}
 
@@ -371,14 +300,11 @@ class TableServiceTest extends ServiceTest {
 			doReturn(Optional.empty())
 				.when(tableReader).findTableWithStoreByTableId(invalidTableId);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> tableService.deleteTable(ownerPassport, invalidTableId))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_TABLE);
-				verify(tableReader).findTableWithStoreByTableId(invalidTableId);
-				verify(tableWriter, never()).deleteTable(any());
-			});
+			assertThatThrownBy(() -> tableService.deleteTable(ownerPassport, invalidTableId))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_FOUND_TABLE);
+			verify(tableReader).findTableWithStoreByTableId(invalidTableId);
+			verify(tableWriter, never()).deleteTable(any());
 		}
 
 		@Test
@@ -391,14 +317,11 @@ class TableServiceTest extends ServiceTest {
 			doReturn(Optional.of(savedTable))
 				.when(tableReader).findTableWithStoreByTableId(queryTableId);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> tableService.deleteTable(diffOwnerPassport, queryTableId))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
-				verify(tableReader).findTableWithStoreByTableId(queryTableId);
-				verify(tableWriter, never()).deleteTable(any());
-			});
+			assertThatThrownBy(() -> tableService.deleteTable(diffOwnerPassport, queryTableId))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.NOT_EQUAL_STORE_OWNER);
+			verify(tableReader).findTableWithStoreByTableId(queryTableId);
+			verify(tableWriter, never()).deleteTable(any());
 		}
 
 		@Test
@@ -411,14 +334,11 @@ class TableServiceTest extends ServiceTest {
 			doReturn(Optional.of(savedTable))
 				.when(tableReader).findTableWithStoreByTableId(queryTableId);
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(() -> tableService.deleteTable(ownerPassport, queryTableId))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.STORE_IS_OPEN_TABLE_WRITE);
-				verify(tableReader).findTableWithStoreByTableId(queryTableId);
-				verify(tableWriter, never()).deleteTable(any());
-			});
+			assertThatThrownBy(() -> tableService.deleteTable(ownerPassport, queryTableId))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.STORE_IS_OPEN_TABLE_WRITE);
+			verify(tableReader).findTableWithStoreByTableId(queryTableId);
+			verify(tableWriter, never()).deleteTable(any());
 		}
 	}
 
@@ -444,10 +364,8 @@ class TableServiceTest extends ServiceTest {
 			assertSoftly(softly -> {
 				softly.assertThat(resultTables).hasSize(2);
 				softly.assertThat(resultTables).contains(savedTable1, savedTable2);
-
-				verify(tableReader)
-					.findTables(anyLong());
 			});
+			verify(tableReader).findTables(anyLong());
 		}
 	}
 }

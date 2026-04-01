@@ -1,6 +1,6 @@
 package domain.pos.order.service;
 
-import static org.assertj.core.api.SoftAssertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
@@ -78,11 +78,9 @@ public class OrderServiceTest extends ServiceTest {
 
 			Order result = orderService.postOrderWithCart(receiptId, userPassport, sessionToken);
 
-			assertSoftly(softly -> {
-				softly.assertThat(result).isEqualTo(expectedOrder);
-				verify(orderWriter).postOrderWithCart(any(), any());
-				verify(cartWriter).deleteCartAndCartMenuByReceiptId(receiptId);
-			});
+			assertThat(result).isEqualTo(expectedOrder);
+			verify(orderWriter).postOrderWithCart(any(), any());
+			verify(cartWriter).deleteCartAndCartMenuByReceiptId(receiptId);
 		}
 
 		@Test
@@ -93,14 +91,10 @@ public class OrderServiceTest extends ServiceTest {
 				.willReturn(Optional.of(receipt));
 			given(cartWriter.getCartWithLock(receiptId)).willReturn(Optional.of(cart));
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> orderService.postOrderWithCart(receiptId, userPassport, wrongToken))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_ORDER_SESSION_INVALID);
-				verify(orderWriter, never()).postOrderWithCart(any(), any());
-			});
+			assertThatThrownBy(() -> orderService.postOrderWithCart(receiptId, userPassport, wrongToken))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_ORDER_SESSION_INVALID);
+			verify(orderWriter, never()).postOrderWithCart(any(), any());
 		}
 
 		@Test
@@ -110,14 +104,10 @@ public class OrderServiceTest extends ServiceTest {
 				.willReturn(Optional.of(receipt));
 			given(cartWriter.getCartWithLock(receiptId)).willReturn(Optional.of(cart));
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> orderService.postOrderWithCart(receiptId, userPassport, null))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_ORDER_SESSION_INVALID);
-				verify(orderWriter, never()).postOrderWithCart(any(), any());
-			});
+			assertThatThrownBy(() -> orderService.postOrderWithCart(receiptId, userPassport, null))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_ORDER_SESSION_INVALID);
+			verify(orderWriter, never()).postOrderWithCart(any(), any());
 		}
 
 		@Test
@@ -127,14 +117,10 @@ public class OrderServiceTest extends ServiceTest {
 				.willReturn(Optional.of(receipt));
 			given(cartWriter.getCartWithLock(receiptId)).willReturn(Optional.of(expiredCart));
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> orderService.postOrderWithCart(receiptId, userPassport, sessionToken))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_ORDER_SESSION_EXPIRED);
-				verify(orderWriter, never()).postOrderWithCart(any(), any());
-			});
+			assertThatThrownBy(() -> orderService.postOrderWithCart(receiptId, userPassport, sessionToken))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_ORDER_SESSION_EXPIRED);
+			verify(orderWriter, never()).postOrderWithCart(any(), any());
 		}
 
 		@Test
@@ -144,14 +130,10 @@ public class OrderServiceTest extends ServiceTest {
 				.willReturn(Optional.of(receipt));
 			given(cartWriter.getCartWithLock(receiptId)).willReturn(Optional.of(cartWithoutSession));
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> orderService.postOrderWithCart(receiptId, userPassport, sessionToken))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_ORDER_SESSION_INVALID);
-				verify(orderWriter, never()).postOrderWithCart(any(), any());
-			});
+			assertThatThrownBy(() -> orderService.postOrderWithCart(receiptId, userPassport, sessionToken))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_ORDER_SESSION_INVALID);
+			verify(orderWriter, never()).postOrderWithCart(any(), any());
 		}
 
 		@Test
@@ -161,14 +143,10 @@ public class OrderServiceTest extends ServiceTest {
 				.willReturn(Optional.of(receipt));
 			given(cartWriter.getCartWithLock(receiptId)).willReturn(Optional.of(emptyCart));
 
-			// when -> then
-			assertSoftly(softly -> {
-				softly.assertThatThrownBy(
-						() -> orderService.postOrderWithCart(receiptId, userPassport, sessionToken))
-					.isInstanceOf(ServiceException.class)
-					.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_EMPTY);
-				verify(orderWriter, never()).postOrderWithCart(any(), any());
-			});
+			assertThatThrownBy(() -> orderService.postOrderWithCart(receiptId, userPassport, sessionToken))
+				.isInstanceOf(ServiceException.class)
+				.hasFieldOrPropertyWithValue("errorCode", ErrorCode.CART_EMPTY);
+			verify(orderWriter, never()).postOrderWithCart(any(), any());
 		}
 	}
 }
