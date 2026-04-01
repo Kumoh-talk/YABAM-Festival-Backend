@@ -36,12 +36,10 @@ class MenuCategoryCreateTest {
 	@DisplayName("메뉴 이름이 Null 또는 공백이면 ServiceException(DOMAIN_INVALID_MENU_CATEGORY_NAME)")
 	void name_null_or_blank(String name) {
 		// when -> then
-		assertSoftly(softly -> {
-			softly.assertThatThrownBy(() -> MenuCategory.create(name, 1, 1L))
-				.isInstanceOf(com.exception.ServiceException.class)
-				.extracting(ex -> ((com.exception.ServiceException)ex).getErrorCode())
-				.isEqualTo(com.exception.ErrorCode.DOMAIN_INVALID_MENU_CATEGORY_NAME);
-		});
+		assertThatThrownBy(() -> MenuCategory.create(name, 1, 1L))
+			.isInstanceOf(com.exception.ServiceException.class)
+			.extracting(ex -> ((com.exception.ServiceException)ex).getErrorCode())
+			.isEqualTo(com.exception.ErrorCode.DOMAIN_INVALID_MENU_CATEGORY_NAME);
 	}
 
 	@ParameterizedTest
@@ -50,12 +48,10 @@ class MenuCategoryCreateTest {
 	@DisplayName("메뉴 순서가 Null 또는 1보다 작으면 ServiceException(DOMAIN_INVALID_MENU_CATEGORY_ORDER)")
 	void order_must_be_positive(Integer invalidOrder) {
 		// when -> then
-		assertSoftly(softly -> {
-			softly.assertThatThrownBy(() -> MenuCategory.create("음료", invalidOrder, 1L))
-				.isInstanceOf(com.exception.ServiceException.class)
-				.extracting(ex -> ((com.exception.ServiceException)ex).getErrorCode())
-				.isEqualTo(com.exception.ErrorCode.DOMAIN_INVALID_MENU_CATEGORY_ORDER);
-		});
+		assertThatThrownBy(() -> MenuCategory.create("음료", invalidOrder, 1L))
+			.isInstanceOf(com.exception.ServiceException.class)
+			.extracting(ex -> ((com.exception.ServiceException)ex).getErrorCode())
+			.isEqualTo(com.exception.ErrorCode.DOMAIN_INVALID_MENU_CATEGORY_ORDER);
 	}
 
 	@Test
