@@ -51,7 +51,6 @@ public class MenuCategoryOrderingOps implements OrderingOps<MenuCategory> {
 
 	@Override
 	public Integer refreshOrder(Long targetId) {
-		MenuCategory refreshCategory = menuCategoryRepository.refresh(targetId);
-		return refreshCategory.getOrder();
+		return menuCategoryRepository.refresh(targetId).getOrder();
 	}
 }
