@@ -51,7 +51,6 @@ public class SecurityConfig {
 		"/docs/**",
 	};
 
-	/* ───── ① Swagger 전용 체인 ───── */
 	@Bean
 	@Order(0)
 	public SecurityWebFilterChain swaggerChain(ServerHttpSecurity http) {
