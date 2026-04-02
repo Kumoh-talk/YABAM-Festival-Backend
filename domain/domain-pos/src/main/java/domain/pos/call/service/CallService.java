@@ -27,7 +27,7 @@ public class CallService {
 	public void postCall(final UUID receiptId, final CallMessage callMessage) {
 		Receipt receipt = receiptReader.getReceiptWithTableAndStore(receiptId)
 			.orElseThrow(() -> new ServiceException(ErrorCode.RECEIPT_NOT_FOUND));
-		if (!receipt.getSale().getCloseDateTime().isEmpty() || !receipt.getSale().getStore().getIsOpen()) {
+		if (receipt.getSale().getCloseDateTime().isPresent() || !receipt.getSale().getStore().getIsOpen()) {
 			throw new ServiceException(ErrorCode.CONFLICT_CLOSE_STORE);
 		}
 		if (!receipt.getTable().getIsActive()) {
